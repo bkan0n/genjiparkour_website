@@ -23,21 +23,23 @@
             <a href="https://dsc.gg/genjiparkour" target="_blank"><i class="fab fa-discord"></i>Discord</a>
             <a href="tutorial.html"><i class="fas fa-book-open"></i>Tutorial</a>
         </div>
-        <!-- Hamburger Menu Icon -->
-            <button id="hamburger" class="menu-icon" onclick="toggleMenu()">
-                <div id="bar1" class="bar"></div>
-                <div id="bar2" class="bar"></div>
-                <div id="bar3" class="bar"></div>
-            </button>
+            <!-- Hamburger Menu Icon -->
+        <div class="menu--right" role="navigation">
+            <div class="menuToggle" id="burgerMenu">
+                <input type="checkbox"/>
+                <span></span>
+                <span></span>
+                <span></span>
+                <ul class="menuItem">
+                <li><a href="#">New maps</a></li>
+                <li><a href="#">Maps search</a></li>
+                <li><a href="#">Guides</a></li>
+                <li><a href="news.html">News & Events</a></li>
+                <li><a href="#">Show me more</a></li>
+                </ul>
+            </div>
+        </div>
     </nav>
-    <!-- Dropdown Menu -->
-    <div class="dropdown-menu" id="dropdownMenu">
-        <a href="#">New maps</a>
-        <a href="#">Maps search</a>
-        <a href="#">Guides</a>
-        <a href="news.html">News & Event</a>
-        <button class="close-menu" id="menu-close" onclick="toggleMenu()">&#10005;</button>
-    </div>
     <!-- Main Content -->
     <main>
         <section class="hero-section" id="hero1">

@@ -1,0 +1,6 @@
+-remove the shrink and make it fixed
+-add the small icon
+-adjust the padding for entries
+-remove the image for the home page
+-news & event
+-add pro to rank list

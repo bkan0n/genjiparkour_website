@@ -29,21 +29,25 @@
                 <a href="tutorial.html">
                     <i class="fas fa-book-open"></i>Tutorial
                 </a>
+                </div>
+            <!-- Hamburger Menu Icon -->
+            <div class="menu--right" role="navigation">
+                <div class="menuToggle" id="burgerMenu">
+                    <input type="checkbox"/>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <ul class="menuItem">
+                    <li><a href="#">New maps</a></li>
+                    <li><a href="#">Maps search</a></li>
+                    <li><a href="#">Guides</a></li>
+                    <li><a href="news.html">News & Events</a></li>
+                    <li><a href="#">Show me more</a></li>
+                    </ul>
+                </div>
             </div>
-                <button id="hamburger" class="menu-icon" onclick="toggleMenu()">
-                    <div id="bar1" class="bar"></div>
-                    <div id="bar2" class="bar"></div>
-                    <div id="bar3" class="bar"></div>
-                </button>
-        </nav>
-        <!-- Dropdown Menu -->
-        <div class="dropdown-menu" id="dropdownMenu">
-            <a href="#">New maps</a>
-            <a href="#">Maps search</a>
-            <a href="#">Guides</a>
-            <a href="news.html">News & Event</a>
-            <button class="close-menu" id="menu-close" onclick="toggleMenu()">&#10005;</button>
         </div>
+        </nav>
         <div class="container">
             <h1>Players leaderboard</h1>
             <!-- Formulaire pour la recherche et les filtres -->
@@ -401,6 +405,7 @@
                 echo "</div>";
             }
 
+            // Fermeture de la connexion
             $conn->close();
             ?>
         </div>

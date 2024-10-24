@@ -266,42 +266,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// Fonction pour ouvrir/fermer le menu
-function toggleMenu() {
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    const bar1 = document.getElementById('bar1');
-    const bar2 = document.getElementById('bar2');
-    const bar3 = document.getElementById('bar3');
-
-    dropdownMenu.classList.toggle('open');
-
-    if (dropdownMenu.classList.contains('open')) {
-        // Transform hamburger bars into a smaller cross
-        bar1.style.transform = 'rotate(45deg) translate(3px, 3px)';
-        bar1.style.width = '15px'; // Small cross size
-        bar2.style.opacity = '0';
-        bar3.style.transform = 'rotate(-45deg) translate(3px, -3px)';
-        bar3.style.width = '15px'; // Small cross size
-    } else {
-        // Reset the bars to their original state
-        bar1.style.transform = 'none';
-        bar1.style.width = '100%';
-        bar2.style.opacity = '1';
-        bar3.style.transform = 'none';
-        bar3.style.width = '100%';
-    }
-}
-
 // Fonction pour fermer le menu lors du scroll vers le bas
 function closeMenuOnScroll() {
-    const dropdownMenu = document.getElementById('dropdownMenu');
+    const burgerMenuCheckbox = document.getElementById('burgerMenu');
 
-    if (dropdownMenu.classList.contains('open')) {
-        toggleMenu(); // Ferme le menu s'il est ouvert lorsque l'utilisateur fait défiler
+    // Vérifie si la checkbox est cochée (menu ouvert)
+    if (burgerMenuCheckbox.checked) {
+        burgerMenuCheckbox.checked = false; // Ferme le menu
     }
 }
 
-// Écouter l'événement de scroll pour fermer le menu lors du défilement
 window.addEventListener('scroll', closeMenuOnScroll);
 
 

@@ -166,9 +166,10 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Centrer le bouton flottant */
 .scroll-indicator {
     position: absolute;
-    bottom: 80px;
+    bottom: 80px; /* Adjust so the scroll indicator isn't too far down */
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -209,14 +210,14 @@ html {
 /* Scroll-indicator2 spécifique à hero2 */
 .scroll-indicator2 {
     position: absolute;
-    bottom: 40px;
+    bottom: 40px; /* Ajustez si nécessaire */
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
 }
 
 .scroll-btn2 {
-    border: 2px solid #4d4d4d;
+    border: 2px solid #4d4d4d; /* Couleur différente pour différencier */
     padding: 10px 20px;
     border-radius: 30px;
     color: #4d4d4d;
