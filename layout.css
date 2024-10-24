@@ -151,9 +151,9 @@ nav a:not(.logo):hover::before {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-end; /* Aligne le contenu à droite */
-    padding-right: 5px; /* Optionnel : ajouter un espacement à droite */
-    transition: height 0.5s ease, opacity 0.5s ease; /* Transition pour height */
+    align-items: flex-end; 
+    padding-right: 5px;
+    transition: height 0.5s ease, opacity 0.5s ease; 
     z-index: 999;
     text-align: right;
 }
@@ -170,16 +170,16 @@ nav a:not(.logo):hover::before {
     position: relative;
 }
 
-/* Fine border-bottom for each dropdown menu item */
+
 .dropdown-menu a:after {
     content: '';
     position: absolute;
-    bottom: -5px; /* Position slightly below the text */
+    bottom: -5px;
     left: 0;
     width: 100%;
     height: 1px;
     background-color: #fff;
-    transform: scaleY(0.3); /* Réduit la hauteur de la bordure */
+    transform: scaleY(0.3);
     transform-origin: bottom;
 }
 
@@ -219,13 +219,13 @@ nav a:not(.logo):hover::before {
 }
 
 .bar.small-cross {
-    width: 15px; /* Réduit la taille de la croix */
+    width: 15px;
 }
 
 /* Fine cross when open */
 .dropdown-menu.open #bar1 {
-    transform: rotate(45deg) translate(3px, 3px); /* Réduire la translation */
-    width: 15px; /* Réduire la largeur */
+    transform: rotate(45deg) translate(3px, 3px);
+    width: 15px;
 }
 
 .dropdown-menu.open #bar2 {
@@ -233,8 +233,8 @@ nav a:not(.logo):hover::before {
 }
 
 .dropdown-menu.open #bar3 {
-    transform: rotate(-45deg) translate(3px, -3px); /* Réduire la translation */
-    width: 15px; /* Réduire la largeur */
+    transform: rotate(-45deg) translate(3px, -3px);
+    width: 15px;
 }
 
 /* Ajouter un délai progressif pour chaque lien */
@@ -260,7 +260,7 @@ nav a:not(.logo):hover::before {
 
 /* Transition effect for the icon */
 .bar {
-    width: 24px; /* Limite la largeur des barres à la taille du bouton */
+    width: 24px;
     height: 2px;
     background-color: #fff;
     position: absolute;

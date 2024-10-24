@@ -401,7 +401,6 @@
                 echo "</div>";
             }
 
-            // Fermeture de la connexion
             $conn->close();
             ?>
         </div>
