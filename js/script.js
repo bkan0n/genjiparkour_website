@@ -268,14 +268,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Fonction pour fermer le menu lors du scroll vers le bas
 function closeMenuOnScroll() {
-    const burgerMenuCheckbox = document.getElementById('burgerMenu');
+    const burgerMenuCheckbox = document.getElementById('burgerMenuScroll');
 
     // Vérifie si la checkbox est cochée (menu ouvert)
     if (burgerMenuCheckbox.checked) {
         burgerMenuCheckbox.checked = false; // Ferme le menu
     }
 }
-
+// Ajoute un écouteur d'événement pour détecter le défilement
 window.addEventListener('scroll', closeMenuOnScroll);
 
 
