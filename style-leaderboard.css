@@ -413,7 +413,7 @@ th {
   border-radius: 5px;
   cursor: pointer;
   padding: 15px 15px;
-  height: 35px;
+  height: 45px;
   display: flex;
   align-items: center;
 }
@@ -426,7 +426,7 @@ th {
   border-radius: 5px;
   cursor: pointer;
   padding: 12px 15px;
-  height: 22px; 
+  height: 45px; 
   display: flex;
   align-items: center;
 }
