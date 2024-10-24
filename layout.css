@@ -1,0 +1,407 @@
+/* toute la hauteur de la fenêtre */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: radial-gradient(circle, #1b1b1b, #000);
+    color: #fff;
+    margin: 0;
+    padding-top: 50px;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+nav {
+    background-color: #222;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    z-index: 1000;
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+}
+
+nav .logo {
+    height: auto;
+    position: relative;
+    margin-top: -3px;
+    left: 20px;
+    pointer-events: none;
+}
+
+nav .logo a {
+    color: #fff;
+    font-size: 24px;
+    text-decoration: none;
+    letter-spacing: 4px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+nav .nav-links {
+    display: flex;
+    left: 9%;
+    transform: translateX(-9%);
+    gap: 50px;
+    justify-content: center;
+    align-items: center; 
+    flex-grow: 1;
+    margin-top: 7px;
+}
+
+nav .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    position: relative;
+    padding-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+nav .nav-links a i {
+    margin-right: 5px;
+}
+
+nav a:not(.logo)::before {
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 0;
+    background-color: #fff;
+    bottom: 7px;
+    left: 50%;
+    transform: translate(-50%);
+    transition: width 0.4s ease;
+}
+
+nav a:not(.logo):hover::before {
+    width: 100%;
+}
+
+.custom-icon {
+    width: 30px;
+    margin-top: -10px;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
+/* Hamburger Menu Icon */
+#hamburger, .bar {
+    position: absolute;
+}
+
+#hamburger {
+    display: block;
+    top: 50%;
+    right: 50px;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-50%);
+    z-index: 55;
+    padding: 0;
+    border: 0;
+    background: none;
+    appearance: none;
+    transition: opacity .2s linear .1s;
+}
+
+.bar {
+    top: 3px;
+    left: 0;
+    background-color: #fff;
+    width: 100%;
+    height: 2px;
+    transform-origin: center center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#bar2 {
+    top: 7px;
+}
+
+#bar3 {
+    top: 11px;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 6%;
+    right: 50px;
+    width: 200px;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end; /* Aligne le contenu à droite */
+    padding-right: 5px; /* Optionnel : ajouter un espacement à droite */
+    transition: height 0.5s ease, opacity 0.5s ease; /* Transition pour height */
+    z-index: 999;
+    text-align: right;
+}
+
+.dropdown-menu a {
+    color: #fff;
+    font-size: 18px;
+    text-decoration: none;
+    margin: 10px 0;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    text-transform: uppercase;
+    position: relative;
+}
+
+/* Fine border-bottom for each dropdown menu item */
+.dropdown-menu a:after {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* Position slightly below the text */
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #fff;
+    transform: scaleY(0.3); /* Réduit la hauteur de la bordure */
+    transform-origin: bottom;
+}
+
+.dropdown-menu .close-menu {
+    font-size: 24px;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition-delay: 0.6s;
+}
+
+.dropdown-menu.open {
+    height: 200px;
+    opacity: 1;
+}
+
+/* Quand le menu est ouvert, les liens apparaissent progressivement */
+.dropdown-menu.open a {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#menu-close {
+    left: 0;
+    width: 100%;
+    z-index: 11;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    display: block;
+}
+
+.dropdown-menu.open .bar {
+    transition: transform 0.3s ease-in-out;
+}
+
+.bar.small-cross {
+    width: 15px; /* Réduit la taille de la croix */
+}
+
+/* Fine cross when open */
+.dropdown-menu.open #bar1 {
+    transform: rotate(45deg) translate(3px, 3px); /* Réduire la translation */
+    width: 15px; /* Réduire la largeur */
+}
+
+.dropdown-menu.open #bar2 {
+    opacity: 0;
+}
+
+.dropdown-menu.open #bar3 {
+    transform: rotate(-45deg) translate(3px, -3px); /* Réduire la translation */
+    width: 15px; /* Réduire la largeur */
+}
+
+/* Ajouter un délai progressif pour chaque lien */
+.dropdown-menu a:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.dropdown-menu a:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.dropdown-menu a:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.dropdown-menu a:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+.dropdown-menu a:nth-child(5) {
+    transition-delay: 0.5s;
+}
+
+/* Transition effect for the icon */
+.bar {
+    width: 24px; /* Limite la largeur des barres à la taille du bouton */
+    height: 2px;
+    background-color: #fff;
+    position: absolute;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Styles du pied de page */
+footer {
+    background-color: #222;
+    padding: 20px 20px;
+    /*border-top: 1px solid #e0e0e0;*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left, .footer-right {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 20px;
+}
+
+.scroll-indicator a {
+    color: #fff;
+    font-size: 24px;
+    text-decoration: none;
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator2 {
+    position: absolute;
+    bottom: 20px;
+}
+
+.scroll-indicator2 a {
+    color: #555;
+    font-size: 24px;
+    text-decoration: none;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(10px); }
+    60% { transform: translateY(5px); }
+}
+
+/* Boutons modernes */
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.btn:hover {
+    background-color: #555;
+}
+
+/* Media Queries pour le Responsive Design */
+
+/*petits appareils (téléphones, largeur jusqu'à 768px) */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        padding: 10px 0;
+    }
+
+    nav .logo {
+        margin-left: -150px;
+        margin-bottom: 10px;
+    }
+    
+    nav .nav-links {
+        flex-direction: column;
+        gap: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .hero-content h1 {
+        font-size: 32px;
+    }
+}
+
+/*tablettes (entre 768px et 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    nav .nav-links {
+        gap: 30px;
+    }
+    
+    .hero-content h1 {
+        font-size: 40px;
+    }
+
+    nav .nav-links {
+        left: 10%;
+        transform: translateX(-10%);
+    }
+}
+
+/* Pour les écrans larges (plus de 1024px) */
+@media (min-width: 1024px) {
+    nav .nav-links {
+        gap: 50px;
+    }
+    
+    .hero-content h1 {
+        font-size: 48px;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+  }
+
+/* Scroll enhance */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #b3b1b1;
+    border-radius: 10px;
+}

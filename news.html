@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News & Event</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="style-news.css">
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+    <!-- Header / Navigation -->
+    <nav>
+        <div class="logo">
+            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <a href="index.html">GENJI PARKOUR</a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">
+                <i class="fas fa-home"></i>Home
+            </a>
+            <a href="leaderboard.php">
+                <i class="fas fa-trophy"></i>Leaderboard
+            </a>
+            <a href="https://dsc.gg/genjiparkour" target="_blank">
+                <i class="fab fa-discord"></i>Discord
+            </a>
+            <a href="tutorial.html">
+                <i class="fas fa-book-open"></i>Tutorial
+            </a>
+        </div>
+        <button id="hamburger" class="menu-icon" onclick="toggleMenu()">
+            <div id="bar1" class="bar"></div>
+            <div id="bar2" class="bar"></div>
+            <div id="bar3" class="bar"></div>
+        </button>
+    </nav>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <a href="#">New maps</a>
+            <a href="#">Maps search</a>
+            <a href="#">Guides</a>
+            <a href="news.html">News & Event</a>
+            <button class="close-menu" id="menu-close" onclick="toggleMenu()">&#10005;</button>
+        </div>
+    <!-- Main content for News & Event -->
+    <main class="news-container">
+        <div class="news-item">
+            <h2 class="news-title">Lorem ipsum</h2>
+            <p class="news-date">Date: xxxx</p>
+            <p class="news-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+        </div>
+
+        <div class="news-item">
+            <h2 class="news-title">Lorem ipsum</h2>
+            <p class="news-date">Date: xxxx</p>
+            <p class="news-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+        </div>
+
+        <div class="news-item">
+            <h2 class="news-title">Lorem ipsum</h2>
+            <p class="news-date">Date: xxxx</p>
+            <p class="news-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+        </div>
+    </main>
+
+    <!-- Pagination buttons -->
+    <div class="pagination">
+        <button class="prev">Previous</button>
+        <button class="next">Next</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">Genji Parkour © 2024</div>
+        <div class="footer-right">Joe is cool</div>
+    </footer>
+</body>
+</html>

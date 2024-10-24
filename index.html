@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genji Parkour</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="style-main.css">
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <a href="index.html">GENJI PARKOUR</a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">
+                <i class="fas fa-home"></i>Home
+            </a>
+            <a href="leaderboard.php">
+                <i class="fas fa-trophy"></i>Leaderboard
+            </a>
+            <a href="https://dsc.gg/genjiparkour" target="_blank">
+                <i class="fab fa-discord"></i>Discord
+            </a>
+            <a href="tutorial.html">
+                <i class="fas fa-book-open"></i>Tutorial
+            </a>
+        </div>
+            <!-- Hamburger Menu Icon -->
+            <button id="hamburger" class="menu-icon" onclick="toggleMenu()">
+                <div id="bar1" class="bar"></div>
+                <div id="bar2" class="bar"></div>
+                <div id="bar3" class="bar"></div>
+            </button>
+    </nav>
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="#">New maps</a>
+        <a href="#">Maps search</a>
+        <a href="#">Guides</a>
+        <a href="news.html">News & Event</a>
+        <button class="close-menu" id="menu-close" onclick="toggleMenu()">&#10005;</button>
+    </div>
+
+    <section class="hero" id="hero1">
+        <div class="hero-content">
+            <p class="recent-launch">RECENT STATS</p>
+            <h1>GENJI PARKOUR LEADERBOARD</h1>
+            <a href="leaderboard.php" class="cta-btn">view</a>
+        </div>
+        <div class="scroll-indicator">
+            <a href="#next-section" class="scroll-btn"><i class="fas fa-chevron-down"></i></a>
+        </div>
+    </section>
+    <section id="next-section" class="achievements">
+        <h2>Latest Events</h2>
+        <div class="event-grid">
+            <div class="event-item">
+                <h3>Parkour World Tournaments</h3>
+                <p>The ultimate test of skill and speed</p>
+            </div>
+            <div class="event-item">
+                <h3>New Parkour Maps Released</h3>
+                <p>Challenge yourself with our latest set of thrilling maps</p>
+            </div>
+            <div class="event-item">
+                <h3>Top Scorers of 2024</h3>
+                <p>See the latest leaderboard and scores from the community</p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-left">Genji Parkour © 2024</div>
+        <div class="footer-right">Joe is cool</div>
+    </footer>
+</body>
+</html>
