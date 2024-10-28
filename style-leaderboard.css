@@ -13,6 +13,7 @@ h1 {
   margin: 0 auto;
   width: 100%;
 }
+
 /*
 #wrapper {
   display: flex;
@@ -585,10 +586,10 @@ th {
 /* Style pour chaque rang */
 .rank-ninja { color: rgb(63, 223, 63); }
 .rank-jumper { color: rgb(154, 235, 134); }
-.rank-skilled { color: rgb(238, 234, 11); }
+.rank-skilled { color: rgb(255, 238, 0); }
 .rank-pro { color: rgb(224, 178, 24); }
-.rank-master { color: rgb(221, 131, 27); }
-.rank-grandmaster { color: rgb(212, 59, 21); }
+.rank-master { color: rgb(238, 130, 7); }
+.rank-grandmaster { color: rgb(233, 15, 15); }
 .rank-god { color: rgb(129, 8, 8); }
 
 /* Style du bouton de tri */

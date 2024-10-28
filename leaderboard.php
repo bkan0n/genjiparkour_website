@@ -42,7 +42,7 @@
                     <li><a href="#">Maps search</a></li>
                     <li><a href="#">Guides</a></li>
                     <li><a href="news.html">News & Events</a></li>
-                    <li><a href="#">Show me more</a></li>
+                    <li><a href="graphs.php">Graphs</a></li>
                     </ul>
                 </div>
             </div>
@@ -122,8 +122,13 @@
             </div>
 
             <?php
-            // Connexion à la base de données
-            $conn = new mysqli('localhost', 'root', '', 'genjiparkour');
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "genjiparkour";
+            $tablename= "leaderboard";
+
+            $conn = new mysqli($servername, $username, $password, $dbname);
 
             // Vérifie si la connexion est correcte
             if ($conn->connect_error) {
@@ -138,8 +143,6 @@
                 $page = 1;
             }
             $start_from = ($page - 1) * $results_per_page;
-
-            // Récupérer les filtres
 
             // Liste blanche des colonnes pour le tri
             $valid_sort_columns = ['player_name', 'player_xp', 'player_wr', 'rank_name', 'player_map_count', 'player_playtest_count', 'player_tag'];
@@ -166,18 +169,14 @@
             $valid_ranks = ['', 'Ninja', 'Jumper', 'Skilled', 'Pro', 'Master', 'Grandmaster', 'God'];
             $rank_filter = isset($_GET['rank_name']) && in_array($_GET['rank_name'], $valid_ranks) ? $_GET['rank_name'] : '';
 
-            // Échapper la recherche
             $search = isset($_GET['search']) ? $_GET['search'] : '';
             $search_escaped = $conn->real_escape_string($search);
 
-            // Récupérer l'état des cases à cocher
             foreach ($show_columns as $col) {
                 ${"show_$col"} = isset($_GET["show_$col"]) ? $_GET["show_$col"] : '1';
             }
 
-            // Construire la requête SQL
-            $table_name = "leaderboard";
-            $sql = "SELECT * FROM $table_name WHERE 1=1";
+            $sql = "SELECT * FROM $tablename WHERE 1=1";
 
             if (!empty($search)) {
                 if ($search_by === 'player_name') {
@@ -216,8 +215,7 @@
                 echo "<tr>
                         <th class='col-name'>Name
                             <span class='vertical-bar'></span>
-                            <button id='sort-name' class='sort-btn' data-column='player_name' onclick='animation(this); sortTableAjax(event, \"player_name\", this)'
->
+                            <button id='sort-name' class='sort-btn' data-column='player_name' onclick='animation(this); sortTableAjax(event, \"player_name\", this)'>
                                 <div class='stroke stroke1'></div>
                                 <div class='stroke stroke2'></div>
                                 <div class='stroke stroke3'></div>
@@ -408,6 +406,7 @@
             // Fermeture de la connexion
             $conn->close();
             ?>
+            </div>
         </div>
     </div>
     <footer>
