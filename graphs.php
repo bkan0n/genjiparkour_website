@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/DrawSVGPlugin.min.js"></script>
+    <script src="js/script.js" defer></script>
 </head>
 <body>
     <nav>
@@ -19,10 +20,10 @@
             <a href="index.html">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
-            <a href="index.html"><i class="fas fa-home"></i>Home</a>
-            <a href="leaderboard.php"><i class="fas fa-trophy"></i>Leaderboard</a>
-            <a href="https://dsc.gg/genjiparkour" target="_blank"><i class="fab fa-discord"></i>Discord</a>
-            <a href="tutorial.html"><i class="fas fa-book-open"></i>Tutorial</a>
+            <a href="index.html">Home</a>
+            <a href="leaderboard.php">Leaderboard</a>
+            <a href="https://dsc.gg/genjiparkour" target="_blank">Discord</a>
+            <a href="tutorial.html">Tutorial</a>
             </div>
             <!-- Hamburger Menu Icon -->
             <div class="menu--right" role="navigation">
@@ -699,81 +700,79 @@
 
     //XP Chart
     document.addEventListener("DOMContentLoaded", () => {
-    const ranks = ["Rank 1", "Rank 2", "Rank 3", "Rank 4", "Rank 5", "Rank 6", "Rank 7"];
-    const xpRequired = ranks.map((_, i) => Math.log(i + 2) * 1000); // Calcul logarithmique pour XP requise
+        const ranks = ["Rank 1", "Rank 2", "Rank 3", "Rank 4", "Rank 5", "Rank 6", "Rank 7"];
+        const xpRequired = ranks.map((_, i) => Math.log(i + 2) * 1000); // Calcul logarithmique pour XP requise
 
-    const ctx = document.getElementById("xpRankChart").getContext("2d");
+        const ctx = document.getElementById("xpRankChart").getContext("2d");
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ranks,
-            datasets: [{
-                label: 'XP Required for Each Rank',
-                data: xpRequired,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                fill: true
-            }]
-        },
-        options: {
-            animation: {
-                    duration: 4000
-                },
-            scales: {
-                y: {
-                    type: 'logarithmic',
-                    title: {
-                        display: true,
-                        text: 'XP Required (Log Scale)',
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Rank',
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
-                }
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ranks,
+                datasets: [{
+                    label: 'XP Required for Each Rank',
+                    data: xpRequired,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: true
+                }]
             },
-            plugins: {
-                legend: {
-                    display: true
+            options: {
+                animation: {
+                        duration: 4000
+                    },
+                scales: {
+                    y: {
+                        type: 'logarithmic',
+                        title: {
+                            display: true,
+                            text: 'XP Required (Log Scale)',
+                            color: '#333',
+                            font: {
+                                family: 'Roboto',
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#333',
+                            font: {
+                                family: 'Roboto',
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Rank',
+                            color: '#333',
+                            font: {
+                                family: 'Roboto',
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#333',
+                            font: {
+                                family: 'Roboto',
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    }
                 }
             }
-        }
+        });
     });
-});
-
-
     </script>
 </body>
 </html>

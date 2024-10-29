@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+body {
+    background: #f5f5f5;
+}
+
 .dropdown-menu a {
     color: #000000;
 }

@@ -13,23 +13,23 @@
     <script src="js/script.js" defer></script>
 </head>
 <body>
+    <div class="bg-container">
+        <img src="assets/bg4k-3.webp" alt="Background" class="background-image">
+    </div>
+    <div id="smoke-background"></div>
     <nav>
         <div class="logo">
             <img src="assets/favicon.png" alt="Logo" class="custom-icon">
             <a href="index.html">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
-            <a href="index.html">
-                <i class="fas fa-home"></i>Home
+            <a href="index.html">Home
             </a>
-            <a href="leaderboard.php">
-                <i class="fas fa-trophy"></i>Leaderboard
+            <a href="leaderboard.php">Leaderboard
             </a>
-            <a href="https://dsc.gg/genjiparkour" target="_blank">
-                <i class="fab fa-discord"></i>Discord
+            <a href="https://dsc.gg/genjiparkour" target="_blank">Discord
             </a>
-            <a href="tutorial.html">
-                <i class="fas fa-book-open"></i>Tutorial
+            <a href="tutorial.html">Tutorial
             </a>
         </div>
             <!-- Hamburger Menu Icon -->
@@ -52,13 +52,18 @@
     </nav>
 
     <section class="hero" id="hero1">
-        <div class="hero-content">
-            <p class="recent-launch">RECENT STATS</p>
-            <h1>GENJI PARKOUR LEADERBOARD</h1>
-            <a href="leaderboard.php" class="cta-btn">view</a>
-        </div>
         <div class="scroll-indicator">
             <a href="#next-section" class="scroll-btn"><i class="fas fa-chevron-down"></i></a>
+        </div>
+        <div class="hero-content">
+            <div class="side-section left">
+                <p class="recent-stats">Newest maps</p>
+                <a href="#" class="cta-btn">Coming soon</a>
+            </div>
+            <div class="side-section right">
+                <p class="recent-stats">Newsfeed</p>
+                <a href="#" class="cta-btn">Coming soon</a>
+            </div>
         </div>
     </section>
     <section id="next-section" class="achievements">
@@ -82,5 +87,26 @@
         <div class="footer-left">Genji Parkour © 2024</div>
         <div class="footer-right">Joe is cool</div>
     </footer>
+    <script>
+particlesJS("smoke-background", {
+    "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 1000 } },
+        "color": { "value": "#aaaaaa" },
+        "opacity": { "value": 0.2, "random": true, "anim": { "enable": true, "speed": 0.5, "opacity_min": 0.05 } },
+        "size": { "value": 30, "random": true, "anim": { "enable": true, "speed": 3, "size_min": 10 } },
+        "move": { "enable": true, "speed": 0.3, "direction": "top-right", "random": true, "straight": false, "out_mode": "out" }
+    },
+    "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+            "onhover": { "enable": false },
+            "onclick": { "enable": false },
+            "resize": true
+        }
+    },
+    "retina_detect": true
+});
+
+    </script>
 </body>
 </html>
