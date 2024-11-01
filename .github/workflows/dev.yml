@@ -19,4 +19,3 @@ jobs:
         ssh_user: ${{ secrets.GENJI_PK_SSH_USER }}
         docker_compose_prefix: genji_pk
         docker_compose_filename: docker-compose.dev.yaml
-        pull: true
