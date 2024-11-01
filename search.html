@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genji Parkour - Maps</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/style-search.css">
+    <script src="js/maps.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <a href="index.html">GENJI PARKOUR</a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="leaderboard.php">Leaderboard</a>
+            <a href="https://dsc.gg/genjiparkour" target="_blank">Discord</a>
+            <a href="tutorial.html">Tutorial</a>
+        </div>
+        <div class="menu--right" role="navigation">
+            <div class="menuToggle" id="burgerMenu">
+                <input type="checkbox" id="burgerMenuScroll"/>
+                <span></span>
+                <span></span>
+                <span></span>
+                <ul class="menuItem">
+                    <li><a href="#">New maps</a></li>
+                    <li><a href="search.html">Maps search</a></li>
+                    <li><a href="#">Guides</a></li>
+                    <li><a href="news.html">News & Events</a></li>
+                    <li><a href="graphs.php">Graphs</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="tab-buttons">
+            <button onclick="selectSection('mapSearch')" id="mapSearchBtn">Map Search</button>
+            <button onclick="selectSection('completions')" id="completionsBtn">Completions</button>
+            <button onclick="selectSection('guide')" id="guideBtn">Guides</button>
+            <button onclick="selectSection('personalRecords')" id="personalRecordsBtn">Personal Records</button>
+        </div>
+
+        <div class="selected-mode-container">
+            <div class="selected-mode" id="selectedMode">Select a search mode</div>
+            <div class="filter-actions" id="filterActions" style="display: none;">
+                <button class="add-filter-btn" id="addFilterBtn" onmouseover="showFilterOptions()"></button>
+                <button class="apply-filters-btn" id="applyFiltersBtn" onclick="applyFilters()">✔</button>
+                <button class="clear-filters-btn" id="clearFiltersBtn" onclick="clearFilters()">✖</button>
+                <div class="filter-options" id="filterOptions" onmouseleave="hideFilterOptions()"></div>
+            </div>
+        </div>
+
+        <div class="filter-section" id="dynamicFilters">
+            <div class="filters-container" id="filtersContainer">
+                <div class="filter">
+                    <input type="text" id="map_name" placeholder="Map Name" oninput="showSuggestions(event)" />
+                    <button class="remove-filter-btn">X</button>
+                    <div id="suggestionsContainer" class="suggestions hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <p></p>
+        </div>
+        <div class="pagination-container" id="paginationContainer"></div>
+    </div>
+    
+    <footer>
+        <div class="footer-left">Genji Parkour © 2024</div>
+        <div class="footer-right">Joe is cool</div>
+    </footer>
+</body>
+</html>

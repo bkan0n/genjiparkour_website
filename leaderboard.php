@@ -5,8 +5,9 @@
     <title>Genji Parkour - Leaderboard</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="layout.css">
-    <link rel="stylesheet" href="style-leaderboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/style-leaderboard.css">
     <script src="js/script.js" defer></script>
 </head>
 <body>
@@ -35,7 +36,7 @@
                     <span></span>
                     <ul class="menuItem">
                     <li><a href="#">New maps</a></li>
-                    <li><a href="#">Maps search</a></li>
+                    <li><a href="search.html">Maps search</a></li>
                     <li><a href="#">Guides</a></li>
                     <li><a href="news.html">News & Events</a></li>
                     <li><a href="graphs.php">Graphs</a></li>
@@ -46,9 +47,7 @@
         </nav>
         <div class="container">
             <h1>Players leaderboard</h1>
-            <!-- Formulaire pour la recherche et les filtres -->
             <form method="GET" action="leaderboard.php" class="form-container">
-                <!-- Dropdown pour le critère de recherche -->
                 <div class="custom-select" id="search-by-select">
                     <div class="select-trigger" id="search-by-trigger"></div>
                     <i class="fas fa-sliders-h filter-icon"></i>
@@ -58,10 +57,9 @@
                         <div class="custom-option" data-value="player_both">Name/Tag</div>
                     </div>
                 </div>
-                <!-- Barre de recherche -->
+
                 <input type="text" name="search" id="search-input" placeholder="Search by name & tag..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search'], ENT_QUOTES, 'UTF-8') : ''; ?>">
 
-                <!-- Dropdown customisé pour le tri -->
                 <div class="custom-select-large" id="sort-select">
                     <div class="select-trigger" id="sort-trigger">Sort by</div>
                     <div class="custom-options select-hide" id="sort-options">
@@ -70,7 +68,6 @@
                     </div>
                 </div>
 
-                <!-- Dropdown customisé pour les rangs -->
                 <div class="custom-select-large" id="rank-select">
                     <div class="select-trigger" id="rank-trigger">Search rank</div>
                     <div class="custom-options select-hide" id="rank-options">
