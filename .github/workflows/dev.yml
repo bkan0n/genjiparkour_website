@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: bkan0n/ssh-remote-compose-action@1.0.2
+    - uses: bkan0n/ssh-remote-compose-action@1.0.3
       name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.GENJI_PK_HOST }}
