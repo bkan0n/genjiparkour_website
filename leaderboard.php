@@ -122,11 +122,7 @@
             </div>
 
             <?php
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "genjiparkour";
-            $tablename= "leaderboard";
+            include_once('database.php');
 
             $conn = new mysqli($servername, $username, $password, $dbname);
 
