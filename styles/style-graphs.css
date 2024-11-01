@@ -17,6 +17,14 @@ canvas {
     height: 100%;
 }
 
+#burgerMenu a {
+    color : #2b2b2b;
+}
+
+.menuItem a {
+    border-bottom: 1px solid #2b2b2b; /* Bordure bas */
+}
+
 .container {
     display: flex;
     flex-direction: column;

@@ -222,7 +222,7 @@
         )
         SELECT *
         FROM ranked_maps
-        WHERE ranking <= 5 AND difficulty = '$difficulty'  -- Filtre par difficulté
+        WHERE ranking <= 5 AND difficulty = $1  -- Filtre par difficulté
         ORDER BY
             CASE difficulty
                 WHEN 'Easy' THEN 1
@@ -235,7 +235,7 @@
             ranking;
         ";
         
-        $result = pg_query($conn, $sql);
+        $result = pg_query_params($conn, $sql, array($difficulty));
         $data = [];
         
         if ($result && pg_num_rows($result) > 0) {
