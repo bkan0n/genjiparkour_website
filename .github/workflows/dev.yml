@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: humbertocrispim/ssh-docker-compose-action@v1.0.0
+    - uses: bkan0n/ssh-remote-compose-action@1.0.0
       name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.GENJI_PK_HOST }}
@@ -23,4 +23,5 @@ jobs:
         ssh_user: ${{ secrets.GENJI_PK_SSH_USER }}
         docker_compose_prefix: genji_pk
         docker_compose_filename: docker-compose.dev.yaml
+        
       
