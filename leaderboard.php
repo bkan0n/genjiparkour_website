@@ -114,6 +114,7 @@
                 ?>
             </div>
             <?php
+
             $host = getenv('DB_HOST');
             $port = getenv('DB_PORT');
             $dbname = getenv('DB_NAME');
@@ -126,6 +127,7 @@
             // Erreur connexion
             if (!$conn) {
                 error_log("Connection failed: " . pg_last_error($conn));
+
                 die("An error occurred. Please try again later.");
             }
 
