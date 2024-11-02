@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 
-$api_key = getenv("X-API-KEY");
+$api_key = getenv("API_KEY");
 $base_url = getenv("API_ROOT");
 
 if (!$api_key) {
@@ -83,7 +83,7 @@ function getJsonResponse($url) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'X-API-KEY: ' . getenv("X-API-KEY")
+        'API_KEY: ' . getenv("API_KEY")
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
