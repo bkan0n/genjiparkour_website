@@ -11,6 +11,8 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PWD=${DB_PWD}
+      - DB_NAME=${DB_NAME}
+      - API_ROOT=${API_ROOT}
 
 networks:
   contabo_network:
