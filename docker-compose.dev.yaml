@@ -13,6 +13,7 @@ services:
       - DB_PWD=${DB_PWD}
       - DB_NAME=${DB_NAME}
       - API_ROOT=${API_ROOT}
+      - API_KEY=${API_KEY}
 
 networks:
   contabo_network:
