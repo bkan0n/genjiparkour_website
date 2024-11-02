@@ -22,4 +22,6 @@ jobs:
         db_port: ${{ secrets.DB_PORT }}
         db_user: ${{ secrets.DB_USER }}
         db_pwd: ${{ secrets.DB_PWD }}
+        db_name: ${{ secrets.DB_NAME }}
+        api_root: ${{ secrets.API_ROOT }}
       
