@@ -1,9 +1,8 @@
 <?php
 header("Content-Type: application/json");
 
-$api_key = getenv("API_KEY");
-$base_url = getenv("API_ROOT");
-
+$api_key = getenv("X_API_KEY");
+$base_url = getenv("X_API_ROOT");
 if (!$api_key) {
     echo json_encode(["error" => "API key not set."]);
     exit;
@@ -28,9 +27,10 @@ function buildMapSearchUrl(
     $page_number = null,
     $count_only = false
 ) {
-    global $base_url;
+    global $base_url; // Utilise $base_url comme base de l'URL
     $endpoint = $base_url . "/v1/mapsearch";
     $params = [];
+
 
     if ($map_code !== null) $params['map_code'] = $map_code;
     if ($map_type !== null) $params['map_type'] = $map_type;
@@ -83,7 +83,7 @@ function getJsonResponse($url) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'API_KEY: ' . getenv("API_KEY")
+        'X-API-KEY: ' . getenv("X_API_KEY")
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
