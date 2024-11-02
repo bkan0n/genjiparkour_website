@@ -2,8 +2,14 @@
 header("Content-Type: application/json");
 
 $api_key = getenv("X-API-KEY");
+$base_url = getenv("API_ROOT");
+
 if (!$api_key) {
     echo json_encode(["error" => "API key not set."]);
+    exit;
+}
+if (!$base_url) {
+    echo json_encode(["error" => "API root not set."]);
     exit;
 }
 
@@ -22,7 +28,8 @@ function buildMapSearchUrl(
     $page_number = null,
     $count_only = false
 ) {
-    $endpoint = "https://api.genji.pk/v1/mapsearch";
+    global $base_url;
+    $endpoint = $base_url . "/v1/mapsearch";
     $params = [];
 
     if ($map_code !== null) $params['map_code'] = $map_code;
