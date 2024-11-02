@@ -4,6 +4,8 @@ const filterOptions = {
         { id: 'map_code', label: 'Map Code' },
         { id: 'difficulty', label: 'Map Difficulty' },
         { id: 'creator', label: 'Map Creator' },
+        { id: 'mechanics', label: 'Mechanics' },
+        { id: 'restrictions', label: 'Restrictions' },
         { id: 'only_playtest', label: 'Only Playtest' },
         { id: 'only_maps_with_medals', label: 'Only Medals' },
     ],
@@ -19,6 +21,7 @@ let currentPage = 1;
 const pageSize = 25;
 let totalPages = 1;
 let hideTimeout;
+const applyFiltersButton = document.getElementById("applyFiltersBtn");
 
 // Cacher le conteneur filtre par défaut
 document.addEventListener("DOMContentLoaded", () => {
@@ -72,10 +75,18 @@ function selectSection(sectionId) {
 }
 
 const mechanicsOptions = [
-    "Wallclimb", "Multi Climb", "Bhop", "Create Bhop", "Triple Jump", 
-    "Stall", "Slide", "Dash", "Ultimate", "Save Climb", "Edge Climb", 
-    "High Edge", "Distance Climb", "Crouch Climb", "Emotesave Bhop", 
-    "Deathsave Bhop", "Bhop First", "Dash Start", "Double Jump"
+    "Edge Climb", "Bhop", "Crouch Edge", "Save Climb",
+    "Bhop First", "High Edge", "Distance Edge",
+    "Quick Climb", "Slide", "Stall", "Dash", "Ultimate",
+    "Emote Save Bhop", "Death Bhop", "Triple Jump",
+    "Multi Climb", "Vertical Multi Climb", "Create Bhop", 
+    "Standing Create Bhop"
+];
+
+const restrictionsOptions = [
+    "Dash Start", "Triple Jump", "Emote Save Bhop ", 
+    "Death Bhop", "Multi Climb", "Standing Create Bhop", 
+    "Create Bhop", "Wall Climb"
 ];
 
 function addFilter(filterId, filterLabel) {
@@ -157,6 +168,10 @@ function addFilter(filterId, filterLabel) {
             suggestionsContainer.classList.add("suggestions", "hidden");
             suggestionsContainer.id = "suggestionsContainer";
             filterElement.appendChild(suggestionsContainer);
+        } else if (filterId === "mechanics") {
+            filterElement.appendChild(createDropdown("mechanics", "Select Mechanics", mechanicsOptions, updateMechanicsFilter));
+        } else if (filterId === "restrictions") {
+            filterElement.appendChild(createDropdown("restrictions", "Select Restrictions", restrictionsOptions, updateRestrictionsFilter));
         } else {
             filterInput = document.createElement("input");
             filterInput.type = "text";
@@ -183,12 +198,54 @@ function addFilter(filterId, filterLabel) {
     }
 }
 
+function createDropdown(filterId, buttonText, options, changeHandler) {
+    const dropdown = document.createElement("div");
+    dropdown.classList.add("dropdown");
+
+    const button = document.createElement("button");
+    button.textContent = buttonText;
+    button.classList.add("dropdown-toggle");
+    button.onclick = (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("show");
+    };
+
+    const checkboxContainer = document.createElement("div");
+    checkboxContainer.classList.add("dropdown-content");
+
+    options.forEach(option => {
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = option;
+        checkbox.name = filterId;
+
+        label.appendChild(checkbox);
+        label.append(` ${option}`);
+        checkboxContainer.appendChild(label);
+
+        checkbox.addEventListener("change", changeHandler);
+    });
+
+    dropdown.appendChild(button);
+    dropdown.appendChild(checkboxContainer);
+    return dropdown;
+}
+
 function updateMechanicsFilter() {
     const selectedMechanics = [];
     document.querySelectorAll("input[name='mechanics']:checked").forEach(checkbox => {
         selectedMechanics.push(checkbox.value);
     });
-    filters["map_mechanics"] = selectedMechanics;
+    filters["mechanics"] = selectedMechanics;
+}
+
+function updateRestrictionsFilter() {
+    const selectedRestrictions = [];
+    document.querySelectorAll("input[name='restrictions']:checked").forEach(checkbox => {
+        selectedRestrictions.push(checkbox.value);
+    });
+    filters["restrictions"] = selectedRestrictions;
 }
 
 document.addEventListener("click", function (event) {
@@ -276,7 +333,21 @@ function applyFilters() {
         const filterId = filter.dataset.filterId;
         const input = filter.querySelector("input, select");
 
-        if (input && input.value) {
+        if (filterId === "mechanics") {
+            const selectedMechanics = Array.from(document.querySelectorAll("input[name='mechanics']:checked"))
+                                           .map(checkbox => checkbox.value)
+                                           .sort();
+            if (selectedMechanics.length > 0) {
+                filters[filterId] = selectedMechanics;
+            }
+        } else if (filterId === "restrictions") {
+            const selectedRestrictions = Array.from(document.querySelectorAll("input[name='restrictions']:checked"))
+                                            .map(checkbox => checkbox.value)
+                                            .sort();
+            if (selectedRestrictions.length > 0) {
+                filters[filterId] = selectedRestrictions;
+            }
+        } else if (input && input.value) {
             filters[filterId] = input.value;
         }
     });
@@ -284,32 +355,32 @@ function applyFilters() {
     filters.page_size = pageSize;
     filters.page_number = currentPage;
 
-    fetch('api/map_search_api.php', {
+    const apiUrl = 'api/map_search_api.php';
+
+    // Appel unique
+    fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...filters, count_only: true })
+        body: JSON.stringify(filters)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Total Results:", data.total_results);
-        totalResults = data.total_results;
-        totalPages = Math.ceil(totalResults / pageSize);
-
-        return fetch('api/map_search_api.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(filters)
-        });
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
     })
-    .then(response => response.json())
     .then(data => {
-        // Conversion de l'objet en tableau
+        const totalResults = data.pagination?.total_results ?? "N/A";
+        console.log("Total Results:", totalResults);
+    
+        totalPages = data.pagination?.total_pages || 1;
+    
         const results = Object.values(data).filter(item => typeof item === "object" && !item.pagination);
-        console.log("Results Data:", results); // Vérif données
+        console.log("Results Data:", results);
         displayResults(results);
         renderPaginationButtons();
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => console.error("Fetch error:", error));
 }
 
 function displayResults(data) {
@@ -410,4 +481,4 @@ function changePage(pageNumber) {
     applyFilters();
 }
 
-document.getElementById("applyFiltersBtn").addEventListener("click", applyFilters);
+applyFiltersButton.removeEventListener("click", applyFilters);

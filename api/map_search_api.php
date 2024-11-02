@@ -1,7 +1,6 @@
 <?php
 header("Content-Type: application/json");
 
-// Check if the API key is set
 $api_key = getenv("X-API-KEY");
 if (!$api_key) {
     echo json_encode(["error" => "API key not set."]);
@@ -13,8 +12,8 @@ function buildMapSearchUrl(
     $map_type = null,
     $map_name = null,
     $creator = null,
-    $mechanic = null,
-    $restriction = null,
+    $mechanics = null,
+    $restrictions = null,
     $difficulty = null,
     $minimum_quality = null,
     $only_playtest = null,
@@ -30,21 +29,42 @@ function buildMapSearchUrl(
     if ($map_type !== null) $params['map_type'] = $map_type;
     if ($map_name !== null) $params['map_name'] = $map_name;
     if ($creator !== null) $params['creator'] = $creator;
-    if ($mechanic !== null) $params['mechanic'] = $mechanic;
-    if ($restriction !== null) $params['restriction'] = $restriction;
     if ($difficulty !== null) $params['difficulty'] = $difficulty;
     if ($minimum_quality !== null) $params['minimum_quality'] = $minimum_quality;
     if ($only_playtest !== null) $params['only_playtest'] = $only_playtest === 'true' ? true : false;
     if ($only_maps_with_medals !== null) $params['only_maps_with_medals'] = $only_maps_with_medals === 'true' ? true : false;
-
     if (!$count_only) {
         $params['page_size'] = $page_size;
         $params['page_number'] = $page_number;
     }
 
-    $query_string = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    // Mechanics et Restrictions []
+    if ($mechanics !== null && is_array($mechanics)) {
+        foreach ($mechanics as $mechanic) {
+            $params[] = "mechanics=" . urlencode($mechanic);
+        }
+    } elseif ($mechanics !== null) {
+        $params['mechanics'] = $mechanics;
+    }
+
+    if ($restrictions !== null && is_array($restrictions)) {
+        foreach ($restrictions as $restriction) {
+            $params[] = "restrictions=" . urlencode($restriction);
+        }
+    } elseif ($restrictions !== null) {
+        $params['restrictions'] = $restrictions;
+    }
+
+    // Requête finale 
+    $query_string = implode('&', array_map(
+        fn($key, $value) => is_int($key) ? $value : "$key=$value",
+        array_keys($params),
+        $params
+    ));
+
     return $endpoint . ($query_string ? '?' . $query_string : '');
 }
+
 
 function getJsonResponse($url) {
     $ch = curl_init();
@@ -72,38 +92,16 @@ function getJsonResponse($url) {
 }
 
 $filters = json_decode(file_get_contents("php://input"), true);
-$is_count_request = isset($filters['count_only']) ? $filters['count_only'] : false;
 $page_size = $filters['page_size'] ?? 25;
 $page_number = $filters['page_number'] ?? 1;
-
-if ($is_count_request) {
-    $url = buildMapSearchUrl(
-        $filters['map_code'] ?? null,
-        $filters['map_type'] ?? null,
-        $filters['map_name'] ?? null,
-        $filters['creator'] ?? null,
-        $filters['mechanic'] ?? null,
-        $filters['restriction'] ?? null,
-        $filters['difficulty'] ?? null,
-        $filters['minimum_quality'] ?? null,
-        $filters['only_playtest'] ?? null,
-        $filters['only_maps_with_medals'] ?? null
-    );
-    $response = getJsonResponse($url);
-
-    $total_results = $response[0]['total_results'] ?? 0;
-
-    echo json_encode(['total_results' => $total_results]);
-    exit;
-}
 
 $url = buildMapSearchUrl(
     $filters['map_code'] ?? null,
     $filters['map_type'] ?? null,
     $filters['map_name'] ?? null,
     $filters['creator'] ?? null,
-    $filters['mechanic'] ?? null,
-    $filters['restriction'] ?? null,
+    $filters['mechanics'] ?? null,
+    $filters['restrictions'] ?? null,
     $filters['difficulty'] ?? null,
     $filters['minimum_quality'] ?? null,
     $filters['only_playtest'] ?? null,
@@ -114,15 +112,13 @@ $url = buildMapSearchUrl(
 
 $response = getJsonResponse($url);
 
-if (isset($response[0]['total_results'])) {
-    $total_results = $response[0]['total_results'];
-    $total_pages = ceil($total_results / $page_size);
-    $response['pagination'] = [
-        'total_results' => $total_results,
-        'page_size' => $page_size,
-        'page_number' => $page_number,
-        'total_pages' => $total_pages
-    ];
-}
+$total_results = $response[0]['total_results'] ?? 0;
+$total_pages = ceil($total_results / $page_size);
+$response['pagination'] = [
+    'total_results' => $total_results,
+    'page_size' => $page_size,
+    'page_number' => $page_number,
+    'total_pages' => $total_pages
+];
 
 echo json_encode($response);
