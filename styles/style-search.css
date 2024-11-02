@@ -1,0 +1,437 @@
+body {
+    background: radial-gradient(circle, rgba(82,82,82,1) 0%, rgba(43,43,43,1) 100%);
+}
+
+.container {
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
+}
+
+.selected-mode-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.selected-mode {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-right: 10px;
+    text-align: center;
+    color: #fff;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.tab-buttons button {
+    border: 2px solid #fff;
+    padding: 5px 30px;
+    background: transparent;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 200px;
+    max-width: 100%;
+    display: inline-block;
+}
+
+.tab-buttons button:hover,
+.tab-buttons .active {
+    background-color: #fff;
+    color: #2b2b2b;
+}
+
+.filter-section {
+    margin-top: 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.filters-container {
+    display: flex;
+    /*flex-wrap: wrap; stack filters*/ 
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.filter {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #2b2b2b;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.filter:hover {
+    transform: translateY(-1px);
+}
+
+.filter input,
+.filter select {
+    margin-right: 8px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    flex: 1;
+}
+
+.filter input {
+    background-color: #ffffff;
+    color: #2b2b2b;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.filter input::placeholder {
+    color: #2b2b2b;
+}
+
+.filter select {
+    background-color: #ffffff;
+    color: #2b2b2b;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+}
+
+.add-filter-btn,
+.apply-filters-btn,
+.clear-filters-btn {
+    width: 40px;
+    height: 40px;
+    background-color: #2b2b2b;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.add-filter-btn:before {
+    content: "+";
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 80%;
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 36px;
+    text-align: center;
+}
+
+.add-filter-btn:hover {
+    background-color: #3a3a3a;
+}
+
+
+.add-filter-btn:hover,
+.apply-filters-btn:hover,
+.clear-filters-btn:hover {
+    background-color: #3a3a3a;
+}
+
+.filter-options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    z-index: 10;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #2b2b2b;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    min-width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.filter-options button {
+    display: block;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.filter-options button:hover {
+    background-color: #4d4d4d;
+}
+
+.add-filter:hover .filter-options,
+.filter-options:hover {
+    display: block;
+}
+
+.remove-filter-btn {
+    background-color: #555555;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 8px;
+}
+
+.remove-filter-btn:hover {
+    background-color: #444444;
+}
+
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 5%;
+    width: auto;
+    max-width: 300px;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #3a3a3a;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.suggestions div {
+    padding: 8px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.suggestions div:hover {
+    background-color: #4d4d4d;
+}
+
+table {
+    max-width: 1000px !important;
+    border-collapse: separate;
+    border-spacing: 0 0px !important;
+    border-radius: 25px;
+    background-color: #2b2b2b;
+    margin: 0 auto;
+    padding: 7px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    animation: fadeInUp 1s ease-in-out;
+}
+
+thead {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+}
+  
+thead th {
+    text-align: center;
+    padding-top: 30px;
+    padding: 20px;
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+/*Arrondi tableau*/
+thead th:first-child {
+    border-top-left-radius: 15px;
+}
+
+thead th:last-child {
+border-top-right-radius: 15px;
+}
+
+tbody tr:last-child td:first-child {
+border-bottom-left-radius: 15px;
+}
+
+tbody tr:last-child td:last-child {
+border-bottom-right-radius: 15px;
+}
+
+.results-table {
+    border-radius: 25px;
+    overflow: hidden;
+    background-color: #2b2b2b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+.results-table th, .results-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+/* Styles des en-têtes */
+.results-table th {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Styles pour les cellules */
+.results-table td {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+/* Style des lignes au survol */
+.results-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Style spécifique pour les classes utilisées */
+.mapCode {
+    color: rgb(255, 255, 255);
+}
+
+.mapName, .mapType, .mapCreator, .mapDifficulty, .mapQuality {
+    color: #fff;
+}
+
+/* Style des lignes de données */
+tr.row-content {
+    background-color: rgba(255, 255, 255, 0.05);
+    min-height: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+tr.row-content:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: scale(1.02);
+}
+
+/* Styles de pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-container button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-container button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.pagination-container button:hover {
+    background-color: #777;
+}
+
+.pagination-container span {
+    color: #fff;
+    padding: 5px 10px;
+}
+
+.dropdown-toggle {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #2b2b2b;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    color: #2b2b2b;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    padding: 8px;
+    text-align: left;
+}
+
+.dropdown.show .dropdown-content {
+    display: block;
+}
+
+.dropdown-content label {
+    display: block;
+    padding: 4px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    accent-color: #2b2b2b;
+}
+
+.checkbox-label input[type="checkbox"]:hover {
+    accent-color: #5e5e5e;
+}

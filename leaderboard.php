@@ -5,8 +5,9 @@
     <title>Genji Parkour - Leaderboard</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="layout.css">
-    <link rel="stylesheet" href="style-leaderboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/style-leaderboard.css">
     <script src="js/script.js" defer></script>
 </head>
 <body>
@@ -17,17 +18,13 @@
                 <a href="index.html">GENJI PARKOUR</a>
             </div>
             <div class="nav-links">
-                <a href="index.html">
-                    <i class="fas fa-home"></i>Home
+                <a href="index.html">Home
                 </a>
-                <a href="leaderboard.php">
-                    <i class="fas fa-trophy"></i>Leaderboard
+                <a href="leaderboard.php">Leaderboard
                 </a>
-                <a href="https://dsc.gg/genjiparkour" target="_blank">
-                    <i class="fab fa-discord"></i>Discord
+                <a href="https://dsc.gg/genjiparkour" target="_blank">Discord
                 </a>
-                <a href="tutorial.html">
-                    <i class="fas fa-book-open"></i>Tutorial
+                <a href="tutorial.html">Tutorial
                 </a>
                 </div>
             <!-- Hamburger Menu Icon -->
@@ -39,7 +36,7 @@
                     <span></span>
                     <ul class="menuItem">
                     <li><a href="#">New maps</a></li>
-                    <li><a href="#">Maps search</a></li>
+                    <li><a href="search.html">Maps search</a></li>
                     <li><a href="#">Guides</a></li>
                     <li><a href="news.html">News & Events</a></li>
                     <li><a href="graphs.php">Graphs</a></li>
@@ -50,9 +47,7 @@
         </nav>
         <div class="container">
             <h1>Players leaderboard</h1>
-            <!-- Formulaire pour la recherche et les filtres -->
             <form method="GET" action="leaderboard.php" class="form-container">
-                <!-- Dropdown pour le critère de recherche -->
                 <div class="custom-select" id="search-by-select">
                     <div class="select-trigger" id="search-by-trigger"></div>
                     <i class="fas fa-sliders-h filter-icon"></i>
@@ -62,10 +57,9 @@
                         <div class="custom-option" data-value="player_both">Name/Tag</div>
                     </div>
                 </div>
-                <!-- Barre de recherche -->
+
                 <input type="text" name="search" id="search-input" placeholder="Search by name & tag..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search'], ENT_QUOTES, 'UTF-8') : ''; ?>">
 
-                <!-- Dropdown customisé pour le tri -->
                 <div class="custom-select-large" id="sort-select">
                     <div class="select-trigger" id="sort-trigger">Sort by</div>
                     <div class="custom-options select-hide" id="sort-options">
@@ -74,7 +68,6 @@
                     </div>
                 </div>
 
-                <!-- Dropdown customisé pour les rangs -->
                 <div class="custom-select-large" id="rank-select">
                     <div class="select-trigger" id="rank-trigger">Search rank</div>
                     <div class="custom-options select-hide" id="rank-options">
@@ -120,19 +113,25 @@
                 }
                 ?>
             </div>
-
             <?php
-            include_once('database.php');
 
-            $conn = new mysqli($servername, $username, $password, $dbname);
+            $host = getenv('DB_HOST');
+            $port = getenv('DB_PORT');
+            $dbname = getenv('DB_NAME');
+            $user = getenv('DB_USER');
+            $password = getenv('DB_PWD');
 
-            // Vérifie si la connexion est correcte
-            if ($conn->connect_error) {
-                error_log("Connection failed: " . $conn->connect_error);
+            $conn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$password");
+            $tablename = "website_xp_leaderboard";
+
+            // Erreur connexion
+            if (!$conn) {
+                error_log("Connection failed: " . pg_last_error($conn));
+
                 die("An error occurred. Please try again later.");
             }
 
-            // Pagination: nombre d'entrées par page
+            // Pagination
             $results_per_page = 25;
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             if ($page < 1) {
@@ -141,8 +140,8 @@
             $start_from = ($page - 1) * $results_per_page;
 
             // Liste blanche des colonnes pour le tri
-            $valid_sort_columns = ['player_name', 'player_xp', 'player_wr', 'rank_name', 'player_map_count', 'player_playtest_count', 'player_tag'];
-            $sort_by = isset($_GET['sort']) && in_array($_GET['sort'], $valid_sort_columns) ? $_GET['sort'] : 'rank_name';
+            $valid_sort_columns = ['player_name', 'player_xp', 'player_wr', 'player_map_count', 'player_playtest_count', 'player_tag'];
+            $sort_by = isset($_GET['sort']) && in_array($_GET['sort'], $valid_sort_columns) ? $_GET['sort'] : 'player_xp';
 
             // Liste blanche pour l'ordre de tri
             $order = isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc']) ? $_GET['order'] : 'asc';
@@ -165,47 +164,115 @@
             $valid_ranks = ['', 'Ninja', 'Jumper', 'Skilled', 'Pro', 'Master', 'Grandmaster', 'God'];
             $rank_filter = isset($_GET['rank_name']) && in_array($_GET['rank_name'], $valid_ranks) ? $_GET['rank_name'] : '';
 
-            $search = isset($_GET['search']) ? $_GET['search'] : '';
-            $search_escaped = $conn->real_escape_string($search);
+            $search = isset($_GET['search']) ? str_replace('--', '', $_GET['search']) : '';
+            $search_escaped = pg_escape_string($conn, $search);
 
+            $show_columns = ['rank', 'xp', 'wr', 'map', 'playtest'];
             foreach ($show_columns as $col) {
                 ${"show_$col"} = isset($_GET["show_$col"]) ? $_GET["show_$col"] : '1';
             }
 
-            $sql = "SELECT * FROM $tablename WHERE 1=1";
+            // Requête SQL
+            $sql = "WITH ranks AS (
+                SELECT
+                    r.user_id,
+                    r.map_code,
+                    rank() OVER (PARTITION BY r.map_code ORDER BY record) AS rank_num
+                FROM records r
+                JOIN users u ON r.user_id = u.user_id
+                WHERE u.user_id > 1000 AND r.record < 99999999 AND r.verified = TRUE
+            ),
+            world_records AS (
+                SELECT
+                    r.user_id,
+                    count(r.user_id) AS amount
+                FROM ranks r
+                WHERE rank_num = 1
+                GROUP BY r.user_id
+            ),
+            map_counts AS (
+                SELECT user_id, count(*) AS amount FROM map_creators GROUP BY user_id
+            ),
+            website_xp_leaderboard AS (
+                SELECT
+                    u.nickname AS player_name,
+                    coalesce(xp.amount, 0) AS player_xp,
+                    coalesce(wr.amount, 0) AS player_wr,
+                    coalesce(mc.amount, 0) AS player_map_count,
+                    coalesce(ptc.amount, 0) AS player_playtest_count,
+                    coalesce(ugn.global_name, 'Unknown Username') AS player_tag
+                FROM users u
+                LEFT JOIN xptable xp ON u.user_id = xp.user_id
+                LEFT JOIN user_global_names ugn ON u.user_id = ugn.user_id
+                LEFT JOIN playtest_count ptc ON u.user_id = ptc.user_id
+                LEFT JOIN map_counts mc ON u.user_id = mc.user_id
+                LEFT JOIN world_records wr ON u.user_id = wr.user_id
+                WHERE u.user_id > 1000
+            )
+            SELECT * FROM website_xp_leaderboard";
 
+            // Appliquer les filtres de recherche
+            $where_clause = '';
             if (!empty($search)) {
                 if ($search_by === 'player_name') {
-                    $sql .= " AND player_name LIKE '%$search_escaped%'";
+                    $where_clause = "player_name ILIKE '%$search_escaped%'";
                 } elseif ($search_by === 'player_tag') {
-                    $sql .= " AND player_tag LIKE '%$search_escaped%'";
+                    $where_clause = "player_tag ILIKE '%$search_escaped%'";
                 } else {
-                    $sql .= " AND (player_name LIKE '%$search_escaped%' OR player_tag LIKE '%$search_escaped%')";
+                    $where_clause = "(player_name ILIKE '%$search_escaped%' OR player_tag ILIKE '%$search_escaped%')";
                 }
             }
 
-            if (!empty($rank_filter)) {
-                $rank_escaped = $conn->real_escape_string($rank_filter);
-                $sql .= " AND rank_name = '$rank_escaped'";
+            if (!empty($where_clause)) {
+                $sql .= " WHERE " . $where_clause;
             }
 
-            if ($sort_by === 'rank_name') {
-                $order_by = "FIELD(rank_name, 'God', 'Grandmaster', 'Master', 'Pro', 'Skilled', 'Jumper', 'Ninja') $order";
-            } else {
-                $order_by = "$sort_by $order";
-            }
+            // Appliquer tri
+            $sql .= " ORDER BY $sort_by $order LIMIT $results_per_page OFFSET $start_from";
 
-            $sql .= " ORDER BY $order_by LIMIT $start_from, $results_per_page";
-
-            $result = $conn->query($sql);
+            // Exécuter requête
+            $result = pg_query($conn, $sql);
 
             if ($result === false) {
-                error_log("SQL Error: " . $conn->error);
+                error_log("SQL Error: " . pg_last_error($conn));
                 die("An error occurred while retrieving data.");
             }
 
+            // Fonction rang dynamique
+            function getRankName($xp) {
+                if ($xp >= 10000) {
+                    return 'God';
+                } elseif ($xp >= 7500) {
+                    return 'Grandmaster';
+                } elseif ($xp >= 5000) {
+                    return 'Master';
+                } elseif ($xp >= 3000) {
+                    return 'Pro';
+                } elseif ($xp >= 1500) {
+                    return 'Skilled';
+                } elseif ($xp >= 500) {
+                    return 'Jumper';
+                } else {
+                    return 'Ninja';
+                }
+            }
+
+            // Appliquer le filtre de rang après résultats
+            $filtered_results = [];
+            if (!empty($rank_filter)) {
+                while ($row = pg_fetch_assoc($result)) {
+                    if (getRankName($row['player_xp']) === $rank_filter) {
+                        $filtered_results[] = $row;
+                    }
+                }
+            } else {
+                while ($row = pg_fetch_assoc($result)) {
+                    $filtered_results[] = $row;
+                }
+            }
+
             // Affichage des données
-            if ($result->num_rows > 0) {
+            if (!empty($filtered_results)) {
                 echo "<table id='leaderboard'>";
                 echo "<thead>";
                 echo "<tr>
@@ -219,7 +286,6 @@
                             </button>
                         </th>";
 
-                // Toujours générer les colonnes, avec style conditionnel
                 $rank_style = ($show_rank != '0') ? '' : 'style="display:none;"';
                 echo "<th class='col-rank' $rank_style>Rank
                         <span class='vertical-bar'></span>
@@ -254,7 +320,7 @@
                     </th>";
 
                 $maps_style = ($show_map != '0') ? '' : 'style="display:none;"';
-                echo "<th class='col-map' $maps_style>Map Count
+                echo "<th class='col-map' $maps_style>Map Made
                         <span class='vertical-bar'></span>
                         <button id='sort-map' class='sort-btn' data-column='player_map_count' onclick='animation(this); sortTableAjax(\"player_map_count\", this)'>
                             <div class='stroke stroke1'></div>
@@ -265,7 +331,7 @@
                     </th>";
 
                 $playtests_style = ($show_playtest != '0') ? '' : 'style="display:none;"';
-                echo "<th class='col-playtest' $playtests_style>Playtest Count
+                echo "<th class='col-playtest' $playtests_style>Playtest Vote
                         <span class='vertical-bar'></span>
                         <button id='sort-playtest' class='sort-btn' data-column='player_playtest_count' onclick='animation(this); sortTableAjax(\"player_playtest_count\", this)'>
                             <div class='stroke stroke1'></div>
@@ -288,14 +354,14 @@
                 echo "</thead>";
 
                 echo "<tbody>";
-                while ($row = $result->fetch_assoc()) {
-                    $rank_class = strtolower($row['rank_name']);
+                foreach ($filtered_results as $row) {
+                    $rank_name = getRankName($row['player_xp']); // Rang dynamique
+                    $rank_class = strtolower($rank_name);
                     echo "<tr class='row-content'>
                             <td class='col-name'>" . htmlspecialchars($row['player_name'], ENT_QUOTES, 'UTF-8') . "</td>";
 
-                    // Toujours générer les colonnes, avec style conditionnel
                     $rank_style = ($show_rank != '0') ? '' : 'style="display:none;"';
-                    echo "<td class='col-rank rank-$rank_class' $rank_style>" . htmlspecialchars($row['rank_name'], ENT_QUOTES, 'UTF-8') . "</td>";
+                    echo "<td class='col-rank rank-$rank_class' $rank_style>" . htmlspecialchars($rank_name, ENT_QUOTES, 'UTF-8') . "</td>";
 
                     $xp_style = ($show_xp != '0') ? '' : 'style="display:none;"';
                     echo "<td class='col-xp' $xp_style>" . htmlspecialchars($row['player_xp'], ENT_QUOTES, 'UTF-8') . " XP</td>";
@@ -304,10 +370,10 @@
                     echo "<td class='col-wr' $wr_style>" . htmlspecialchars($row['player_wr'], ENT_QUOTES, 'UTF-8') . " WR</td>";
 
                     $maps_style = ($show_map != '0') ? '' : 'style="display:none;"';
-                    echo "<td class='col-map' $maps_style>" . htmlspecialchars($row['player_map_count'], ENT_QUOTES, 'UTF-8') . " Map</td>";
+                    echo "<td class='col-map' $maps_style>" . htmlspecialchars($row['player_map_count'], ENT_QUOTES, 'UTF-8') . " " . (($row['player_map_count'] > 1) ? 'Maps' : 'Map') . "</td>";
 
                     $playtests_style = ($show_playtest != '0') ? '' : 'style="display:none;"';
-                    echo "<td class='col-playtest' $playtests_style>" . htmlspecialchars($row['player_playtest_count'], ENT_QUOTES, 'UTF-8') . " Playtest</td>";
+                    echo "<td class='col-playtest' $playtests_style>" . htmlspecialchars($row['player_playtest_count'], ENT_QUOTES, 'UTF-8') . " " . (($row['player_playtest_count'] > 1) ? 'Votes' : 'Vote') . "</td>";
 
                     echo "<td class='col-tag'>" . htmlspecialchars($row['player_tag'], ENT_QUOTES, 'UTF-8') . "</td>
                         </tr>";
@@ -319,31 +385,20 @@
             }
 
             // Pagination
-            $sql_count = "SELECT COUNT(id) AS total FROM leaderboard WHERE 1=1";
-            if (!empty($search)) {
-                if ($search_by === 'player_name') {
-                    $sql_count .= " AND player_name LIKE '%$search_escaped%'";
-                } elseif ($search_by === 'player_tag') {
-                    $sql_count .= " AND player_tag LIKE '%$search_escaped%'";
-                } else {
-                    $sql_count .= " AND (player_name LIKE '%$search_escaped%' OR player_tag LIKE '%$search_escaped%')";
-                }
-            }
-            if (!empty($rank_filter)) {
-                $sql_count .= " AND rank_name = '$rank_escaped'";
-            }
+            $sql_total_entries = preg_replace('/ORDER BY.*$/i', '', $sql);
+            $sql_total_entries = "SELECT COUNT(*) AS total FROM ($sql_total_entries) AS all_entries";
 
-            // Exécuter la requête pour obtenir le nombre d'entrées correspondant aux critères de recherche
-            $result_count = $conn->query($sql_count);
-            if ($result_count && $row_count = $result_count->fetch_assoc()) {
+            // Nombre total d'entrées
+            $result_count = pg_query($conn, $sql_total_entries);
+            if ($result_count && $row_count = pg_fetch_assoc($result_count)) {
                 $total_entries = (int)$row_count['total'];
             } else {
                 $total_entries = 0;
             }
 
+            // Nombre total de pages
             $total_pages = ($total_entries > 0) ? ceil($total_entries / $results_per_page) : 1;
 
-            // N'afficher la pagination que s'il y a plus d'une page
             if ($total_pages > 1) {
                 echo "<div class='pagination'>";
 
@@ -359,7 +414,7 @@
                     $start_page = max(1, $end_page - $pages_to_show + 1);
                 }
 
-                // Préparer les paramètres pour l'URL
+                // Paramètres URL
                 $base_url = 'leaderboard.php?';
                 $query_params = [
                     'search' => $search,
@@ -399,8 +454,7 @@
                 echo "</div>";
             }
 
-            // Fermeture de la connexion
-            $conn->close();
+            pg_close($conn);
             ?>
             </div>
         </div>

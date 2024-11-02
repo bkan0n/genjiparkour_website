@@ -17,6 +17,14 @@ canvas {
     height: 100%;
 }
 
+#burgerMenu a {
+    color : #2b2b2b;
+}
+
+.menuItem a {
+    border-bottom: 1px solid #2b2b2b; /* Bordure bas */
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -43,7 +51,7 @@ canvas {
 }
 
 .chart-container {
-    margin-right : -1200px;
+    margin-right : -1250px;
     margin-top: -440px;
 }
 
@@ -52,17 +60,17 @@ canvas {
 }
 
 .quality-container {
-    margin-left : -1200px;
+    margin-left : -1250px;
     margin-top: -440px
 }
 
 .populars-maps-container {
-    margin-left : -1200px;
+    margin-left : -1250px;
     margin-top: -30px;
 }
 
 .XP-container {
-    margin-right : -1200px;
+    margin-right : -1250px;
     margin-top: -440px;
 }
 

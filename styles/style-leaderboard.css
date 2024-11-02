@@ -24,7 +24,12 @@ h1 {
 .container {
   flex-direction: column;
   justify-content: flex-start;
-  margin-bottom: 25px;
+}
+
+h1 {
+  margin-top: 30px;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .form-container {
@@ -43,7 +48,7 @@ h1 {
   justify-content: center;
   align-items: center;
   padding: 5px 10px;
-  background-color: #3d3c3c; 
+  background-color: #2b2b2b; 
   border-radius: 5px;
   cursor: pointer;
 }
@@ -53,7 +58,7 @@ input[type="text"] {
   font-size: 16px;
   border: 1px solid #fff;
   border-radius: 8px;
-  background-color: rgba(197, 197, 197, 0.15);
+  background-color: #2b2b2b;
   color: #fff;
   width: 300px;
   transition: width 0.3s ease, background-color 0.3s ease;
@@ -64,7 +69,7 @@ input[type="text"]:hover {
 }
 
 input[type="text"]:focus {
-  background-color: rgba(197, 197, 197, 0.15);
+  background-color: #2b2b2b;
   color: #fff;
   width: 320px;
 }
@@ -215,7 +220,7 @@ table {
   border-collapse: separate;
   border-spacing: 0 0px !important;
   border-radius: 25px;
-  background-color: transparent;
+  background-color: #2b2b2b;
   margin: 0 auto;
   padding: 7px;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
@@ -232,7 +237,14 @@ td.col-rank, td.col-xp, td.col-wr, td.col-maps, td.col-playtests {
 
 /* Style des en-têtes pour informations secondaires */
 th.col-rank, th.col-xp, th.col-wr, th.col-map, th.col-playtest {
-  font-weight: 400; 
+  font-weight: 600; 
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/*Style des en-têtes pour infos primaires */
+th.col-tag, th.col-name {
+  font-weight: 600; 
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
 }
@@ -296,10 +308,10 @@ tbody tr:last-child td:last-child {
 
 .toggle-columns {
   color: #fff;
-  border: 2px solid #fff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 15px;
   padding: 10px 15px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #2b2b2b;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
@@ -409,7 +421,7 @@ th {
 .custom-select {
   position: relative;
   width: auto;
-  background-color: #3d3c3c;
+  background-color: #2b2b2b;
   color: #fff;
   border-radius: 5px;
   cursor: pointer;
@@ -422,7 +434,7 @@ th {
 .custom-select-large {
   position: relative;
   width: 150px;
-  background-color: #3d3c3c;
+  background-color: #2b2b2b;
   color: #fff;
   border-radius: 5px;
   cursor: pointer;

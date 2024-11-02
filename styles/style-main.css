@@ -8,11 +8,11 @@
 /* Structure de base */
 html, body {
     height: 100%;
-    background: radial-gradient(circle, #1b1b1b, #000);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Mona Sans', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle, rgba(60,77,87,1) 0%, rgba(27,33,34,0.9934348739495799) 100%);
 }
 
 /* Section héro */
@@ -25,39 +25,40 @@ html, body {
     text-align: center;
     color: #fff;
     overflow: hidden;
-    margin-bottom: 0;
-    padding-bottom: 0;
-    animation: fadeInUp 0.5s ease-in-out;
-}
-
-.hero-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
 }
 
 .hero-content {
     z-index: 1;
     max-width: 800px;
+    padding-top: 50px;
 }
 
-.hero-content .recent-launch {
+
+.hero-content .recent-stats {
     font-size: 18px;
     letter-spacing: 2px;
-    margin-bottom: 10px;
     color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 10px;
 }
 
-.hero-content h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    color: #fff;
+.side-section {
+    background-color: transparent;
+    border-radius: 10px;
+    padding: 20px;
+    width: 15%;
+    text-align: center;
+    position: absolute;
+    top: calc(50% - 50px);
+    transform: translateY(-50%);
+}
+
+.side-section.left {
+    left: 10%;
+}
+
+.side-section.right {
+    right: 10%;
 }
 
 .cta-btn {
@@ -68,6 +69,10 @@ html, body {
     text-decoration: none;
     font-size: 16px;
     transition: background-color 0.3s ease;
+    width: 200px;
+    max-width: 100%;
+    display: inline-block;
+    margin: 0 auto;
 }
 
 .cta-btn:hover {
@@ -122,44 +127,58 @@ html {
 }
 
 /* Section des événements */
-.achievements {
-    background-color: #111;
-    padding: 80px 20px;
-    margin-top: -50px;
-    text-align: center;
+
+#next-section.achievements {
+    background: radial-gradient(circle, rgba(60,77,87,1) 0%, rgba(27,33,34,0.9934348739495799) 100%);
     color: #fff;
+    padding: 60px 0;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 5;
 }
 
-.achievements h2 {
-    font-size: 36px;
-    margin-bottom: 40px;
+#next-section h2 {
+    font-family: 'Mona Sans', sans-serif;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 30px;
 }
 
 .event-grid {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 30px;
     flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .event-item {
-    background-color: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    background-color: transparent;
+    border: 2px solid #fff;
+    padding: 25px;
+    width: 100%;
+    max-width: 300px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.event-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.4);
 }
 
 .event-item h3 {
-    font-size: 24px;
+    font-size: 1.5rem;
+    color: #f0f0f0;
     margin-bottom: 10px;
 }
 
 .event-item p {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #ddd;
+    font-size: 1rem;
+    color: #cfcfcf;
 }
+
 
 /*écrans plus petits */
 @media (max-width: 768px) {
@@ -177,5 +196,23 @@ html {
 
     footer {
         flex-direction: column;
+    }
+}
+
+@media (max-width: 1486px) {
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-btn {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    .recent-stats {
+        text-align: center;
     }
 }
