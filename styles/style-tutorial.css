@@ -48,7 +48,7 @@ nav {
 }
 
 .hero-content h1 {
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
     font-size: 48px;
     margin-bottom: 20px;
     color: #222;
@@ -75,7 +75,7 @@ nav {
 }
 
 .highlight-code {
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
     font-weight: 700;
 }
 

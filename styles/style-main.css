@@ -8,7 +8,7 @@
 /* Structure de base */
 html, body {
     height: 100%;
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -138,7 +138,7 @@ html {
 }
 
 #next-section h2 {
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
     font-size: 2.5rem;
     color: #fff;
     margin-bottom: 30px;

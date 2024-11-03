@@ -6,7 +6,6 @@
     <title>Genji Parkour - Graphs</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-graphs.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

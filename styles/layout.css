@@ -22,6 +22,39 @@ time, mark, audio, video {
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'Mona Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/MonaSans-Regular.woff2') format('woff2'),
+       url('fonts/MonaSans-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: url('fonts/MonaSans-Medium.woff2') format('woff2'),
+       url('fonts/MonaSans-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('fonts/MonaSans-SemiBold.woff2') format('woff2'),
+       url('fonts/MonaSans-SemiBold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('fonts/MonaSans-Bold.woff2') format('woff2'),
+       url('fonts/MonaSans-Bold.woff') format('woff');
+}
+
+
 html, body {
   height: 100%;
   margin: 0;

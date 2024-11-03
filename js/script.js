@@ -13,7 +13,13 @@ window.addEventListener('scroll', function() {
 
 let isSorting = false;
 
-// Fonction pour réappliquer les événements de tri
+document.querySelectorAll('.sort-btn').forEach(button => {
+    button.addEventListener('click', function(event) {
+        const column = this.getAttribute('data-column');
+        sortTableAjax(event, column, this);
+    });
+});
+
 function reapplySortEvents() {
     document.querySelectorAll('.sort-btn').forEach(button => {
         button.addEventListener('click', function(event) {

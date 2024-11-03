@@ -5,7 +5,6 @@
     <title>Genji Parkour - Leaderboard</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-leaderboard.css">
     <script src="js/script.js" defer></script>
@@ -43,7 +42,6 @@
                     </ul>
                 </div>
             </div>
-        </div>
         </nav>
         <div class="container">
             <h1>Players leaderboard</h1>
@@ -271,12 +269,13 @@
 
             // Affichage des données
             if (!empty($filtered_results)) {
+                echo "<div class='table-container'>";
                 echo "<table id='leaderboard'>";
                 echo "<thead>";
                 echo "<tr>
                         <th class='col-name'>Name
                             <span class='vertical-bar'></span>
-                            <button id='sort-name' class='sort-btn' data-column='player_name' onclick='animation(this); sortTableAjax(event, \"player_name\", this)'>
+                            <button id='sort-name' class='sort-btn' data-column='player_name' onclick='animation(this)'>
                                 <div class='stroke stroke1'></div>
                                 <div class='stroke stroke2'></div>
                                 <div class='stroke stroke3'></div>
@@ -287,7 +286,7 @@
                 $rank_style = ($show_rank != '0') ? '' : 'style="display:none;"';
                 echo "<th class='col-rank' $rank_style>Rank
                         <span class='vertical-bar'></span>
-                        <button id='sort-rank' class='sort-btn' data-column='rank_name' onclick='animation(this); sortTableAjax(\"rank_name\", this)'>
+                        <button id='sort-rank' class='sort-btn' data-column='rank_name' onclick='animation(this)'>
                             <div class='stroke stroke1'></div>
                             <div class='stroke stroke2'></div>
                             <div class='stroke stroke3'></div>
@@ -298,7 +297,7 @@
                 $xp_style = ($show_xp != '0') ? '' : 'style="display:none;"';
                 echo "<th class='col-xp' $xp_style>XP
                         <span class='vertical-bar'></span>
-                        <button id='sort-xp' class='sort-btn' data-column='player_xp' onclick='animation(this); sortTableAjax(\"player_xp\", this)'>
+                        <button id='sort-xp' class='sort-btn' data-column='player_xp' onclick='animation(this)'>
                             <div class='stroke stroke1'></div>
                             <div class='stroke stroke2'></div>
                             <div class='stroke stroke3'></div>
@@ -309,7 +308,7 @@
                 $wr_style = ($show_wr != '0') ? '' : 'style="display:none;"';
                 echo "<th class='col-wr' $wr_style>World Records
                         <span class='vertical-bar'></span>
-                        <button id='sort-wr' class='sort-btn' data-column='player_wr' onclick='animation(this); sortTableAjax(\"player_wr\", this)'>
+                        <button id='sort-wr' class='sort-btn' data-column='player_wr' onclick='animation(this)'>
                             <div class='stroke stroke1'></div>
                             <div class='stroke stroke2'></div>
                             <div class='stroke stroke3'></div>
@@ -320,7 +319,7 @@
                 $maps_style = ($show_map != '0') ? '' : 'style="display:none;"';
                 echo "<th class='col-map' $maps_style>Map Made
                         <span class='vertical-bar'></span>
-                        <button id='sort-map' class='sort-btn' data-column='player_map_count' onclick='animation(this); sortTableAjax(\"player_map_count\", this)'>
+                        <button id='sort-map' class='sort-btn' data-column='player_map_count' onclick='animation(this)'>
                             <div class='stroke stroke1'></div>
                             <div class='stroke stroke2'></div>
                             <div class='stroke stroke3'></div>
@@ -331,7 +330,7 @@
                 $playtests_style = ($show_playtest != '0') ? '' : 'style="display:none;"';
                 echo "<th class='col-playtest' $playtests_style>Playtest Vote
                         <span class='vertical-bar'></span>
-                        <button id='sort-playtest' class='sort-btn' data-column='player_playtest_count' onclick='animation(this); sortTableAjax(\"player_playtest_count\", this)'>
+                        <button id='sort-playtest' class='sort-btn' data-column='player_playtest_count' onclick='animation(this)'>
                             <div class='stroke stroke1'></div>
                             <div class='stroke stroke2'></div>
                             <div class='stroke stroke3'></div>
@@ -341,7 +340,7 @@
 
                 echo "<th class='col-tag'>Discord Tag
                         <span class='vertical-bar'></span>
-                        <button id='sort-tag' class='sort-btn' data-column='player_tag' onclick='animation(this); sortTableAjax(\"player_tag\", this)'>
+                        <button id='sort-tag' class='sort-btn' data-column='player_tag' onclick='animation(this)'>
                             <div class='stroke stroke1'></div>
                             <div class='stroke stroke2'></div>
                             <div class='stroke stroke3'></div>
@@ -378,6 +377,7 @@
                 }
                 echo "</tbody>";
                 echo "</table>";
+                echo "</div>";
             } else {
                 echo "<div class='no-results-message'>No players found</div>";
             }
