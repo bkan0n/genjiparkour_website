@@ -1,4 +1,3 @@
-/* Variables pour les couleurs */
 :root {
     --main-bg-color: radial-gradient(circle, #1b1b1b, #000);
     --text-color: #fff;
@@ -7,14 +6,13 @@
     --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Styles généraux */
 html, body {
     margin: 0;
     padding: 0;
     font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
     background: var(--main-bg-color);
     color: var(--text-color);
-    scroll-behavior: smooth; /* Smooth scrolling */
+    scroll-behavior: smooth;
 }
 
 body {
@@ -24,10 +22,9 @@ body {
 }
 
 main {
-    flex: 1; /* Contenu principal occupe tout l'espace */
+    flex: 1;
 }
 
-/* Main container for News & Events */
 .news-container {
     display: grid;
     grid-template-columns: 1fr;
@@ -73,7 +70,6 @@ main {
     color: #444;
 }
 
-/* Pagination buttons */
 .pagination {
     display: flex;
     justify-content: center;
@@ -100,7 +96,6 @@ main {
     transform: translateY(1px);
 }
 
-/* Footer */
 footer {
     background-color: #222;
     padding: 20px;
@@ -110,7 +105,6 @@ footer {
     font-size: 14px;
 }
 
-/* Media Queries pour ajuster le design sur mobiles */
 @media (max-width: 768px) {
     nav .nav-links {
         flex-direction: column;
@@ -136,7 +130,6 @@ footer {
     }
 }
 
-/* Media Queries pour les grands écrans */
 @media (min-width: 1200px) {
     .news-container {
         grid-template-columns: repeat(2, 1fr);

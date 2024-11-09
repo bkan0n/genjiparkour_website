@@ -91,6 +91,7 @@ body {
     font-size: 14px;
     background: none;
     transition: all 0.3s ease-in-out;
+    z-index: 5;
 }
 
 .scroll-btn i {
