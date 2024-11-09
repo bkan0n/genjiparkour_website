@@ -108,7 +108,6 @@ function animation(button) {
     }, 1000);
 }
 
-// Fonction pour mettre à jour les résultats de recherche via AJAX
 function updateSearchResults() {
     const searchInput = document.getElementById('search-input').value;
     const searchBy = document.getElementById('selected-search-by').value;
@@ -136,7 +135,6 @@ function updateSearchResults() {
         });
 }
 
-// Gérer la sélection des tris et rangs
 document.addEventListener("DOMContentLoaded", function() {
 
     const sortTrigger = document.getElementById('sort-trigger');
@@ -221,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Ajoute un gestionnaire d'événements à chaque case à cocher pour modifier l'affichage
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const column = this.getAttribute('data-col');
@@ -271,20 +268,3 @@ document.addEventListener("DOMContentLoaded", function() {
         location.reload();
     });
 });
-
-// Fonction pour fermer le menu lors du scroll vers le bas
-function closeMenuOnScroll() {
-    const burgerMenuCheckbox = document.getElementById('burgerMenuScroll');
-
-    // Vérifie si la checkbox est cochée (menu ouvert)
-    if (burgerMenuCheckbox.checked) {
-        burgerMenuCheckbox.checked = false; // Ferme le menu
-    }
-}
-// Ajoute un écouteur d'événement pour détecter le défilement
-window.addEventListener('scroll', closeMenuOnScroll);
-
-
-
-
-
