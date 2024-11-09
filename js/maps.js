@@ -11,8 +11,49 @@ const filterOptions = {
     ],
     completions: [{ id: 'map_code', label: 'Map Code' }],
     guide: [{ id: 'map_code', label: 'Map Code' }],
-    personalRecords: [{ id: 'player_name', label: 'Player Name' }]
+    personalRecords: [
+        { id: 'user', label: 'Player Name' },
+        { id: 'map_code', label: 'Map Code' }
+    ]
 };
+
+const mapNames = [
+    "Ayutthaya", "Black Forest", "Blizzard World", "Busan", "Castillo", "Chateau Guillard",
+    "Circuit Royal", "Colosseo", "Dorado", "Ecopoint: Antarctica", "Eichenwalde", "Esperanca",
+    "Hanamura", "Havana", "Hollywood", "Horizon Lunar Colony", "Ilios", "Junkertown",
+    "Kanezaka", "King's Row", "Lijiang Tower", "Malevento", "Midtown", "Necropolis",
+    "Nepal", "New Queen Street", "Numbani", "Oasis", "Paraiso", "Paris", "Petra",
+    "Practice Range", "Rialto", "Route 66", "Temple of Anubis", "Volskaya Industries",
+    "Watchpoint: Gibraltar", "Workshop Chamber", "Workshop Expanse", "Workshop Green Screen",
+    "Workshop Island", "Framework", "Tools", "Shambali", "Chateau Guillard (Halloween)",
+    "Eichenwalde (Halloween)", "Hollywood (Halloween)", "Black Forest (Winter)",
+    "Blizzard World (Winter)", "Ecopoint: Antarctica (Winter)", "Hanamura (Winter)",
+    "King's Row (Winter)", "Busan (Lunar New Year)", "Lijiang Tower (Lunar New Year)",
+    "Antarctic Peninsula", "Suravasa", "New Junk City", "Samoa", "Hanaoka",
+    "Runasapi", "Throne of Anubis"
+];
+
+const apiUrls = {
+    mapSearch: 'api/map_search_api.php',
+    completions: 'api/completions_api.php',
+    guide: 'api/guides_api.php',
+    personalRecords: 'api/personal_records_api.php'
+};
+
+const mechanicsOptions = [
+    "Edge Climb", "Bhop", "Crouch Edge", "Save Climb",
+    "Bhop First", "High Edge", "Distance Edge",
+    "Quick Climb", "Slide", "Stall", "Dash", "Ultimate",
+    "Emote Save Bhop", "Death Bhop", "Triple Jump",
+    "Multi Climb", "Vertical Multi Climb", "Create Bhop", 
+    "Standing Create Bhop"
+];
+
+const restrictionsOptions = [
+    "Dash Start", "Triple Jump", "Emote Save Bhop ", 
+    "Death Bhop", "Multi Climb", "Standing Create Bhop", 
+    "Create Bhop", "Wall Climb"
+];
 
 const filters = {};
 const selectedFilters = [];
@@ -23,7 +64,6 @@ let totalPages = 1;
 let hideTimeout;
 const applyFiltersButton = document.getElementById("applyFiltersBtn");
 
-// Cacher le conteneur filtre par défaut
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("filtersContainer").style.display = "none";
 });
@@ -63,31 +103,40 @@ function selectSection(sectionId) {
     clearFilters();
     currentPage = 1;
     document.getElementById("filterActions").style.display = "flex";
+    
+    const selectedModeText = document.getElementById("selectedMode");
+    const intuitiveModeText = document.getElementById("intuitiveMode");
+    const addFilterMessage = document.getElementById("addFilterMessage");
 
-    document.getElementById("selectedMode").style.display = "none";
+    if (addFilterMessage) {
+        addFilterMessage.style.display = "none";
+    }
+
+    if (intuitiveModeText) {
+        intuitiveModeText.style.display = currentSection ? "block" : "none";
+    }
+    
+    if (sectionId === 'guide') {
+        if (selectedModeText) {
+            selectedModeText.style.display = "none";
+            intuitiveModeText.style.display = "none";
+            
+        }
+        
+        document.getElementById("filtersContainer").style.display = "flex";
+        addFilter("map_code", "Map Code");
+    } else {
+        if (selectedModeText) {
+            selectedModeText.style.display = "none";
+        }
+        document.getElementById("filtersContainer").style.display = "none";
+    }
 
     document.querySelectorAll('.tab-buttons button').forEach(button => {
         button.classList.remove('active');
     });
     document.getElementById(`${sectionId}Btn`).classList.add('active');
-
-    document.getElementById("filterActions").style.display = "flex";
 }
-
-const mechanicsOptions = [
-    "Edge Climb", "Bhop", "Crouch Edge", "Save Climb",
-    "Bhop First", "High Edge", "Distance Edge",
-    "Quick Climb", "Slide", "Stall", "Dash", "Ultimate",
-    "Emote Save Bhop", "Death Bhop", "Triple Jump",
-    "Multi Climb", "Vertical Multi Climb", "Create Bhop", 
-    "Standing Create Bhop"
-];
-
-const restrictionsOptions = [
-    "Dash Start", "Triple Jump", "Emote Save Bhop ", 
-    "Death Bhop", "Multi Climb", "Standing Create Bhop", 
-    "Create Bhop", "Wall Climb"
-];
 
 function addFilter(filterId, filterLabel) {
     if (!selectedFilters.includes(filterId)) {
@@ -102,6 +151,11 @@ function addFilter(filterId, filterLabel) {
         filterElement.style.position = "relative";
 
         let filterInput;
+
+        const intuitiveModeText = document.getElementById("intuitiveMode");
+        if (intuitiveModeText) {
+            intuitiveModeText.style.display = "none";
+        }
 
         if (filterId === "only_playtest" || filterId === "only_maps_with_medals") {
             filterInput = document.createElement("select");
@@ -256,22 +310,6 @@ document.addEventListener("click", function (event) {
     }
 });
 
-const mapNames = [
-    "Ayutthaya", "Black Forest", "Blizzard World", "Busan", "Castillo", "Chateau Guillard",
-    "Circuit Royal", "Colosseo", "Dorado", "Ecopoint: Antarctica", "Eichenwalde", "Esperanca",
-    "Hanamura", "Havana", "Hollywood", "Horizon Lunar Colony", "Ilios", "Junkertown",
-    "Kanezaka", "King's Row", "Lijiang Tower", "Malevento", "Midtown", "Necropolis",
-    "Nepal", "New Queen Street", "Numbani", "Oasis", "Paraiso", "Paris", "Petra",
-    "Practice Range", "Rialto", "Route 66", "Temple of Anubis", "Volskaya Industries",
-    "Watchpoint: Gibraltar", "Workshop Chamber", "Workshop Expanse", "Workshop Green Screen",
-    "Workshop Island", "Framework", "Tools", "Shambali", "Chateau Guillard (Halloween)",
-    "Eichenwalde (Halloween)", "Hollywood (Halloween)", "Black Forest (Winter)",
-    "Blizzard World (Winter)", "Ecopoint: Antarctica (Winter)", "Hanamura (Winter)",
-    "King's Row (Winter)", "Busan (Lunar New Year)", "Lijiang Tower (Lunar New Year)",
-    "Antarctic Peninsula", "Suravasa", "New Junk City", "Samoa", "Hanaoka",
-    "Runasapi", "Throne of Anubis"
-];
-
 function showSuggestions(event) {
     const input = event.target;
     const filterValue = input.value.toLowerCase();
@@ -320,7 +358,6 @@ function clearFilters() {
     }
     Object.keys(filters).forEach(key => delete filters[key]);
 
-    // Hide pagination
     const paginationContainer = document.getElementById("paginationContainer");
     paginationContainer.innerHTML = ""; 
 }
@@ -348,14 +385,27 @@ function applyFilters() {
                 filters[filterId] = selectedRestrictions;
             }
         } else if (input && input.value) {
-            filters[filterId] = input.value;
+            filters[filterId] = filterId === "map_name" ? encodeURIComponent(input.value) : input.value;
         }
     });
+
+    if (currentSection === 'guide' && !filters.map_code) {
+        document.getElementById("resultsContainer").innerHTML = `
+            <p style="color: white; font-weight: bold; font-size: 18px;">
+                ⚠️ Enter a map code!
+            </p>`;
+        return;
+    }
 
     filters.page_size = pageSize;
     filters.page_number = currentPage;
 
-    const apiUrl = 'api/map_search_api.php';
+    const apiUrl = apiUrls[currentSection];
+
+    const intuitiveModeText = document.getElementById("intuitiveMode");
+    if (intuitiveModeText) {
+        intuitiveModeText.style.display = "none";
+    }
 
     // Appel unique
     fetch(apiUrl, {
@@ -372,72 +422,277 @@ function applyFilters() {
     .then(data => {
         const totalResults = data.pagination?.total_results ?? "N/A";
         console.log("Total Results:", totalResults);
-    
+
         totalPages = data.pagination?.total_pages || 1;
-    
-        const results = Object.values(data).filter(item => typeof item === "object" && !item.pagination);
-        console.log("Results Data:", results);
-        displayResults(results);
+
+        if (currentSection === 'mapSearch') {
+            displayMapSearchResults(data);
+        } else if (currentSection === 'completions') {
+            displayCompletionsResults(data);
+        } else if (currentSection === 'guide') {
+            displayGuideResults(data);
+        } else if (currentSection === 'personalRecords') {
+            displayPersonalRecordsResults(data);
+        }
         renderPaginationButtons();
     })
     .catch(error => console.error("Fetch error:", error));
 }
 
-function displayResults(data) {
+function displayMapSearchResults(data) {
     const resultsContainer = document.getElementById("resultsContainer");
 
-    if (data.error) {
-        resultsContainer.innerHTML = `<p>${data.error}</p>`;
-    } else if (Array.isArray(data) && data.length > 0) {
-        // Filtres undefined
-        const filteredData = data.filter(result => result.map_name !== undefined);
+    const results = Object.values(data).filter(item => typeof item === "object" && !item.pagination);
+    const filteredResults = results.filter(result => result.map_name && result.map_name !== "N/A");
 
-        // Fonction quality
-        const getStars = (quality) => {
-            let stars = '';
-            const starCount = Math.floor(quality);
-            for (let i = 0; i < starCount; i++) {
-                stars += '⭐';
-            }
-            return stars || 'N/A';
-        };
-
-        resultsContainer.innerHTML = `
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th class="mapCode">Code</th>
-                        <th class="mapName">Name</th>
-                        <th class="mapType">Type</th>
-                        <th class="mapCreator">Creator</th>
-                        <th class="mapDifficulty">Difficulty</th>
-                        <th class="mapQuality">Quality</th>
-                        <th class="mapGold">Gold</th>
-                        <th class="mapSilver">Silver</th>
-                        <th class="mapBronze">Bronze</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filteredData.map(result => `
-                        <tr>
-                            <td>${result.map_code}</td>
-                            <td>${result.map_name}</td>
-                            <td>${Array.isArray(result.map_type) ? result.map_type.flat().join(", ") : "N/A"}</td>
-                            <td>${result.creators ? result.creators.join(", ") : "N/A"}</td>
-                            <td>${result.difficulty || "N/A"}</td>
-                            <td>${getStars(result.quality) || "N/A"}</td>
-                            <td>${result.gold || "N/A"}</td>
-                            <td>${result.silver || "N/A"}</td>
-                            <td>${result.bronze || "N/A"}</td>
-                        </tr>
-                    `).join("")}
-                </tbody>
-            </table>`;
-    } else {
+    if (filteredResults.length === 0) {
         resultsContainer.innerHTML = "<p>No results found.</p>";
+        return;
     }
+
+    const getStars = (quality) => {
+        let stars = '';
+        const starCount = Math.floor(quality);
+        for (let i = 0; i < starCount; i++) {
+            stars += '⭐';
+        }
+        return stars || 'N/A';
+    };
+
+    resultsContainer.innerHTML = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th class="mapCode">Code</th>
+                    <th class="mapName">Name</th>
+                    <th class="mapType">Type</th>
+                    <th class="mapCreator">Creator</th>
+                    <th class="mapDifficulty">Difficulty</th>
+                    <th class="mapQuality">Quality</th>
+                    <th class="mapGold">Gold</th>
+                    <th class="mapSilver">Silver</th>
+                    <th class="mapBronze">Bronze</th>
+                    <th class="mapDetails">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filteredResults.map((result, index) => `
+                    <tr>
+                        <td>${result.map_code || "N/A"}</td>
+                        <td>${result.map_name || "N/A"}</td>
+                        <td>${Array.isArray(result.map_type) ? result.map_type.join(", ") : "N/A"}</td>
+                        <td>${result.creators ? result.creators.join(", ") : "N/A"}</td>
+                        <td>${result.difficulty || "N/A"}</td>
+                        <td>${getStars(result.quality) || "N/A"}</td>
+                        <td>${result.gold || "N/A"}</td>
+                        <td>${result.silver || "N/A"}</td>
+                        <td>${result.bronze || "N/A"}</td>
+                        <td><button class="details-btn" onclick="showDetailsModal(${index})">View</button></td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="detailsModalOverlay" class="modal-overlay-custom" style="display:none;">
+            <div id="detailsModalBox" class="modal-box-custom">
+                <span id="detailsModalClose" class="modal-close-button" onclick="closeDetailsModal()">&times;</span>
+                <div id="modalDetailsContainer"></div>
+            </div>
+        </div>
+    `);
+
+    window.showDetailsModal = function(index) {
+        const result = filteredResults[index];
+        const mechanics = result.mechanics ? result.mechanics.join(", ") : "N/A";
+        const restrictions = result.restrictions ? result.restrictions.join(", ") : "N/A";
+        const description = result.desc || "No description available";
+    
+        const mapName = result.map_name ? result.map_name.toLowerCase().replace(/[()\s]/g, "") : "default";
+        const bannerPath = `assets/banners/${mapName}.png`;
+    
+        const medals = [];
+        if (result.gold && result.gold !== "N/A") {
+            medals.push(`
+                <div class="medal-wrapper">
+                    <img src="assets/verifications/gold_wr.gif" alt="Gold Medal" class="medal-image" />
+                    <span class="medal-time">${result.gold}</span>
+                </div>
+            `);
+        }
+        if (result.silver && result.silver !== "N/A") {
+            medals.push(`
+                <div class="medal-wrapper">
+                    <img src="assets/verifications/silver_wr.gif" alt="Silver Medal" class="medal-image" />
+                    <span class="medal-time">${result.silver}</span>
+                </div>
+            `);
+        }
+        if (result.bronze && result.bronze !== "N/A") {
+            medals.push(`
+                <div class="medal-wrapper">
+                    <img src="assets/verifications/bronze_wr.gif" alt="Bronze Medal" class="medal-image" />
+                    <span class="medal-time">${result.bronze}</span>
+                </div>
+            `);
+        }
+    
+        const detailsContent = `
+            <div id="modalContentFrame" class="modal-content-frame">
+                <div id="modalLayout" class="modal-layout">
+                    <div id="modalTextSection" class="modal-text-section">
+                        <h2>Map Details</h2>
+                        <p><strong>Code:</strong> ${result.map_code || "N/A"}</p>
+                        <p><strong>Name:</strong> ${result.map_name || "N/A"}</p>
+                        <p><strong>Type:</strong> ${Array.isArray(result.map_type) ? result.map_type.join(", ") : "N/A"}</p>
+                        <p><strong>Creator:</strong> ${result.creators ? result.creators.join(", ") : "N/A"}</p>
+                        <p><strong>Difficulty:</strong> ${result.difficulty || "N/A"}</p>
+                        <p><strong>Quality:</strong> ${getStars(result.quality) || "N/A"}</p>
+                        <p><strong>Mechanics:</strong> ${mechanics}</p>
+                        <p><strong>Restrictions:</strong> ${restrictions}</p>
+                        <p><strong>Description:</strong> ${description}</p>
+                    </div>
+                    <div id="modalBannerSection" class="modal-banner-section">
+                        <img src="${bannerPath}" alt="${mapName} Banner" class="modal-banner-image" onerror="this.style.display='none'" />
+                        <div class="medals-container">
+                            ${medals.join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    
+        document.getElementById("modalDetailsContainer").innerHTML = detailsContent;
+        document.getElementById("detailsModalOverlay").style.display = "flex";
+    };
+    
+
+    window.closeDetailsModal = function() {
+        document.getElementById("detailsModalOverlay").style.display = "none";
+    };
+    document.getElementById("detailsModalOverlay").addEventListener("click", function(event) {
+        if (event.target === this) {
+            closeDetailsModal();
+        }
+    });
 }
 
+
+function displayPersonalRecordsResults(results) {
+    const resultsContainer = document.getElementById("resultsContainer");
+    const dataResults = results.results || [];
+
+    if (dataResults.length === 0) {
+        resultsContainer.innerHTML = "<p>No results found.</p>";
+        return;
+    }
+
+    const filteredResults = dataResults.filter(result => result.map_code && result.map_code !== "N/A");
+
+    resultsContainer.innerHTML = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th class="mapCode">Code</th>
+                    <th class="nickname">Nickname</th>
+                    <th class="discordTag">Discord Tag</th>
+                    <th class="difficulty">Difficulty</th>
+                    <th class="time">Time</th>
+                    <th class="medal">Medal</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filteredResults.map(result => `
+                    <tr>
+                        <td>${result.map_code || "N/A"}</td>
+                        <td>${result.nickname || "N/A"}</td>
+                        <td>${result.discord_tag || "N/A"}</td>
+                        <td>${result.difficulty || "N/A"}</td>
+                         <td>${result.time > 16000 ? "Completion" : result.time}</td>
+                        <td>${result.medal || "N/A"}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>`;
+}
+
+function displayCompletionsResults(results) {
+    const resultsContainer = document.getElementById("resultsContainer");
+    const dataResults = results.results || [];
+
+    if (dataResults.length === 0) {
+        resultsContainer.innerHTML = "<p>No results found.</p>";
+        return;
+    }
+
+    resultsContainer.innerHTML = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th class="mapCode">Map Code</th>
+                    <th class="nickname">Player Name</th>
+                    <th class="discordTag">Discord Tag</th>
+                    <th class="time">Time</th>
+                    <th class="medal">Medal</th>
+                    <th class="video">Video</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dataResults.map(result => `
+                    <tr>
+                        <td>${result.map_code || "N/A"}</td>
+                        <td>${result.nickname || "N/A"}</td>
+                        <td>${result.discord_tag || "N/A"}</td>
+                        <td>${result.time > 16000 ? "Completion" : result.time}</td>
+                        <td>${result.medal || "N/A"}</td>
+                        <td>${result.video ? `<a href="${result.video}" target="_blank" class="white-link">Watch</a>` : "N/A"}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>`;
+}
+
+
+
+function displayGuideResults(results) {
+    const resultsContainer = document.getElementById("resultsContainer");
+    const dataResults = Array.isArray(results.results) ? results.results : [];
+
+    if (dataResults.length === 0) {
+        resultsContainer.innerHTML = "<p>No guides found.</p>";
+        return;
+    }
+
+    resultsContainer.innerHTML = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th class="mapCode">Map Code</th>
+                    <th class="guideVideo">Guide Video</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dataResults.map(result => {
+                    let linkText = "Watch Guide";
+                    if (result.url.includes("youtube.com") || result.url.includes("youtu.be")) {
+                        linkText = "Watch on YouTube";
+                    } else if (result.url.includes("bilibili.com")) {
+                        linkText = "Watch on Bilibili";
+                    }
+
+                    return `
+                        <tr>
+                            <td>${result.map_code || "N/A"}</td>
+                            <td>
+                                ${result.url ? `<a href="${result.url}" target="_blank" class="white-link">${linkText}</a>` : "N/A"}
+                            </td>
+                        </tr>
+                    `;
+                }).join("")}
+            </tbody>
+        </table>`;
+}
 
 function renderPaginationButtons() {
     const paginationContainer = document.getElementById("paginationContainer");

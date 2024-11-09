@@ -25,9 +25,10 @@ function buildMapSearchUrl(
     $only_maps_with_medals = null,
     $page_size = null,
     $page_number = null,
-    $count_only = false
+    $count_only = false,
+    $desc = null
 ) {
-    global $base_url; // Utilise $base_url comme base de l'URL
+    global $base_url;
     $endpoint = $base_url . "/v1/mapsearch";
     $params = [];
 
@@ -40,6 +41,7 @@ function buildMapSearchUrl(
     if ($minimum_quality !== null) $params['minimum_quality'] = $minimum_quality;
     if ($only_playtest !== null) $params['only_playtest'] = $only_playtest === 'true' ? true : false;
     if ($only_maps_with_medals !== null) $params['only_maps_with_medals'] = $only_maps_with_medals === 'true' ? true : false;
+    if ($desc !== null) $params['desc'] = $desc;
     if (!$count_only) {
         $params['page_size'] = $page_size;
         $params['page_number'] = $page_number;
@@ -101,6 +103,7 @@ function getJsonResponse($url) {
 $filters = json_decode(file_get_contents("php://input"), true);
 $page_size = $filters['page_size'] ?? 25;
 $page_number = $filters['page_number'] ?? 1;
+$desc = $filters['desc'] ?? null;
 
 $url = buildMapSearchUrl(
     $filters['map_code'] ?? null,
@@ -114,7 +117,9 @@ $url = buildMapSearchUrl(
     $filters['only_playtest'] ?? null,
     $filters['only_maps_with_medals'] ?? null,
     $page_size,
-    $page_number
+    $page_number,
+    false,
+    $desc
 );
 
 $response = getJsonResponse($url);
