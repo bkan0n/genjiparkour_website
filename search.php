@@ -1,3 +1,11 @@
+<?php
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', __DIR__ . '/');
+}
+
+require BASE_PATH . "discord/session_init.php";
+include BASE_PATH . "discord/header.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,36 +16,55 @@
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-search.css">
     <script src="js/maps.js" defer></script>
+    <script src="js/layout.js" defer></script>
 </head>
 <body>
     <nav>
         <div class="logo">
             <img src="assets/favicon.png" alt="Logo" class="custom-icon">
-            <a href="index.html">GENJI PARKOUR</a>
+            <a href="home.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
-            <a href="index.html">Home</a>
+            <a href="home.php">Home</a>
             <a href="leaderboard.php">Leaderboard</a>
             <a href="https://dsc.gg/genjiparkour" target="_blank">Discord</a>
             <a href="tutorial.html">Tutorial</a>
         </div>
         <div class="menu--right" role="navigation">
+            <div class="auth-links">
+                <?php if (isset($_SESSION['user_avatar'])): ?>
+                    <div class="user-avatar-dropdown">
+                        <img src="https://cdn.discordapp.com/avatars/<?php echo htmlspecialchars($_SESSION['user_id']); ?>/<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>.png" alt="User Avatar" class="user-avatar" id="avatar-icon" />
+                    </div>
+                <?php else: ?>
+                    <a href="discord/login.php" class="btn-discord">
+                    <i class="fa-solid fa-circle-user"></i>
+                    </a>
+                <?php endif; ?>
+            </div>
             <div class="menuToggle" id="burgerMenu">
                 <input type="checkbox" id="burgerMenuScroll"/>
                 <span></span>
                 <span></span>
                 <span></span>
                 <ul class="menuItem">
-                    <li><a href="#">New maps</a></li>
-                    <li><a href="search.html">Maps search</a></li>
-                    <li><a href="#">Guides</a></li>
-                    <li><a href="news.html">News & Events</a></li>
+                    <li><a href="search.php">Maps search</a></li>
+                    <li><a href="news.php">News & Events</a></li>
                     <li><a href="graphs.php">Graphs</a></li>
+                    <li><a href="#">Submit completion</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    
+    <div class="modal" id="profileModal">
+        <div class="modal-content" id="profileModalContent">
+            <?php include 'modal/profile.php'; ?>
+        </div>
+    </div>
+    <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
+        <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
+        </div>
+    </div>
     <div class="container">
         <div class="tab-buttons">
             <button onclick="selectSection('mapSearch')" id="mapSearchBtn">Map Search</button>
@@ -45,7 +72,6 @@
             <button onclick="selectSection('guide')" id="guideBtn">Guides</button>
             <button onclick="selectSection('personalRecords')" id="personalRecordsBtn">Personal Records</button>
         </div>
-
         <div class="selected-mode-container">
             <div class="selected-mode" id="selectedMode">Select a search mode</div>
             <div class="filter-actions" id="filterActions" style="display: none;">
@@ -55,6 +81,7 @@
                 <div class="filter-options" id="filterOptions" onmouseleave="hideFilterOptions()"></div>
             </div>
         </div>
+        <div class="intuitive-mode" id="intuitiveMode" style= "display: none;">Add a filter or click ✔</div>
 
         <div class="filter-section" id="dynamicFilters">
             <div class="filters-container" id="filtersContainer">
