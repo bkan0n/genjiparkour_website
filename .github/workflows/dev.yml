@@ -25,4 +25,6 @@ jobs:
         db_name: ${{ secrets.DB_NAME }}
         x_api_root: ${{ secrets.X_API_ROOT }}
         x_api_key: ${{ secrets.X_API_KEY }}
+        discord_client_id: ${{ secrets.DISCORD_CLIENT_ID }}
+        discord_client_secret: ${{ secrets.DISCORD_CLIENT_SECRET }}
       
