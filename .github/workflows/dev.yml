@@ -8,9 +8,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4.2.2
 
-    - uses: bkan0n/ssh-remote-compose-action@1.0.6
+    - uses: bkan0n/ssh-remote-compose-action@1.0.7
       name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.GENJI_PK_HOST }}
