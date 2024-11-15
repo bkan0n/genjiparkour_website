@@ -222,6 +222,17 @@ function addFilter(filterId, filterLabel) {
             suggestionsContainer.classList.add("suggestions", "hidden");
             suggestionsContainer.id = "suggestionsContainer";
             filterElement.appendChild(suggestionsContainer);
+        } else if (filterId === "map_code") {
+            filterInput = document.createElement("input");
+            filterInput.type = "text";
+            filterInput.placeholder = filterLabel;
+
+            // Convertir les caractères en majuscules
+            filterInput.addEventListener("input", () => {
+                filterInput.value = filterInput.value.toUpperCase();
+            });
+
+            filterElement.appendChild(filterInput);
         } else if (filterId === "mechanics") {
             filterElement.appendChild(createDropdown("mechanics", "Select Mechanics", mechanicsOptions, updateMechanicsFilter));
         } else if (filterId === "restrictions") {
@@ -245,7 +256,7 @@ function addFilter(filterId, filterLabel) {
 
         filterElement.appendChild(removeButton);
         filterContainer.appendChild(filterElement);
-        
+
         // Afficher le conteneur de filtres
         filterContainer.style.display = "flex";
         hideFilterOptions();
@@ -407,7 +418,6 @@ function applyFilters() {
         intuitiveModeText.style.display = "none";
     }
 
-    // Appel unique
     fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -581,7 +591,7 @@ function displayMapSearchResults(data) {
 
 function displayPersonalRecordsResults(results) {
     const resultsContainer = document.getElementById("resultsContainer");
-    const dataResults = results.results || [];
+    const dataResults = Array.isArray(results.results) ? results.results : [];
 
     if (dataResults.length === 0) {
         resultsContainer.innerHTML = "<p>No results found.</p>";
@@ -619,7 +629,7 @@ function displayPersonalRecordsResults(results) {
 
 function displayCompletionsResults(results) {
     const resultsContainer = document.getElementById("resultsContainer");
-    const dataResults = results.results || [];
+    const dataResults = Array.isArray(results.results) ? results.results : [];
 
     if (dataResults.length === 0) {
         resultsContainer.innerHTML = "<p>No results found.</p>";
