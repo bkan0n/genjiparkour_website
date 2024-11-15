@@ -14,6 +14,8 @@ services:
       - DB_NAME=${DB_NAME}
       - X_API_ROOT=${X_API_ROOT}
       - X_API_KEY=${X_API_KEY}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
 
 networks:
   contabo_network:
