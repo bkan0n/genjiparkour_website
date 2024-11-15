@@ -11,7 +11,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Graphs</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-graphs.css">
@@ -23,7 +23,7 @@ include BASE_PATH . "discord/header.php";
 <body>
     <nav>
         <div class="logo">
-            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="custom-icon">
             <a href="home.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
@@ -370,7 +370,7 @@ include BASE_PATH . "discord/header.php";
             <canvas id="mostPlayedMapsChart" width="400" height="200"></canvas>
             <div class="difficulty-selection">
                 <label for="difficultySelect"></label>
-                <select id="difficultySelect" onchange="updateURL()">
+                <select id="difficultySelect">
                     <option value="Easy" <?php if ($difficulty === 'Easy') echo 'selected'; ?>>Easy</option>
                     <option value="Medium" <?php if ($difficulty === 'Medium') echo 'selected'; ?>>Medium</option>
                     <option value="Hard" <?php if ($difficulty === 'Hard') echo 'selected'; ?>>Hard</option>
@@ -579,76 +579,65 @@ include BASE_PATH . "discord/header.php";
 
     //Quality chart 
     document.addEventListener("DOMContentLoaded", () => {
-        const creators = <?php echo json_encode($creators); ?>;
-        const qualityAverages = <?php echo json_encode($qualityAverages); ?>;
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+    const ctx = document.getElementById("qualityDotChart").getContext("2d");
+    let qualityChart;
 
-        const canvas = document.getElementById('qualityDotChart');
-        const ctx = canvas.getContext('2d');
+    function updateChart(data) {
+        const sortedData = data.sort((a, b) => b.map_count - a.map_count).slice(0, 18);
 
-        const ratio = window.devicePixelRatio || 1;
+        const creators = sortedData.map(item => item.name);
+        const mapCounts = sortedData.map(item => item.map_count);
+        const averageQualities = sortedData.map(item => parseFloat(item.average_quality));
 
-        canvas.style.width = "300%";
-        canvas.style.height = "400px";
-        canvas.width = canvas.clientWidth * ratio;
-        canvas.height = canvas.clientHeight * ratio; 
-        ctx.scale(ratio, ratio);
+        const chartData = creators.map((creator, index) => ({
+            x: mapCounts[index],
+            y: averageQualities[index]
+        }));
 
-        new Chart(ctx, {
+        const colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+            '#C9CBFF', '#FFA500', '#FF4500', '#00FA9A', '#9370DB',
+            '#FFD700', '#DC143C', '#1E90FF', '#B22222', '#00CED1'
+        ];
+
+        if (qualityChart) {
+            qualityChart.destroy();
+        }
+
+        qualityChart = new Chart(ctx, {
             type: 'scatter',
             data: {
-                labels: creators,
                 datasets: [{
-                    label: 'Average quality per creator',
-                    data: qualityAverages.map((value, index) => ({ x: index + 1, y: value })),
-                    backgroundColor: colors.slice(0, qualityAverages.length),
+                    label: 'Map creators by average quality',
+                    data: chartData,
+                    backgroundColor: colors.slice(0, chartData.length),
                     pointRadius: 6,
                     pointHoverRadius: 8
                 }]
             },
             options: {
                 responsive: true,
-                animation: {
-                    duration: 4000 
-                },
                 scales: {
                     x: {
+                        type: 'logarithmic',
                         title: {
                             display: true,
-                            text: 'Maps makers',
+                            text: 'Amount of maps (Log Scale)',
                             color: '#333',
                             font: {
-                                family: 'Roboto',
-                                weight: 'bold',
-                                size: 18,
-                                lineHeight: 1.5
+                                size: 16,
+                                weight: 'bold'
                             }
                         },
-                        grid: {
-                            color: 'rgba(200, 200, 200, 0.3)',
-                            borderColor: '#CCCCCC', 
-                            borderWidth: 1.5,
-                            lineWidth: 1,
-                            drawOnChartArea: true,
-                            drawTicks: false, 
-                            drawBorder: false
-                        },
                         ticks: {
-                            callback: function(value) {
-                                return creators[value - 1];
-                            },
-                            stepSize: 1,
                             color: '#333',
                             font: {
-                                family: 'Roboto',
-                                weight: 'bold',
                                 size: 12
                             }
                         }
                     },
                     y: {
-                        beginAtZero: true,
-                        max: 6,
                         title: {
                             display: true,
                             text: 'Average quality',
@@ -660,14 +649,6 @@ include BASE_PATH . "discord/header.php";
                                 lineHeight: 1.5
                             }
                         },
-                        grid: {
-                            color: 'rgba(200, 200, 200, 0.3)',
-                            lineWidth: 1,
-                            borderDash: [5, 5],
-                            drawTicks: false,
-                            zeroLineColor: '#666',
-                            zeroLineWidth: 1.5,
-                        },
                         ticks: {
                             color: '#333',
                             font: {
@@ -675,33 +656,54 @@ include BASE_PATH . "discord/header.php";
                                 weight: 'bold',
                                 size: 12
                             }
-                        }
+                        },
+                        beginAtZero: true
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `Average quality: ${context.raw.y}`;
+                                const roundedQuality = averageQualities[context.dataIndex].toFixed(2);
+                                return `${creators[context.dataIndex]} - Maps: ${context.raw.x}, Quality: ${roundedQuality}`;
                             }
                         }
                     }
                 }
             }
         });
+    }
+
+        fetch('api/popularCreators.php')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    updateChart(data);
+                } else {
+                    console.error('Unexpected response format:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching top map creators:', error));
     });
+
+
+
 
     //Popular chart
     document.addEventListener("DOMContentLoaded", () => {
-        const mapCodes = <?php echo $mapCodes; ?>;
-        const mapCompletions = <?php echo $mapCompletions; ?>;
-        const mapQuality = <?php echo json_encode($qualityAverages); ?>;
-        const difficulty = "<?php echo $difficulty; ?>";
+    const ctx = document.getElementById("mostPlayedMapsChart").getContext("2d");
+    let mostPlayedMapsChart;
 
-        const ctx = document.getElementById("mostPlayedMapsChart").getContext("2d");
+    function updateChart(difficulty, data) {
+        const mapCodes = data.map(item => item.map_code);
+        const mapCompletions = data.map(item => item.completions);
+        const mapQuality = data.map(item => parseFloat(item.quality));
+
+        const bubbleData = mapCodes.map((mapCode, index) => ({
+            x: mapCode,
+            y: mapCompletions[index],
+            r: mapQuality[index] * 2
+        }));
 
         const difficultyColors = {
             "Easy": "rgba(10, 209, 0, 0.6)",
@@ -714,15 +716,11 @@ include BASE_PATH . "discord/header.php";
 
         const bubbleColor = difficultyColors[difficulty] || "rgba(54, 162, 235, 0.6)";
 
-        const bubbleData = mapCodes.map((mapCode, index) => {
-            return {
-                x: mapCode,
-                y: mapCompletions[index],
-                r: mapQuality[index] * 3
-            };
-        });
+        if (mostPlayedMapsChart) {
+            mostPlayedMapsChart.destroy();
+        }
 
-        new Chart(ctx, {
+        mostPlayedMapsChart = new Chart(ctx, {
             type: "bubble",
             data: {
                 datasets: [{
@@ -735,16 +733,13 @@ include BASE_PATH . "discord/header.php";
             },
             options: {
                 responsive: true,
-                animation: {
-                    duration: 4000
-                },
                 scales: {
                     x: {
                         type: 'category',
                         labels: mapCodes,
                         title: {
                             display: true,
-                            text: 'Maps codes',
+                            text: 'Map codes',
                             color: '#333',
                             font: {
                                 family: 'Roboto',
@@ -752,15 +747,6 @@ include BASE_PATH . "discord/header.php";
                                 size: 16,
                                 lineHeight: 1.5
                             }
-                        },
-                        grid: {
-                            color: 'rgba(200, 200, 200, 0.3)',
-                            borderColor: '#CCCCCC',
-                            borderWidth: 1.5,
-                            lineWidth: 1,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            drawBorder: false
                         },
                         ticks: {
                             color: '#333',
@@ -783,14 +769,6 @@ include BASE_PATH . "discord/header.php";
                                 lineHeight: 1.5
                             }
                         },
-                        grid: {
-                            color: 'rgba(200, 200, 200, 0.3)',
-                            lineWidth: 1,
-                            borderDash: [5, 5],
-                            drawTicks: false,
-                            zeroLineColor: '#666',
-                            zeroLineWidth: 1.5,
-                        },
                         ticks: {
                             color: '#333',
                             font: {
@@ -803,30 +781,40 @@ include BASE_PATH . "discord/header.php";
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: true
-                    },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                const mapCode = mapCodes[context.dataIndex];
-                                const completions = context.raw.y;
-                                const quality = mapQuality[context.dataIndex];
-                                return `${mapCode}: ${completions} completions, Quality: ${quality}`;
+                                return `${context.raw.x}: ${context.raw.y} completions, Quality: ${mapQuality[context.dataIndex]}`;
                             }
                         }
                     }
                 }
             }
         });
-    });
-
-    function updateURL() {
-        const difficulty = document.getElementById("difficultySelect").value;
-        const url = new URL(window.location.href);
-        url.searchParams.set("difficulty", difficulty);
-        window.location.href = url; 
     }
+
+    document.getElementById("difficultySelect").addEventListener("change", updateChartData);
+
+        function updateChartData() {
+            const difficulty = document.getElementById("difficultySelect").value;
+
+            fetch("api/popularMaps.php")
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        const filteredData = data.filter(item => item.difficulty === difficulty);
+                        updateChart(difficulty, filteredData);
+                    } else if (data.error) {
+                        console.error('API Error:', data.error);
+                    } else {
+                        console.error('Unexpected response format:', data);
+                    }
+                })
+                .catch(error => console.error('Error fetching chart data:', error));
+        }
+
+        updateChartData();
+    });
 
     function animateSelect() {
         const select = document.getElementById("difficultySelect");
