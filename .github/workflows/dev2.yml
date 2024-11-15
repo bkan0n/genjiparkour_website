@@ -26,7 +26,7 @@ jobs:
         envkey_X_API_KEY: ${{ secrets.X_API_KEY }}
         envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
-        directory: /
+        directory: ./
         file_name: .env.aaaaaaaa
         fail_on_empty: false
         sort_keys: false
