@@ -27,7 +27,7 @@ jobs:
         envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
         directory: ./
-        file_name: .env.aaaaaaaa
+        file_name: .env
         fail_on_empty: false
         sort_keys: false
 
@@ -36,4 +36,4 @@ jobs:
         host: ${{ secrets.GENJI_PK_HOST }}
         key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         username: ${{ secrets.GENJI_PK_SSH_USER }}
-        script: whoami
+        script: docker compose --env-file .env -f docker-compose.dev.yaml up --no-deps --build 
