@@ -8,9 +8,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4.2.2
 
-    - uses: bkan0n/ssh-remote-compose-action@1.0.6
+    - uses: bkan0n/ssh-remote-compose-action@1.0.7
       name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.GENJI_PK_HOST }}
@@ -25,4 +25,6 @@ jobs:
         db_name: ${{ secrets.DB_NAME }}
         x_api_root: ${{ secrets.X_API_ROOT }}
         x_api_key: ${{ secrets.X_API_KEY }}
+        discord_client_id: ${{ secrets.DISCORD_CLIENT_ID }}
+        discord_client_secret: ${{ secrets.DISCORD_CLIENT_SECRET }}
       
