@@ -22,10 +22,10 @@ include BASE_PATH . "discord/header.php";
     <nav>
         <div class="logo">
             <img src="assets/img-2/favicon.png" alt="Logo" class="custom-icon">
-            <a href="home.php">GENJI PARKOUR</a>
+            <a href="index.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
-            <a href="home.php">Home</a>
+            <a href="index.php">Home</a>
             <a href="leaderboard.php">Leaderboard</a>
             <a href="https://dsc.gg/genjiparkour" target="_blank">Discord</a>
             <a href="tutorial.php">Tutorial</a>

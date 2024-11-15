@@ -4,7 +4,7 @@ if (!defined('BASE_PATH')) {
 }
 require BASE_PATH . 'discord/config.php';
 
-$returnUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : REDIRECT_URL . 'home.php';
+$returnUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : REDIRECT_URL . 'index.php';
 $_SESSION['return_url'] = $returnUrl;
 
 $_SESSION['state'] = bin2hex(random_bytes(16));

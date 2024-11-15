@@ -109,7 +109,7 @@ if (is_array($guildsData)) {
     }
 }
 
-$returnUrl = $_SESSION['return_url'] ?? REDIRECT_URL . 'home.php';
+$returnUrl = $_SESSION['return_url'] ?? REDIRECT_URL . 'index.php';
 unset($_SESSION['return_url']);
 
 header('Location: ' . $returnUrl);
