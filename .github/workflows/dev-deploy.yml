@@ -17,4 +17,4 @@ jobs:
         host: ${{ secrets.GENJI_PK_HOST }}
         key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         username: ${{ secrets.GENJI_PK_SSH_USER }}
-        script: DB_HOST=${{ secrets.DB_HOST }} DB_PORT=${{ secrets.DB_PORT }} DB_USER=${{ secrets.DB_USER }} DB_PWD=${{ secrets.DB_PWD }} DB_NAME=${{ secrets.DB_NAME }} X_API_ROOT=${{ secrets.X_API_ROOT }} X_API_KEY =${{ secrets.X_API_KEY }} DISCORD_CL=${{ secrets.DISCORD_CLIENT_ID }} DISCORD_CLIENT_SECRET=${{ secrets.DISCORD_CLIENT_SECRET }}  docker compose -f docker-compose.dev.yaml up --no-deps --build 
+        script: DB_HOST=${{ secrets.DB_HOST }} DB_PORT=${{ secrets.DB_PORT }} DB_USER=${{ secrets.DB_USER }} DB_PWD=${{ secrets.DB_PWD }} DB_NAME=${{ secrets.DB_NAME }} X_API_ROOT=${{ secrets.X_API_ROOT }} X_API_KEY=${{ secrets.X_API_KEY }} DISCORD_CL=${{ secrets.DISCORD_CLIENT_ID }} DISCORD_CLIENT_SECRET=${{ secrets.DISCORD_CLIENT_SECRET }}  docker compose -f docker-compose.dev.yaml up --no-deps --build 
