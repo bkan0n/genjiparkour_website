@@ -28,10 +28,6 @@ if (!defined('DISCORD_CLIENT_SECRET')) {
     define('DISCORD_CLIENT_SECRET', getenv('DISCORD_CLIENT_SECRET'));
 }
 
-if (!defined('DISCORD_REDIRECT_URI')) {
-    define('DISCORD_REDIRECT_URI', getenv('DISCORD_REDIRECT_URI'));
-}
-
 if (!defined('DISCORD_API_URL')) {
     define('DISCORD_API_URL', 'https://discord.com/api/v10');
 }
@@ -51,6 +47,10 @@ if (!defined('REDIRECT_URL')) {
     } elseif ($_SERVER['HTTP_HOST'] === 'genji.pk') {
         define('REDIRECT_URL', 'https://genji.pk/');
     }
+}
+
+if (!defined('DISCORD_REDIRECT_URI')) {
+    define('DISCORD_REDIRECT_URI', REDIRECT_URL . 'discord/callback.php');
 }
 
 $_SESSION['LAST_ACTIVITY'] = time();
