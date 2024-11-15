@@ -43,21 +43,20 @@ include BASE_PATH . "discord/header.php";
                     </a>
                 <?php endif; ?>
             </div>
-            <div class="menuToggle" id="burgerMenu">
-                <input type="checkbox" id="burgerMenuScroll"/>
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul class="menuItem">
-                    <li><a href="search.php">Maps search</a></li>
-                    <li><a href="news.php">News & Events</a></li>
-                    <li><a href="graphs.php">Graphs</a></li>
-                    <li><a href="#">Submit completion</a></li>
-                </ul>
-            </div>
+        <div class="menuToggle" id="burgerMenu">
+            <input type="checkbox" id="burgerMenuScroll" />
+            <span></span>
+            <span></span>
+            <span></span>
+            <ul class="menuItem hidden" id="menuItems">
+                <li><a href="search.php">Maps search</a></li>
+                <li><a href="news.php">News & Events</a></li>
+                <li><a href="graphs.php">Graphs</a></li>
+                <li><a href="#">Submit completion</a></li>
+            </ul>
         </div>
     </nav>
-    <div class="modal" id="profileModal">
+    <div class="modal-profile" id="profileModal">
         <div class="modal-content">
             <?php include 'modal/profile.php'; ?>
         </div>

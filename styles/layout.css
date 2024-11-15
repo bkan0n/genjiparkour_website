@@ -571,7 +571,7 @@ footer {
 }
 
 /* Style pour le modal */
-.modal {
+.modal-profile {
   display: none;
   position: fixed;
   top: 0;
