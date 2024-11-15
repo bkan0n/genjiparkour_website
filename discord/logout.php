@@ -26,7 +26,7 @@ log_event("User logged out: " . $_SESSION['user_id']);
 session_unset();
 session_destroy();
 
-$redirectUrl = isset($_GET['redirect']) ? $_GET['redirect'] : '../home.php';
+$redirectUrl = isset($_GET['redirect']) ? $_GET['redirect'] : '../index.php';
 header('Location: ' . $redirectUrl);
 exit;
 ?>
