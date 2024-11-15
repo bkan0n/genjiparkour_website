@@ -57,7 +57,7 @@ include BASE_PATH . "discord/header.php";
             </div>
         </div>
     </nav>
-    <div class="modal-profile" id="profileModal">
+    <div class="modal-profile" id="profileModal" style="display: none;">
         <div class="modal-content">
             <?php include 'modal/profile.php'; ?>
         </div>

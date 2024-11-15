@@ -26,7 +26,6 @@ $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/bann
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js"></script>
     <style>
         .user-card { margin: 20px auto; padding: 20px; background: #333; color: #fff; border-radius: 10px; max-width: 600px; text-align: center; }
         .header-banner img { width: 100%; border-radius: 10px; }

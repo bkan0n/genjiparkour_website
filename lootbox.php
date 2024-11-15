@@ -65,7 +65,7 @@ include BASE_PATH . "discord/header.php";
         </div>
     </div>
 </nav>
-<div class="modal-profile" id="profileModal">
+<div class="modal-profile" id="profileModal" style="display: none;">
     <div class="modal-content">
         <?php include 'modal/profile.php'; ?>
     </div>
@@ -111,5 +111,6 @@ include BASE_PATH . "discord/header.php";
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js" defer></script>
     <script src="js/lootbox.js" defer></script>
+    <script src="js/layout.js" defer></script>
   </body>
 </html>
