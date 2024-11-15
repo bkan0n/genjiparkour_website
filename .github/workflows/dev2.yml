@@ -35,4 +35,4 @@ jobs:
         host: ${{ secrets.GENJI_PK_HOST }}
         key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         username: ${{ secrets.GENJI_PK_SSH_USER }}
-        script: docker compose --env-file .env -f docker-compose.dev.yaml up --no-deps --build 
+        script: docker compose --env-file ~/.env -f docker-compose.dev.yaml up --no-deps --build 
