@@ -11,7 +11,7 @@ include BASE_PATH . "discord/header.php";
 <head>
     <meta charset="UTF-8">
     <title>Genji Parkour - Leaderboard</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-leaderboard.css">
@@ -22,7 +22,7 @@ include BASE_PATH . "discord/header.php";
     <div id="wrapper">
     <nav>
         <div class="logo">
-            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="custom-icon">
             <a href="home.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">

@@ -1,20 +1,19 @@
 <?php
+require 'config.php';
 header("Content-Type: application/json");
 
-$api_key = getenv("X_API_KEY");
-$base_url = getenv("X_API_ROOT");
-if (!$api_key) {
+if (!$apiKey) {
     echo json_encode(["error" => "API key not set."]);
     exit;
 }
-if (!$base_url) {
+if (!$apiRoot) {
     echo json_encode(["error" => "API root not set."]);
     exit;
 }
 
 function buildCompletionsUrl($map_code = null, $page_size = 25, $page_number = 1) {
-    global $base_url;
-    $endpoint = $base_url . "/v1/completions";
+    global $apiRoot;
+    $endpoint = $apiRoot . "/v1/completions/search";
     $params = [];
 
     if ($map_code !== null) $params['map_code'] = $map_code;
@@ -55,7 +54,7 @@ $page_size = $filters['page_size'] ?? 25;
 $page_number = $filters['page_number'] ?? 1;
 
 $url = buildCompletionsUrl(
-    $filters['map_code'] ?? null, // Utilise le filtre `map_code`
+    $filters['map_code'] ?? null,
     $page_size,
     $page_number
 );

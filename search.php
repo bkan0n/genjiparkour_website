@@ -12,7 +12,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Maps</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-search.css">
     <script src="js/maps.js" defer></script>
@@ -21,14 +21,14 @@ include BASE_PATH . "discord/header.php";
 <body>
     <nav>
         <div class="logo">
-            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="custom-icon">
             <a href="home.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
             <a href="home.php">Home</a>
             <a href="leaderboard.php">Leaderboard</a>
             <a href="https://dsc.gg/genjiparkour" target="_blank">Discord</a>
-            <a href="tutorial.html">Tutorial</a>
+            <a href="tutorial.php">Tutorial</a>
         </div>
         <div class="menu--right" role="navigation">
             <div class="auth-links">

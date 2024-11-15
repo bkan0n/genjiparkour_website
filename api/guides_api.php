@@ -1,20 +1,18 @@
 <?php
+require 'config.php';
 header("Content-Type: application/json");
-
-$api_key = getenv("X_API_KEY");
-$base_url = getenv("X_API_ROOT");
-if (!$api_key) {
+if (!$apiKey) {
     echo json_encode(["error" => "API key not set."]);
     exit;
 }
-if (!$base_url) {
+if (!$apiRoot) {
     echo json_encode(["error" => "API root not set."]);
     exit;
 }
 
 function buildGuideUrl($map_code = null, $page_size = 25, $page_number = 1) {
-    global $base_url;
-    $endpoint = $base_url . "/v1/guides";
+    global $apiRoot;
+    $endpoint = $apiRoot . "/v1/maps/guides";
     $params = [];
 
     if ($map_code !== null) $params['map_code'] = $map_code;
