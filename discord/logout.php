@@ -6,8 +6,9 @@ require BASE_PATH . 'discord/config.php';
 
 function log_event($message) {
     $logDir = __DIR__ . '/logs';
+
     if (!is_dir($logDir)) {
-        mkdir($logDir, 0777, true);
+        @mkdir($logDir, 0777, true);
     }
 
     $logFile = $logDir . '/security.log';
@@ -15,13 +16,18 @@ function log_event($message) {
 
     if (file_exists($logFile) && filesize($logFile) >= $maxFileSize) {
         $timestamp = date('Y-m-d_H-i-s');
-        rename($logFile, $logDir . "/security_$timestamp.log");
+        @rename($logFile, $logDir . "/security_$timestamp.log");
     }
 
     $logEntry = date("Y-m-d H:i:s") . " - " . $message . "\n";
-    file_put_contents($logFile, $logEntry, FILE_APPEND);
+    if (!@file_put_contents($logFile, $logEntry, FILE_APPEND)) {
+        error_log("Failed to write to log file: $logFile");
+    }
 }
-log_event("User logged out: " . $_SESSION['user_id']);
+
+if (isset($_SESSION['user_id'])) {
+    log_event("User logged out: " . $_SESSION['user_id']);
+}
 
 session_unset();
 session_destroy();
