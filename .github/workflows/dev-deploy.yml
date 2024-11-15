@@ -34,4 +34,11 @@ jobs:
         host: ${{ secrets.GENJI_PK_HOST }}
         key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         username: ${{ secrets.GENJI_PK_SSH_USER }}
+        script: ls -al
+
+    - uses: appleboy/ssh-action@v1.1.0
+      with:
+        host: ${{ secrets.GENJI_PK_HOST }}
+        key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
+        username: ${{ secrets.GENJI_PK_SSH_USER }}
         script: docker compose --env-file ${{ github.workspace }}/.env -f docker-compose.dev.yaml up --no-deps --build 
