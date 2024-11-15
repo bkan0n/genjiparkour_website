@@ -1,0 +1,19 @@
+services:
+  web:
+    container_name: genjiparkour_website
+    build: .
+    networks:
+      - contabo_network
+      - genji-network
+    
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PWD=${DB_PWD}
+
+networks:
+  contabo_network:
+    external: true
+  genji-network:
+    external: true
