@@ -75,7 +75,7 @@ function getRandomRewards(userId, keyType) {
 
 $('.generate').click(function() {
     if (!userId) {
-        alert("Veuillez vous connecter pour ouvrir un pack.");
+        alert("Login is required on this page");
         return;
     }
 
