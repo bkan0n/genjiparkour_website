@@ -3,7 +3,7 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', __DIR__ . '/');
 }
 
-require BASE_PATH . "discord/session_init.php";
+require BASE_PATH . "../discord/session_init.php";
 
 function is_animated($image) {
     return (substr($image, 0, 2) == "a_") ? ".gif" : ".png";
@@ -34,9 +34,8 @@ $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/bann
     </style>
 </head>
 <body>
-    <main class="container">
+    <main class="container-profile">
         <div class="user-card">
-            <span class="close-btn" id="closeModal"><i class="fa-solid fa-xmark"></i></span>
             <?php if ($banner_url): ?>
                 <div class="header-banner">
                     <img src="<?php echo htmlspecialchars($banner_url); ?>?size=300" alt="User Banner">

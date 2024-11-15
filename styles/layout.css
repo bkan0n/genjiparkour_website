@@ -571,6 +571,20 @@ footer {
 }
 
 /* Style pour le modal */
+.container-profile {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 5;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
 #profileModal {
   display: none;
   position: fixed;
@@ -613,6 +627,6 @@ footer {
   background: #2b2b2b !important;
   color: #fff;
   border-radius: 10px;
-  max-width: 600px;
+  max-width: 200px;
   text-align: center;
 }

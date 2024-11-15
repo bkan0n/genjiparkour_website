@@ -66,10 +66,9 @@ include BASE_PATH . "discord/header.php";
     </div>
 </nav>
 <div class="modal-profile" id="profileModal" style="display: none;">
-    <div id="profileModalContent" class="modal-content">
-        <?php include 'modal/profile.php'; ?>
+        <div id="profileModalContent" class="modal-content">
+        </div>
     </div>
-</div>
 <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
     <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
     </div>

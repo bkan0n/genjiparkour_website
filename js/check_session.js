@@ -51,23 +51,3 @@ function closeSessionModal() {
     window.location.href = `${REDIRECT_URL}discord/logout.php?redirect=` + encodeURIComponent(redirectUrl);
     document.getElementById("sessionModal").style.display = "none";
 }
-
-const profileModal = document.getElementById("profileModal");
-const avatarIcon = document.getElementById("avatar-icon");
-const closeModal = document.getElementById("closeModal");
-
-if (avatarIcon && profileModal && closeModal) {
-    avatarIcon.addEventListener("click", () => {
-        profileModal.style.display = "flex";
-    });
-
-    closeModal.addEventListener("click", () => {
-        profileModal.style.display = "none";
-    });
-
-    window.addEventListener("click", (event) => {
-        if (event.target === profileModal) {
-            profileModal.style.display = "none";
-        }
-    });
-}
