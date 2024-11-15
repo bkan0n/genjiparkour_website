@@ -12,7 +12,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Home</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css">
@@ -21,12 +21,12 @@ include BASE_PATH . "discord/header.php";
 </head>
 <body>
     <div class="bg-container">
-        <img src="assets/bg4k-3.webp" alt="Background" class="background-image">
+        <img src="assets/img-2/bg4k-3.webp" alt="Background" class="background-image">
     </div>
     <div id="smoke-background"></div>
     <nav>
         <div class="logo">
-            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="custom-icon">
             <a href="home.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
@@ -77,8 +77,8 @@ include BASE_PATH . "discord/header.php";
         </div>
         <div class="hero-content">
             <div class="side-section left">
-                <p class="recent-stats">Newest maps</p>
-                <a href="#" class="cta-btn">Coming soon</a>
+                <p class="recent-stats">Pack opening</p>
+                <a href="lootbox.php" class="cta-btn">Click here</a>
             </div>
             <div class="side-section right">
                 <p class="recent-stats">Newsfeed</p>

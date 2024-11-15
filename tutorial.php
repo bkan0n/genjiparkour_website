@@ -12,7 +12,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Tutorial</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-tutorial.css">
@@ -22,7 +22,7 @@ include BASE_PATH . "discord/header.php";
 <body>
     <nav>
         <div class="logo">
-            <img src="assets/favicon.png" alt="Logo" class="custom-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="custom-icon">
             <a href="home.php">GENJI PARKOUR</a>
         </div>
         <div class="nav-links">
@@ -82,7 +82,7 @@ include BASE_PATH . "discord/header.php";
 
         <section class="hero-section" id="hero2">
             <div class="hero-image">
-                <img src="assets/parkour_tutorial.jpg" alt="Techniques Avancées" loading="lazy">
+                <img src="assets/img-2/parkour_tutorial.jpg" alt="Techniques Avancées" loading="lazy">
             </div>
             <div class="hero-content">
                 <h1>Genji Parkour Tutorial</h1>
