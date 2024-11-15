@@ -48,11 +48,11 @@ include BASE_PATH . "discord/header.php";
                 <?php endif; ?>
             </div>
             <div class="menuToggle" id="burgerMenu">
-                <input type="checkbox" id="burgerMenuScroll"/>
+                <input type="checkbox" id="burgerMenuScroll" />
                 <span></span>
                 <span></span>
                 <span></span>
-                <ul class="menuItem">
+                <ul class="menuItem hidden" id="menuItems">
                     <li><a href="search.php">Maps search</a></li>
                     <li><a href="news.php">News & Events</a></li>
                     <li><a href="graphs.php">Graphs</a></li>
@@ -61,7 +61,7 @@ include BASE_PATH . "discord/header.php";
             </div>
         </div>
     </nav>
-    <div class="modal" id="profileModal">
+    <div class="modal-profile" id="profileModal">
         <div class="modal-content">
             <?php include 'modal/profile.php'; ?>
         </div>

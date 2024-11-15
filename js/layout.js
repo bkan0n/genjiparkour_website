@@ -18,3 +18,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const burgerMenu = document.getElementById("burgerMenu");
+    const menuItems = document.getElementById("menuItems");
+
+    burgerMenu.addEventListener("click", () => {
+        menuItems.classList.toggle("hidden");
+    });
+});
