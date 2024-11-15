@@ -12,33 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4.2.2
 
-    - uses: SpicyPizza/create-envfile@v2.0.3
-      name: Make envfile
-      with:
-        envkey_DB_HOST: ${{ secrets.DB_HOST }}
-        envkey_DB_PORT: ${{ secrets.DB_PORT }}
-        envkey_DB_USER: ${{ secrets.DB_USER }}
-        envkey_DB_PWD: ${{ secrets.DB_PWD }}
-        envkey_DB_NAME: ${{ secrets.DB_NAME }}
-        envkey_X_API_ROOT: ${{ secrets.X_API_ROOT }}
-        envkey_X_API_KEY: ${{ secrets.X_API_KEY }}
-        envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
-        envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
-        file_name: .env
-        directory: ../../../../home/nebula/
-        fail_on_empty: false
-        sort_keys: false
-
     - uses: appleboy/ssh-action@v1.1.0
       with:
         host: ${{ secrets.GENJI_PK_HOST }}
         key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         username: ${{ secrets.GENJI_PK_SSH_USER }}
-        script: ls -al
-
-    - uses: appleboy/ssh-action@v1.1.0
-      with:
-        host: ${{ secrets.GENJI_PK_HOST }}
-        key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
-        username: ${{ secrets.GENJI_PK_SSH_USER }}
-        script: docker compose --env-file ${{ github.workspace }}/.env -f docker-compose.dev.yaml up --no-deps --build 
+        script: DB_HOST=${{ secrets.DB_HOST }} DB_PORT=${{ secrets.DB_PORT }} DB_USER=${{ secrets.DB_USER }} DB_PWD=${{ secrets.DB_PWD }} DB_NAME=${{ secrets.DB_NAME }} X_API_ROOT=${{ secrets.X_API_ROOT }} X_API_KEY =${{ secrets.X_API_KEY }} DISCORD_CL=${{ secrets.DISCORD_CLIENT_ID }} DISCORD_CLIENT_SECRET=${{ secrets.DISCORD_CLIENT_SECRET }}  docker compose -f docker-compose.dev.yaml up --no-deps --build 
