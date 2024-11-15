@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", function () {
     const avatarIcon = document.getElementById("avatar-icon");
     const profileModal = document.getElementById("profileModal");
-    const profileModalContent = document.getElementById("profileModalContent");
     const closeModal = document.getElementById("closeModal");
 
     if (!avatarIcon) {
@@ -47,35 +46,23 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    if (avatarIcon && profileModal && profileModalContent) {
+    if (avatarIcon && profileModal) {
         avatarIcon.addEventListener("click", () => {
             profileModal.style.display = "block";
-
-            fetch('modal/profile.php')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erreur HTTP : ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    profileModalContent.innerHTML = html;
-                })
-                .catch(error => {
-                    console.error("Erreur lors du chargement de modal/profile.php :", error);
-                    profileModalContent.innerHTML = "<p>Erreur lors du chargement du contenu du modal.</p>";
-                });
+            document.body.style.overflowY = "hidden";
         });
 
         if (closeModal) {
             closeModal.addEventListener("click", () => {
                 profileModal.style.display = "none";
+                document.body.style.overflowY = "auto";
             });
         }
 
         window.addEventListener("click", (event) => {
             if (event.target === profileModal) {
                 profileModal.style.display = "none";
+                document.body.style.overflowY = "auto";
             }
         });
     }

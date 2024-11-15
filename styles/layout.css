@@ -579,7 +579,7 @@ footer {
   background-color: transparent;
   padding: 20px;
   border-radius: 10px;
-  z-index: 5;
+  z-index: 1000;
   width: 90%;
   max-width: 500px;
   text-align: center;
@@ -594,7 +594,7 @@ footer {
   height: 100%;
   align-items: center;
   justify-content: center;
-  z-index: 5;
+  z-index: 7;
 }
 
 .modal-content {
@@ -605,7 +605,7 @@ footer {
   color: white;
   border: none !important;
   box-shadow: none !important;
-  z-index: 5;
+  z-index: 7;
 }
 
 .close-btn {
@@ -629,4 +629,5 @@ footer {
   border-radius: 10px;
   max-width: 200px;
   text-align: center;
+  z-index: 7;
 }
