@@ -15,7 +15,7 @@ $username = $_SESSION['username'] ?? "Guest";
 $user_flags = $_SESSION['user_flags'] ?? 0;
 $user_premium = $_SESSION['user_premium'] ?? 0;
 
-$avatar_url = $user_id && $user_avatar ? "https://cdn.discordapp.com/avatars/$user_id/$user_avatar" . is_animated($user_avatar) : "assets/default-avatar.jpg";
+$avatar_url = $user_id && $user_avatar ? "https://cdn.discordapp.com/avatars/$user_id/$user_avatar" . is_animated($user_avatar) : "assets/img-2/default-avatar.jpg";
 $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/banners/$user_id/{$_SESSION['user_banner']}" . is_animated($_SESSION['user_banner']) : null;
 ?>
 
