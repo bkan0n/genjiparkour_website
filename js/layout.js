@@ -33,17 +33,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetch('modal/profile.php')
         .then(response => {
+            console.log("Status:", response.status);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             return response.text();
         })
         .then(html => {
-            profileModal.innerHTML = html;
+            console.log("Fetch succeeded:", html);
+            document.getElementById("profileModalContent").innerHTML = html;
         })
         .catch(error => {
-            console.error("Erreur lors du chargement du contenu du modal :", error);
-            profileModal.innerHTML = "<p>Une erreur s'est produite lors du chargement.</p>";
+            console.error("Fetch failed:", error);
+            document.getElementById("profileModalContent").innerHTML = "<p>Erreur lors du chargement.</p>";
         });
 });
 
