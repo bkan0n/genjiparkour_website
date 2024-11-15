@@ -1,4 +1,4 @@
-name: Updated Dev Deployment
+name: Dev Deployment
 
 on:
   push:
@@ -15,8 +15,6 @@ jobs:
     - uses: SpicyPizza/create-envfile@v2.0.3
       name: Make envfile
       with:
-        # envkey_DOCKER_COMPOSE_PREFIX: genji_pk-test
-        # envkey_DOCKER_COMPOSE_FILENAME: docker-compose.dev.yaml
         envkey_DB_HOST: ${{ secrets.DB_HOST }}
         envkey_DB_PORT: ${{ secrets.DB_PORT }}
         envkey_DB_USER: ${{ secrets.DB_USER }}
