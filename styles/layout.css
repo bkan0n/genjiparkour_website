@@ -571,7 +571,7 @@ footer {
 }
 
 /* Style pour le modal */
-.modal-profile {
+#profileModal {
   display: none;
   position: fixed;
   top: 0;
@@ -616,8 +616,3 @@ footer {
   max-width: 600px;
   text-align: center;
 }
-
-.header-banner img { width: 100%; border-radius: 10px; }
-.header-avatar img { border-radius: 50%; width: 100px; height: 100px; }
-.header-username { font-size: 24px; font-weight: bold; }
-.header-badges img { margin: 5px; }

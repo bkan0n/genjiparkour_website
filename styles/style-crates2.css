@@ -1270,9 +1270,6 @@
  
  body { font-family: "Roboto", sans-serif; font-size: 16px; font-weight: 400; background-color: #242a2f; -webkit-font-smoothing: antialiased; color: #fff; }
  
- a, a:visited { color: #2797e8; }
- a:hover, a:visited:hover { color: #55aded; }
- 
  .container { width: 100%; max-width: 1000px; margin: 0px auto; }
  .container.main { margin-top: 30px; }
 
