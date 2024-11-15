@@ -24,39 +24,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const menuItems = document.getElementById("menuItems");
 
     burgerMenu.addEventListener("click", () => {
-        menuItems.classList.toggle("hidden");
+        if (menuItems.classList.contains('hidden')) {
+            menuItems.style.visibility = 'visible';
+            menuItems.classList.remove('hidden');
+        } else {
+            menuItems.classList.add('hidden');
+            setTimeout(() => {
+                menuItems.style.visibility = 'hidden';
+            }, 1000);
+        }
     });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const profileModal = document.getElementById("profileModalContent");
-
-    fetch('modal/profile.php')
-        .then(response => {
-            console.log("Status:", response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(html => {
-            console.log("Fetch succeeded:", html);
-            document.getElementById("profileModalContent").innerHTML = html;
-        })
-        .catch(error => {
-            console.error("Fetch failed:", error);
-            document.getElementById("profileModalContent").innerHTML = "<p>Erreur lors du chargement.</p>";
-        });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
     const avatarIcon = document.getElementById("avatar-icon");
     const profileModal = document.getElementById("profileModal");
+    const profileModalContent = document.getElementById("profileModalContent");
     const closeModal = document.getElementById("closeModal");
 
-    if (avatarIcon && profileModal) {
+    if (!avatarIcon) {
+        console.warn("L'utilisateur n'est pas connecté. Aucun modal ne sera affiché.");
+        return;
+    }
+
+    if (avatarIcon && profileModal && profileModalContent) {
         avatarIcon.addEventListener("click", () => {
             profileModal.style.display = "block";
+
+            fetch('modal/profile.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP : ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    profileModalContent.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error("Erreur lors du chargement de modal/profile.php :", error);
+                    profileModalContent.innerHTML = "<p>Erreur lors du chargement du contenu du modal.</p>";
+                });
         });
 
         if (closeModal) {

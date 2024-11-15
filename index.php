@@ -17,7 +17,7 @@ include BASE_PATH . "discord/header.php";
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-main.css">
-    <script src="js/layout.js" defer nonce="<?php echo $nonce; ?>"></script>
+    <script src="js/layout.js" defer></script>
 </head>
 <body>
     <div class="bg-container">
