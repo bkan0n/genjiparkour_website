@@ -67,3 +67,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+function preventExcessiveRefresh(maxRefreshes, timeWindow) {
+    const storageKey = 'pageRefreshes';
+    const now = Date.now();
+
+    let refreshes = localStorage.getItem(storageKey);
+    refreshes = refreshes ? JSON.parse(refreshes) : [];
+
+    refreshes = refreshes.filter(timestamp => now - timestamp < timeWindow);
+
+    refreshes.push(now);
+
+    if (refreshes.length > maxRefreshes) {
+        document.body.innerHTML = `<h1>Excessive page refresh (${maxRefreshes} in ${timeWindow / 1000} secondes detected)</h1>`;
+        throw new Error('Excessive page refresh. Page blocked.');
+    }
+
+    localStorage.setItem(storageKey, JSON.stringify(refreshes));
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    preventExcessiveRefresh(5, 5000);
+});

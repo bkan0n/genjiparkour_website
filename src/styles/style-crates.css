@@ -415,3 +415,18 @@
 .random-shake {
     animation: randomShake 0.1s ease-in-out infinite;
 }
+
+@keyframes disintegration {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.8) rotate(10deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(0.5) rotate(20deg);
+        opacity: 0;
+    }
+}

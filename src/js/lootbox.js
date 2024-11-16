@@ -6,14 +6,12 @@ var isRunning = false;
 var openSound = new Audio('assets/sounds/open-box.ogg');
 var volume = 0.25;
 var filterType;
-var weights = [];
-var rareWeights = [];
-var randomizedItem = [];
 var crate = [];
 let generatedRewards = [];
 let rewardKeyType = "";
 let rewardNonce = "";
 let keys = 0;
+let packOpened = false;
 const sounds = {
     common: new Audio('assets/sounds/common-sound.ogg'),
     rare: new Audio('assets/sounds/common-sound.ogg'),
@@ -133,36 +131,82 @@ function proceedWithLootBoxOpening() {
         openSound.volume = volume;
         openSound.play();
 
-        $('.crate-0, .crate-1, .crate-2').each(function() {
-            if ($(this).hasClass('flip')) {
-                $(this).removeClass('flip');
-            }
-            $(this).addClass('animated bounceOutUp');
-        });
+        const firstTimeDelays = {
+            separation: 1000,
+            bounceOutUp: 1600,
+            bounceInDown: 2500,
+        };
 
-        $('.card1').animate({ left: '-=250px', top: '0px', opacity: 1 }, 500, 'swing');
-        $('.card2').animate({ left: '0px', top: '10px', opacity: 1 }, 500, 'swing');
-        $('.card3').animate({ left: '+=250px', top: '20px', opacity: 1 }, 500, 'swing');
+        const subsequentDelays = {
+            flip: 1000,
+            disintegration: 1000,
+            bounceInDown: 500,
+        };
 
-        setTimeout(function() {
-            $('.card1, .card2, .card3').each(function() {
-                $(this).addClass('animated bounceOutUp');
+        const delays = packOpened ? subsequentDelays : firstTimeDelays;
+
+        if (!packOpened) {
+            console.log("Première ouverture : animation de séparation et bounceOutUp");
+
+            $('.card1').animate({ left: '-=250px', top: '0px', opacity: 1 }, delays.separation, 'swing');
+            $('.card2').animate({ left: '0px', top: '10px', opacity: 1 }, delays.separation, 'swing');
+            $('.card3').animate({ left: '+=250px', top: '20px', opacity: 1 }, delays.separation, 'swing');
+
+            setTimeout(function () {
+                console.log("Ajout de bounceOutUp aux cartes après séparation.");
+                $('.card1, .card2, .card3').each(function () {
+                    $(this).removeClass('flip animated bounceInDown').addClass('animated bounceOutUp');
+                });
+            }, delays.separation);
+
+            setTimeout(() => {
+                console.log("Suppression et apparition des nouvelles cartes");
+                deleteCards();
+                displayRewards(generatedRewards);
+
+                $('.card').each(function () {
+                    $(this).addClass('animated bounceInDown');
+                });
+            }, delays.separation + delays.bounceOutUp);
+        } else {
+            console.log("Ouverture ultérieure : flip et disintegration");
+            $('.card').each(function () {
+                const card = $(this);
+
+                if (card.hasClass('flip')) {
+                    card.removeClass('bounceInDown');
+                    card.removeClass('flip');
+                }
+
+                setTimeout(() => {
+                    card.css({
+                        animation: 'disintegration 1s forwards',
+                        opacity: 0,
+                    });
+                }, delays.flip);
             });
-        }, 600);
 
-        setTimeout(deleteCards, 1500);
+            setTimeout(() => {
+                deleteCards();
+                displayRewards(generatedRewards);
 
-        setTimeout(function() {
-            displayRewards(generatedRewards);
-            generatedRewards = [];
-        }, 2350);
+                $('.card').each(function () {
+                    $(this).addClass('animated bounceInDown');
+                });
+            }, delays.flip + delays.disintegration + delays.bounceInDown);
+        }
 
-        setTimeout(function() {
+        setTimeout(() => {
             restoreCrate();
             isRunning = false;
-        }, 4000);
+            packOpened = true;
+        }, delays.separation + delays.bounceOutUp + delays.bounceInDown);
     }
 }
+
+
+
+
 
 function pauseCrate() {
     $('.generate').attr('disabled', 'disabled').css('cursor', 'not-allowed');
@@ -223,17 +267,19 @@ $(document).ready(function() {
 function displayRewards(rewards) {
     $('#crate').empty();
 
+    let rewardGranted = false;
+
     rewards.forEach((reward, index) => {
         let rewardClass = `reward-${reward.name}`;
         const card = $('<li/>').addClass(`card shadow animated bounceInDown crate-${index}`);
         const cardInner = $('<div/>').addClass('card-inner');
         const cardFront = $('<div/>').addClass('card-front');
-        const frontText = $('<span/>').addClass('front-text').text('Click to reveal');
+        const frontText = $('<span/>').addClass('front-text').text('Pick one card');
         cardFront.append(frontText);
 
         const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
         const rewardImage = $('<img/>').addClass('reward-image').attr('src', `images/${reward.name}.jpg`);
-        
+
         const rewardName = $('<div/>').addClass('reward-name').text(`Name: ${reward.name}`);
         const rewardType = $('<div/>').addClass('reward-type').text(`Type: ${reward.type}`);
         const rewardRarity = $('<div/>').addClass('reward-rarity').text(`Rarity: ${reward.rarity}`);
@@ -244,61 +290,57 @@ function displayRewards(rewards) {
         $('#crate').append(card);
 
         card.on('click', function () {
-            if (reward.rarity === 'epic') {
-                $(this).find('.card-inner').addClass('swing-animation').one('animationend', function() {
-                    $(this).removeClass('swing-animation');
-        
-                    setTimeout(() => {
-                        card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
-                        playSound(reward.rarity);
-                        
-                        if (card.hasClass('flip')) {
-                            addGifParticles(card.find('.card-back'), reward.rarity);
-                            $('.card').not('.flip').find('.front-text').text('Click to see what you missed');
-                            if (!$('.card').hasClass('rewarded')) {
-                                grantReward(userId, reward.name);
-                                card.addClass('rewarded');
-                            }
-                        }
-                    }, 200);
-                });
-            } else if (reward.rarity === 'legendary') {
-                $(this).find('.card-inner').addClass('random-shake');
-
-                setTimeout(() => {
-                    $(this).find('.card-inner').removeClass('random-shake');
-                    
-                    setTimeout(() => {
-                        card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
-                        playSound(reward.rarity);
-                        
-                        if (card.hasClass('flip')) {
-                            addGifParticles(card.find('.card-back'), reward.rarity);
-                            $('.card').not('.flip').find('.front-text').text('Click to see what you missed');
-                            if (!$('.card').hasClass('rewarded')) {
-                                grantReward(userId, reward.name);
-                                card.addClass('rewarded');
-                            }
-                        }
-                    }, 50);
-                }, 1000);
-            } else {
-                card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
-                playSound(reward.rarity);
-                
-                if (card.hasClass('flip')) {
-                    addGifParticles(card.find('.card-back'), reward.rarity);
-                    $('.card').not('.flip').find('.front-text').text('Click to see what you missed');
-                    if (!$('.card').hasClass('rewarded')) {
-                        grantReward(userId, reward.name);
-                        card.addClass('rewarded');
-                    }
-                }
+            if ($(this).hasClass('flip')) {
+                $(this).removeClass('flip').addClass('flip');
+                return;
             }
+
+            revealCard($(this), reward);
+
+            setTimeout(() => {
+                $('.card').not($(this)).each(function () {
+                    if (!$(this).hasClass('flip')) {
+                        const otherReward = rewards[$(this).index()];
+                        revealCard($(this), otherReward, false);
+                    }
+                });
+            }, 1000);
         });
     });
-}
 
+    function revealCard(card, reward, grantRewardFlag = true) {
+        if (reward.rarity === 'epic') {
+            card.find('.card-inner').addClass('swing-animation').one('animationend', function () {
+                $(this).removeClass('swing-animation');
+                flipCard(card, reward, grantRewardFlag);
+            });
+        } else if (reward.rarity === 'legendary') {
+            card.find('.card-inner').addClass('random-shake');
+            setTimeout(() => {
+                card.find('.card-inner').removeClass('random-shake');
+                flipCard(card, reward, grantRewardFlag);
+            }, 1000);
+        } else {
+            flipCard(card, reward, grantRewardFlag);
+        }
+    }
+
+    function flipCard(card, reward, grantRewardFlag) {
+        card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
+        playSound(reward.rarity);
+        addGifParticles(card.find('.card-back'), reward.rarity);
+
+        if (card.hasClass('flip')) {
+            card.find('.front-text').text('Oops');
+
+            if (grantRewardFlag && !rewardGranted) {
+                grantReward(userId, reward.name);
+                card.addClass('rewarded');
+                rewardGranted = true;
+            }
+        }
+    }
+}
 
 function grantReward(userId, rewardType) {
     $.ajax({
