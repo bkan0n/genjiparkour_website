@@ -20,21 +20,32 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const burgerMenu = document.getElementById("burgerMenu");
+    const burgerMenuCheckbox = document.getElementById("burgerMenuScroll");
     const menuItems = document.getElementById("menuItems");
-
-    burgerMenu.addEventListener("click", () => {
-        if (menuItems.classList.contains('hidden')) {
-            menuItems.style.visibility = 'visible';
-            menuItems.classList.remove('hidden');
-        } else {
-            menuItems.classList.add('hidden');
-            setTimeout(() => {
-                menuItems.style.visibility = 'hidden';
-            }, 1000);
-        }
+  
+    let isAnimating = false;
+  
+    burgerMenuCheckbox.addEventListener("change", () => {
+      if (isAnimating) {
+        burgerMenuCheckbox.checked = !burgerMenuCheckbox.checked;
+        return;
+      }
+  
+      if (burgerMenuCheckbox.checked) {
+        menuItems.classList.remove('hidden');
+        menuItems.style.visibility = 'visible';
+      } else {
+        isAnimating = true;
+        menuItems.classList.add('hidden');
+        setTimeout(() => {
+          menuItems.style.visibility = 'hidden';
+          isAnimating = false;
+        }, 200);
+      }
     });
 });
+  
+  
 
 document.addEventListener("DOMContentLoaded", function () {
     const avatarIcon = document.getElementById("avatar-icon");
