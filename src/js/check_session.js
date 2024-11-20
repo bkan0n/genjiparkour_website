@@ -6,7 +6,7 @@ function checkSession() {
     fetch(`${REDIRECT_URL}discord/check_session.php`)
         .then(response => response.json())
         .then(data => {
-            console.log("Session expired status:", data.session_expired);
+            //console.log("Session expired status:", data.session_expired);
             if (data.session_expired) {
                 clearInterval(checkSessionInterval);
                 displaySessionExpiredModal();
