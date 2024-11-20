@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  create-envfile:
+  deploy-dev-site:
  
     runs-on: ubuntu-latest
     steps:
@@ -36,13 +36,3 @@ jobs:
         ssh_user: ${{ secrets.GENJI_PK_SSH_USER }}
         docker_compose_prefix: genji_pk-test
         docker_compose_filename: docker-compose.dev.yaml
-
-
-    # - uses: appleboy/ssh-action@v1.1.0
-    #   with:
-    #     host: ${{ secrets.GENJI_PK_HOST }}
-    #     key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
-    #     username: ${{ secrets.GENJI_PK_SSH_USER }}
-    #     script: docker compose -f docker-compose.dev.yaml up --no-deps --build 
-
-        
