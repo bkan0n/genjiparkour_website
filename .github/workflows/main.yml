@@ -1,24 +1,38 @@
-name: Deploy Main
+name: Main Deployment
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  deploy:
+
+  create-envfile:
+ 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4.2.2
 
-    - uses: bkan0n/ssh-remote-compose-action@1.0.3
+    - uses: SpicyPizza/create-envfile@v2.0.3
+      name: Make envfile
+      with:
+        envkey_DB_HOST: ${{ secrets.DB_HOST }}
+        envkey_DB_PORT: ${{ secrets.DB_PORT }}
+        envkey_DB_USER: ${{ secrets.DB_USER }}
+        envkey_DB_PWD: ${{ secrets.DB_PWD }}
+        envkey_DB_NAME: ${{ secrets.DB_NAME }}
+        envkey_X_API_ROOT: ${{ secrets.X_API_ROOT }}
+        envkey_X_API_KEY: ${{ secrets.X_API_KEY }}
+        envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+        envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
+        file_name: .env
+        fail_on_empty: false
+        sort_keys: false
+
+    - uses: bkan0n/ssh-remote-compose-action@main
       name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.GENJI_PK_HOST }}
         ssh_private_key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         ssh_user: ${{ secrets.GENJI_PK_SSH_USER }}
-        docker_compose_prefix: genji_pk
+        docker_compose_prefix: genji_pk-prod
         docker_compose_filename: docker-compose.prod.yaml
-        db_host: ${{ secrets.DB_HOST }}
-        db_port: ${{ secrets.DB_PORT }}
-        db_user: ${{ secrets.DB_USER }}
-        db_pwd: ${{ secrets.DB_PWD }}
