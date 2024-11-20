@@ -1,97 +1,423 @@
-// script.js
+let currentPage = 1;
+let totalPages = 1;
+let isSorting = false;
+const skillRankOrder = [
+    "God",
+    "Grandmaster",
+    "Master",
+    "Pro",
+    "Skilled",
+    "Jumper",
+    "Ninja"
+];
+let activeFilters = {
+    sort_column: 'xp_amount',
+    sort_direction: 'desc',
+    rank: '',
+    search: ''
+};
 
 const navbar = document.querySelector('nav');
 
-window.addEventListener('scroll', function() {
-    const nav = document.querySelector('nav');
+window.addEventListener('scroll', function () {
     if (window.scrollY > 50) {
-      nav.classList.add('shrink');
+        navbar.classList.add('shrink');
     } else {
-      nav.classList.remove('shrink');
+        navbar.classList.remove('shrink');
     }
-});
-
-let isSorting = false;
-
-document.querySelectorAll('.sort-btn').forEach(button => {
-    button.addEventListener('click', function(event) {
-        const column = this.getAttribute('data-column');
-        sortTableAjax(event, column, this);
-    });
 });
 
 function reapplySortEvents() {
     document.querySelectorAll('.sort-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            sortTableAjax(event, button.getAttribute('data-column'), button);
-        });
+        button.removeEventListener('click', handleSortClick);
+        button.addEventListener('click', handleSortClick);
     });
 }
 
-// Fonction pour effectuer le tri via AJAX
-function sortTableAjax(event, column, button) {
-    event.preventDefault();
+function handleSortClick(event) {
+    const button = event.currentTarget;
+    const column = button.getAttribute('data-column');
+    sortTableAjax(event, column, button);
+}
 
-    if (isSorting) {
-        console.log("Tri déjà en cours, action bloquée.");
+
+document.addEventListener("DOMContentLoaded", function () {
+    const leaderboardContainer = document.getElementById('leaderboard');
+    const paginationContainer = document.querySelector('.pagination-container');
+
+    if (!leaderboardContainer) {
+        console.error("L'élément avec l'ID 'leaderboard' est introuvable.");
         return;
     }
 
-    isSorting = true;
-    button.disabled = true;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    let currentOrder = urlParams.get('order');
-    const currentSort = urlParams.get('sort');
-
-    if ((column === "player_xp" || column === "player_wr" || column === "rank_name") && (!currentSort || currentSort !== column)) {
-        currentOrder = 'desc';
-    } else {
-        if (currentSort === column) {
-            currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-        } else {
-            currentOrder = 'asc';
-        }
+    if (!paginationContainer) {
+        console.error("Le conteneur de pagination est introuvable.");
+        return;
     }
 
-    urlParams.set('sort', column);
-    urlParams.set('order', currentOrder);
+    leaderboardContainer.innerHTML = `
+        <thead>
+            <tr>
+                <th class="col-nickname">
+                    Nickname
+                    <span class="vertical-bar"></span>
+                    <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-xp">
+                    XP
+                    <span class="vertical-bar"></span>
+                    <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-tier">
+                    Tier
+                    <span class="vertical-bar"></span>
+                    <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-skill-rank">
+                    Skill Rank
+                    <span class="vertical-bar"></span>
+                    <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-wr">
+                    World Records
+                    <span class="vertical-bar"></span>
+                    <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-maps">
+                    Maps Made
+                    <span class="vertical-bar"></span>
+                    <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-playtest">
+                    Playtest Votes
+                    <span class="vertical-bar"></span>
+                    <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+                <th class="col-discord-tag">
+                    Discord Tag
+                    <span class="vertical-bar"></span>
+                    <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
+                        <div class="stroke stroke1"></div>
+                        <div class="stroke stroke2"></div>
+                        <div class="stroke stroke3"></div>
+                        <div class="tap-circle"></div>
+                    </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
 
-    const newUrl = `?${urlParams.toString()}`;
-    history.pushState(null, '', newUrl);
+    updateLeaderboard();
+});
 
-    fetch(`leaderboard.php?${urlParams.toString()}`)
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const newDocument = parser.parseFromString(html, 'text/html');
-            const newTbody = newDocument.querySelector('#leaderboard tbody');
-            document.querySelector('#leaderboard tbody').innerHTML = newTbody.innerHTML;
+async function fetchLeaderboard(params = {}) {
+    const url = new URL('./api/getFullLeaderboard.php', window.location.href);
 
-            reapplySortEvents();
-            button.disabled = false;
-            isSorting = false;
+    Object.keys(params).forEach(key => {
+        if (params[key]) url.searchParams.append(key, params[key]);
+    });
 
-            document.querySelectorAll('.sort-btn').forEach(btn => {
-                if (btn !== button) {
-                    btn.classList.remove('asc', 'desc');
-                }
-            });
-
-            if (currentOrder === 'asc') {
-                button.classList.add('asc');
-            } else {
-                button.classList.add('desc');
-            }
-        })
-        .catch(error => {
-            console.error('Erreur AJAX:', error);
-            button.disabled = false;
-            isSorting = false;
-        });
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Erreur : ${response.status} - ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données:', error);
+        return [];
+    }
 }
 
-// Fonction d'animation pour les boutons de tri
+async function updateLeaderboard(params = {}) {
+    const defaults = {
+        sort_column: 'xp_amount',
+        sort_direction: 'desc',
+        page_size: 25,
+        page_number: currentPage
+    };
+
+    const combinedParams = { ...defaults, ...params };
+
+    console.log("Params combinés :", combinedParams);
+
+    const data = await fetchLeaderboard(combinedParams);
+
+    if (!Array.isArray(data) || data.length === 0) {
+        document.querySelector("#leaderboard tbody").innerHTML = `
+            <tr><td colspan="8">No data available</td></tr>`;
+        return;
+    }
+
+    if (combinedParams.sort_column === 'skill_rank') {
+        console.log("Tri Skill Rank déclenché !");
+        renderLeaderboard(sortBySkillRank(data, combinedParams.sort_direction));
+    } else {
+        console.log("Render normal");
+        renderLeaderboard(data);
+    }
+
+    renderPagination(data[0]?.total_results || 0, combinedParams.page_number, combinedParams.page_size);
+
+    reapplySortEvents();
+    reapplyColumnVisibility();
+}
+
+function renderLeaderboard(data) {
+    const leaderboardBody = document.querySelector('#leaderboard tbody');
+    leaderboardBody.innerHTML = '';
+
+    data.forEach(player => {
+        const tr = document.createElement('tr');
+        const skillRankClass = getSkillRankClass(player.skill_rank);
+        const discordTag = player.discord_tag === "Unknown Username" ? 'N/A' : (player.discord_tag || 'N/A');
+        tr.innerHTML = `
+            <td class="col-nickname">${player.nickname || 'N/A'}</td>
+            <td class="col-xp">${player.xp_amount || 0}</td>
+            <td class="col-tier">${player.tier_name || 'N/A'}</td>
+            <td class="col-skill-rank ${skillRankClass}">${player.skill_rank || 'N/A'}</td>
+            <td class="col-wr">${player.wr_count || 0}</td>
+            <td class="col-maps">${player.map_count || 0}</td>
+            <td class="col-playtest">${player.playtest_count || 0}</td>
+            <td class="col-discord-tag">${discordTag}</td>
+        `;
+        leaderboardBody.appendChild(tr);
+    });
+}
+
+function getSkillRankClass(skillRank) {
+    switch (skillRank?.toLowerCase()) {
+        case 'ninja': return 'rank-ninja';
+        case 'jumper': return 'rank-jumper';
+        case 'skilled': return 'rank-skilled';
+        case 'pro': return 'rank-pro';
+        case 'master': return 'rank-master';
+        case 'grandmaster': return 'rank-grandmaster';
+        case 'god': return 'rank-god';
+        default: return '';
+    }
+}
+
+function renderPagination(totalResults, currentPage, resultsPerPage) {
+    const paginationContainer = document.querySelector(".pagination-container");
+    paginationContainer.innerHTML = "";
+
+    totalPages = Math.ceil(totalResults / resultsPerPage);
+
+    if (totalPages <= 1) {
+        return;
+    }
+
+    const firstButton = document.createElement("button");
+    firstButton.textContent = "« First";
+    firstButton.disabled = currentPage === 1;
+    firstButton.addEventListener("click", () => changePage(1));
+    paginationContainer.appendChild(firstButton);
+
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "‹ Prev";
+    prevButton.disabled = currentPage === 1;
+    prevButton.addEventListener("click", () => changePage(currentPage - 1));
+    paginationContainer.appendChild(prevButton);
+
+    const pageIndicator = document.createElement("span");
+    pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+    pageIndicator.classList.add("page-indicator");
+    paginationContainer.appendChild(pageIndicator);
+
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "Next ›";
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.addEventListener("click", () => changePage(currentPage + 1));
+    paginationContainer.appendChild(nextButton);
+
+    const lastButton = document.createElement("button");
+    lastButton.textContent = "Last »";
+    lastButton.disabled = currentPage === totalPages;
+    lastButton.addEventListener("click", () => changePage(totalPages));
+    paginationContainer.appendChild(lastButton);
+}
+
+async function changePage(pageNumber) {
+    currentPage = pageNumber;
+    await updateLeaderboard({ page_number: currentPage });
+}
+
+function applyColumnVisibility(column, isVisible) {
+    const header = document.querySelector(`th.col-${column}`);
+    if (header) {
+        header.style.display = isVisible ? '' : 'none';
+    }
+
+    const rows = document.querySelectorAll('#leaderboard tbody tr');
+    rows.forEach(row => {
+        const cell = row.querySelector(`td.col-${column}`);
+        if (cell) {
+            cell.style.display = isVisible ? '' : 'none';
+        }
+    });
+
+    applyRoundedCorners();
+}
+
+function reapplyColumnVisibility() {
+    const checkboxes = document.querySelectorAll('.toggle-col');
+    checkboxes.forEach(checkbox => {
+        const column = checkbox.getAttribute('data-col');
+        const isVisible = checkbox.checked;
+        applyColumnVisibility(column, isVisible);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
+    const searchByTrigger = document.getElementById('search-by-trigger');
+    const searchByOptions = document.querySelectorAll('#search-by-options .custom-option');
+    const selectedSearchBy = document.getElementById('selected-search-by');
+
+    selectedSearchBy.value = 'player_both';
+
+    searchByOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            const selectedValue = this.getAttribute('data-value');
+            selectedSearchBy.value = selectedValue;
+            searchByTrigger.textContent = this.textContent;
+            searchInput.placeholder = `Search by ${this.textContent}...`;
+        });
+    });
+
+    function updateSearchResults() {
+        const searchValue = searchInput.value.trim();
+        const searchByValue = selectedSearchBy.value || 'player_both';
+
+        const params = new URLSearchParams({
+            search: searchValue,
+            search_by: searchByValue
+        });
+
+        fetch(`api/getFullLeaderboard.php?${params.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    renderLeaderboard(data);
+                } else {
+                    document.querySelector("#leaderboard tbody").innerHTML = `
+                        <tr><td colspan="8">No results found</td></tr>`;
+                }
+            })
+            .catch(error => console.error('Erreur lors de la recherche:', error));
+    }
+
+    searchInput.addEventListener('input', updateSearchResults);
+
+    updateSearchResults();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const checkboxes = document.querySelectorAll('.toggle-col');
+    const urlParams = new URLSearchParams(window.location.search);
+
+    checkboxes.forEach(checkbox => {
+        const column = checkbox.getAttribute('data-col');
+        let showColumn = sessionStorage.getItem(`show_${column}`);
+
+        if (showColumn === null) {
+            showColumn = urlParams.get(`show_${column}`) || '1';
+            sessionStorage.setItem(`show_${column}`, showColumn);
+        }
+
+        const isVisible = showColumn === '1';
+        checkbox.checked = isVisible;
+        applyColumnVisibility(column, isVisible);
+
+        checkbox.addEventListener('change', function () {
+            const isVisible = this.checked;
+            applyColumnVisibility(column, isVisible);
+            sessionStorage.setItem(`show_${column}`, isVisible ? '1' : '0');
+        });
+    });
+
+    updateLeaderboard();
+});
+
+function applyFilters() {
+    const sortValue = document.getElementById('selected-sort').value;
+    const rankValue = document.getElementById('selected-rank').value;
+
+    const params = {
+        sort_column: sortValue,
+        skill_rank: rankValue,
+        page_number: 1
+    };
+
+    updateLeaderboard(params);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const sortTrigger = document.getElementById('sort-trigger');
+    const rankTrigger = document.getElementById('rank-trigger');
+    const sortOptions = document.querySelectorAll('#sort-select .custom-option');
+    const rankOptions = document.querySelectorAll('#rank-select .custom-option');
+
+    sortOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            const sortValue = this.getAttribute('data-value');
+            sortTrigger.textContent = this.textContent;
+            activeFilters.sort = sortValue;
+            document.getElementById('selected-sort').value = this.getAttribute('data-value');
+            applyFilters(activeFilters);
+        });
+    });
+
+    rankOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            const rankValue = this.getAttribute('data-value');
+            rankTrigger.textContent = this.textContent;
+            activeFilters.rank = rankValue;
+            document.getElementById('selected-rank').value = this.getAttribute('data-value');
+            applyFilters(activeFilters);
+        });
+    });
+
+    updateLeaderboard(activeFilters);
+});
+
 function animation(button) {
     button.classList.add('disable-click');
 
@@ -108,163 +434,131 @@ function animation(button) {
     }, 1000);
 }
 
-function updateSearchResults() {
-    const searchInput = document.getElementById('search-input').value;
-    const searchBy = document.getElementById('selected-search-by').value;
+document.querySelectorAll('.sort-btn').forEach(button => {
+    button.addEventListener('click', function (event) {
+        console.log(`Bouton cliqué : ${button.id}`);
+        const column = button.getAttribute('data-column');
+        sortTableAjax(event, column, button);
+    });
+});
 
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('search', searchInput);
-    urlParams.set('search_by', searchBy);
 
-    const newUrl = `?${urlParams.toString()}`;
-    history.pushState(null, '', newUrl);
+function sortTableAjax(event, column, button) {
+    event.preventDefault();
 
-    fetch(`leaderboard.php?${urlParams.toString()}`)
-        .then(response => response.text())
-        .then(html => {
+    if (isSorting) {
+        console.warn("Un tri est déjà en cours.");
+        return;
+    }
 
-            const parser = new DOMParser();
-            const newDocument = parser.parseFromString(html, 'text/html');
-            const newTbody = newDocument.querySelector('#leaderboard tbody');
-            document.querySelector('#leaderboard tbody').innerHTML = newTbody.innerHTML;
+    isSorting = true;
+    button.disabled = true;
 
-            reapplySortEvents();
+    let currentOrder = button.getAttribute('data-order');
+    const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+    button.setAttribute('data-order', newOrder);
+
+    const params = {
+        sort_column: column,
+        sort_direction: newOrder,
+        page_number: currentPage,
+    };
+
+    console.log(`Tri sur la colonne "${column}" avec ordre "${newOrder}"`);
+
+    fetch(`api/getFullLeaderboard.php?${new URLSearchParams(params).toString()}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur : ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Données récupérées :", data);
+            updateLeaderboard(params);
         })
         .catch(error => {
-            console.error('Erreur AJAX:', error);
+            console.error('Erreur lors de la récupération des données :', error);
+        })
+        .finally(() => {
+            isSorting = false;
+            button.disabled = false;
         });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
 
-    const sortTrigger = document.getElementById('sort-trigger');
-    const rankTrigger = document.getElementById('rank-trigger');
-    const searchByTrigger = document.getElementById('search-by-trigger');
+function sortBySkillRank(data, order = 'asc') {
+    console.log("Données initiales : ", data.map(item => item.skill_rank));
 
-    const sortOptions = document.querySelectorAll('#sort-select .custom-option');
-    const rankOptions = document.querySelectorAll('#rank-select .custom-option');
-    const searchOptions = document.querySelectorAll('#search-by-select .custom-option');
+    const sortedData = data.sort((a, b) => {
+        const rankA = skillRankOrder.indexOf(a.skill_rank.trim());
+        const rankB = skillRankOrder.indexOf(b.skill_rank.trim());
 
-    // Gestion de la sélection pour les tris
-    sortOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            sortTrigger.textContent = this.textContent;
-            document.getElementById('selected-sort').value = this.getAttribute('data-value');
-        });
-    });
+        const adjustedRankA = rankA === -1 ? skillRankOrder.length : rankA;
+        const adjustedRankB = rankB === -1 ? skillRankOrder.length : rankB;
 
-    // Gestion de la sélection pour les rangs
-    rankOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            rankTrigger.textContent = this.textContent;
-            document.getElementById('selected-rank').value = this.getAttribute('data-value');
-        });
-    });
-
-    // Gérer la sélection du critère de recherche
-    searchOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            searchByTrigger.textContent = this.textContent;
-            const selectedValue = this.getAttribute('data-value');
-            const searchInput = document.getElementById('search-input');
-            document.getElementById('selected-search-by').value = selectedValue;
-
-            if (selectedValue === 'player_name') {
-                searchInput.placeholder = "Search by player name...";
-            } else if (selectedValue === 'player_tag') {
-                searchInput.placeholder = "Search by player tag...";
-            } else {
-                searchInput.placeholder = "Search by name & tag...";
-            }
-        });
-    });
-
-    // Gestion des cases à cocher pour afficher/cacher les colonnes
-    const checkboxes = document.querySelectorAll('.toggle-col');
-
-    // Fonction pour mettre à jour l'URL en fonction de l'état des cases à cocher
-    function updateUrlParams() {
-        const urlParams = new URLSearchParams(window.location.search);
-
-        checkboxes.forEach(checkbox => {
-            const column = checkbox.getAttribute('data-col');
-            const hiddenInput = document.getElementById(`show_${column}_input`);
-            urlParams.set(`show_${column}`, hiddenInput.value);
-        });
-
-        const newUrl = `?${urlParams.toString()}`;
-        history.replaceState(null, '', newUrl);
-
-        updatePaginationLinks();
-    }
-
-    checkboxes.forEach(checkbox => {
-        const column = checkbox.getAttribute('data-col');
-        const urlParams = new URLSearchParams(window.location.search);
-        const showColumn = urlParams.get(`show_${column}`);
-
-        const hiddenInputId = `show_${column}_input`;
-        const hiddenInput = document.getElementById(hiddenInputId);
-
-        if (showColumn === '0') {
-            checkbox.checked = false;
-            const elements = document.querySelectorAll(`.col-${column}`);
-            elements.forEach(el => el.style.display = 'none');
-            hiddenInput.value = '0';
+        if (order === 'asc') {
+            return adjustedRankA - adjustedRankB;
         } else {
-            checkbox.checked = true;
-            const elements = document.querySelectorAll(`.col-${column}`);
-            elements.forEach(el => el.style.display = '');
-            hiddenInput.value = '1';
+            return adjustedRankB - adjustedRankA;
         }
     });
 
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const column = this.getAttribute('data-col');
-            const colClass = `.col-${column}`;
-            const elements = document.querySelectorAll(colClass);
-            const hiddenInputId = `show_${column}_input`;
-            const hiddenInput = document.getElementById(hiddenInputId);
+    return sortedData;
+}
 
-            if (this.checked) {
-                elements.forEach(el => el.style.display = '');
-                hiddenInput.value = '1';
-            } else {
-                elements.forEach(el => el.style.display = 'none');
-                hiddenInput.value = '0';
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    const resetButton = document.querySelector('.reset-filters-btn');
 
-            updateUrlParams();
-        });
-    });
+    if (resetButton) {
+        resetButton.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    // Fonction pour ajouter les états des cases à cocher aux liens de pagination
-    function updatePaginationLinks() {
-        const paginationLinks = document.querySelectorAll('.pagination a');
-        paginationLinks.forEach(link => {
-            const url = new URL(link.href, window.location.origin);
-            const urlParams = new URLSearchParams(window.location.search);
+            const searchInput = document.getElementById('search-input');
+            const selectedSort = document.getElementById('selected-sort');
+            const selectedRank = document.getElementById('selected-rank');
 
-            const pageNumber = url.searchParams.get('page');
-            urlParams.set('page', pageNumber);
+            if (searchInput) searchInput.value = '';
+            if (selectedSort) selectedSort.value = 'xp_amount';
+            if (selectedRank) selectedRank.value = '';
 
-            checkboxes.forEach(checkbox => {
-                const column = checkbox.getAttribute('data-col');
-                const hiddenInputId = `show_${column}_input`;
-                const hiddenInput = document.getElementById(hiddenInputId);
-                urlParams.set(`show_${column}`, hiddenInput.value);
+            const sortTrigger = document.getElementById('sort-trigger');
+            const rankTrigger = document.getElementById('rank-trigger');
+
+            if (sortTrigger) sortTrigger.textContent = 'Sort by';
+            if (rankTrigger) rankTrigger.textContent = 'All Ranks';
+
+            updateLeaderboard({
+                sort_column: 'xp_amount',
+                sort_direction: 'desc',
+                page_number: 1
             });
-
-            link.href = `${window.location.pathname}?${urlParams.toString()}`;
         });
     }
-
-    updatePaginationLinks();
-
-    reapplySortEvents();
-
-    window.addEventListener('popstate', function(event) {
-        location.reload();
-    });
 });
+
+function applyRoundedCorners() {
+    const table = document.querySelector('table');
+    if (!table) return;
+
+    const visibleHeaders = Array.from(table.querySelectorAll('thead th')).filter(th => th.style.display !== 'none');
+    const lastRow = table.querySelector('tbody tr:last-child');
+    const visibleCells = lastRow ? Array.from(lastRow.querySelectorAll('td')).filter(td => td.style.display !== 'none') : [];
+
+    document.querySelectorAll('thead th, tbody td').forEach(cell => {
+        cell.style.borderRadius = '';
+    });
+
+    if (visibleHeaders.length > 0) {
+        visibleHeaders[0].style.borderTopLeftRadius = '15px';
+        visibleHeaders[visibleHeaders.length - 1].style.borderTopRightRadius = '15px';
+    }
+
+    if (visibleCells.length > 0) {
+        visibleCells[0].style.borderBottomLeftRadius = '15px';
+        visibleCells[visibleCells.length - 1].style.borderBottomRightRadius = '15px';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', applyRoundedCorners);
+document.addEventListener('updateSearchResults', applyRoundedCorners);
