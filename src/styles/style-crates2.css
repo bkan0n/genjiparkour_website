@@ -1175,7 +1175,7 @@
  .crateScore p #value.value--rare { color: #0070ff; }
  .crateScore p #value.value--epic { color: #B048F8; }
  .crateScore p #value.value--legendary { color: #ff8000; }
- @media screen and (min-width: 769px) { .card-section { min-height: 420px; padding: 20px 0; } }
+ @media screen and (min-width: 769px) { .card-section { min-height: 420px; } }
  .card-section #crate li { max-height: 420px; display: table; table-layout: fixed; border-radius: 7px; }
  
  .box-type { position: relative; }

@@ -235,7 +235,7 @@ body {
     display: none;
 }
 
-.hidden {
+.hidden-suggestions {
     display: none;
 }
 
@@ -268,7 +268,7 @@ thead {
     border-radius: 15px;
     overflow: hidden;
 }
-  
+
 thead th {
     text-align: center;
     padding-top: 30px;

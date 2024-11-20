@@ -5,7 +5,7 @@
 .centered-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    padding: 20px;
 }
 .button-container {
     display: inline-flex;
@@ -323,7 +323,7 @@
     width: 150px;
     height: 220px;
     margin: 0 auto;
-    margin-bottom: 100px;
+    margin-bottom: 150px;
     left: 120px;
     display: flex;
     align-items: center;
