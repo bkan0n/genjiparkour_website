@@ -219,7 +219,7 @@ function addFilter(filterId, filterLabel) {
 
             // Conteneur pour les suggestions
             const suggestionsContainer = document.createElement("div");
-            suggestionsContainer.classList.add("suggestions", "hidden");
+            suggestionsContainer.classList.add("suggestions", "hidden-suggestions");
             suggestionsContainer.id = "suggestionsContainer";
             filterElement.appendChild(suggestionsContainer);
         } else if (filterId === "map_code") {
@@ -396,7 +396,7 @@ function applyFilters() {
                 filters[filterId] = selectedRestrictions;
             }
         } else if (input && input.value) {
-            filters[filterId] = filterId === "map_name" ? encodeURIComponent(input.value) : input.value;
+            filters[filterId] = encodeURIComponent(input.value);
         }
     });
 
