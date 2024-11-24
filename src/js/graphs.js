@@ -1,7 +1,7 @@
 //Circular chat
 async function fetchRankData(endpoint) {
     try {
-        const response = await fetch(`api/${endpoint}`);
+        const response = await fetch(`api/graphs/${endpoint}`);
         if (!response.ok) throw new Error(`Erreur : ${response.status} - ${response.statusText}`);
         return await response.json();
     } catch (error) {
@@ -12,13 +12,22 @@ async function fetchRankData(endpoint) {
 
 async function generateSVG(endpoint) {
     const rankData = await fetchRankData(endpoint);
-    const filteredRankData = rankData.filter(rank => rank.tier.toLowerCase() !== "ninja");
-    if (filteredRankData.length === 0) {
+    if (rankData.length === 0) {
         console.error('Aucune donnée disponible pour générer le graphique.');
         return;
     }
 
+    const filteredRankData = endpoint === 'getPlayersPerSkill.php'
+    ? rankData.filter(rank => rank.tier !== "Ninja")
+    : rankData;
+
     const totalPlayers = filteredRankData.reduce((sum, rank) => sum + rank.amount, 0);
+    
+    if (totalPlayers === 0) {
+        console.error('Aucune donnée valide disponible après filtrage.');
+        return;
+    }
+
     const ringsContainer = document.getElementById('rings-container');
     const figuresContainer = document.getElementById('figures-container');
     const linesContainer = document.getElementById('lines-container');
@@ -32,11 +41,11 @@ async function generateSVG(endpoint) {
     const cx = 389, cy = 294, radiusInner = 150, radiusOuter = 170;
 
     const skillTierColors = [
-        //'rgb(63, 223, 63)', // Ninja
-        'rgb(154, 235, 134)', // Jumper
-        'rgb(255, 238, 0)', // Skilled
-        'rgb(224, 178, 24)', // Pro
-        'rgb(238, 130, 7)', // Master
+        //'#00ff1a"', // Ninja
+        '#cdff3a', // Jumper
+        '#fbdf00', // Skilled
+        '#ff9700', // Pro
+        '#ff4500', // Master
         'rgb(233, 15, 15)', // Grandmaster
         'rgb(129, 8, 8)' // God
     ];
@@ -258,7 +267,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 //Bar chart
 document.addEventListener("DOMContentLoaded", async () => {
-    const response = await fetch('api/getMapsPerDifficulty.php');
+    const response = await fetch('api/graphs/getMapsPerDifficulty.php');
     const mapData = await response.json();
 
     const difficulties = mapData.map(item => item.difficulty.toUpperCase());
@@ -422,6 +431,10 @@ function updateChart(data) {
         },
         options: {
             responsive: true,
+            animation: {
+                duration: 3000,
+                easing: 'easeOutQuart'
+            },
             scales: {
                 x: {
                     type: 'logarithmic',
@@ -478,7 +491,7 @@ function updateChart(data) {
     });
 }
 
-    fetch('api/popularCreators.php')
+    fetch('api/graphs/popularCreators.php')
         .then(response => response.json())
         .then(data => {
             if (Array.isArray(data)) {
@@ -546,6 +559,10 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             options: {
                 responsive: true,
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInQuad'
+                },
                 scales: {
                     x: {
                         type: 'category',
@@ -607,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function fetchDifficulties() {
-        fetch("api/popularMaps.php")
+        fetch("api/graphs/popularMaps.php")
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {
@@ -626,7 +643,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateChartData() {
         const difficulty = document.getElementById("difficultySelect").value;
 
-        fetch("api/popularMaps.php")
+        fetch("api/graphs/popularMaps.php")
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {
