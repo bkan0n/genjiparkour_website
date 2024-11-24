@@ -15,6 +15,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/style-search.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/maps.js" defer></script>
     <script src="js/layout.js" defer></script>
 </head>
@@ -81,23 +82,32 @@ include BASE_PATH . "discord/header.php";
             </div>
         </div>
         <div class="intuitive-mode" id="intuitiveMode" style= "display: none;">Add a filter or click ✔</div>
-
         <div class="filter-section" id="dynamicFilters">
             <div class="filters-container" id="filtersContainer">
                 <div class="filter">
-                    <input type="text" id="map_name" placeholder="Map Name" oninput="showSuggestions(event)" />
-                    <button class="remove-filter-btn">X</button>
-                    <div id="suggestionsContainer" class="suggestions hidden"></div>
+                    <input type="text" id="mapNameInput"/>
+                    <div id="mapNameSuggestionsContainer" class="suggestions"></div>
+                </div>
+                <div class="filter">
+                    <input type="text" id="mapCodeInput"/>
+                    <div id="mapCodeSuggestionsContainer" class="suggestions"></div>
+                </div>
+                <div class="filter">
+                    <input type="text" id="nicknameInput"/>
+                    <div id="nicknameSuggestionsContainer" class="suggestions"></div>
                 </div>
             </div>
         </div>
-
+        <div id="loadingContainer">
+            <div class="line"></div>
+        </div>
         <div class="results-container" id="resultsContainer">
-            <p></p>
         </div>
         <div class="pagination-container" id="paginationContainer"></div>
     </div>
-    
+    <script>
+    let user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
+    </script>
     <footer>
         <div class="footer-left">Genji Parkour © 2024</div>
         <div class="footer-right">Joe is cool</div>
