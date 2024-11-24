@@ -57,88 +57,90 @@ document.addEventListener("DOMContentLoaded", function () {
 
     leaderboardContainer.innerHTML = `
         <thead>
-            <tr>
-                <th class="col-nickname">
-                    Nickname
-                    <span class="vertical-bar"></span>
-                    <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-xp">
-                    XP
-                    <span class="vertical-bar"></span>
-                    <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-tier">
-                    Tier
-                    <span class="vertical-bar"></span>
-                    <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-skill-rank">
-                    Skill Rank
-                    <span class="vertical-bar"></span>
-                    <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-wr">
-                    World Records
-                    <span class="vertical-bar"></span>
-                    <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-maps">
-                    Maps Made
-                    <span class="vertical-bar"></span>
-                    <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-playtest">
-                    Playtest Votes
-                    <span class="vertical-bar"></span>
-                    <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-                <th class="col-discord-tag">
-                    Discord Tag
-                    <span class="vertical-bar"></span>
-                    <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
-                        <div class="stroke stroke1"></div>
-                        <div class="stroke stroke2"></div>
-                        <div class="stroke stroke3"></div>
-                        <div class="tap-circle"></div>
-                    </button>
-                </th>
-            </tr>
+            <div class="thead-container">
+                <tr class="thead-wrapper">
+                    <th class="col-nickname">
+                        Nickname
+                        <span class="vertical-bar"></span>
+                        <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-xp">
+                        XP
+                        <span class="vertical-bar"></span>
+                        <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-tier">
+                        Tier
+                        <span class="vertical-bar"></span>
+                        <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-skill-rank">
+                        Skill Rank
+                        <span class="vertical-bar"></span>
+                        <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-wr">
+                        World Records
+                        <span class="vertical-bar"></span>
+                        <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-maps">
+                        Maps Made
+                        <span class="vertical-bar"></span>
+                        <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-playtest">
+                        Playtest Votes
+                        <span class="vertical-bar"></span>
+                        <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                    <th class="col-discord-tag">
+                        Discord Tag
+                        <span class="vertical-bar"></span>
+                        <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
+                            <div class="stroke stroke1"></div>
+                            <div class="stroke stroke2"></div>
+                            <div class="stroke stroke3"></div>
+                            <div class="tap-circle"></div>
+                        </button>
+                    </th>
+                </tr>
+            </div>
         </thead>
         <tbody></tbody>
     `;
@@ -541,24 +543,32 @@ function applyRoundedCorners() {
     const table = document.querySelector('table');
     if (!table) return;
 
-    const visibleHeaders = Array.from(table.querySelectorAll('thead th')).filter(th => th.style.display !== 'none');
-    const lastRow = table.querySelector('tbody tr:last-child');
-    const visibleCells = lastRow ? Array.from(lastRow.querySelectorAll('td')).filter(td => td.style.display !== 'none') : [];
+    const theadWrapper = table.querySelector('.thead-wrapper');
+    const tbody = table.querySelector('tbody');
+    const lastRow = tbody.querySelector('tr:last-child');
+    const visibleHeaders = Array.from(theadWrapper.querySelectorAll('th')).filter(th => th.offsetParent !== null);
+    const visibleCells = lastRow ? Array.from(lastRow.querySelectorAll('td')).filter(td => td.offsetParent !== null) : [];
 
-    document.querySelectorAll('thead th, tbody td').forEach(cell => {
+    // Réinitialiser les coins arrondis
+    document.querySelectorAll('th, td').forEach(cell => {
         cell.style.borderRadius = '';
     });
 
+    // Appliquer les coins arrondis au thead
     if (visibleHeaders.length > 0) {
         visibleHeaders[0].style.borderTopLeftRadius = '15px';
         visibleHeaders[visibleHeaders.length - 1].style.borderTopRightRadius = '15px';
     }
 
+    // Appliquer les coins arrondis au tbody
     if (visibleCells.length > 0) {
         visibleCells[0].style.borderBottomLeftRadius = '15px';
         visibleCells[visibleCells.length - 1].style.borderBottomRightRadius = '15px';
     }
 }
 
+// Ajouter des écouteurs d'événements
 document.addEventListener('DOMContentLoaded', applyRoundedCorners);
 document.addEventListener('updateSearchResults', applyRoundedCorners);
+
+
