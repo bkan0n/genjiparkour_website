@@ -1,6 +1,7 @@
 <?php
-require 'config.php';
+require '../config.php';
 header("Content-Type: application/json");
+
 if (!$apiKey) {
     echo json_encode(["error" => "API key not set."]);
     exit;
@@ -10,12 +11,13 @@ if (!$apiRoot) {
     exit;
 }
 
-function buildGuideUrl($map_code = null, $page_size = 25, $page_number = 1) {
+function buildCompletionsUrl($map_code = null, $user = null, $page_size = 25, $page_number = 1) {
     global $apiRoot;
-    $endpoint = $apiRoot . "/v1/maps/guides";
+    $endpoint = $apiRoot . "/v1/completions/search";
     $params = [];
 
     if ($map_code !== null) $params['map_code'] = $map_code;
+    if ($user !== null) $params['user'] = $user;
     $params['page_size'] = $page_size;
     $params['page_number'] = $page_number;
 
@@ -52,8 +54,9 @@ $filters = json_decode(file_get_contents("php://input"), true);
 $page_size = $filters['page_size'] ?? 25;
 $page_number = $filters['page_number'] ?? 1;
 
-$url = buildGuideUrl(
+$url = buildCompletionsUrl(
     $filters['map_code'] ?? null,
+    $filters['user'] ?? null,
     $page_size,
     $page_number
 );
@@ -66,7 +69,11 @@ $total_pages = ceil($total_results / $page_size);
 $formatted_response = array_map(function($result) {
     return [
         "map_code" => $result["map_code"] ?? "N/A",
-        "url" => $result["url"] ?? "N/A"
+        "nickname" => $result["nickname"] ?? "N/A",
+        "discord_tag" => $result["discord_tag"] ?? "N/A",
+        "time" => $result["time"] ?? 0,
+        "medal" => $result["medal"] ?? "N/A",
+        "video" => $result["video"] ?? null
     ];
 }, $response);
 

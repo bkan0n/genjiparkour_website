@@ -1,7 +1,7 @@
 <?php
-require 'config.php';
+require '../config.php';
 
-$apiUrl = getenv('X_API_ROOT') . '/v1/ranks/statistics/skill/players';
+$apiUrl = getenv('X_API_ROOT') . '/v1/ranks/statistics/xp/players';
 $apiKey = getenv('X_API_KEY');
 
 $ch = curl_init($apiUrl);

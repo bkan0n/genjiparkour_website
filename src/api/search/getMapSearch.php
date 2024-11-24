@@ -1,5 +1,6 @@
 <?php
-require 'config.php';
+require '../config.php';
+session_start();
 header("Content-Type: application/json");
 
 if (!$apiKey) {
@@ -10,6 +11,8 @@ if (!$apiRoot) {
     echo json_encode(["error" => "API root not set."]);
     exit;
 }
+
+$user_id = $_SESSION['user_id'] ?? null;
 
 function buildMapSearchUrl(
     $map_code = null,
@@ -22,15 +25,16 @@ function buildMapSearchUrl(
     $minimum_quality = null,
     $only_playtest = null,
     $only_maps_with_medals = null,
+    $ignore_completions = null,
     $page_size = null,
     $page_number = null,
     $count_only = false,
-    $desc = null
+    $desc = null,
+    $user_id = null
 ) {
     global $apiRoot;
     $endpoint = $apiRoot . "/v1/maps/search";
     $params = [];
-
 
     if ($map_code !== null) $params['map_code'] = $map_code;
     if ($map_type !== null) $params['map_type'] = $map_type;
@@ -38,15 +42,25 @@ function buildMapSearchUrl(
     if ($creator !== null) $params['creator'] = $creator;
     if ($difficulty !== null) $params['difficulty'] = $difficulty;
     if ($minimum_quality !== null) $params['minimum_quality'] = $minimum_quality;
-    if ($only_playtest !== null) $params['only_playtest'] = $only_playtest === 'true' ? true : false;
-    if ($only_maps_with_medals !== null) $params['only_maps_with_medals'] = $only_maps_with_medals === 'true' ? true : false;
+    if ($only_playtest!== null) {
+        $params['only_playtest'] = $only_playtest === 'true' ? 'true' : 'false';
+    }
+    if ($only_maps_with_medals !== null) {
+        $params['only_maps_with_medals'] = $only_maps_with_medals === 'true' ? 'true' : 'false';
+    }
+    if ($ignore_completions !== null) {
+        $params['ignore_completions'] = $ignore_completions === 'true' ? 'true' : 'false';
+    }
     if ($desc !== null) $params['desc'] = $desc;
     if (!$count_only) {
         $params['page_size'] = $page_size;
         $params['page_number'] = $page_number;
     }
 
-    // Mechanics et Restrictions []
+    if ($user_id !== null) {
+        $params['user_id'] = $user_id;
+    }
+
     if ($mechanics !== null && is_array($mechanics)) {
         foreach ($mechanics as $mechanic) {
             $params[] = "mechanics=" . urlencode($mechanic);
@@ -63,16 +77,13 @@ function buildMapSearchUrl(
         $params['restrictions'] = $restrictions;
     }
 
-    // Requête finale 
     $query_string = implode('&', array_map(
         fn($key, $value) => is_int($key) ? $value : "$key=$value",
         array_keys($params),
         $params
     ));
-
     return $endpoint . ($query_string ? '?' . $query_string : '');
 }
-
 
 function getJsonResponse($url) {
     $ch = curl_init();
@@ -87,7 +98,7 @@ function getJsonResponse($url) {
         'X-API-KEY: ' . getenv("X_API_KEY")
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
+    error_log("API Request URL: " . $url);
     $response = curl_exec($ch);
     if ($response === false) {
         $error_msg = curl_error($ch);
@@ -96,7 +107,13 @@ function getJsonResponse($url) {
     }
 
     curl_close($ch);
-    return json_decode($response, true) ?: ["error" => "Failed to decode JSON response."];
+
+    $decoded = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return ["error" => "Invalid JSON response from API", "raw_response" => $response];
+    }
+
+    return $decoded;
 }
 
 $filters = json_decode(file_get_contents("php://input"), true);
@@ -115,13 +132,33 @@ $url = buildMapSearchUrl(
     $filters['minimum_quality'] ?? null,
     $filters['only_playtest'] ?? null,
     $filters['only_maps_with_medals'] ?? null,
+    $filters['ignore_completions'] ?? null,
     $page_size,
     $page_number,
     false,
-    $desc
+    $desc,
+    $user_id
 );
 
 $response = getJsonResponse($url);
+
+if (isset($response['error'])) {
+    echo json_encode($response);
+    exit;
+}
+
+$response = array_map(function ($map) {
+    $map['time'] = isset($map['time']) && is_numeric($map['time']) 
+        ? (int) $map['time'] 
+        : null;
+
+    $valid_medals = ['Gold', 'Silver', 'Bronze'];
+    $map['medal_type'] = isset($map['medal_type']) && in_array($map['medal_type'], $valid_medals, true) 
+        ? $map['medal_type'] 
+        : null;
+
+    return $map;
+}, $response);
 
 $total_results = $response[0]['total_results'] ?? 0;
 $total_pages = ceil($total_results / $page_size);
