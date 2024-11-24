@@ -41,7 +41,7 @@ $('.js-volume').click(function() {
 
 function getRandomRewards(userId, keyType) {
     $.ajax({
-        url: `api/getRandomItems.php`,
+        url: `api/lootbox/getRandomItems.php`,
         type: 'GET',
         data: { user_id: userId, key_type: rewardKeyType, amount: 3 },
         dataType: 'json',
@@ -78,7 +78,7 @@ $('.generate').click(function() {
     }
 
     $.ajax({
-        url: 'api/viewUsersKeys.php',
+        url: 'api/lootbox/viewUsersKeys.php',
         type: 'GET',
         data: { user_id: userId },
         dataType: 'json',
@@ -223,7 +223,7 @@ function deleteCards() {
 
 function fetchKeys(userId) {
     $.ajax({
-        url: 'api/viewUsersKeys.php',
+        url: 'api/lootbox/viewUsersKeys.php',
         type: 'GET',
         data: { user_id: userId },
         dataType: 'json',
@@ -344,7 +344,7 @@ function displayRewards(rewards) {
 
 function grantReward(userId, rewardType) {
     $.ajax({
-        url: 'api/grantRewardToUser.php',
+        url: 'api/lootbox/grantRewardToUser.php',
         type: 'POST',
         data: { 
             user_id: userId,
@@ -413,7 +413,7 @@ $('#giveKeyButton').click(function () {
     }
 
     $.ajax({
-        url: 'api/grantKeyToUser.php',
+        url: 'api/lootbox/grantKeyToUser.php',
         type: 'POST',
         data: { user_id: userId, key_type: 'Classic' },
         dataType: 'json',
