@@ -40,6 +40,11 @@ body {
     color: #fff;
     text-transform: uppercase;
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .side-section {
@@ -73,6 +78,11 @@ body {
     max-width: 100%;
     display: inline-block;
     margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .cta-btn:hover {
@@ -210,7 +220,7 @@ html {
     .cta-btn {
         margin-left: auto;
         margin-right: auto;
-        display: block;
+        width: 200px;
     }
 
     .recent-stats {
