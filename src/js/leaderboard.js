@@ -549,25 +549,21 @@ function applyRoundedCorners() {
     const visibleHeaders = Array.from(theadWrapper.querySelectorAll('th')).filter(th => th.offsetParent !== null);
     const visibleCells = lastRow ? Array.from(lastRow.querySelectorAll('td')).filter(td => td.offsetParent !== null) : [];
 
-    // Réinitialiser les coins arrondis
     document.querySelectorAll('th, td').forEach(cell => {
         cell.style.borderRadius = '';
     });
 
-    // Appliquer les coins arrondis au thead
     if (visibleHeaders.length > 0) {
         visibleHeaders[0].style.borderTopLeftRadius = '15px';
         visibleHeaders[visibleHeaders.length - 1].style.borderTopRightRadius = '15px';
     }
 
-    // Appliquer les coins arrondis au tbody
     if (visibleCells.length > 0) {
         visibleCells[0].style.borderBottomLeftRadius = '15px';
         visibleCells[visibleCells.length - 1].style.borderBottomRightRadius = '15px';
     }
 }
 
-// Ajouter des écouteurs d'événements
 document.addEventListener('DOMContentLoaded', applyRoundedCorners);
 document.addEventListener('updateSearchResults', applyRoundedCorners);
 

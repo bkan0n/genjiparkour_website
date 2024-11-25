@@ -1,5 +1,19 @@
+/* Réinitialisation globale des styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Structure de base */
+html, body {
+    height: 100%;
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
+}
+
 body {
     background: radial-gradient(circle, rgba(82,82,82,1) 0%, rgba(43,43,43,1) 100%);
+    overflow-x: hidden;
 }
 
 .container {
@@ -9,7 +23,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 60px;
+    margin-top: 20px;
 }
 
 .selected-mode-container {

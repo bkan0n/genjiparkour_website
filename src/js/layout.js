@@ -1,14 +1,3 @@
-function closeMenuOnScroll() {
-    const burgerMenuCheckbox = document.getElementById('burgerMenuScroll');
-
-
-    if (burgerMenuCheckbox.checked) {
-        burgerMenuCheckbox.checked = false; 
-    }
-}
-
-window.addEventListener('scroll', closeMenuOnScroll);
-
 document.addEventListener("DOMContentLoaded", function() {
     fetch("discord/check_session.php")
         .then(response => response.json())
@@ -19,46 +8,18 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const burgerMenuCheckbox = document.getElementById("burgerMenuScroll");
-    const menuItems = document.getElementById("menuItems");
-  
-    let isAnimating = false;
-  
-    burgerMenuCheckbox.addEventListener("change", () => {
-      if (isAnimating) {
-        burgerMenuCheckbox.checked = !burgerMenuCheckbox.checked;
-        return;
-      }
-  
-      if (burgerMenuCheckbox.checked) {
-        menuItems.classList.remove('hidden');
-        menuItems.style.visibility = 'visible';
-      } else {
-        isAnimating = true;
-        menuItems.classList.add('hidden');
-        setTimeout(() => {
-          menuItems.style.visibility = 'hidden';
-          isAnimating = false;
-        }, 200);
-      }
-    });
-});
-  
-  
-
 document.addEventListener("DOMContentLoaded", function () {
-    const avatarIcon = document.getElementById("avatar-icon");
+    const profileBtn = document.getElementById("user-profile");
     const profileModal = document.getElementById("profileModal");
     const closeModal = document.getElementById("closeModal");
 
-    if (!avatarIcon) {
+    if (!profileBtn) {
         console.warn("L'utilisateur n'est pas connecté. Aucun modal ne sera affiché.");
         return;
     }
 
-    if (avatarIcon && profileModal) {
-        avatarIcon.addEventListener("click", () => {
+    if (profileBtn && profileModal) {
+        profileBtn.addEventListener("click", () => {
             profileModal.style.display = "block";
             document.body.style.overflowY = "hidden";
         });
@@ -101,3 +62,107 @@ function preventExcessiveRefresh(maxRefreshes, timeWindow) {
 document.addEventListener("DOMContentLoaded", function () {
     preventExcessiveRefresh(5, 5000);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle-nav');
+    const avatarIcon = document.getElementById("avatar-icon");
+    const avatarDropdown = avatarIcon?.parentElement;
+
+    const closeAllMenus = () => {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('open');
+            const associatedToggle = menu.previousElementSibling;
+            if (associatedToggle) {
+                const associatedArrow = associatedToggle.querySelector('.arrow');
+                if (associatedArrow) {
+                    associatedArrow.style.transform = 'rotate(-45deg) translate(5px, 2px)';
+                }
+            }
+        });
+
+        if (avatarDropdown) {
+            avatarDropdown.classList.remove('open');
+        }
+    };
+
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', (event) => {
+            const dropdownMenu = toggle.nextElementSibling;
+            const arrow = toggle.querySelector('.arrow');
+
+            closeAllMenus();
+
+            dropdownMenu.classList.toggle('open');
+
+            if (dropdownMenu.classList.contains('open')) {
+                arrow.style.transform = 'rotate(135deg) translate(-1px, -4px)';
+            } else {
+                arrow.style.transform = 'rotate(-45deg) translate(5px, 2px)';
+            }
+
+            event.stopPropagation();
+        });
+    });
+
+    if (avatarIcon) {
+        avatarIcon.addEventListener("click", (event) => {
+            closeAllMenus();
+
+            avatarDropdown.classList.toggle("open");
+
+            event.stopPropagation();
+        });
+    }
+
+    document.addEventListener("click", () => {
+        closeAllMenus();
+    });
+
+    document.querySelectorAll(".dropdown-menu, .user-avatar-dropdown .dropdown-menu").forEach(menu => {
+        menu.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+    });
+});
+
+
+function forceScrollbar() {
+    const body = document.body;
+    const hasScrollbar = window.innerWidth > document.documentElement.clientWidth;
+
+    if (!hasScrollbar) {
+        body.style.overflowY = "scroll";
+    } else {
+        body.style.overflowY = "auto";
+    }
+}
+
+window.addEventListener("load", forceScrollbar);
+
+window.addEventListener("resize", forceScrollbar);
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+function activateSectionFromURL() {
+    const section = getQueryParam('section');
+    if (section) {
+        selectSection(section);
+
+        const activeButton = document.getElementById(section + "Btn");
+        if (activeButton) {
+            document.querySelectorAll('.tab-buttons button').forEach(button => {
+                button.classList.remove('active');
+            });
+            activeButton.classList.add('active');
+        }
+    }
+}
+
+window.addEventListener("load", activateSectionFromURL);
+
+
+
+
