@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '../config.php';
 
 if (!isset($_POST['user_id']) || !isset($_POST['key_type']) || !isset($_POST['reward_type']) || !isset($_POST['nonce'])) {
     echo json_encode(['error' => 'Missing required parameters']);

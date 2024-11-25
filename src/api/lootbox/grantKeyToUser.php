@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require 'config.php';
+require '../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['user_id']) || empty($_POST['key_type'])) {
     echo json_encode(['error' => 'User ID and Key Type are required.']);

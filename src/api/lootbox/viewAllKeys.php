@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '../config.php';
 
 $key_type = $_GET['key_type'] ?? null;
 $apiRoot = "{$apiRoot}/v1/lootbox/keys";

@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '../config.php';
 
 $reward_type = $_GET['reward_type'] ?? null;
 $key_type = $_GET['key_type'] ?? null;
