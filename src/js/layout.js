@@ -90,14 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const dropdownMenu = toggle.nextElementSibling;
             const arrow = toggle.querySelector('.arrow');
 
-            closeAllMenus();
-
-            dropdownMenu.classList.toggle('open');
-
             if (dropdownMenu.classList.contains('open')) {
-                arrow.style.transform = 'rotate(135deg) translate(-1px, -4px)';
-            } else {
+                dropdownMenu.classList.remove('open');
                 arrow.style.transform = 'rotate(-45deg) translate(5px, 2px)';
+            } else {
+                closeAllMenus();
+                dropdownMenu.classList.add('open');
+                arrow.style.transform = 'rotate(135deg) translate(-1px, -4px)';
             }
 
             event.stopPropagation();
@@ -106,9 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (avatarIcon) {
         avatarIcon.addEventListener("click", (event) => {
-            closeAllMenus();
-
-            avatarDropdown.classList.toggle("open");
+            if (avatarDropdown.classList.contains("open")) {
+                avatarDropdown.classList.remove("open");
+            } else {
+                closeAllMenus();
+                avatarDropdown.classList.add("open");
+            }
 
             event.stopPropagation();
         });
@@ -124,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
 
 
 function forceScrollbar() {
@@ -162,7 +165,3 @@ function activateSectionFromURL() {
 }
 
 window.addEventListener("load", activateSectionFromURL);
-
-
-
-

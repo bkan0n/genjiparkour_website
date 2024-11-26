@@ -65,7 +65,7 @@ $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/bann
             </div>
 
             <div class="body-wrapper mt-4">
-                <a class="btn btn-lg btn-danger btn-block" href="discord/logout.php">LOG OUT</a>
+                <a class="btn btn-lg btn-danger btn-block" href="discord/logout.php"><?= htmlspecialchars($translations['navbar']['logout']) ?></a>
             </div>
         </div>
     </main>

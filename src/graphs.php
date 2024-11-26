@@ -2,11 +2,13 @@
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', __DIR__ . '/');
 }
+
 require BASE_PATH . "discord/session_init.php";
 include BASE_PATH . "discord/header.php";
+require BASE_PATH . 'translations/load_translations.php';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($selectedLang) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,30 +30,49 @@ include BASE_PATH . "discord/header.php";
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="leaderboard.php">Leaderboard</a></li>
+            <li><a href="index.php"><?= htmlspecialchars($translations['navbar']['home']) ?></a></li>
+            <li><a href="leaderboard.php"><?= htmlspecialchars($translations['navbar']['leaderboard']) ?></a></li>
             <li class="dropdown-nav">
                 <button class="dropdown-toggle-nav">
-                Search <span class="arrow"></span>
+                <?= htmlspecialchars($translations['navbar']['search']) ?> <span class="arrow"></span>
                 </button>
                 <ul class="dropdown-menu">
-            <li><a href="search.php">Maps</a></li>
-            <li><a href="search.php">Guides</a></li>
-            <li><a href="search.php">Completions</a></li>
-            </ul>
-        </li>
-        <li class="dropdown-nav">
-            <button class="dropdown-toggle-nav">
-            Community <span class="arrow"></span>
-            </button>
-            <ul class="dropdown-menu">
-            <li><a href="news.php">News</a></li>
-            <li><a href="tutorial.php">Tutorial</a></li>
-            <li><a href="graphs.php">Statistics</a></li>
-            </ul>
-        </li>
+                    <li><a href="search.php?section=mapSearch"><?= htmlspecialchars($translations['navbar']['maps']) ?></a></li>
+                    <li><a href="search.php?section=guide"><?= htmlspecialchars($translations['navbar']['guides']) ?></a></li>
+                    <li><a href="search.php?section=completions"><?= htmlspecialchars($translations['navbar']['completions']) ?></a></li>
+                </ul>
+            </li>
+            <li class="dropdown-nav">
+                <button class="dropdown-toggle-nav">
+                <?= htmlspecialchars($translations['navbar']['community']) ?> <span class="arrow"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="news.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
+                    <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
+                    <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
+                </ul>
+            </li>
         </ul>
         <div class="navbar-right">
+            <ul class="lang-menu">
+                <li class="lang-dropdown-nav">
+                    <button class="dropdown-toggle-nav">
+                    <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
+                    <?= htmlspecialchars($selectedLangData['name']) ?>
+                    <span class="arrow"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                    <?php foreach ($languages as $langCode => $langData): ?>
+                        <li>
+                        <a href="?lang=<?= htmlspecialchars($langCode) ?>">
+                            <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                            <?= htmlspecialchars($langData['name']) ?>
+                        </a>
+                        </li>
+                    <?php endforeach; ?>
+                    </ul>
+                </li>
+            </ul>
             <a href="https://dsc.gg/genjiparkour" target="_blank" class="discord-logo">
                 <i class="fab fa-discord"></i>
             </a>
@@ -64,7 +85,7 @@ include BASE_PATH . "discord/header.php";
                     </ul>
                 </div>
             <?php else: ?>
-                <a href="discord/login.php" class="login-btn">Login</a>
+                <a href="discord/login.php" class="login-btn"><?= htmlspecialchars($translations['navbar']['login']) ?></a>
             <?php endif; ?>
         </div>
     </nav>
@@ -77,51 +98,53 @@ include BASE_PATH . "discord/header.php";
         <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
         </div>
     </div>
-    <main class="container">
-        <div class="pie-chart-container">
-            <title></title>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 778 590">
-                <circle class="background-circle" cx="389" cy="294" r="160" fill="none" stroke="#bdbdbd" stroke-width="40" />
-                <circle class="inner-circle" cx="389" cy="294" r="160" fill="none" stroke="#fff" stroke-width="20" />
-                <text x="389" y="294" class="pie-title-text" text-anchor="middle" alignment-baseline="middle" font-family="Roboto" font-size="24" font-weight="bold" fill="#333">
-                    Ranks distribution
-                </text>
-                <text id="hover-text" x="389" y="294" font-size="18" fill="#333" font-family="Roboto" text-anchor="middle" opacity="0">
-                </text>
-                <g id="rings-container" class="mt-rings" fill="none" stroke-miterlimit="10" stroke-width="30"></g>
-                <g id="lines-container" stroke="#333" stroke-width="1"></g>
-                <g id="figures-container" class="mt-figures"></g>
-            </svg>
-            <div class="difficulty-selection">
-                <label for="rankSelect"></label>
-                <select id="rankSelect">
-                    <option value="normalRanks">Skill ranks</option>
-                    <option value="communityRanks">Community ranks</option>
-                </select>
+    <main>
+        <div class="container">
+            <div class="pie-chart-container">
+                <title></title>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 778 590">
+                    <circle class="background-circle" cx="389" cy="294" r="160" fill="none" stroke="#bdbdbd" stroke-width="40" />
+                    <circle class="inner-circle" cx="389" cy="294" r="160" fill="none" stroke="#fff" stroke-width="20" />
+                    <text x="389" y="294" class="pie-title-text" text-anchor="middle" alignment-baseline="middle" font-family="Roboto" font-size="24" font-weight="bold" fill="#333">
+                    <?= htmlspecialchars($translations['thead']['mapRankDistribution']) ?>
+                    </text>
+                    <text id="hover-text" x="389" y="294" font-size="18" fill="#333" font-family="Roboto" text-anchor="middle" opacity="0">
+                    </text>
+                    <g id="rings-container" class="mt-rings" fill="none" stroke-miterlimit="10" stroke-width="30"></g>
+                    <g id="lines-container" stroke="#333" stroke-width="1"></g>
+                    <g id="figures-container" class="mt-figures"></g>
+                </svg>
+                <div class="difficulty-selection">
+                    <label for="rankSelect"></label>
+                    <select id="rankSelect">
+                        <option value="normalRanks"><?= htmlspecialchars($translations['chart']['skillRank']) ?></option>
+                        <option value="communityRanks"><?= htmlspecialchars($translations['chart']['tierRank']) ?></option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="chart-container">
-            <canvas id="difficultyBarChart" width="400" height="200"></canvas>
-        </div>
-        <div class="quality-container">
-            <canvas id="qualityDotChart" width="400" height="200"></canvas>
-        </div>
-        <div class="populars-maps-container">
-            <canvas id="mostPlayedMapsChart" width="400" height="200"></canvas>
-            <div class="difficulty-selection">
-                <label for="difficultySelect"></label>
-                <select id="difficultySelect">
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
-                    <option value="Very Hard">Very hard</option>
-                    <option value="Extreme">Extreme</option>
-                    <option value="Hell">Hell</option>
-                </select>
+            <div class="chart-container">
+                <canvas id="difficultyBarChart" width="400" height="200"></canvas>
             </div>
-        </div>
-        <div class="XP-container">
-            <canvas id="xpRankChart"></canvas>
+            <div class="quality-container">
+                <canvas id="qualityDotChart" width="400" height="200"></canvas>
+            </div>
+            <div class="populars-maps-container">
+                <canvas id="mostPlayedMapsChart" width="400" height="200"></canvas>
+                <div class="difficulty-selection">
+                    <label for="difficultySelect"></label>
+                    <select id="difficultySelect">
+                        <option value="Easy"><?= htmlspecialchars($translations['chart']['easy']) ?></option>
+                        <option value="Medium"><?= htmlspecialchars($translations['chart']['medium']) ?></option>
+                        <option value="Hard"><?= htmlspecialchars($translations['chart']['hard']) ?></option>
+                        <option value="Very Hard"><?= htmlspecialchars($translations['chart']['very hard']) ?></option>
+                        <option value="Extreme"><?= htmlspecialchars($translations['chart']['extreme']) ?></option>
+                        <option value="Hell"><?= htmlspecialchars($translations['chart']['hell']) ?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="XP-container">
+                <canvas id="xpRankChart"></canvas>
+            </div>
         </div>
     </main>
     <footer>

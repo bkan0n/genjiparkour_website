@@ -16,6 +16,7 @@ html, body {
 }
 
 body {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     min-height: 100vh;

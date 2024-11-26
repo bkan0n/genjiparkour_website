@@ -5,6 +5,7 @@ if (!defined('BASE_PATH')) {
 
 require BASE_PATH . "discord/session_init.php";
 include BASE_PATH . "discord/header.php";
+require BASE_PATH . 'translations/load_translations.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,36 +20,55 @@ include BASE_PATH . "discord/header.php";
     <script src="js/layout.js" defer></script>
 </head>
 <body>
-<nav class="navbar">
+    <nav class="navbar">
         <div class="navbar-left">
             <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="leaderboard.php">Leaderboard</a></li>
+            <li><a href="index.php"><?= htmlspecialchars($translations['navbar']['home']) ?></a></li>
+            <li><a href="leaderboard.php"><?= htmlspecialchars($translations['navbar']['leaderboard']) ?></a></li>
             <li class="dropdown-nav">
                 <button class="dropdown-toggle-nav">
-                Search <span class="arrow"></span>
+                <?= htmlspecialchars($translations['navbar']['search']) ?> <span class="arrow"></span>
                 </button>
                 <ul class="dropdown-menu">
-            <li><a href="search.php">Maps</a></li>
-            <li><a href="search.php">Guides</a></li>
-            <li><a href="search.php">Completions</a></li>
-            </ul>
-        </li>
-        <li class="dropdown-nav">
-            <button class="dropdown-toggle-nav">
-            Community <span class="arrow"></span>
-            </button>
-            <ul class="dropdown-menu">
-            <li><a href="news.php">News</a></li>
-            <li><a href="tutorial.php">Tutorial</a></li>
-            <li><a href="graphs.php">Statistics</a></li>
-            </ul>
-        </li>
+                    <li><a href="search.php?section=mapSearch"><?= htmlspecialchars($translations['navbar']['maps']) ?></a></li>
+                    <li><a href="search.php?section=guide"><?= htmlspecialchars($translations['navbar']['guides']) ?></a></li>
+                    <li><a href="search.php?section=completions"><?= htmlspecialchars($translations['navbar']['completions']) ?></a></li>
+                </ul>
+            </li>
+            <li class="dropdown-nav">
+                <button class="dropdown-toggle-nav">
+                <?= htmlspecialchars($translations['navbar']['community']) ?> <span class="arrow"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="news.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
+                    <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
+                    <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
+                </ul>
+            </li>
         </ul>
         <div class="navbar-right">
+            <ul class="lang-menu">
+                <li class="lang-dropdown-nav">
+                    <button class="dropdown-toggle-nav">
+                    <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
+                    <?= htmlspecialchars($selectedLangData['name']) ?>
+                    <span class="arrow"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                    <?php foreach ($languages as $langCode => $langData): ?>
+                        <li>
+                        <a href="?lang=<?= htmlspecialchars($langCode) ?>">
+                            <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                            <?= htmlspecialchars($langData['name']) ?>
+                        </a>
+                        </li>
+                    <?php endforeach; ?>
+                    </ul>
+                </li>
+            </ul>
             <a href="https://dsc.gg/genjiparkour" target="_blank" class="discord-logo">
                 <i class="fab fa-discord"></i>
             </a>
@@ -61,7 +81,7 @@ include BASE_PATH . "discord/header.php";
                     </ul>
                 </div>
             <?php else: ?>
-                <a href="discord/login.php" class="login-btn">Login</a>
+                <a href="discord/login.php" class="login-btn"><?= htmlspecialchars($translations['navbar']['login']) ?></a>
             <?php endif; ?>
         </div>
     </nav>
@@ -93,12 +113,10 @@ include BASE_PATH . "discord/header.php";
             <p class="news-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
         </div>
     </main>
-
     <div class="pagination">
         <button class="prev">Previous</button>
         <button class="next">Next</button>
     </div>
-
     <footer>
         <div class="footer-left">Genji Parkour © 2024</div>
         <div class="footer-right">Joe is cool</div>

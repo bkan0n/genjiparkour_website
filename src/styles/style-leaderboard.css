@@ -218,8 +218,6 @@ button.reset-filters-btn:hover {
 
 /* Tableau */
 table {
-  width: 100% !important;
-  max-width: 900px !important;
   border-collapse: separate;
   border-spacing: 0 0px !important;
   border-radius: 25px;
@@ -233,8 +231,7 @@ table {
 }
 
 #leaderboard {
-  width: 100%;
-  max-width: 1400px !important;
+  width: 80%;
   table-layout: fixed;
 }
 
@@ -383,6 +380,7 @@ th {
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .pagination-container button {
@@ -444,7 +442,7 @@ th {
 }
 
 .custom-select-large .select-trigger {
-  padding: 12px;
+  padding: 5px;
   background-color: transparent;
   color: #fff;
   border-radius: 5px;

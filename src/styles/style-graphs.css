@@ -30,10 +30,11 @@ canvas {
     flex-direction: column;
     align-items: center;
     gap: 40px;
-    padding: 3px;
+    padding: 13px;
     max-width: 600px;
     margin: 0 auto;
 }
+
 .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
     display: flex;
     justify-content: center;

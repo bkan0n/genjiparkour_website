@@ -555,9 +555,11 @@ footer {
   background-color: #7a7a7a;
 }
 
-/* Animation pour les liens de la navbar et les dropdown toggles */
+/* Animation pour les liens de la navbar, lang-menu et dropdown toggles */
 .navbar-menu a,
-.dropdown-nav .-nav,
+.lang-menu a,
+.dropdown-nav .dropdown-toggle-nav,
+.lang-dropdown-nav .dropdown-toggle-nav,
 .user-avatar-dropdown .dropdown-menu a {
   position: relative;
   color: #fff;
@@ -568,13 +570,17 @@ footer {
 }
 
 .navbar-menu a:hover::after,
+.lang-menu a:hover::after,
 .dropdown-nav .dropdown-toggle-nav:hover::after,
+.lang-dropdown-nav .dropdown-toggle-nav:hover::after,
 .user-avatar-dropdown .dropdown-menu a:hover::after {
   width: 100%;
 }
 
 .navbar-menu a::after,
+.lang-menu a::after,
 .dropdown-nav .dropdown-toggle-nav::after,
+.lang-dropdown-nav .dropdown-toggle-nav::after,
 .user-avatar-dropdown .dropdown-menu a::after {
   content: '';
   position: absolute;
@@ -589,11 +595,13 @@ footer {
 }
 
 .navbar-menu a:hover::after,
-.dropdown-nav .dropdown-toggle-nav:hover::after,
+.lang-menu a:hover::after,
+.lang-dropdown-nav .dropdown-toggle-nav:hover::after,
 .user-avatar-dropdown .dropdown-menu a:hover::after {
   transform: scaleX(1);
   transform-origin: left center;
 }
+
 
 
 /* Responsive Design */
@@ -693,4 +701,128 @@ footer {
   display: block;
   font-size: 0.9rem;
   transition: background-color 0.3s ease;
+}
+
+/* Menu principal des langues */
+.lang-menu {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  justify-content: center;
+}
+
+.lang-menu li {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lang-dropdown-nav .dropdown-toggle-nav {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 8px 0px;
+  margin-right: 5px;
+  transition: background-color 0.3s ease, border-radius 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.lang-dropdown-nav .arrow {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(5px, 2px);
+  transition: transform 0.3s ease;
+}
+
+.lang-dropdown-nav.open .arrow {
+  transform: rotate(135deg) translate(-1px, -4px);
+}
+
+.lang-dropdown-nav .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2b2b2b;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: none;
+  list-style: none;
+  padding: 10px 0;
+  text-align: center;
+  z-index: 50;
+  width: 100px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.lang-dropdown-nav .dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lang-dropdown-nav .dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
+
+.lang-dropdown-nav .dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}
+
+.lang-dropdown-nav .dropdown-menu.open {
+  display: block;
+}
+
+.lang-dropdown-nav .dropdown-menu li {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0px 12px;
+}
+
+.lang-dropdown-nav .dropdown-menu a {
+  padding: 8px 0px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+i.flag::before {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+  vertical-align: middle;
+  content: "";
+  background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
+}
+
+i.flag-us:before,i.flag-america:before,i.flag-united-states:before {
+  background-position: -72px -1950px !important
+}
+
+i.flag-fr:before,i.flag-france:before {
+  background-position: 0 -1976px !important
+}
+
+i.flag-ru:before,i.flag-russia:before {
+  background-position: -72px -884px !important
+}
+
+i.flag-de:before,i.flag-germany:before {
+  background-position: 0 -1430px !important
+}
+
+i.flag-cn:before,i.flag-china:before {
+  background-position: 0 -1196px !important
 }

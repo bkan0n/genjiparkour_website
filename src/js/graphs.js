@@ -1,3 +1,40 @@
+const currentLang = document.documentElement.lang || "en";
+console.log(`Langue actuelle : ${currentLang}`);
+
+async function loadTranslations() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        const currentLang = document.documentElement.lang || "en";
+        translations = data[currentLang]?.chart || {};
+        console.log("Traductions chargées :", translations);
+    } catch (error) {
+        console.error("Erreur lors du chargement des traductions :", error);
+    }
+}
+
+function t(key, params = {}) {
+    const keys = key.split('.'); // Découpe la clé en parties
+    let translation = translations;
+
+    for (let i = 0; i < keys.length; i++) {
+        if (!translation[keys[i]]) {
+            console.warn(`Clé de traduction manquante : ${key}`);
+            return key; // Retourne la clé brute si elle est manquante
+        }
+        translation = translation[keys[i]];
+    }
+
+    if (typeof translation === "string") {
+        Object.keys(params).forEach(param => {
+            const regex = new RegExp(`{${param}}`, "g");
+            translation = translation.replace(regex, params[param]);
+        });
+    }
+
+    return translation;
+}
+
 //Circular chat
 async function fetchRankData(endpoint) {
     try {
@@ -113,7 +150,7 @@ async function generateSVG(endpoint) {
         ringsContainer.appendChild(path);
 
         path.addEventListener('mouseover', () => {
-            hoverText.textContent = `${rank.amount} Players in ${rank.tier}`;
+            hoverText.textContent = t("playersInTier", { amount: rank.amount, tier: rank.tier });
             hoverText.style.opacity = 1;
         });
 
@@ -267,10 +304,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 //Bar chart
 document.addEventListener("DOMContentLoaded", async () => {
+    await loadTranslations();
     const response = await fetch('api/graphs/getMapsPerDifficulty.php');
     const mapData = await response.json();
 
-    const difficulties = mapData.map(item => item.difficulty.toUpperCase());
+    const difficulties = mapData.map(item => t(`${item.difficulty.toLowerCase()}`));
     const amounts = mapData.map(item => item.amount);
 
     const colors = [
@@ -287,7 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         data: {
             labels: difficulties,
             datasets: [{
-                label: 'Map Difficulty Distribution',
+                label: t("mapDifficultyDistribution"),
                 data: amounts,
                 backgroundColor: colors,
                 borderRadius: {
@@ -308,7 +346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Amount of maps',
+                        text: t("amountOfMaps"),
                         color: '#333',
                         font: {
                             family: 'Roboto',
@@ -333,7 +371,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 x: {
                     title: {
                         display: true,
-                        text: 'Difficulty level',
+                        text: t("difficultyLevel"),
                         color: '#333',
                         font: {
                             family: 'Roboto',
@@ -363,10 +401,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.raw} maps`;
+                            return t("mapsTooltip", { count: context.raw });
                         }
                     }
-                }
+                }                
             }
         },
         plugins: [{
@@ -392,104 +430,110 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 //Quality chart 
 document.addEventListener("DOMContentLoaded", () => {
-const ctx = document.getElementById("qualityDotChart").getContext("2d");
-let qualityChart;
+    const ctx = document.getElementById("qualityDotChart").getContext("2d");
+    let qualityChart;
 
-function updateChart(data) {
-    const sortedData = data.sort((a, b) => b.map_count - a.map_count).slice(0, 18);
+    function updateChart(data) {
+        const sortedData = data.sort((a, b) => b.map_count - a.map_count).slice(0, 18);
 
-    const creators = sortedData.map(item => item.name);
-    const mapCounts = sortedData.map(item => item.map_count);
-    const averageQualities = sortedData.map(item => parseFloat(item.average_quality));
+        const creators = sortedData.map(item => item.name);
+        const mapCounts = sortedData.map(item => item.map_count);
+        const averageQualities = sortedData.map(item => parseFloat(item.average_quality));
 
-    const chartData = creators.map((creator, index) => ({
-        x: mapCounts[index],
-        y: averageQualities[index]
-    }));
+        const chartData = creators.map((creator, index) => ({
+            x: mapCounts[index],
+            y: averageQualities[index]
+        }));
 
-    const colors = [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-        '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-        '#C9CBFF', '#FFA500', '#FF4500', '#00FA9A', '#9370DB',
-        '#FFD700', '#DC143C', '#1E90FF', '#B22222', '#00CED1'
-    ];
+        const colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+            '#C9CBFF', '#FFA500', '#FF4500', '#00FA9A', '#9370DB',
+            '#FFD700', '#DC143C', '#1E90FF', '#B22222', '#00CED1'
+        ];
 
-    if (qualityChart) {
-        qualityChart.destroy();
-    }
+        if (qualityChart) {
+            qualityChart.destroy();
+        }
 
-    qualityChart = new Chart(ctx, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Map creators by average quality',
-                data: chartData,
-                backgroundColor: colors.slice(0, chartData.length),
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            animation: {
-                duration: 3000,
-                easing: 'easeOutQuart'
+        qualityChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: t("popularCreators"),
+                    data: chartData,
+                    backgroundColor: colors.slice(0, chartData.length),
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
             },
-            scales: {
-                x: {
-                    type: 'logarithmic',
-                    title: {
-                        display: true,
-                        text: 'Amount of maps (Log Scale)',
-                        color: '#333',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 3000,
+                    easing: 'easeOutQuart'
+                },
+                scales: {
+                    x: {
+                        type: 'logarithmic',
+                        title: {
+                            display: true,
+                            text: t("mapAmountLogScale"),
+                            color: '#333',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#333',
+                            font: {
+                                size: 12
+                            }
                         }
                     },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            size: 12
-                        }
+                    y: {
+                        title: {
+                            display: true,
+                            text: t("averageQuality"),
+                            color: '#333',
+                            font: {
+                                family: 'Roboto',
+                                weight: 'bold',
+                                size: 16,
+                                lineHeight: 1.5
+                            }
+                        },
+                        ticks: {
+                            color: '#333',
+                            font: {
+                                family: 'Roboto',
+                                weight: 'bold',
+                                size: 12
+                            }
+                        },
+                        beginAtZero: true
                     }
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Average quality',
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            weight: 'bold',
-                            size: 16,
-                            lineHeight: 1.5
-                        }
-                    },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            weight: 'bold',
-                            size: 12
-                        }
-                    },
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const roundedQuality = averageQualities[context.dataIndex].toFixed(2);
-                            return `${creators[context.dataIndex]} - Maps: ${context.raw.x}, Quality: ${roundedQuality}`;
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const roundedQuality = averageQualities[context.dataIndex].toFixed(2);
+                                const creator = creators[context.dataIndex];
+                                const mapCount = context.raw.x;
+                                return t("tooltipLabel", {
+                                    creator: creator,
+                                    mapCount: mapCount,
+                                    quality: roundedQuality
+                                });
+                            }
                         }
                     }
-                }
+                }        
             }
-        }
-    });
-}
+        });
+    }
 
     fetch('api/graphs/popularCreators.php')
         .then(response => response.json())
@@ -524,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
         difficulties.forEach(difficulty => {
             const option = document.createElement("option");
             option.value = difficulty;
-            option.textContent = difficulty;
+            option.textContent = t(`${difficulty.toLowerCase()}`) || difficulty;
             difficultySelect.appendChild(option);
         });
     }
@@ -550,7 +594,7 @@ document.addEventListener("DOMContentLoaded", () => {
             type: "bubble",
             data: {
                 datasets: [{
-                    label: `Top maps for ${difficulty}`,
+                    label: t("topMapsFor", { difficulty: t(`${difficulty.toLowerCase()}`) }),
                     data: bubbleData,
                     backgroundColor: bubbleColor,
                     borderColor: "rgba(128, 128, 128, 0.6)",
@@ -569,7 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         labels: mapCodes,
                         title: {
                             display: true,
-                            text: 'Map codes',
+                            text: t("mapCodes"),
                             color: '#333',
                             font: {
                                 family: 'Roboto',
@@ -590,7 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     y: {
                         title: {
                             display: true,
-                            text: 'Completions',
+                            text: t("completions"),
                             color: '#333',
                             font: {
                                 family: 'Roboto',
@@ -614,7 +658,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `${context.raw.x}: ${context.raw.y} completions, Quality: ${mapQuality[context.dataIndex]}`;
+                                return t("completionsTooltip", {
+                                    map: context.raw.x,
+                                    completions: context.raw.y,
+                                    quality: mapQuality[context.dataIndex].toFixed(2)
+                                });
                             }
                         }
                     }

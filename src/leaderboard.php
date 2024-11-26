@@ -5,9 +5,10 @@ if (!defined('BASE_PATH')) {
 
 require BASE_PATH . "discord/session_init.php";
 include BASE_PATH . "discord/header.php";
+require BASE_PATH . 'translations/load_translations.php';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($selectedLang) ?>">
 <head>
     <meta charset="UTF-8">
     <title>Genji Parkour - Leaderboard</title>
@@ -26,30 +27,49 @@ include BASE_PATH . "discord/header.php";
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="leaderboard.php">Leaderboard</a></li>
+            <li><a href="index.php"><?= htmlspecialchars($translations['navbar']['home']) ?></a></li>
+            <li><a href="leaderboard.php"><?= htmlspecialchars($translations['navbar']['leaderboard']) ?></a></li>
             <li class="dropdown-nav">
                 <button class="dropdown-toggle-nav">
-                Search <span class="arrow"></span>
+                <?= htmlspecialchars($translations['navbar']['search']) ?> <span class="arrow"></span>
                 </button>
                 <ul class="dropdown-menu">
-            <li><a href="search.php">Maps</a></li>
-            <li><a href="search.php">Guides</a></li>
-            <li><a href="search.php">Completions</a></li>
-            </ul>
-        </li>
-        <li class="dropdown-nav">
-            <button class="dropdown-toggle-nav">
-            Community <span class="arrow"></span>
-            </button>
-            <ul class="dropdown-menu">
-            <li><a href="news.php">News</a></li>
-            <li><a href="tutorial.php">Tutorial</a></li>
-            <li><a href="graphs.php">Statistics</a></li>
-            </ul>
-        </li>
+                    <li><a href="search.php?section=mapSearch"><?= htmlspecialchars($translations['navbar']['maps']) ?></a></li>
+                    <li><a href="search.php?section=guide"><?= htmlspecialchars($translations['navbar']['guides']) ?></a></li>
+                    <li><a href="search.php?section=completions"><?= htmlspecialchars($translations['navbar']['completions']) ?></a></li>
+                </ul>
+            </li>
+            <li class="dropdown-nav">
+                <button class="dropdown-toggle-nav">
+                <?= htmlspecialchars($translations['navbar']['community']) ?> <span class="arrow"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="news.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
+                    <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
+                    <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
+                </ul>
+            </li>
         </ul>
         <div class="navbar-right">
+            <ul class="lang-menu">
+                <li class="lang-dropdown-nav">
+                    <button class="dropdown-toggle-nav">
+                    <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
+                    <?= htmlspecialchars($selectedLangData['name']) ?>
+                    <span class="arrow"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                    <?php foreach ($languages as $langCode => $langData): ?>
+                        <li>
+                        <a href="?lang=<?= htmlspecialchars($langCode) ?>">
+                            <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                            <?= htmlspecialchars($langData['name']) ?>
+                        </a>
+                        </li>
+                    <?php endforeach; ?>
+                    </ul>
+                </li>
+            </ul>
             <a href="https://dsc.gg/genjiparkour" target="_blank" class="discord-logo">
                 <i class="fab fa-discord"></i>
             </a>
@@ -62,7 +82,7 @@ include BASE_PATH . "discord/header.php";
                     </ul>
                 </div>
             <?php else: ?>
-                <a href="discord/login.php" class="login-btn">Login</a>
+                <a href="discord/login.php" class="login-btn"><?= htmlspecialchars($translations['navbar']['login']) ?></a>
             <?php endif; ?>
         </div>
     </nav>
@@ -75,72 +95,117 @@ include BASE_PATH . "discord/header.php";
         <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
         </div>
     </div>
-        <div class="container">
-            <h1> </h1>
-            <form method="GET" action="leaderboard.php" class="form-container">
-                <div class="custom-select" id="search-by-select">
-                    <div class="select-trigger" id="search-by-trigger"></div>
-                    <i class="fas fa-sliders-h filter-icon"></i>
-                    <div class="custom-options select-hide" id="search-by-options">
-                        <div class="custom-option" data-value="nickname">Name</div>
-                        <div class="custom-option" data-value="discord_tag">Tag</div>
-                        <div class="custom-option" data-value="player_both" selected>Name/Tag</div>
+    <div class="container">
+        <form method="GET" action="leaderboard.php" class="form-container">
+            <!-- Search By -->
+            <div class="custom-select" id="search-by-select">
+                <div class="select-trigger" id="search-by-trigger">
+                    <?= htmlspecialchars($translations['leaderboard']['searchBy_nameOrTag'] ?? 'Name/Tag') ?>
+                </div>
+                <i class="fas fa-sliders-h filter-icon"></i>
+                <div class="custom-options select-hide" id="search-by-options">
+                    <div class="custom-option" data-value="nickname">
+                        <?= htmlspecialchars($translations['leaderboard']['searchBy_name'] ?? 'Name') ?>
+                    </div>
+                    <div class="custom-option" data-value="discord_tag">
+                        <?= htmlspecialchars($translations['leaderboard']['searchBy_discordTag'] ?? 'Tag') ?>
+                    </div>
+                    <div class="custom-option" data-value="player_both" selected>
+                        <?= htmlspecialchars($translations['leaderboard']['searchBy_nameOrTag'] ?? 'Name/Tag') ?>
                     </div>
                 </div>
-
-                <input type="text" name="search" id="search-input" placeholder="Search by Name/Tag...">
-                <input type="hidden" id="selected-search-by" value="player_both">
-
-                <div class="custom-select-large" id="sort-select">
-                    <div class="select-trigger" id="sort-trigger">Sort by</div>
-                    <div class="custom-options select-hide" id="sort-options">
-                        <div class="custom-option" data-value="xp_amount">XP</div>
-                        <div class="custom-option" data-value="wr_count">World records</div>
-                        <div class="custom-option" data-value="map_count">Maps made</div>
-                        <div class="custom-option" data-value="playtest_count">Playtest votes</div>
-                    </div>
-                </div>
-
-                <div class="custom-select-large" id="rank-select">
-                    <div class="select-trigger" id="rank-trigger">Search rank</div>
-                    <div class="custom-options select-hide" id="rank-options">
-                        <div class="custom-option" data-value="">All ranks</div>
-                        <div class="custom-option" data-value="Ninja">Ninja</div>
-                        <div class="custom-option" data-value="Jumper">Jumper</div>
-                        <div class="custom-option" data-value="Skilled">Skilled</div>
-                        <div class="custom-option" data-value="Pro">Pro</div>
-                        <div class="custom-option" data-value="Master">Master</div>
-                        <div class="custom-option" data-value="Grandmaster">Grandmaster</div>
-                        <div class="custom-option" data-value="God">God</div>
-                    </div>
-                </div>
-
-                <input type="hidden" name="sort_column" id="selected-sort" value="<?php echo isset($_GET['sort_column']) ? htmlspecialchars($_GET['sort_column'], ENT_QUOTES, 'UTF-8') : 'xp_amount'; ?>">
-                <input type="hidden" name="skill_rank" id="selected-rank" value="<?php echo isset($_GET['skill_rank']) ? htmlspecialchars($_GET['skill_rank'], ENT_QUOTES, 'UTF-8') : ''; ?>">
-                <input type="hidden" name="search_by" id="selected-search-by" value="<?php echo isset($_GET['search_by']) ? htmlspecialchars($_GET['search_by'], ENT_QUOTES, 'UTF-8') : 'player_both'; ?>">
-                <button type="submit" class="reset-filters-btn">Reset filters</button>
-
-            </form>
-            <div id="checkboxes-container">
-                <input type="checkbox" id="toggle_xp" class="toggle-col" data-col="xp" checked>
-                <label for="toggle_xp"><span></span> XP <ins><i></i></ins></label>
-                <input type="checkbox" id="toggle_tier" class="toggle-col" data-col="tier" checked>
-                <label for="toggle_tier"><span></span> Tier <ins><i></i></ins></label>
-                <input type="checkbox" id="toggle_skill-rank" class="toggle-col" data-col="skill-rank" checked>
-                <label for="toggle_skill-rank"><span></span> Rank <ins><i></i></ins></label>
-                <input type="checkbox" id="toggle_wr" class="toggle-col" data-col="wr" checked>
-                <label for="toggle_wr"><span></span> WR <ins><i></i></ins></label>
-                <input type="checkbox" id="toggle_maps" class="toggle-col" data-col="maps" checked>
-                <label for="toggle_maps"><span></span> Maps <ins><i></i></ins></label>
-                <input type="checkbox" id="toggle_playtest" class="toggle-col" data-col="playtest" checked>
-                <label for="toggle_playtest"><span></span> Playtest <ins><i></i></ins></label>
-                <input type="checkbox" id="toggle_discord-tag" class="toggle-col" data-col="discord-tag" checked>
-                <label for="toggle_discord-tag"><span></span> TAG <ins><i></i></ins></label>
             </div>
-            <div id="leaderboard-container">
-                <div class="table-wrapper">
-                    <table id="leaderboard"></table>
+
+            <!-- Search Input -->
+            <input type="text" name="search" id="search-input" placeholder="<?= htmlspecialchars($translations['leaderboard']['placeholder'] ?? 'Search by Name/Tag...') ?>">
+            <input type="hidden" id="selected-search-by" value="player_both">
+
+            <!-- Sort By -->
+            <div class="custom-select-large" id="sort-select">
+                <div class="select-trigger" id="sort-trigger">
+                    <?= htmlspecialchars($translations['leaderboard']['sortBy'] ?? 'Sort by') ?>
                 </div>
+                <div class="custom-options select-hide" id="sort-options">
+                    <div class="custom-option" data-value="xp_amount">
+                        <?= htmlspecialchars($translations['leaderboard']['sortBy_xp'] ?? 'XP') ?>
+                    </div>
+                    <div class="custom-option" data-value="wr_count">
+                        <?= htmlspecialchars($translations['leaderboard']['sortBy_worldRecords'] ?? 'World records') ?>
+                    </div>
+                    <div class="custom-option" data-value="map_count">
+                        <?= htmlspecialchars($translations['leaderboard']['sortBy_mapsMade'] ?? 'Maps made') ?>
+                    </div>
+                    <div class="custom-option" data-value="playtest_count">
+                        <?= htmlspecialchars($translations['leaderboard']['sortBy_playtestVotes'] ?? 'Playtest votes') ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rank Filter -->
+            <div class="custom-select-large" id="rank-select">
+                <div class="select-trigger" id="rank-trigger">
+                    <?= htmlspecialchars($translations['leaderboard']['rank'] ?? 'Search rank') ?>
+                </div>
+                <div class="custom-options select-hide" id="rank-options">
+                    <div class="custom-option" data-value="">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_allRanks'] ?? 'All ranks') ?>
+                    </div>
+                    <div class="custom-option" data-value="Ninja">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_ninja'] ?? 'Ninja') ?>
+                    </div>
+                    <div class="custom-option" data-value="Jumper">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_jumper'] ?? 'Jumper') ?>
+                    </div>
+                    <div class="custom-option" data-value="Skilled">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_skilled'] ?? 'Skilled') ?>
+                    </div>
+                    <div class="custom-option" data-value="Pro">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_pro'] ?? 'Pro') ?>
+                    </div>
+                    <div class="custom-option" data-value="Master">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_master'] ?? 'Master') ?>
+                    </div>
+                    <div class="custom-option" data-value="Grandmaster">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_grandmaster'] ?? 'Grandmaster') ?>
+                    </div>
+                    <div class="custom-option" data-value="God">
+                        <?= htmlspecialchars($translations['leaderboard']['rank_god'] ?? 'God') ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset Filters Button -->
+            <button type="submit" class="reset-filters-btn">
+                <?= htmlspecialchars($translations['leaderboard']['resetFilters'] ?? 'Reset filters') ?>
+            </button>
+        </form>
+
+        <!-- Toggle Columns -->
+        <div id="checkboxes-container">
+            <input type="checkbox" id="toggle_xp" class="toggle-col" data-col="xp" checked>
+            <label for="toggle_xp"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_xp']) ?> <ins><i></i></ins></label>
+
+            <input type="checkbox" id="toggle_tier" class="toggle-col" data-col="tier" checked>
+            <label for="toggle_tier"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_tier']) ?> <ins><i></i></ins></label>
+
+            <input type="checkbox" id="toggle_skill-rank" class="toggle-col" data-col="skill-rank" checked>
+            <label for="toggle_skill-rank"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_rank']) ?> <ins><i></i></ins></label>
+
+            <input type="checkbox" id="toggle_wr" class="toggle-col" data-col="wr" checked>
+            <label for="toggle_wr"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_worldRecords']) ?> <ins><i></i></ins></label>
+
+            <input type="checkbox" id="toggle_maps" class="toggle-col" data-col="maps" checked>
+            <label for="toggle_maps"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_maps']) ?> <ins><i></i></ins></label>
+
+            <input type="checkbox" id="toggle_playtest" class="toggle-col" data-col="playtest" checked>
+            <label for="toggle_playtest"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_playtest']) ?> <ins><i></i></ins></label>
+
+            <input type="checkbox" id="toggle_discord-tag" class="toggle-col" data-col="discord-tag" checked>
+            <label for="toggle_discord-tag"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_discordTag']) ?> <ins><i></i></ins></label>
+        </div>
+        <div id="leaderboard-container">
+            <div class="table-wrapper">
+                <table id="leaderboard"></table>
             </div>
             <div class="pagination-container"></div>
         </div>

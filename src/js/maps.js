@@ -1,26 +1,3 @@
-const filterOptions = {
-    mapSearch: [
-        { id: 'map_name', label: 'Map Name' },
-        { id: 'map_code', label: 'Map Code' },
-        { id: 'difficulty', label: 'Map Difficulty' },
-        { id: 'creator', label: 'Map Creator' },
-        { id: 'mechanics', label: 'Mechanics' },
-        { id: 'restrictions', label: 'Restrictions' },
-        { id: 'only_playtest', label: 'Only Playtest' },
-        { id: 'only_maps_with_medals', label: 'Only Medals' },
-        { id: 'ignore_completions', label: 'Ignore Completions' },
-    ],
-    completions: [
-        { id: 'user', label: 'Player Name' },
-        { id: 'map_code', label: 'Map Code' },
-    ],
-    guide: [{ id: 'map_code', label: 'Map Code' }],
-    personalRecords: [
-        //{ id: 'user', label: 'Player Name' },
-        { id: 'map_code', label: 'Map Code' },
-    ]
-};
-
 const apiUrls = {
     mapSearch: 'api/search/getMapSearch.php',
     completions: 'api/search/getCompletions.php',
@@ -51,6 +28,7 @@ const sectionLoadingOperations = {
     }
 };
 
+const filterOptions = {};
 const filters = {};
 const selectedFilters = [];
 let mechanicsOptions = [];
@@ -77,6 +55,70 @@ const difficultyOptions = ["Beginner", "Easy", "Medium", "Hard", "Very Hard", "E
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("filtersContainer").style.display = "none";
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const currentLang = document.documentElement.lang || "en";
+    const filterOptionsDropdown = document.querySelector(".filter-options");
+
+    if (filterOptionsDropdown && currentLang === "fr") {
+        filterOptionsDropdown.style.width = "150px";
+    }
+
+    fetch('translations/translations.json')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des traductions.');
+            }
+            return response.json();
+        })
+        .then((translations) => {
+            const filters = translations[currentLang]?.filters || {};
+
+            Object.assign(filterOptions, {
+                mapSearch: [
+                    { id: "map_name", label: filters.map_name },
+                    { id: "map_code", label: filters.map_code },
+                    { id: "difficulty", label: filters.difficulty },
+                    { id: "creator", label: filters.creator },
+                    { id: "mechanics", label: filters.mechanics },
+                    { id: "restrictions", label: filters.restrictions },
+                    { id: "only_playtest", label: filters.only_playtest },
+                    { id: "only_maps_with_medals", label: filters.only_maps_with_medals },
+                    { id: "ignore_completions", label: filters.ignore_completions }
+                ],
+                completions: [
+                    { id: "user", label: filters.player_name },
+                    { id: "map_code", label: filters.map_code }
+                ],
+                guide: [
+                    { id: "map_code", label: filters.map_code }
+                ],
+                personalRecords: [
+                    { id: "map_code", label: filters.map_code }
+                ]
+            });
+
+            console.log("Filter options loaded: ", filterOptions);
+        })
+        .catch((error) => {
+            console.error("Erreur lors du chargement des traductions : ", error);
+        });
+});
+
+async function loadTranslations() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        const currentLang = document.documentElement.lang || "en";
+        translations = data[currentLang]?.thead || {};
+    } catch (error) {
+        console.error("Erreur lors du chargement des traductions :", error);
+    }
+}
+
+function t(key) {
+    return translations[key] || key;
+}
 
 async function loadDynamicOptions() {
     try {
@@ -136,7 +178,7 @@ function selectSection(sectionId) {
     clearFilters();
     currentPage = 1;
     document.getElementById("filterActions").style.display = "flex";
-    
+
     const selectedModeText = document.getElementById("selectedMode");
     const intuitiveModeText = document.getElementById("intuitiveMode");
     const addFilterMessage = document.getElementById("addFilterMessage");
@@ -338,9 +380,8 @@ function addFilter(filterId, filterLabel) {
         } else if (filterId === "map_code") {
             filterInput = document.createElement("input");
             filterInput.type = "text";
-            filterInput.placeholder = "Map Code";
-            filterInput.addEventListener("input", showMapCodeSuggestions);
             filterInput.placeholder = filterLabel;
+            filterInput.addEventListener("input", showMapCodeSuggestions);
             filterInput.addEventListener("input", () => {
                 filterInput.value = filterInput.value.toUpperCase();
             });
@@ -356,7 +397,7 @@ function addFilter(filterId, filterLabel) {
         } else if (filterId === "creator") {
             filterInput = document.createElement("input");
             filterInput.type = "text";
-            filterInput.placeholder = "Map Creator";
+            filterInput.placeholder = filterLabel;
             filterInput.addEventListener("input", showUsersSuggestions);
             filterElement.appendChild(filterInput);
         
@@ -367,7 +408,7 @@ function addFilter(filterId, filterLabel) {
         } else if (filterId === "user") {
             filterInput = document.createElement("input");
             filterInput.type = "text";
-            filterInput.placeholder = "Player Name";
+            filterInput.placeholder = filterLabel;
             filterInput.addEventListener("input", showUsersSuggestions);
             filterElement.appendChild(filterInput);
 
@@ -745,7 +786,8 @@ function hideLoadingBar() {
     loadingBar.style.display = "none";
 }
 
-function displayMapSearchResults(data) {
+async function displayMapSearchResults(data) {
+    await loadTranslations();
     const resultsContainer = document.getElementById("resultsContainer");
 
     const results = Object.values(data).filter(item => typeof item === "object" && !item.pagination);
@@ -782,16 +824,16 @@ function displayMapSearchResults(data) {
             </colgroup>
             <thead>
                 <tr>
-                    <th class="mapCode">Code</th>
-                    <th class="mapName">Name</th>
-                    <th class="mapType">Type</th>
-                    <th class="mapCreator">Creator</th>
-                    <th class="mapDifficulty">Difficulty</th>
-                    <th class="mapQuality">Quality</th>
-                    <th class="mapGold">Gold</th>
-                    <th class="mapSilver">Silver</th>
-                    <th class="mapBronze">Bronze</th>
-                    <th class="mapDetails">Details</th>
+                    <th class="mapCode">${t("mapCode")}</th>
+                    <th class="mapName">${t("mapName")}</th>
+                    <th class="mapType">${t("mapType")}</th>
+                    <th class="mapCreator">${t("mapCreator")}</th>
+                    <th class="mapDifficulty">${t("mapDifficulty")}</th>
+                    <th class="mapQuality">${t("mapQuality")}</th>
+                    <th class="mapGold">${t("mapGold")}</th>
+                    <th class="mapSilver">${t("mapSilver")}</th>
+                    <th class="mapBronze">${t("mapBronze")}</th>
+                    <th class="mapDetails">${t("mapDetails")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -952,7 +994,8 @@ function displayMapSearchResults(data) {
     });
 }
 
-function displayPersonalRecordsResults(results) {
+async function displayPersonalRecordsResults(results) {
+    await loadTranslations();
     const resultsContainer = document.getElementById("resultsContainer");
     const dataResults = Array.isArray(results.results) ? results.results : [];
 
@@ -975,12 +1018,12 @@ function displayPersonalRecordsResults(results) {
             </colgroup>
             <thead>
                 <tr>
-                    <th class="mapCode">Code</th>
-                    <th class="nickname">Nickname</th>
-                    <th class="discordTag">Discord Tag</th>
-                    <th class="difficulty">Difficulty</th>
-                    <th class="time">Time</th>
-                    <th class="medal">Medal</th>
+                    <th class="mapCode">${t("mapCode")}</th>
+                    <th class="nickname">${t("mapNickname")}</th>
+                    <th class="discordTag">${t("mapDiscordTag")}</th>
+                    <th class="difficulty">${t("mapDifficulty")}</th>
+                    <th class="time">${t("mapTime")}</th>
+                    <th class="medal">${t("mapMedal")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -1012,7 +1055,8 @@ function displayPersonalRecordsResults(results) {
         </table>`;
 }
 
-function displayCompletionsResults(results) {
+async function displayCompletionsResults(results) {
+    await loadTranslations();
     const resultsContainer = document.getElementById("resultsContainer");
     const dataResults = Array.isArray(results.results) ? results.results : [];
 
@@ -1033,12 +1077,12 @@ function displayCompletionsResults(results) {
             </colgroup>
             <thead>
                 <tr>
-                    <th class="mapCode">Map Code</th>
-                    <th class="nickname">Player Name</th>
-                    <th class="discordTag">Discord Tag</th>
-                    <th class="time">Time</th>
-                    <th class="medal">Medal</th>
-                    <th class="video">Video</th>
+                    <th class="mapCode">${t("mapCode")}</th>
+                    <th class="nickname">${t("mapNickname")}</th>
+                    <th class="discordTag">${t("mapDiscordTag")}</th>
+                    <th class="time">${t("mapTime")}</th>
+                    <th class="medal">${t("mapMedal")}</th>
+                    <th class="video">${t("mapVideo")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -1070,7 +1114,8 @@ function displayCompletionsResults(results) {
         </table>`;
 }
 
-function displayGuideResults(results) {
+async function displayGuideResults(results) {
+    await loadTranslations();
     const resultsContainer = document.getElementById("resultsContainer");
     const dataResults = Array.isArray(results.results) ? results.results : [];
 
@@ -1083,8 +1128,8 @@ function displayGuideResults(results) {
         <table class="results-table">
             <thead>
                 <tr>
-                    <th class="mapCode">Map Code</th>
-                    <th class="guideVideo">Guide Video</th>
+                    <th class="mapCode">${t("mapCode")}</th>
+                    <th class="guideVideo">${t("mapVideo")}</th>
                 </tr>
             </thead>
             <tbody>

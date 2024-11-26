@@ -17,7 +17,24 @@ let activeFilters = {
     search: ''
 };
 
+const currentLang = document.documentElement.lang || "en";
+console.log(`Langue actuelle : ${currentLang}`);
 const navbar = document.querySelector('nav');
+
+async function loadTranslations() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        const currentLang = document.documentElement.lang || "en";
+        translations = data[currentLang]?.thead || {};
+    } catch (error) {
+        console.error("Erreur lors du chargement des traductions :", error);
+    }
+}
+
+function t(key) {
+    return translations[key] || key;
+}
 
 window.addEventListener('scroll', function () {
     if (window.scrollY > 50) {
@@ -41,18 +58,23 @@ function handleSortClick(event) {
 }
 
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+    await loadTranslations();
     const leaderboardContainer = document.getElementById('leaderboard');
     const paginationContainer = document.querySelector('.pagination-container');
 
     if (!leaderboardContainer) {
-        console.error("L'élément avec l'ID 'leaderboard' est introuvable.");
+        console.error("L'élément avec l'ID 'leaderboard' est introuvable");
         return;
     }
 
     if (!paginationContainer) {
-        console.error("Le conteneur de pagination est introuvable.");
+        console.error("Le conteneur de pagination est introuvable");
         return;
+    }
+
+    if (currentLang === 'fr' && leaderboardContainer) {
+        leaderboardContainer.style.width = `calc(80% + 120px)`;
     }
 
     leaderboardContainer.innerHTML = `
@@ -60,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="thead-container">
                 <tr class="thead-wrapper">
                     <th class="col-nickname">
-                        Nickname
+                        ${t("mapNickname")}
                         <span class="vertical-bar"></span>
                         <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -70,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-xp">
-                        XP
+                        ${t("mapXP")}    
                         <span class="vertical-bar"></span>
                         <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -80,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-tier">
-                        Tier
+                        ${t("mapTierRank")}
                         <span class="vertical-bar"></span>
                         <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -90,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-skill-rank">
-                        Skill Rank
+                        ${t("mapSkillRank")}
                         <span class="vertical-bar"></span>
                         <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -100,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-wr">
-                        World Records
+                        ${t("mapWR")}
                         <span class="vertical-bar"></span>
                         <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -110,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-maps">
-                        Maps Made
+                        ${t("mapMade")}
                         <span class="vertical-bar"></span>
                         <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -120,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-playtest">
-                        Playtest Votes
+                        ${t("mapPlaytestsVotes")}
                         <span class="vertical-bar"></span>
                         <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -130,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </th>
                     <th class="col-discord-tag">
-                        Discord Tag
+                        ${t("mapDiscordTag")}
                         <span class="vertical-bar"></span>
                         <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -541,10 +563,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function applyRoundedCorners() {
     const table = document.querySelector('table');
-    if (!table) return;
+    if (!table) {
+        console.warn("Tableau introuvable dans le DOM.");
+        return;
+    }
 
     const theadWrapper = table.querySelector('.thead-wrapper');
     const tbody = table.querySelector('tbody');
+    if (!theadWrapper || !tbody) {
+        return;
+    }
+
     const lastRow = tbody.querySelector('tr:last-child');
     const visibleHeaders = Array.from(theadWrapper.querySelectorAll('th')).filter(th => th.offsetParent !== null);
     const visibleCells = lastRow ? Array.from(lastRow.querySelectorAll('td')).filter(td => td.offsetParent !== null) : [];
@@ -563,6 +592,7 @@ function applyRoundedCorners() {
         visibleCells[visibleCells.length - 1].style.borderBottomRightRadius = '15px';
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', applyRoundedCorners);
 document.addEventListener('updateSearchResults', applyRoundedCorners);
