@@ -4,10 +4,8 @@ if (!defined('BASE_PATH')) {
 }
 
 require BASE_PATH . "discord/session_init.php";
+require BASE_PATH . "translations/load_translations.php";
 include BASE_PATH . "discord/header.php";
-require BASE_PATH . 'translations/load_translations.php';
-$languages = getLanguages();
-$selectedLangData = $languages[$selectedLang] ?? $languages['en'];
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($selectedLang) ?>">
