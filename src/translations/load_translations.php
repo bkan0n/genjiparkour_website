@@ -1,4 +1,9 @@
 <?php
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', __DIR__ . '/../');
+}
+require BASE_PATH . 'translations/set_language_cookie.php';
+
 function loadTranslations($lang = 'en') {
     $jsonPath = __DIR__ . '/translations.json';
 
@@ -18,13 +23,6 @@ function getLanguages() {
         return $translations['languages'] ?? [];
     }
     return [];
-}
-
-if (isset($_GET['lang'])) {
-    $selectedLang = $_GET['lang'];
-    setcookie('lang', $selectedLang, time() + (365 * 24 * 60 * 60), '/');
-} else {
-    $selectedLang = $_COOKIE['lang'] ?? 'en';
 }
 
 $translations = loadTranslations($selectedLang);
