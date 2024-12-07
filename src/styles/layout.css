@@ -126,6 +126,7 @@ footer {
     align-items: center;
     width: 100%;
     z-index: 5;
+    position: relative;
 }
 
 .footer-left, .footer-right {
@@ -140,18 +141,6 @@ footer {
 
 .scroll-indicator a {
     color: #fff;
-    font-size: 24px;
-    text-decoration: none;
-    animation: bounce 2s infinite;
-}
-
-.scroll-indicator2 {
-    position: absolute;
-    bottom: 20px;
-}
-
-.scroll-indicator2 a {
-    color: #555;
     font-size: 24px;
     text-decoration: none;
     animation: bounce 2s infinite;
@@ -213,7 +202,7 @@ footer {
   height: 100%;
   align-items: center;
   justify-content: center;
-  z-index: 7;
+  z-index: 2000;
 }
 
 .modal-content {
@@ -224,7 +213,7 @@ footer {
   color: white;
   border: none !important;
   box-shadow: none !important;
-  z-index: 7;
+  z-index: 2000;
 }
 
 .close-btn {
@@ -248,25 +237,7 @@ footer {
   border-radius: 10px;
   max-width: 200px;
   text-align: center;
-  z-index: 7;
-}
-
-/* Section 1 */
-.navbar-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-icon {
-  width: 30px;
-  height: 30px;
-}
-
-.logo-text {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
+  z-index: 2000;
 }
 
 /* Section 2 */
@@ -333,7 +304,7 @@ footer {
   list-style: none;
   padding: 10px 0;
   text-align: center;
-  z-index: 50;
+  z-index: 2000;
 }
 
 .dropdown-nav .dropdown-menu {
@@ -385,6 +356,42 @@ footer {
 
 .login-btn:hover {
   background-color: #7a7a7a;
+}
+
+.moderator-btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  background-color: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.moderator-btn:before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 1px solid #5865f2;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.moderator-icon {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.moderator-btn:hover::before {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
 }
 
 /* Animation nav links*/
@@ -463,9 +470,13 @@ footer {
   gap: 10px;
 }
 
-.logo-icon {
-  width: 30px;
-  height: 30px;
+.navbar-left .logo-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  object-fit: cover;
+  cursor: pointer;
 }
 
 .logo-text {
@@ -516,7 +527,7 @@ footer {
   list-style: none;
   padding: 10px 0;
   text-align: center;
-  z-index: 50;
+  z-index: 1000;
 }
 
 .dropdown.open .dropdown-menu {
@@ -602,54 +613,6 @@ footer {
   transform-origin: left center;
 }
 
-
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .navbar {
-    flex-direction: column;
-    padding: 15px;
-  }
-
-  .navbar-menu {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-
-  .navbar-right {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .logo-text {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    width: 90%;
-  }
-
-  .navbar-menu {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .navbar-right {
-    justify-content: center;
-  }
-
-  .dropdown-nav .dropdown-menu {
-    top: calc(100% + 5px);
-    transform: translateX(0);
-    left: 0;
-    right: 0;
-  }
-}
-
 /* Styles user dropdown */
 
 .user-avatar-dropdown {
@@ -678,7 +641,7 @@ footer {
   list-style: none;
   padding: 10px 0;
   min-width: 100px;
-  z-index: 50;
+  z-index: 1000;
   text-align: center;
 }
 
@@ -757,7 +720,7 @@ footer {
   list-style: none;
   padding: 10px 0;
   text-align: center;
-  z-index: 50;
+  z-index: 1000;
   width: 100px;
   max-height: 150px;
   overflow-y: auto;
@@ -807,22 +770,1079 @@ i.flag::before {
   background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
 }
 
-i.flag-us:before,i.flag-america:before,i.flag-united-states:before {
-  background-position: -72px -1950px !important
+i.flag-ad:before,i.flag-andorra:before {
+  background-position: 0 0 !important
 }
 
-i.flag-fr:before,i.flag-france:before {
-  background-position: 0 -1976px !important
+i.flag-ae:before,i.flag-united-arab-emirates:before,i.flag-uae:before {
+  background-position: 0 -26px !important
 }
 
-i.flag-ru:before,i.flag-russia:before {
-  background-position: -72px -884px !important
+i.flag-af:before,i.flag-afghanistan:before {
+  background-position: 0 -52px !important
+}
+
+i.flag-ag:before,i.flag-antigua:before {
+  background-position: 0 -78px !important
+}
+
+i.flag-ai:before,i.flag-anguilla:before {
+  background-position: 0 -104px !important
+}
+
+i.flag-al:before,i.flag-albania:before {
+  background-position: 0 -130px !important
+}
+
+i.flag-am:before,i.flag-armenia:before {
+  background-position: 0 -156px !important
+}
+
+i.flag-an:before,i.flag-netherlands-antilles:before {
+  background-position: 0 -182px !important
+}
+
+i.flag-ao:before,i.flag-angola:before {
+  background-position: 0 -208px !important
+}
+
+i.flag-ar:before,i.flag-argentina:before {
+  background-position: 0 -234px !important
+}
+
+i.flag-as:before,i.flag-american-samoa:before {
+  background-position: 0 -260px !important
+}
+
+i.flag-at:before,i.flag-austria:before {
+  background-position: 0 -286px !important
+}
+
+i.flag-au:before,i.flag-australia:before {
+  background-position: 0 -312px !important
+}
+
+i.flag-aw:before,i.flag-aruba:before {
+  background-position: 0 -338px !important
+}
+
+i.flag-ax:before,i.flag-aland-islands:before {
+  background-position: 0 -364px !important
+}
+
+i.flag-az:before,i.flag-azerbaijan:before {
+  background-position: 0 -390px !important
+}
+
+i.flag-ba:before,i.flag-bosnia:before {
+  background-position: 0 -416px !important
+}
+
+i.flag-bb:before,i.flag-barbados:before {
+  background-position: 0 -442px !important
+}
+
+i.flag-bd:before,i.flag-bangladesh:before {
+  background-position: 0 -468px !important
+}
+
+i.flag-be:before,i.flag-belgium:before {
+  background-position: 0 -494px !important
+}
+
+i.flag-bf:before,i.flag-burkina-faso:before {
+  background-position: 0 -520px !important
+}
+
+i.flag-bg:before,i.flag-bulgaria:before {
+  background-position: 0 -546px !important
+}
+
+i.flag-bh:before,i.flag-bahrain:before {
+  background-position: 0 -572px !important
+}
+
+i.flag-bi:before,i.flag-burundi:before {
+  background-position: 0 -598px !important
+}
+
+i.flag-bj:before,i.flag-benin:before {
+  background-position: 0 -624px !important
+}
+
+i.flag-bm:before,i.flag-bermuda:before {
+  background-position: 0 -650px !important
+}
+
+i.flag-bn:before,i.flag-brunei:before {
+  background-position: 0 -676px !important
+}
+
+i.flag-bo:before,i.flag-bolivia:before {
+  background-position: 0 -702px !important
+}
+
+i.flag-br:before,i.flag-brazil:before {
+  background-position: 0 -728px !important
+}
+
+i.flag-bs:before,i.flag-bahamas:before {
+  background-position: 0 -754px !important
+}
+
+i.flag-bt:before,i.flag-bhutan:before {
+  background-position: 0 -780px !important
+}
+
+i.flag-bv:before,i.flag-bouvet-island:before {
+  background-position: 0 -806px !important
+}
+
+i.flag-bw:before,i.flag-botswana:before {
+  background-position: 0 -832px !important
+}
+
+i.flag-by:before,i.flag-belarus:before {
+  background-position: 0 -858px !important
+}
+
+i.flag-bz:before,i.flag-belize:before {
+  background-position: 0 -884px !important
+}
+
+i.flag-ca:before,i.flag-canada:before {
+  background-position: 0 -910px !important
+}
+
+i.flag-cc:before,i.flag-cocos-islands:before {
+  background-position: 0 -962px !important
+}
+
+i.flag-cd:before,i.flag-congo:before {
+  background-position: 0 -988px !important
+}
+
+i.flag-cf:before,i.flag-central-african-republic:before {
+  background-position: 0 -1014px !important
+}
+
+i.flag-cg:before,i.flag-congo-brazzaville:before {
+  background-position: 0 -1040px !important
+}
+
+i.flag-ch:before,i.flag-switzerland:before {
+  background-position: 0 -1066px !important
+}
+
+i.flag-ci:before,i.flag-cote-divoire:before {
+  background-position: 0 -1092px !important
+}
+
+i.flag-ck:before,i.flag-cook-islands:before {
+  background-position: 0 -1118px !important
+}
+
+i.flag-cl:before,i.flag-chile:before {
+  background-position: 0 -1144px !important
+}
+
+i.flag-cm:before,i.flag-cameroon:before {
+  background-position: 0 -1170px !important
+}
+
+i.flag-cn:before,i.flag-china:before {
+  background-position: 0 -1196px !important
+}
+
+i.flag-co:before,i.flag-colombia:before {
+  background-position: 0 -1222px !important
+}
+
+i.flag-cr:before,i.flag-costa-rica:before {
+  background-position: 0 -1248px !important
+}
+
+i.flag-cs:before,i.flag-serbia:before {
+  background-position: 0 -1274px !important
+}
+
+i.flag-cu:before,i.flag-cuba:before {
+  background-position: 0 -1300px !important
+}
+
+i.flag-cv:before,i.flag-cape-verde:before {
+  background-position: 0 -1326px !important
+}
+
+i.flag-cx:before,i.flag-christmas-island:before {
+  background-position: 0 -1352px !important
+}
+
+i.flag-cy:before,i.flag-cyprus:before {
+  background-position: 0 -1378px !important
+}
+
+i.flag-cz:before,i.flag-czech-republic:before {
+  background-position: 0 -1404px !important
 }
 
 i.flag-de:before,i.flag-germany:before {
   background-position: 0 -1430px !important
 }
 
-i.flag-cn:before,i.flag-china:before {
-  background-position: 0 -1196px !important
+i.flag-dj:before,i.flag-djibouti:before {
+  background-position: 0 -1456px !important
+}
+
+i.flag-dk:before,i.flag-denmark:before {
+  background-position: 0 -1482px !important
+}
+
+i.flag-dm:before,i.flag-dominica:before {
+  background-position: 0 -1508px !important
+}
+
+i.flag-do:before,i.flag-dominican-republic:before {
+  background-position: 0 -1534px !important
+}
+
+i.flag-dz:before,i.flag-algeria:before {
+  background-position: 0 -1560px !important
+}
+
+i.flag-ec:before,i.flag-ecuador:before {
+  background-position: 0 -1586px !important
+}
+
+i.flag-ee:before,i.flag-estonia:before {
+  background-position: 0 -1612px !important
+}
+
+i.flag-eg:before,i.flag-egypt:before {
+  background-position: 0 -1638px !important
+}
+
+i.flag-eh:before,i.flag-western-sahara:before {
+  background-position: 0 -1664px !important
+}
+
+i.flag-gb-eng:before,i.flag-england:before {
+  background-position: 0 -1690px !important
+}
+
+i.flag-er:before,i.flag-eritrea:before {
+  background-position: 0 -1716px !important
+}
+
+i.flag-es:before,i.flag-spain:before {
+  background-position: 0 -1742px !important
+}
+
+i.flag-et:before,i.flag-ethiopia:before {
+  background-position: 0 -1768px !important
+}
+
+i.flag-eu:before,i.flag-european-union:before {
+  background-position: 0 -1794px !important
+}
+
+i.flag-fi:before,i.flag-finland:before {
+  background-position: 0 -1846px !important
+}
+
+i.flag-fj:before,i.flag-fiji:before {
+  background-position: 0 -1872px !important
+}
+
+i.flag-fk:before,i.flag-falkland-islands:before {
+  background-position: 0 -1898px !important
+}
+
+i.flag-fm:before,i.flag-micronesia:before {
+  background-position: 0 -1924px !important
+}
+
+i.flag-fo:before,i.flag-faroe-islands:before {
+  background-position: 0 -1950px !important
+}
+
+i.flag-fr:before,i.flag-france:before {
+  background-position: 0 -1976px !important
+}
+
+i.flag-ga:before,i.flag-gabon:before {
+  background-position: -36px 0 !important
+}
+
+i.flag-gb:before,i.flag-uk:before,i.flag-united-kingdom:before {
+  background-position: -36px -26px !important
+}
+
+i.flag-gd:before,i.flag-grenada:before {
+  background-position: -36px -52px !important
+}
+
+i.flag-ge:before,i.flag-georgia:before {
+  background-position: -36px -78px !important
+}
+
+i.flag-gf:before,i.flag-french-guiana:before {
+  background-position: -36px -104px !important
+}
+
+i.flag-gh:before,i.flag-ghana:before {
+  background-position: -36px -130px !important
+}
+
+i.flag-gi:before,i.flag-gibraltar:before {
+  background-position: -36px -156px !important
+}
+
+i.flag-gl:before,i.flag-greenland:before {
+  background-position: -36px -182px !important
+}
+
+i.flag-gm:before,i.flag-gambia:before {
+  background-position: -36px -208px !important
+}
+
+i.flag-gn:before,i.flag-guinea:before {
+  background-position: -36px -234px !important
+}
+
+i.flag-gp:before,i.flag-guadeloupe:before {
+  background-position: -36px -260px !important
+}
+
+i.flag-gq:before,i.flag-equatorial-guinea:before {
+  background-position: -36px -286px !important
+}
+
+i.flag-gr:before,i.flag-greece:before {
+  background-position: -36px -312px !important
+}
+
+i.flag-gs:before,i.flag-sandwich-islands:before {
+  background-position: -36px -338px !important
+}
+
+i.flag-gt:before,i.flag-guatemala:before {
+  background-position: -36px -364px !important
+}
+
+i.flag-gu:before,i.flag-guam:before {
+  background-position: -36px -390px !important
+}
+
+i.flag-gw:before,i.flag-guinea-bissau:before {
+  background-position: -36px -416px !important
+}
+
+i.flag-gy:before,i.flag-guyana:before {
+  background-position: -36px -442px !important
+}
+
+i.flag-hk:before,i.flag-hong-kong:before {
+  background-position: -36px -468px !important
+}
+
+i.flag-hm:before,i.flag-heard-island:before {
+  background-position: -36px -494px !important
+}
+
+i.flag-hn:before,i.flag-honduras:before {
+  background-position: -36px -520px !important
+}
+
+i.flag-hr:before,i.flag-croatia:before {
+  background-position: -36px -546px !important
+}
+
+i.flag-ht:before,i.flag-haiti:before {
+  background-position: -36px -572px !important
+}
+
+i.flag-hu:before,i.flag-hungary:before {
+  background-position: -36px -598px !important
+}
+
+i.flag-id:before,i.flag-indonesia:before {
+  background-position: -36px -624px !important
+}
+
+i.flag-ie:before,i.flag-ireland:before {
+  background-position: -36px -650px !important
+}
+
+i.flag-il:before,i.flag-israel:before {
+  background-position: -36px -676px !important
+}
+
+i.flag-in:before,i.flag-india:before {
+  background-position: -36px -702px !important
+}
+
+i.flag-io:before,i.flag-indian-ocean-territory:before {
+  background-position: -36px -728px !important
+}
+
+i.flag-iq:before,i.flag-iraq:before {
+  background-position: -36px -754px !important
+}
+
+i.flag-ir:before,i.flag-iran:before {
+  background-position: -36px -780px !important
+}
+
+i.flag-is:before,i.flag-iceland:before {
+  background-position: -36px -806px !important
+}
+
+i.flag-it:before,i.flag-italy:before {
+  background-position: -36px -832px !important
+}
+
+i.flag-jm:before,i.flag-jamaica:before {
+  background-position: -36px -858px !important
+}
+
+i.flag-jo:before,i.flag-jordan:before {
+  background-position: -36px -884px !important
+}
+
+i.flag-jp:before,i.flag-japan:before {
+  background-position: -36px -910px !important
+}
+
+i.flag-ke:before,i.flag-kenya:before {
+  background-position: -36px -936px !important
+}
+
+i.flag-kg:before,i.flag-kyrgyzstan:before {
+  background-position: -36px -962px !important
+}
+
+i.flag-kh:before,i.flag-cambodia:before {
+  background-position: -36px -988px !important
+}
+
+i.flag-ki:before,i.flag-kiribati:before {
+  background-position: -36px -1014px !important
+}
+
+i.flag-km:before,i.flag-comoros:before {
+  background-position: -36px -1040px !important
+}
+
+i.flag-kn:before,i.flag-saint-kitts-and-nevis:before {
+  background-position: -36px -1066px !important
+}
+
+i.flag-kp:before,i.flag-north-korea:before {
+  background-position: -36px -1092px !important
+}
+
+i.flag-kr:before,i.flag-south-korea:before {
+  background-position: -36px -1118px !important
+}
+
+i.flag-kw:before,i.flag-kuwait:before {
+  background-position: -36px -1144px !important
+}
+
+i.flag-ky:before,i.flag-cayman-islands:before {
+  background-position: -36px -1170px !important
+}
+
+i.flag-kz:before,i.flag-kazakhstan:before {
+  background-position: -36px -1196px !important
+}
+
+i.flag-la:before,i.flag-laos:before {
+  background-position: -36px -1222px !important
+}
+
+i.flag-lb:before,i.flag-lebanon:before {
+  background-position: -36px -1248px !important
+}
+
+i.flag-lc:before,i.flag-saint-lucia:before {
+  background-position: -36px -1274px !important
+}
+
+i.flag-li:before,i.flag-liechtenstein:before {
+  background-position: -36px -1300px !important
+}
+
+i.flag-lk:before,i.flag-sri-lanka:before {
+  background-position: -36px -1326px !important
+}
+
+i.flag-lr:before,i.flag-liberia:before {
+  background-position: -36px -1352px !important
+}
+
+i.flag-ls:before,i.flag-lesotho:before {
+  background-position: -36px -1378px !important
+}
+
+i.flag-lt:before,i.flag-lithuania:before {
+  background-position: -36px -1404px !important
+}
+
+i.flag-lu:before,i.flag-luxembourg:before {
+  background-position: -36px -1430px !important
+}
+
+i.flag-lv:before,i.flag-latvia:before {
+  background-position: -36px -1456px !important
+}
+
+i.flag-ly:before,i.flag-libya:before {
+  background-position: -36px -1482px !important
+}
+
+i.flag-ma:before,i.flag-morocco:before {
+  background-position: -36px -1508px !important
+}
+
+i.flag-mc:before,i.flag-monaco:before {
+  background-position: -36px -1534px !important
+}
+
+i.flag-md:before,i.flag-moldova:before {
+  background-position: -36px -1560px !important
+}
+
+i.flag-me:before,i.flag-montenegro:before {
+  background-position: -36px -1586px !important
+}
+
+i.flag-mg:before,i.flag-madagascar:before {
+  background-position: -36px -1613px !important
+}
+
+i.flag-mh:before,i.flag-marshall-islands:before {
+  background-position: -36px -1639px !important
+}
+
+i.flag-mk:before,i.flag-macedonia:before {
+  background-position: -36px -1665px !important
+}
+
+i.flag-ml:before,i.flag-mali:before {
+  background-position: -36px -1691px !important
+}
+
+i.flag-mm:before,i.flag-myanmar:before,i.flag-burma:before {
+  background-position: -73px -1821px !important
+}
+
+i.flag-mn:before,i.flag-mongolia:before {
+  background-position: -36px -1743px !important
+}
+
+i.flag-mo:before,i.flag-macau:before {
+  background-position: -36px -1769px !important
+}
+
+i.flag-mp:before,i.flag-northern-mariana-islands:before {
+  background-position: -36px -1795px !important
+}
+
+i.flag-mq:before,i.flag-martinique:before {
+  background-position: -36px -1821px !important
+}
+
+i.flag-mr:before,i.flag-mauritania:before {
+  background-position: -36px -1847px !important
+}
+
+i.flag-ms:before,i.flag-montserrat:before {
+  background-position: -36px -1873px !important
+}
+
+i.flag-mt:before,i.flag-malta:before {
+  background-position: -36px -1899px !important
+}
+
+i.flag-mu:before,i.flag-mauritius:before {
+  background-position: -36px -1925px !important
+}
+
+i.flag-mv:before,i.flag-maldives:before {
+  background-position: -36px -1951px !important
+}
+
+i.flag-mw:before,i.flag-malawi:before {
+  background-position: -36px -1977px !important
+}
+
+i.flag-mx:before,i.flag-mexico:before {
+  background-position: -72px 0 !important
+}
+
+i.flag-my:before,i.flag-malaysia:before {
+  background-position: -72px -26px !important
+}
+
+i.flag-mz:before,i.flag-mozambique:before {
+  background-position: -72px -52px !important
+}
+
+i.flag-na:before,i.flag-namibia:before {
+  background-position: -72px -78px !important
+}
+
+i.flag-nc:before,i.flag-new-caledonia:before {
+  background-position: -72px -104px !important
+}
+
+i.flag-ne:before,i.flag-niger:before {
+  background-position: -72px -130px !important
+}
+
+i.flag-nf:before,i.flag-norfolk-island:before {
+  background-position: -72px -156px !important
+}
+
+i.flag-ng:before,i.flag-nigeria:before {
+  background-position: -72px -182px !important
+}
+
+i.flag-ni:before,i.flag-nicaragua:before {
+  background-position: -72px -208px !important
+}
+
+i.flag-nl:before,i.flag-netherlands:before {
+  background-position: -72px -234px !important
+}
+
+i.flag-no:before,i.flag-norway:before {
+  background-position: -72px -260px !important
+}
+
+i.flag-np:before,i.flag-nepal:before {
+  background-position: -72px -286px !important
+}
+
+i.flag-nr:before,i.flag-nauru:before {
+  background-position: -72px -312px !important
+}
+
+i.flag-nu:before,i.flag-niue:before {
+  background-position: -72px -338px !important
+}
+
+i.flag-nz:before,i.flag-new-zealand:before {
+  background-position: -72px -364px !important
+}
+
+i.flag-om:before,i.flag-oman:before {
+  background-position: -72px -390px !important
+}
+
+i.flag-pa:before,i.flag-panama:before {
+  background-position: -72px -416px !important
+}
+
+i.flag-pe:before,i.flag-peru:before {
+  background-position: -72px -442px !important
+}
+
+i.flag-pf:before,i.flag-french-polynesia:before {
+  background-position: -72px -468px !important
+}
+
+i.flag-pg:before,i.flag-new-guinea:before {
+  background-position: -72px -494px !important
+}
+
+i.flag-ph:before,i.flag-philippines:before {
+  background-position: -72px -520px !important
+}
+
+i.flag-pk:before,i.flag-pakistan:before {
+  background-position: -72px -546px !important
+}
+
+i.flag-pl:before,i.flag-poland:before {
+  background-position: -72px -572px !important
+}
+
+i.flag-pm:before,i.flag-saint-pierre:before {
+  background-position: -72px -598px !important
+}
+
+i.flag-pn:before,i.flag-pitcairn-islands:before {
+  background-position: -72px -624px !important
+}
+
+i.flag-pr:before,i.flag-puerto-rico:before {
+  background-position: -72px -650px !important
+}
+
+i.flag-ps:before,i.flag-palestine:before {
+  background-position: -72px -676px !important
+}
+
+i.flag-pt:before,i.flag-portugal:before {
+  background-position: -72px -702px !important
+}
+
+i.flag-pw:before,i.flag-palau:before {
+  background-position: -72px -728px !important
+}
+
+i.flag-py:before,i.flag-paraguay:before {
+  background-position: -72px -754px !important
+}
+
+i.flag-qa:before,i.flag-qatar:before {
+  background-position: -72px -780px !important
+}
+
+i.flag-re:before,i.flag-reunion:before {
+  background-position: -72px -806px !important
+}
+
+i.flag-ro:before,i.flag-romania:before {
+  background-position: -72px -832px !important
+}
+
+i.flag-rs:before,i.flag-serbia:before {
+  background-position: -72px -858px !important
+}
+
+i.flag-ru:before,i.flag-russia:before {
+  background-position: -72px -884px !important
+}
+
+i.flag-rw:before,i.flag-rwanda:before {
+  background-position: -72px -910px !important
+}
+
+i.flag-sa:before,i.flag-saudi-arabia:before {
+  background-position: -72px -936px !important
+}
+
+i.flag-sb:before,i.flag-solomon-islands:before {
+  background-position: -72px -962px !important
+}
+
+i.flag-sc:before,i.flag-seychelles:before {
+  background-position: -72px -988px !important
+}
+
+i.flag-gb-sct:before,i.flag-scotland:before {
+  background-position: -72px -1014px !important
+}
+
+i.flag-sd:before,i.flag-sudan:before {
+  background-position: -72px -1040px !important
+}
+
+i.flag-se:before,i.flag-sweden:before {
+  background-position: -72px -1066px !important
+}
+
+i.flag-sg:before,i.flag-singapore:before {
+  background-position: -72px -1092px !important
+}
+
+i.flag-sh:before,i.flag-saint-helena:before {
+  background-position: -72px -1118px !important
+}
+
+i.flag-si:before,i.flag-slovenia:before {
+  background-position: -72px -1144px !important
+}
+
+i.flag-sj:before,i.flag-svalbard:before,i.flag-jan-mayen:before {
+  background-position: -72px -1170px !important
+}
+
+i.flag-sk:before,i.flag-slovakia:before {
+  background-position: -72px -1196px !important
+}
+
+i.flag-sl:before,i.flag-sierra-leone:before {
+  background-position: -72px -1222px !important
+}
+
+i.flag-sm:before,i.flag-san-marino:before {
+  background-position: -72px -1248px !important
+}
+
+i.flag-sn:before,i.flag-senegal:before {
+  background-position: -72px -1274px !important
+}
+
+i.flag-so:before,i.flag-somalia:before {
+  background-position: -72px -1300px !important
+}
+
+i.flag-sr:before,i.flag-suriname:before {
+  background-position: -72px -1326px !important
+}
+
+i.flag-st:before,i.flag-sao-tome:before {
+  background-position: -72px -1352px !important
+}
+
+i.flag-sv:before,i.flag-el-salvador:before {
+  background-position: -72px -1378px !important
+}
+
+i.flag-sy:before,i.flag-syria:before {
+  background-position: -72px -1404px !important
+}
+
+i.flag-sz:before,i.flag-swaziland:before {
+  background-position: -72px -1430px !important
+}
+
+i.flag-tc:before,i.flag-caicos-islands:before {
+  background-position: -72px -1456px !important
+}
+
+i.flag-td:before,i.flag-chad:before {
+  background-position: -72px -1482px !important
+}
+
+i.flag-tf:before,i.flag-french-territories:before {
+  background-position: -72px -1508px !important
+}
+
+i.flag-tg:before,i.flag-togo:before {
+  background-position: -72px -1534px !important
+}
+
+i.flag-th:before,i.flag-thailand:before {
+  background-position: -72px -1560px !important
+}
+
+i.flag-tj:before,i.flag-tajikistan:before {
+  background-position: -72px -1586px !important
+}
+
+i.flag-tk:before,i.flag-tokelau:before {
+  background-position: -72px -1612px !important
+}
+
+i.flag-tl:before,i.flag-timorleste:before {
+  background-position: -72px -1638px !important
+}
+
+i.flag-tm:before,i.flag-turkmenistan:before {
+  background-position: -72px -1664px !important
+}
+
+i.flag-tn:before,i.flag-tunisia:before {
+  background-position: -72px -1690px !important
+}
+
+i.flag-to:before,i.flag-tonga:before {
+  background-position: -72px -1716px !important
+}
+
+i.flag-tr:before,i.flag-turkey:before {
+  background-position: -72px -1742px !important
+}
+
+i.flag-tt:before,i.flag-trinidad:before {
+  background-position: -72px -1768px !important
+}
+
+i.flag-tv:before,i.flag-tuvalu:before {
+  background-position: -72px -1794px !important
+}
+
+i.flag-tw:before,i.flag-taiwan:before {
+  background-position: -72px -1820px !important
+}
+
+i.flag-tz:before,i.flag-tanzania:before {
+  background-position: -72px -1846px !important
+}
+
+i.flag-ua:before,i.flag-ukraine:before {
+  background-position: -72px -1872px !important
+}
+
+i.flag-ug:before,i.flag-uganda:before {
+  background-position: -72px -1898px !important
+}
+
+i.flag-um:before,i.flag-us-minor-islands:before {
+  background-position: -72px -1924px !important
+}
+
+i.flag-us:before,i.flag-america:before,i.flag-united-states:before {
+  background-position: -72px -1950px !important
+}
+
+i.flag-uy:before,i.flag-uruguay:before {
+  background-position: -72px -1976px !important
+}
+
+i.flag-uz:before,i.flag-uzbekistan:before {
+  background-position: -108px 0 !important
+}
+
+i.flag-va:before,i.flag-vatican-city:before {
+  background-position: -108px -26px !important
+}
+
+i.flag-vc:before,i.flag-saint-vincent:before {
+  background-position: -108px -52px !important
+}
+
+i.flag-ve:before,i.flag-venezuela:before {
+  background-position: -108px -78px !important
+}
+
+i.flag-vg:before,i.flag-british-virgin-islands:before {
+  background-position: -108px -104px !important
+}
+
+i.flag-vi:before,i.flag-us-virgin-islands:before {
+  background-position: -108px -130px !important
+}
+
+i.flag-vn:before,i.flag-vietnam:before {
+  background-position: -108px -156px !important
+}
+
+i.flag-vu:before,i.flag-vanuatu:before {
+  background-position: -108px -182px !important
+}
+
+i.flag-gb-wls:before,i.flag-wales:before {
+  background-position: -108px -208px !important
+}
+
+i.flag-wf:before,i.flag-wallis-and-futuna:before {
+  background-position: -108px -234px !important
+}
+
+i.flag-ws:before,i.flag-samoa:before {
+  background-position: -108px -260px !important
+}
+
+i.flag-ye:before,i.flag-yemen:before {
+  background-position: -108px -286px !important
+}
+
+i.flag-yt:before,i.flag-mayotte:before {
+  background-position: -108px -312px !important
+}
+
+i.flag-za:before,i.flag-south-africa:before {
+  background-position: -108px -338px !important
+}
+
+i.flag-zm:before,i.flag-zambia:before {
+  background-position: -108px -364px !important
+}
+
+i.flag-zw:before,i.flag-zimbabwe:before {
+  background-position: -108px -390px !important
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .navbar {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .navbar-menu {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .navbar-right {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    width: 90%;
+  }
+
+  .navbar-menu {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .navbar-right {
+    justify-content: center;
+  }
+
+  .dropdown-nav .dropdown-menu {
+    top: calc(100% + 5px);
+    transform: translateX(0);
+    left: 0;
+    right: 0;
+  }
+}
+
+/* Modal traduction */
+#translationModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content-translation {
+  background: #2b2b2b;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 300px;
+  width: 90%;
+  text-align: center;
+  z-index: 1010;
+}
+
+.modal-content-translation p {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.modal-content-translation button {
+  padding: 10px 20px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-content-translation button:hover {
+  background: #363636;
+}
+
+#translationModal .modal-content-translation strong {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #fff;
 }

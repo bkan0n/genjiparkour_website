@@ -1,0 +1,225 @@
+/* Variables de couleur */
+:root {
+    --color-1: rgba(10, 209, 0, 0.8);   /* Ninja */
+    --color-2: rgb(145, 214, 0);        /* Jumper */
+    --color-3: rgb(255, 229, 0);        /* Skilled */
+    --color-4: rgb(255, 164, 0);        /* Pro */
+    --color-5: rgb(255, 89, 0);         /* Master */
+    --color-6: rgb(255, 0, 0);          /* Grandmaster */
+    --color-7: rgb(210, 0, 0);          /* God */
+}
+
+body {
+    background: radial-gradient(circle, rgba(241, 241, 241, 1) 0%, rgba(176, 176, 176, 0.993) 100%);
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+}
+
+.menuItem a {
+    border-bottom: 1px solid #2b2b2b;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 4 / 3;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.9375rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.pie-chart-container svg {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    display: block;
+}
+
+.sans-light {
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.09375rem;
+    font-style: normal;
+}
+
+.color-1, .color-2, .color-3, .color-4, .color-5, .color-6, .color-7 {
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.color-1 { fill: var(--color-1); }
+.color-2 { fill: var(--color-2); }
+.color-3 { fill: var(--color-3); }
+.color-4 { fill: var(--color-4); }
+.color-5 { fill: var(--color-5); }
+.color-6 { fill: var(--color-6); }
+.color-7 { fill: var(--color-7); }
+
+.background-circle, .inner-circle {
+    stroke-opacity: 0;
+}
+
+path.segment {
+    transition: transform 0.2s ease-in-out;
+    transform-origin: 50% 50%;
+}
+
+path.segment:hover {
+    transform: translate(0.0625rem, -0.0625rem) scale(1.02);
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+#qualityDotChart {
+    width: 100%;
+    height: auto;
+}
+
+/* Sélecteurs de difficulté */
+.difficulty-selection {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 1.25rem 0;
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
+    z-index: 999;
+}
+
+.difficulty-selection label {
+    font-weight: bold;
+    color: #414141;
+    font-size: 1rem;
+}
+
+.difficulty-selection select {
+    padding: 0.5rem 0.75rem;
+    border: 0.125rem solid #414141;
+    border-radius: 0.5rem;
+    background-color: #f1f1f1;
+    color: #414141;
+    font-size: 0.875rem;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.difficulty-selection select:focus {
+    box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.5);
+    border-color: #414141;
+}
+
+.difficulty-selection option {
+    color: #333;
+}
+
+/* Grille */
+.graphs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 90%;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+/* Boutons sélections */
+.fixed-button {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 0.125rem solid #414141;
+    border-radius: 0.5rem;
+    background-color: #f1f1f1;
+    color: #414141;
+    font-size: 0.875rem;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    z-index: 10;
+}
+
+.fixed-button:hover {
+    background-color: #e1e1e1;
+}
+
+.fixed-button:focus {
+    box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.5);
+    border-color: #414141;
+}
+
+/* --- Media Queries --- */
+
+/* Écran 1024px */
+@media (max-width: 1024px) {
+    .container {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+
+    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+        max-width: 700px;
+        aspect-ratio: 4 / 3;
+        padding: 0.75rem;
+    }
+
+    .graphs-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .fixed-button {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.5rem;
+    }
+}
+
+/* Écran 768px */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.75rem;
+        gap: 1rem;
+    }
+
+    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+        max-width: 90%;
+        aspect-ratio: 1 / 1;
+        padding: 0.5rem;
+    }
+
+    .graphs-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .difficulty-selection label {
+        font-size: 0.875rem;
+    }
+
+    .difficulty-selection select {
+        font-size: 0.75rem;
+    }
+
+    .fixed-button {
+        bottom: 0.75rem;
+        right: 0.75rem;
+    }
+}
