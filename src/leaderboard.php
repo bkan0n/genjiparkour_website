@@ -15,7 +15,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
-    <link rel="stylesheet" href="styles/style-leaderboard.css">
+    <link rel="stylesheet" href="styles/leaderboard.css">
     <script src="js/layout.js" defer></script>
     <script src="js/leaderboard.js" defer></script>
 </head>
@@ -23,7 +23,7 @@ include BASE_PATH . "discord/header.php";
     <div id="wrapper">
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -51,6 +51,9 @@ include BASE_PATH . "discord/header.php";
             </li>
         </ul>
         <div class="navbar-right">
+            <a href="moderator.php" class="moderator-btn">
+                <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+            </a>
             <ul class="lang-menu">
                 <li class="lang-dropdown-nav">
                     <button class="dropdown-toggle-nav">
@@ -59,14 +62,17 @@ include BASE_PATH . "discord/header.php";
                     <span class="arrow"></span>
                     </button>
                     <ul class="dropdown-menu">
-                    <?php foreach ($languages as $langCode => $langData): ?>
-                        <li>
-                        <a href="?lang=<?= htmlspecialchars($langCode) ?>">
-                            <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
-                            <?= htmlspecialchars($langData['name']) ?>
-                        </a>
-                        </li>
-                    <?php endforeach; ?>
+                        <?php foreach ($languages as $langCode => $langData): ?>
+                            <li>
+                                <a href="?lang=<?= htmlspecialchars($langCode) ?>" 
+                                class="<?= isset($langData['translated']) && $langData['translated'] ? '' : 'unavailable' ?>"
+                                data-message="<?= htmlspecialchars($langData['modalMessage']) ?>"
+                                data-close-text="<?= htmlspecialchars($langData['closeButtonText']) ?>">
+                                    <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                                    <?= htmlspecialchars($langData['name']) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </li>
             </ul>
@@ -86,6 +92,12 @@ include BASE_PATH . "discord/header.php";
             <?php endif; ?>
         </div>
     </nav>
+    <div id="translationModal" style="display: none;">
+        <div class="modal-content-translation">
+            <p id="modalMessage"></p>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
     <div class="modal-profile" id="profileModal">
         <div id="profileModalContent" class="modal-content">
             <?php include BASE_PATH . 'modal/profile.php'; ?>
@@ -97,7 +109,6 @@ include BASE_PATH . "discord/header.php";
     </div>
     <div class="container">
         <form method="GET" action="leaderboard.php" class="form-container">
-            <!-- Search By -->
             <div class="custom-select" id="search-by-select">
                 <div class="select-trigger" id="search-by-trigger">
                     <?= htmlspecialchars($translations['leaderboard']['searchBy_nameOrTag'] ?? 'Name/Tag') ?>
@@ -116,11 +127,9 @@ include BASE_PATH . "discord/header.php";
                 </div>
             </div>
 
-            <!-- Search Input -->
             <input type="text" name="search" id="search-input" placeholder="<?= htmlspecialchars($translations['leaderboard']['placeholder'] ?? 'Search by Name/Tag...') ?>">
             <input type="hidden" id="selected-search-by" value="player_both">
 
-            <!-- Sort By -->
             <div class="custom-select-large" id="sort-select">
                 <div class="select-trigger" id="sort-trigger">
                     <?= htmlspecialchars($translations['leaderboard']['sortBy'] ?? 'Sort by') ?>
@@ -140,8 +149,8 @@ include BASE_PATH . "discord/header.php";
                     </div>
                 </div>
             </div>
+            <input type="hidden" id="selected-sort" value="">
 
-            <!-- Rank Filter -->
             <div class="custom-select-large" id="rank-select">
                 <div class="select-trigger" id="rank-trigger">
                     <?= htmlspecialchars($translations['leaderboard']['rank'] ?? 'Search rank') ?>
@@ -173,14 +182,13 @@ include BASE_PATH . "discord/header.php";
                     </div>
                 </div>
             </div>
+            <input type="hidden" id="selected-rank" value="">
 
-            <!-- Reset Filters Button -->
             <button type="submit" class="reset-filters-btn">
                 <?= htmlspecialchars($translations['leaderboard']['resetFilters'] ?? 'Reset filters') ?>
             </button>
         </form>
 
-        <!-- Toggle Columns -->
         <div id="checkboxes-container">
             <input type="checkbox" id="toggle_xp" class="toggle-col" data-col="xp" checked>
             <label for="toggle_xp"><span></span> <?= htmlspecialchars($translations['leaderboard']['toggleColumn_xp']) ?> <ins><i></i></ins></label>

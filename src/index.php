@@ -17,7 +17,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css">
-    <link rel="stylesheet" href="styles/style-main.css">
+    <link rel="stylesheet" href="styles/index.css">
     <script src="js/layout.js" defer></script>
 </head>
 <body>
@@ -27,7 +27,7 @@ include BASE_PATH . "discord/header.php";
     <div id="smoke-background"></div>
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -48,29 +48,35 @@ include BASE_PATH . "discord/header.php";
                 <?= htmlspecialchars($translations['navbar']['community']) ?> <span class="arrow"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="news.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
+                    <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
             </li>
         </ul>
         <div class="navbar-right">
+            <a href="moderator.php" class="moderator-btn">
+                <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+            </a>
             <ul class="lang-menu">
                 <li class="lang-dropdown-nav">
                     <button class="dropdown-toggle-nav">
-                    <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
-                    <?= htmlspecialchars($selectedLangData['name']) ?>
-                    <span class="arrow"></span>
+                        <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
+                        <?= htmlspecialchars($selectedLangData['name']) ?>
+                        <span class="arrow"></span>
                     </button>
                     <ul class="dropdown-menu">
-                    <?php foreach ($languages as $langCode => $langData): ?>
-                        <li>
-                        <a href="?lang=<?= htmlspecialchars($langCode) ?>">
-                            <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
-                            <?= htmlspecialchars($langData['name']) ?>
-                        </a>
-                        </li>
-                    <?php endforeach; ?>
+                        <?php foreach ($languages as $langCode => $langData): ?>
+                            <li>
+                                <a href="?lang=<?= htmlspecialchars($langCode) ?>" 
+                                class="<?= isset($langData['translated']) && $langData['translated'] ? '' : 'unavailable' ?>"
+                                data-message="<?= htmlspecialchars($langData['modalMessage']) ?>"
+                                data-close-text="<?= htmlspecialchars($langData['closeButtonText']) ?>">
+                                    <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                                    <?= htmlspecialchars($langData['name']) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </li>
             </ul>
@@ -90,6 +96,12 @@ include BASE_PATH . "discord/header.php";
             <?php endif; ?>
         </div>
     </nav>
+    <div id="translationModal" style="display: none;">
+        <div class="modal-content-translation">
+            <p id="modalMessage"></p>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
     <div class="modal-profile" id="profileModal">
         <div id="profileModalContent" class="modal-content">
             <?php include BASE_PATH . 'modal/profile.php'; ?>
@@ -99,7 +111,6 @@ include BASE_PATH . "discord/header.php";
         <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
         </div>
     </div>
-
     <section class="hero" id="hero1">
         <div class="scroll-indicator">
             <a href="#next-section" class="scroll-btn"><i class="fas fa-chevron-down"></i></a>
@@ -155,6 +166,7 @@ include BASE_PATH . "discord/header.php";
         },
         "retina_detect": true
     });
+
     </script>
 </body>
 </html>

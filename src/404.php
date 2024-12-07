@@ -12,12 +12,10 @@ include BASE_PATH . "discord/header.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Genji Parkour - Maps</title>
-    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
+    <title>Genji Parkour - Game</title>
     <link rel="stylesheet" href="styles/layout.css">
-    <link rel="stylesheet" href="styles/search.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/search.js" defer></script>
+    <link rel="stylesheet" href="styles/404.css">
+    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <script src="js/layout.js" defer></script>
 </head>
 <body>
@@ -44,7 +42,7 @@ include BASE_PATH . "discord/header.php";
                 <?= htmlspecialchars($translations['navbar']['community']) ?> <span class="arrow"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="news.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
+                    <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
@@ -57,9 +55,9 @@ include BASE_PATH . "discord/header.php";
             <ul class="lang-menu">
                 <li class="lang-dropdown-nav">
                     <button class="dropdown-toggle-nav">
-                    <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
-                    <?= htmlspecialchars($selectedLangData['name']) ?>
-                    <span class="arrow"></span>
+                        <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
+                        <?= htmlspecialchars($selectedLangData['name']) ?>
+                        <span class="arrow"></span>
                     </button>
                     <ul class="dropdown-menu">
                         <?php foreach ($languages as $langCode => $langData): ?>
@@ -83,8 +81,8 @@ include BASE_PATH . "discord/header.php";
                 <div class="user-avatar-dropdown">
                     <img src="https://cdn.discordapp.com/avatars/<?php echo htmlspecialchars($_SESSION['user_id']); ?>/<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>.png" alt="User Avatar" class="user-avatar" id="avatar-icon" />
                     <ul class="dropdown-menu avatar-menu">
-                        <li><a href="lootbox.php">Lootbox</a></li>
-                        <li><a id="user-profile">Profile</a></li>
+                        <li><a href="lootbox.php"><?= htmlspecialchars($translations['navbar']['lootbox']) ?></a></li>
+                        <li><a id="user-profile"><?= htmlspecialchars($translations['navbar']['profile']) ?></a></li>
                     </ul>
                 </div>
             <?php else: ?>
@@ -107,63 +105,19 @@ include BASE_PATH . "discord/header.php";
         <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
         </div>
     </div>
-    <div class="container">
-        <div class="tab-buttons">
-            <button onclick="selectSection('mapSearch')" id="mapSearchBtn">
-                <?= htmlspecialchars($translations['search']['mapSearch']) ?>
-            </button>
-            <button onclick="selectSection('completions')" id="completionsBtn">
-                <?= htmlspecialchars($translations['search']['completions']) ?>
-            </button>
-            <button onclick="selectSection('guide')" id="guideBtn">
-                <?= htmlspecialchars($translations['search']['guides']) ?>
-            </button>
-            <button onclick="selectSection('personalRecords')" id="personalRecordsBtn">
-                <?= htmlspecialchars($translations['search']['personalRecords']) ?>
+    <div class="game-container">
+        <h1><?= htmlspecialchars($translations['game']['title']) ?></h1>
+        <div class="score-container">
+            <span id="scoreDisplay"><?= htmlspecialchars($translations['game']['score']) ?>: 0</span>
+            <span id="highScoreDisplay"><?= htmlspecialchars($translations['game']['highest_score']) ?>: 0</span>
+        </div>        
+        <canvas id="gameCanvas"></canvas>
+            <p class="jump-text"><?= htmlspecialchars($translations['game']['press_space_to_jump']) ?></p>
+            <button id="restartButton" class="restart-btn">
+                <?= htmlspecialchars($translations['game']['restart_button']) ?>
             </button>
         </div>
-        <div class="selected-mode-container">
-            <div class="selected-mode" id="selectedMode">
-                <?= htmlspecialchars($translations['search']['selectMode']) ?>
-            </div>
-            <div class="filter-actions" id="filterActions" style="display: none;">
-                <button class="add-filter-btn" id="addFilterBtn" onmouseover="showFilterOptions()"></button>
-                <button class="apply-filters-btn" id="applyFiltersBtn" onclick="applyFilters()">✔</button>
-                <button class="clear-filters-btn" id="clearFiltersBtn" onclick="clearFilters()">✖</button>
-                <div class="filter-options" id="filterOptions" onmouseleave="hideFilterOptions()"></div>
-            </div>
-        </div>
-        <div class="intuitive-mode" id="intuitiveMode" style="display: none;">
-            <?= htmlspecialchars($translations['search']['addFilterHint']) ?>
-        </div>
-        <div class="filter-section" id="dynamicFilters">
-            <div class="filters-container" id="filtersContainer">
-                <div class="filter">
-                    <input type="text" id="mapNameInput" placeholder="<?= htmlspecialchars($translations['search']['mapNamePlaceholder']) ?>" />
-                    <div id="mapNameSuggestionsContainer" class="suggestions"></div>
-                </div>
-                <div class="filter">
-                    <input type="text" id="mapCodeInput" placeholder="<?= htmlspecialchars($translations['search']['mapCodePlaceholder']) ?>" />
-                    <div id="mapCodeSuggestionsContainer" class="suggestions"></div>
-                </div>
-                <div class="filter">
-                    <input type="text" id="nicknameInput" placeholder="<?= htmlspecialchars($translations['search']['nicknamePlaceholder']) ?>" />
-                    <div id="nicknameSuggestionsContainer" class="suggestions"></div>
-                </div>
-            </div>
-        </div>
-        <div id="loadingContainer">
-            <div class="line"></div>
-        </div>
-        <div class="results-container" id="resultsContainer"></div>
-        <div class="pagination-container" id="paginationContainer"></div>
     </div>
-    <script>
-    let user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
-    </script>
-    <footer>
-        <div class="footer-left">Genji Parkour © 2024</div>
-        <div class="footer-right">Joe is cool</div>
-    </footer>
+    <script src="js/404.js"></script>
 </body>
 </html>

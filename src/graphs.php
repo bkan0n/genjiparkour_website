@@ -16,7 +16,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
-    <link rel="stylesheet" href="styles/style-graphs.css">
+    <link rel="stylesheet" href="styles/graphs.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/DrawSVGPlugin.min.js" defer></script>
@@ -26,7 +26,7 @@ include BASE_PATH . "discord/header.php";
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -54,6 +54,9 @@ include BASE_PATH . "discord/header.php";
             </li>
         </ul>
         <div class="navbar-right">
+            <a href="moderator.php" class="moderator-btn">
+                <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+            </a>
             <ul class="lang-menu">
                 <li class="lang-dropdown-nav">
                     <button class="dropdown-toggle-nav">
@@ -62,14 +65,17 @@ include BASE_PATH . "discord/header.php";
                     <span class="arrow"></span>
                     </button>
                     <ul class="dropdown-menu">
-                    <?php foreach ($languages as $langCode => $langData): ?>
-                        <li>
-                        <a href="?lang=<?= htmlspecialchars($langCode) ?>">
-                            <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
-                            <?= htmlspecialchars($langData['name']) ?>
-                        </a>
-                        </li>
-                    <?php endforeach; ?>
+                        <?php foreach ($languages as $langCode => $langData): ?>
+                            <li>
+                                <a href="?lang=<?= htmlspecialchars($langCode) ?>" 
+                                class="<?= isset($langData['translated']) && $langData['translated'] ? '' : 'unavailable' ?>"
+                                data-message="<?= htmlspecialchars($langData['modalMessage']) ?>"
+                                data-close-text="<?= htmlspecialchars($langData['closeButtonText']) ?>">
+                                    <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                                    <?= htmlspecialchars($langData['name']) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </li>
             </ul>
@@ -89,6 +95,12 @@ include BASE_PATH . "discord/header.php";
             <?php endif; ?>
         </div>
     </nav>
+    <div id="translationModal" style="display: none;">
+        <div class="modal-content-translation">
+            <p id="modalMessage"></p>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
     <div class="modal-profile" id="profileModal">
         <div id="profileModalContent" class="modal-content">
             <?php include BASE_PATH . 'modal/profile.php'; ?>
@@ -100,50 +112,52 @@ include BASE_PATH . "discord/header.php";
     </div>
     <main>
         <div class="container">
-            <div class="pie-chart-container">
-                <title></title>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 778 590">
-                    <circle class="background-circle" cx="389" cy="294" r="160" fill="none" stroke="#bdbdbd" stroke-width="40" />
-                    <circle class="inner-circle" cx="389" cy="294" r="160" fill="none" stroke="#fff" stroke-width="20" />
-                    <text x="389" y="294" class="pie-title-text" text-anchor="middle" alignment-baseline="middle" font-family="Roboto" font-size="24" font-weight="bold" fill="#333">
-                    <?= htmlspecialchars($translations['thead']['mapRankDistribution']) ?>
-                    </text>
-                    <text id="hover-text" x="389" y="294" font-size="18" fill="#333" font-family="Roboto" text-anchor="middle" opacity="0">
-                    </text>
-                    <g id="rings-container" class="mt-rings" fill="none" stroke-miterlimit="10" stroke-width="30"></g>
-                    <g id="lines-container" stroke="#333" stroke-width="1"></g>
-                    <g id="figures-container" class="mt-figures"></g>
-                </svg>
-                <div class="difficulty-selection">
-                    <label for="rankSelect"></label>
-                    <select id="rankSelect">
-                        <option value="normalRanks"><?= htmlspecialchars($translations['chart']['skillRank']) ?></option>
-                        <option value="communityRanks"><?= htmlspecialchars($translations['chart']['tierRank']) ?></option>
-                    </select>
+            <div class="graphs-grid">
+                <div class="pie-chart-container">
+                    <title></title>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 778 590">
+                        <circle class="background-circle" cx="389" cy="294" r="160" fill="none" stroke="#bdbdbd" stroke-width="40" />
+                        <circle class="inner-circle" cx="389" cy="294" r="160" fill="none" stroke="#fff" stroke-width="20" />
+                        <text x="389" y="294" class="pie-title-text" text-anchor="middle" alignment-baseline="middle" font-family="Roboto" font-size="24" font-weight="bold" fill="#333">
+                        <?= htmlspecialchars($translations['thead']['mapRankDistribution']) ?>
+                        </text>
+                        <text id="hover-text" x="389" y="294" font-size="18" fill="#333" font-family="Roboto" text-anchor="middle" opacity="0">
+                        </text>
+                        <g id="rings-container" class="mt-rings" fill="none" stroke-miterlimit="10" stroke-width="30"></g>
+                        <g id="lines-container" stroke="#333" stroke-width="1"></g>
+                        <g id="figures-container" class="mt-figures"></g>
+                    </svg>
+                    <div class="difficulty-selection">
+                        <label for="rankSelect"></label>
+                        <select id="rankSelect" class="fixed-button">
+                            <option value="normalRanks"><?= htmlspecialchars($translations['chart']['skillRank']) ?></option>
+                            <option value="communityRanks"><?= htmlspecialchars($translations['chart']['tierRank']) ?></option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="difficultyBarChart" width="400" height="200"></canvas>
-            </div>
-            <div class="quality-container">
-                <canvas id="qualityDotChart" width="400" height="200"></canvas>
-            </div>
-            <div class="populars-maps-container">
-                <canvas id="mostPlayedMapsChart" width="400" height="200"></canvas>
-                <div class="difficulty-selection">
-                    <label for="difficultySelect"></label>
-                    <select id="difficultySelect">
-                        <option value="Easy"><?= htmlspecialchars($translations['chart']['easy']) ?></option>
-                        <option value="Medium"><?= htmlspecialchars($translations['chart']['medium']) ?></option>
-                        <option value="Hard"><?= htmlspecialchars($translations['chart']['hard']) ?></option>
-                        <option value="Very Hard"><?= htmlspecialchars($translations['chart']['very hard']) ?></option>
-                        <option value="Extreme"><?= htmlspecialchars($translations['chart']['extreme']) ?></option>
-                        <option value="Hell"><?= htmlspecialchars($translations['chart']['hell']) ?></option>
-                    </select>
+                <div class="chart-container">
+                    <canvas id="difficultyBarChart" width="400" height="200"></canvas>
                 </div>
-            </div>
-            <div class="XP-container">
-                <canvas id="xpRankChart"></canvas>
+                <div class="quality-container">
+                    <canvas id="qualityDotChart" width="400" height="200"></canvas>
+                </div>
+                <div class="populars-maps-container">
+                    <canvas id="mostPlayedMapsChart" width="400" height="200"></canvas>
+                    <div class="difficulty-selection">
+                        <label for="difficultySelect"></label>
+                        <select id="difficultySelect" class="fixed-button">
+                            <option value="Easy"><?= htmlspecialchars($translations['chart']['easy']) ?></option>
+                            <option value="Medium"><?= htmlspecialchars($translations['chart']['medium']) ?></option>
+                            <option value="Hard"><?= htmlspecialchars($translations['chart']['hard']) ?></option>
+                            <option value="Very Hard"><?= htmlspecialchars($translations['chart']['very hard']) ?></option>
+                            <option value="Extreme"><?= htmlspecialchars($translations['chart']['extreme']) ?></option>
+                            <option value="Hell"><?= htmlspecialchars($translations['chart']['hell']) ?></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="XP-container">
+                    <canvas id="xpRankChart"></canvas>
+                </div>
             </div>
         </div>
     </main>

@@ -9,17 +9,20 @@ include BASE_PATH . "discord/header.php";
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($selectedLang) ?>">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
     <title>Genji Parkour - Lootbox</title>
-    <link href="styles/style-crates2.css" rel="stylesheet">
+    <link href="styles/lootbox2.css" rel="stylesheet">
     <link href="styles/layout.css" rel="stylesheet">
-    <link href="styles/style-crates.css" rel="stylesheet">
+    <link href="styles/lootbox.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js" defer></script>
+    <script src="js/lootbox.js" defer></script>
+    <script src="js/layout.js" defer></script>
     <script>
     <?php if (isset($_SESSION['user_id'])): ?>
         const userId = "<?php echo htmlspecialchars($_SESSION['user_id']); ?>";
@@ -27,10 +30,11 @@ include BASE_PATH . "discord/header.php";
         const userId = null;
     <?php endif; ?>
     </script>
-  </head>
+</head>
+<body class="overwatch">
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon">
+            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -58,56 +62,66 @@ include BASE_PATH . "discord/header.php";
             </li>
         </ul>
         <div class="navbar-right">
-          <ul class="lang-menu">
-              <li class="lang-dropdown-nav">
-                  <button class="dropdown-toggle-nav">
-                  <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
-                  <?= htmlspecialchars($selectedLangData['name']) ?>
-                  <span class="arrow"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                  <?php foreach ($languages as $langCode => $langData): ?>
-                      <li>
-                      <a href="?lang=<?= htmlspecialchars($langCode) ?>">
-                          <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
-                          <?= htmlspecialchars($langData['name']) ?>
-                      </a>
-                      </li>
-                  <?php endforeach; ?>
-                  </ul>
-              </li>
-          </ul>
-          <a href="https://dsc.gg/genjiparkour" target="_blank" class="discord-logo">
-              <i class="fab fa-discord"></i>
-          </a>
-          <?php if (isset($_SESSION['user_avatar'])): ?>
-              <div class="user-avatar-dropdown">
-                  <img src="https://cdn.discordapp.com/avatars/<?php echo htmlspecialchars($_SESSION['user_id']); ?>/<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>.png" alt="User Avatar" class="user-avatar" id="avatar-icon" />
-                  <ul class="dropdown-menu avatar-menu">
-                      <li><a href="lootbox.php">Lootbox</a></li>
-                      <li><a id="user-profile">Profile</a></li>
-                  </ul>
-              </div>
-          <?php else: ?>
-              <a href="discord/login.php" class="login-btn"><?= htmlspecialchars($translations['navbar']['login']) ?></a>
-          <?php endif; ?>
-      </div>
+            <a href="moderator.php" class="moderator-btn">
+                <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+            </a>
+            <ul class="lang-menu">
+                <li class="lang-dropdown-nav">
+                    <button class="dropdown-toggle-nav">
+                    <i class="flag <?= htmlspecialchars($selectedLangData['flag']) ?>"></i>
+                    <?= htmlspecialchars($selectedLangData['name']) ?>
+                    <span class="arrow"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <?php foreach ($languages as $langCode => $langData): ?>
+                            <li>
+                                <a href="?lang=<?= htmlspecialchars($langCode) ?>" 
+                                class="<?= isset($langData['translated']) && $langData['translated'] ? '' : 'unavailable' ?>"
+                                data-message="<?= htmlspecialchars($langData['modalMessage']) ?>"
+                                data-close-text="<?= htmlspecialchars($langData['closeButtonText']) ?>">
+                                    <i class="flag <?= htmlspecialchars($langData['flag']) ?>"></i>
+                                    <?= htmlspecialchars($langData['name']) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
+            </ul>
+            <a href="https://dsc.gg/genjiparkour" target="_blank" class="discord-logo">
+                <i class="fab fa-discord"></i>
+            </a>
+            <?php if (isset($_SESSION['user_avatar'])): ?>
+                <div class="user-avatar-dropdown">
+                    <img src="https://cdn.discordapp.com/avatars/<?php echo htmlspecialchars($_SESSION['user_id']); ?>/<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>.png" alt="User Avatar" class="user-avatar" id="avatar-icon" />
+                    <ul class="dropdown-menu avatar-menu">
+                        <li><a href="lootbox.php">Lootbox</a></li>
+                        <li><a id="user-profile">Profile</a></li>
+                    </ul>
+                </div>
+            <?php else: ?>
+                <a href="discord/login.php" class="login-btn"><?= htmlspecialchars($translations['navbar']['login']) ?></a>
+            <?php endif; ?>
+        </div>
     </nav>
+    <div id="translationModal" style="display: none;">
+        <div class="modal-content-translation">
+            <p id="modalMessage"></p>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
     <div class="modal-profile" id="profileModal">
         <div id="profileModalContent" class="modal-content">
             <?php include BASE_PATH . 'modal/profile.php'; ?>
         </div>
     </div>
-<div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
-    <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
+    <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
+        <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
+        </div>
     </div>
-</div>
-  <body class="overwatch">
-    <div class="main container">
-      <main role="main">
+    <main role="main" class="main container">
         <div class="card-container">
           <div class="card-section">
-            <div id= "box" class="loot-card-stack">
+            <div id="box" class="loot-card-stack">
               <div class="loot-card card1"></div>
               <div class="loot-card card2"></div>
               <div class="loot-card card3"></div>
@@ -124,7 +138,7 @@ include BASE_PATH . "discord/header.php";
             <button class="generate btn shadow yellow" 
                   onclick="/*ga('send', 'event', 'Generate box', 'Click', 'Open loot box');*/">
                   <?= htmlspecialchars($translations['lootbox']['open_pack']) ?>
-          </button>
+            </button>
             <button class="info-button">?
               <div class="info-tooltip">
                 <div><span class="rarity-common"><?= htmlspecialchars($translations['lootbox']['common']) ?></span>: 80%</div>
@@ -135,14 +149,10 @@ include BASE_PATH . "discord/header.php";
             </button>
           </div>
         </div>
-      </main>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js" defer></script>
-    <script src="js/lootbox.js" defer></script>
-    <script src="js/layout.js" defer></script>
+    </main>
     <footer>
         <div class="footer-left">Genji Parkour © 2024</div>
         <div class="footer-right">Joe is cool</div>
     </footer>
-  </body>
+</body>
 </html>
