@@ -150,6 +150,7 @@ document.getElementById("map-search-button").addEventListener("click", () => {
     suggestionsContainer.style.display = "none";
     fetchMapResults({ map_code: mapCodeInput });
 });
+
 document.getElementById("map-code-input").addEventListener("input", showMapCodeSuggestions);
 
 document.getElementById("user-search-button").addEventListener("click", () => {
@@ -199,7 +200,7 @@ async function fetchMapResults(filters = {}) {
 
         mapCard.innerHTML = `
             <div class="global-edit-container">
-                <button class="global-edit-button">Global edit</button>
+                <button class="global-edit-button">Actions</button>
                 <div class="dropdown-menu-edit" style="display: none;">
                     <ul>
                         <li data-value="Delete">Delete</li>
@@ -208,7 +209,7 @@ async function fetchMapResults(filters = {}) {
                         <li data-value="Archive">Archive</li>
                     </ul>
                 </div>
-                <button class="confirm-button" style="display: none;">Confirm</button>
+                <button class="confirm-button">Confirm changes</button>
             </div>
             <h3>Map details</h3>
             <div class="grid-container">
@@ -243,11 +244,11 @@ async function fetchMapResults(filters = {}) {
 }
 
 function generateGuidesHTML(guides = []) {
-    if (!Array.isArray(guides) || guides.length === 0) {
+    if (!guides || !Array.isArray(guides) || guides.length === 0 || guides.every(g => g === null)) {
         return `
             <p class="field-row">
                 <strong>Guides:</strong>
-                <span class="text-add">No guides available</span>
+                <span class="text-add" style="margin-left: 15px;">No guides available</span>
             </p>
         `;
     }
@@ -276,13 +277,11 @@ function generateGuidesHTML(guides = []) {
 }
 
 function generateCreatorsHTML(creators = []) {
-    if (!Array.isArray(creators) || creators.length === 0) {
+    if (!creators || !Array.isArray(creators) || creators.length === 0 || creators.every(g => g === null)) {
         return `
             <p class="field-row">
                 <strong>Creators:</strong>
-                <span class="text">
-                    <span>No creators available</span>
-                </span>
+                <span class="text-add" style="margin-left: 15px;">No creators</span>
             </p>
         `;
     }
@@ -293,15 +292,9 @@ function generateCreatorsHTML(creators = []) {
             <span class="text-add">
                 ${creators
                     .map(
-                        (creator) => `
-                            <span class="editable" 
-                                  contenteditable="false" 
-                                  data-field="creator" 
-                                  data-original="${creator}">
-                                ${creator}
-                            </span>`
+                        (creator) => `<span class="editable" contenteditable="false" data-field="creator" data-original="${creator}">${creator}</span>`
                     )
-                .join("<br>")}
+                    .join("<br>")}
             </span>
             <span class="icons">
                 ${generateIconsHTML(true)}
@@ -331,393 +324,516 @@ function generateIconsHTML(isAddIcon = false) {
 
 //Bouton interaction edit map
 function activateIcons(container) {
+    setupEditIconListeners(container);
+    setupCreatorInputListeners(container);
+    setupSaveIconListeners(container);
+    setupCancelIconListeners(container);
+    setupAddIconListeners(container);
+    setupGlobalEditButton(container);
+}
+
+function setupEditIconListeners(container) {
     container.querySelectorAll(".fa-pen-to-square").forEach((icon) => {
-        icon.addEventListener("click", () => {
-            const parent = icon.closest("p");
-            const editableSpan = parent.querySelector(".editable");
-            const saveIcon = parent.querySelector(".fa-check");
-            const cancelIcon = parent.querySelector(".fa-xmark");
-            const addIcon = parent.querySelector(".fa-plus");
+        icon.addEventListener("click", () => enterEditMode(icon, container));
+    });
+}
 
-            if (editableSpan) {
-                editableSpan.setAttribute("data-original", editableSpan.textContent.trim());
+function enterEditMode(icon, container) {
+    const parent = icon.closest("p.field-row") || icon.closest("p");
+    
+    const editableSpans = parent.querySelectorAll(".editable");
+    const saveIcon = parent.querySelector(".fa-check");
+    const cancelIcon = parent.querySelector(".fa-xmark");
+    const addIcon = parent.querySelector(".fa-plus");
 
-                editableSpan.setAttribute("contenteditable", "true");
-                editableSpan.focus();
-
-                icon.style.display = "none";
-                saveIcon.style.display = "inline";
-                cancelIcon.style.display = "inline";
-                if (addIcon) {
-                    addIcon.style.display = "inline";
-                }
-
-                console.log("Mode édition activé :", editableSpan.textContent);
-            }
-            parent.querySelectorAll(".editable").forEach((newField) => {
-                newField.setAttribute("contenteditable", "true");
-            });
+    if (editableSpans.length > 0) {
+        editableSpans.forEach((span) => {
+            span.setAttribute("data-original", span.textContent.trim());
+            span.setAttribute("contenteditable", "true");
+            span.classList.add("editing");
         });
+
+        editableSpans[0].focus();
+
+        icon.style.display = "none";
+        if (saveIcon) saveIcon.style.display = "inline";
+        if (cancelIcon) cancelIcon.style.display = "inline";
+        if (addIcon) addIcon.style.display = "inline";
+
+        console.log("Mode édition activé pour tous les champs de la section.");
+    } else {
+        console.warn("Aucun élément .editable trouvé dans le parent :", parent);
+    }
+}
+
+
+function setupSaveIconListeners(container) {
+    container.querySelectorAll(".fa-check").forEach((icon) => {
+        icon.addEventListener("click", () => saveEdits(icon, container));
+    });
+}
+
+function saveEdits(icon, container) {
+    const parent = icon.closest("p");
+    const editableSpan = parent.querySelector(".editable");
+    const fieldType = editableSpan.getAttribute("data-field");
+    const newValue = editableSpan.textContent.trim();
+
+    if (!editableSpan) {
+        console.error("No editable span found!");
+        return;
+    }
+
+    if (!validateField(fieldType, newValue, container, parent)) {
+        return;
+    }
+
+    editableSpan.setAttribute("data-original", newValue);
+    editableSpan.setAttribute("contenteditable", "false");
+
+    parent.querySelectorAll(".editable").forEach((newField) => {
+        newField.setAttribute("contenteditable", "false");
     });
 
+    if (newValue === "") {
+        console.log("Champ vide supprimé :", editableSpan);
+        editableSpan.remove();
+    } else {
+        editableSpan.setAttribute("data-original", newValue);
+    }
+
+    parent.querySelectorAll(".editable").forEach((newField) => {
+        const value = newField.textContent.trim();
+        if (value === "") {
+            console.log("Champ vide supprimé :", newField);
+            newField.remove();
+        } else {
+            newField.setAttribute("contenteditable", "false");
+        }
+    });
+
+    const creators = Array.from(parent.querySelectorAll(".editable[data-field='creator']")).map(
+        (field) => field.textContent.trim()
+    );
+    console.log("Créateurs confirmés :", creators);
+
+    resetEditIcons(parent, container);
+    console.log("Modification confirmée :", newValue);
+}
+
+function setupCancelIconListeners(container) {
+    container.querySelectorAll(".fa-xmark").forEach((icon) => {
+        icon.addEventListener("click", () => cancelEdits(icon, container));
+    });
+}
+
+function cancelEdits(icon, container) {
+    const parent = icon.closest("p");
+    const editableSpans = parent.querySelectorAll(".editable");
+    const editIcon = parent.querySelector(".fa-pen-to-square");
+    const saveIcon = parent.querySelector(".fa-check");
+    const cancelIcon = parent.querySelector(".fa-xmark");
+    const addIcon = parent.querySelector(".fa-plus");
+
+    editableSpans.forEach((editableSpan) => {
+        const originalValue = editableSpan.getAttribute("data-original");
+        const placeholder = editableSpan.getAttribute("placeholder");
+
+        if (!originalValue || editableSpan.classList.contains("placeholder") || editableSpan.textContent.trim() === placeholder) {
+            console.log(`Nouvelle ou incorrecte entrée supprimée (${editableSpan.getAttribute("data-field")}):`, editableSpan.textContent);
+            editableSpan.remove();
+        } else {
+            editableSpan.textContent = originalValue;
+            editableSpan.setAttribute("contenteditable", "false");
+            editableSpan.classList.remove("placeholder");
+        }
+    });
+
+    resetEditIcons(parent, container);
+    shortenLinks(parent);
+
+    console.log("Toutes les modifications ont été annulées ou les nouvelles entrées supprimées");
+}
+
+function resetEditIcons(parent, container) {
+    const editIcon = parent.querySelector(".fa-pen-to-square");
+    const saveIcon = parent.querySelector(".fa-check");
+    const cancelIcon = parent.querySelector(".fa-xmark");
+    const addIcon = parent.querySelector(".fa-plus");
+
+    if (editIcon) editIcon.style.display = "inline";
+    if (saveIcon) saveIcon.style.display = "none";
+    if (cancelIcon) cancelIcon.style.display = "none";
+    if (addIcon) addIcon.style.display = "none";
+
+    hideAllSuggestions(container);
+}
+
+function setupCreatorInputListeners(container) {
     container.querySelectorAll(".editable[data-field='creator']").forEach((field) => {
         field.addEventListener("input", (event) => {
             showUsersSuggestions(event);
         });
     });
-    
-    container.querySelectorAll(".fa-check").forEach((icon) => {
-        icon.addEventListener("click", () => {
-            const parent = icon.closest("p");
-            const editableSpan = parent.querySelector(".editable");
-            const mapNameSuggestionsContainer = document.querySelector(".map-name-suggestions-container");
-            const nicknameSuggestionsContainer = document.querySelector(".creator-suggestions-container");
-            const mechanicsSuggestionsContainer = document.querySelector(".mechanics-suggestions-container");
-            const restrictionsSuggestionsContainer = document.querySelector(".restrictions-suggestions-container");
-            const mapTypeSuggestionsContainer = document.querySelector(".map-types-suggestions-container");
-            const mapDifficultySuggestionsContainer = document.querySelector(".map-difficulty-suggestions-container");
-            const editIcon = parent.querySelector(".fa-pen-to-square");
-            const saveIcon = parent.querySelector(".fa-check");
-            const cancelIcon = parent.querySelector(".fa-xmark");
-            const addIcon = parent.querySelector(".fa-plus");
-    
-            if (!editableSpan) {
-                console.error("No editable span found!");
-                return;
-            }
-    
-            const newValue = editableSpan.textContent.trim();
-            const fieldType = editableSpan.getAttribute("data-field");
-    
-            if (fieldType === "map_code") {
-                const trimmedValue = newValue.trim();
-            
-                if (trimmedValue.length < 5 || trimmedValue.length > 10) {
-                    const errorMessage =
-                        trimmedValue.length < 5
-                            ? "Map code must be at least 5 characters long"
-                            : "Map code must be at most 10 characters long";
-                    showErrorMessage(errorMessage);
-                    console.error("Map code validation failed:", trimmedValue);
-                    return;
-                }
-            } else if (fieldType === "map_name" && mapNameSuggestionsContainer) {
-                const suggestions = Array.from(mapNameSuggestionsContainer.querySelectorAll(".suggestion-item"))
-                    .map((item) => item.textContent.trim());
-    
-                if (!suggestions.includes(newValue)) {
-                    showErrorMessage("Incorrect map name");
-                    console.error("Map name not found in suggestions:", newValue);
-                    return;
-                }
-            } else if (fieldType === "creator" && nicknameSuggestionsContainer) {
-                const suggestions = Array.from(nicknameSuggestionsContainer.querySelectorAll(".suggestion-item"))
-                    .map((item) => item.textContent.trim());
-    
-                if (!suggestions.includes(newValue)) {
-                    showErrorMessage(`Creator "${newValue}" is not in the suggestions`);
-                    console.error("Creator not found in suggestions:", newValue);
-                    return;
-                }
-            } else if (fieldType === "difficulty") {
-                const validDifficulties = [
-                    "Easy -", "Easy", "Easy +",
-                    "Medium -", "Medium", "Medium +",
-                    "Hard -", "Hard", "Hard +",
-                    "Very Hard -", "Very Hard", "Very Hard +",
-                    "Extreme -", "Extreme", "Extreme +",
-                    "Hell"
-                ];
-    
-                if (!validDifficulties.includes(newValue)) {
-                    showErrorMessage(`Difficulty "${newValue}" is not valid`);
-                    console.error("Invalid difficulty:", newValue);
-                    return;
-                }
-            } else if (fieldType === "checkpoints") {
-                const checkpointsValue = parseInt(newValue, 10);
-                if (!/^\d+$/.test(newValue) || checkpointsValue <= 0 || checkpointsValue >= 500) {
-                    showErrorMessage("Checkpoints must be a numeric value greater than 0");
-                    console.error("Checkpoints validation failed:", newValue);
-                    return;
-                }
-            } else if (fieldType === "mechanics" && mechanicsSuggestionsContainer) {
-                const validMechanics = Array.from(mechanicsSuggestionsContainer.querySelectorAll(".suggestion-item"))
-                    .map((item) => item.textContent.trim());
-    
-                const enteredMechanics = newValue.split(",").map((item) => item.trim());
-    
-                const invalidMechanics = enteredMechanics.filter(
-                    (mechanic) => !validMechanics.includes(mechanic)
-                );
-    
-                if (invalidMechanics.length > 0) {
-                    showErrorMessage(
-                        `Invalid mechanics: ${invalidMechanics.join(", ")}. Please select valid options from the suggestions`
-                    );
-                    console.error("Invalid mechanics found:", invalidMechanics);
-                    return;
-                }
-            } else if (fieldType === "restrictions" && restrictionsSuggestionsContainer) {
-                const validRestrictions = Array.from(restrictionsSuggestionsContainer.querySelectorAll(".suggestion-item"))
-                    .map((item) => item.textContent.trim());
-            
-                const enteredRestrictions = newValue.split(",").map((item) => item.trim());
-            
-                const invalidRestrictions = enteredRestrictions.filter(
-                    (restriction) => !validRestrictions.includes(restriction)
-                );
-            
-                if (invalidRestrictions.length > 0) {
-                    showErrorMessage(
-                        `Invalid restrictions: ${invalidRestrictions.join(", ")}. Please select valid options from the suggestions`
-                    );
-                    console.error("Invalid restrictions found:", invalidRestrictions);
-                    return;
-                }
-            } else if (fieldType === "guide") {
-                const allGuides = container.querySelectorAll(".editable[data-field='guide']");
-                let validationFailed = false;
+}
 
-                allGuides.forEach((guide) => {
-                    const guideValue = guide.textContent.trim();
-                    if (!guideValue.startsWith("https://")) {
-                        showErrorMessage("The guide must start with 'https://'");
-                        console.error("Guide validation failed:", guideValue);
-                        validationFailed = true;
-                    }
-                });
+function setupAddIconListeners(container) {
+    container.querySelectorAll(".fa-plus").forEach((icon) => {
+        icon.addEventListener("click", () => addNewField(icon, container));
+    });
+}
 
-                if (validationFailed) return;
-            } else if (fieldType === "map_type" && mapTypeSuggestionsContainer) {
-                const suggestions = Array.from(mapTypeSuggestionsContainer.querySelectorAll(".suggestion-item"))
-                    .map((item) => item.textContent.trim());
-    
-                if (!suggestions.includes(newValue)) {
-                    showErrorMessage("Incorrect map name");
-                    console.error("Map type not found in suggestions:", newValue);
-                    return;
-                }
-            } else if (fieldType === "quality") {
-                const qualityValue = parseFloat(newValue);
-                
-                if (isNaN(qualityValue) || qualityValue < 0 || qualityValue > 6) {
-                    showErrorMessage("Quality must be a number between 0 and 6");
-                    console.error("Quality validation failed:", newValue);
-                    return;
-                }
-            
-                editableSpan.textContent = qualityValue.toFixed(2);
-            }            
-    
-            editableSpan.setAttribute("data-original", newValue);
-            editableSpan.setAttribute("contenteditable", "false");
+function addNewField(icon, container) {
+    const parent = icon.closest("p");
+    if (!parent) {
+        console.error("Parent <p> introuvable pour le bouton :", icon);
+        return;
+    }
 
-            parent.querySelectorAll(".editable").forEach((newField) => {
-                newField.setAttribute("contenteditable", "false");
-            });
-    
-            if (newValue === "") {
-                console.log("Champ vide supprimé :", editableSpan);
-                editableSpan.remove();
-            } else {
-                editableSpan.setAttribute("data-original", newValue);
-            }
-    
-            parent.querySelectorAll(".editable").forEach((newField) => {
-                const value = newField.textContent.trim();
-                if (value === "") {
-                    console.log("Champ vide supprimé :", newField);
-                    newField.remove();
-                } else {
-                    newField.setAttribute("contenteditable", "false");
-                }
-            });
-    
-            const creators = Array.from(parent.querySelectorAll(".editable")).map(
-                (field) => field.textContent.trim()
+    const textContainer = parent.querySelector(".text-add");
+    if (!textContainer) {
+        console.error("Conteneur '.text-add' introuvable dans :", parent);
+        return;
+    }
+
+    const fieldType = textContainer.querySelector(".editable")?.getAttribute("data-field");
+    if (!fieldType) {
+        console.error("Champ 'data-field' introuvable pour '.editable' :", textContainer);
+        return;
+    }
+
+    const lastEditableField = textContainer.querySelector(".editable:last-child");
+
+    if (lastEditableField && (lastEditableField.textContent.trim() === "" || lastEditableField.classList.contains("placeholder"))) {
+        showErrorMessage("Please fill in all the fields before adding another");
+        return;
+    }
+
+    let newField;
+    if (fieldType === "guide") {
+        newField = createEditableField("guide", "New Guide");
+    } else if (fieldType === "creator") {
+        newField = createEditableField("creator", "Creator name");
+    } else {
+        console.error("Type de champ inconnu :", fieldType);
+        return;
+    }
+
+    textContainer.appendChild(newField);
+    applyPlaceholderBehavior(newField);
+    console.log(`Nouvelle entrée ajoutée pour ${fieldType} :`, newField.textContent);
+}
+
+function createEditableField(field, placeholder) {
+    const span = document.createElement("span");
+    span.classList.add("editable");
+    span.setAttribute("contenteditable", "true");
+    span.setAttribute("data-field", field);
+    span.setAttribute("placeholder", placeholder);
+    span.style.marginLeft = "10px";
+    span.style.padding = "2px 5px";
+    span.style.borderRadius = "5px";
+    span.style.cursor = "text";
+    return span;
+}
+
+function validateField(fieldType, value, container, parent) {
+    switch (fieldType) {
+        case "map_code":
+            return validateMapCode(value);
+        case "map_name":
+            return validateMapName(value, container);
+        case "creator":
+            return validateCreator(container);
+        case "difficulty":
+            return validateDifficulty(value);
+        case "checkpoints":
+            return validateCheckpoints(value);
+        case "mechanics":
+            return validateMechanics(value, container);
+        case "restrictions":
+            return validateRestrictions(value, container);
+        case "guide":
+            return validateGuide(container);
+        case "map_type":
+            return validateMapType(value, container);
+        case "quality":
+            return validateQuality(value);
+        default:
+            console.warn("No validation rule defined for field type:", fieldType);
+            return true;
+    }
+}
+
+function validateMapCode(value) {
+    const trimmedValue = value.trim();
+    if (trimmedValue.length < 5 || trimmedValue.length > 8) {
+        const errorMessage =
+            trimmedValue.length < 5
+                ? "Map code must be at least 5 characters long"
+                : "Map code must be at most 10 characters long";
+        showErrorMessage(errorMessage);
+        console.error("Map code validation failed:", trimmedValue);
+        return false;
+    }
+    return true;
+}
+
+function validateMapName(value, container) {
+    const mapNameSuggestionsContainer = container.querySelector(".map-name-suggestions-container");
+    if (mapNameSuggestionsContainer) {
+        const suggestions = Array.from(mapNameSuggestionsContainer.querySelectorAll(".suggestion-item"))
+            .map((item) => item.textContent.trim());
+
+        if (!suggestions.includes(value)) {
+            showErrorMessage("Incorrect map name");
+            console.error("Map name not found in suggestions:", value);
+            return false;
+        }
+    }
+    return true;
+}
+
+function validateCreator(container) {
+    const allCreators = container.querySelectorAll(".editable[data-field='creator']");
+    let validationFailed = false;
+
+    allCreators.forEach((creator) => {
+        const creatorValue = creator.textContent.trim();
+
+        if (creatorValue === "" || creatorValue === "Creator name") {
+            showErrorMessage("The 'Creator' field cannot be empty");
+            console.error("Champ 'Creator' vide");
+            validationFailed = true;
+        }
+    });
+
+    return !validationFailed;
+}
+
+function validateDifficulty(value) {
+    const validDifficulties = [
+        "Easy -", "Easy", "Easy +",
+        "Medium -", "Medium", "Medium +",
+        "Hard -", "Hard", "Hard +",
+        "Very Hard -", "Very Hard", "Very Hard +",
+        "Extreme -", "Extreme", "Extreme +",
+        "Hell"
+    ];
+
+    if (!validDifficulties.includes(value)) {
+        showErrorMessage(`Difficulty "${value}" is not valid`);
+        console.error("Invalid difficulty:", value);
+        return false;
+    }
+    return true;
+}
+
+function validateCheckpoints(value) {
+    const checkpointsValue = parseInt(value, 10);
+    if (!/^\d+$/.test(value) || checkpointsValue <= 0 || checkpointsValue >= 500) {
+        showErrorMessage("Checkpoints must be a numeric value between 0 and 500");
+        console.error("Checkpoints validation failed:", value);
+        return false;
+    }
+    return true;
+}
+
+function validateMechanics(value, container) {
+    const mechanicsSuggestionsContainer = container.querySelector(".mechanics-suggestions-container");
+    if (mechanicsSuggestionsContainer) {
+        const validMechanics = Array.from(mechanicsSuggestionsContainer.querySelectorAll(".suggestion-item"))
+            .map((item) => item.textContent.trim());
+
+        const enteredMechanics = value.split(",").map((item) => item.trim());
+
+        const invalidMechanics = enteredMechanics.filter(
+            (mechanic) => !validMechanics.includes(mechanic)
+        );
+
+        if (invalidMechanics.length > 0) {
+            showErrorMessage(
+                `Invalid mechanics: ${invalidMechanics.join(", ")}. Please select valid options from the suggestions`
             );
-            console.log("Créateurs confirmés :", creators);
-    
-            if (editIcon) editIcon.style.display = "inline";
-            if (icon) icon.style.display = "none";
-            if (saveIcon) saveIcon.style.display = "none";
-            if (cancelIcon) cancelIcon.style.display = "none";
-            if (addIcon) addIcon.style.display = "none";
-            if (mapNameSuggestionsContainer) mapNameSuggestionsContainer.style.display = "none";
-            if (nicknameSuggestionsContainer) nicknameSuggestionsContainer.style.display = "none";
-            if (mechanicsSuggestionsContainer) mechanicsSuggestionsContainer.style.display = "none";
-            if (restrictionsSuggestionsContainer) restrictionsSuggestionsContainer.style.display = "none";
-            if (mapTypeSuggestionsContainer) mapTypeSuggestionsContainer.style.display = "none";
-            if (mapDifficultySuggestionsContainer) mapDifficultySuggestionsContainer.style.display = "none";
+            console.error("Invalid mechanics found:", invalidMechanics);
+            return false;
+        }
+    }
+    return true;
+}
 
-            console.log("Modification confirmée :", newValue);
-        });
+function validateRestrictions(value, container) {
+    const restrictionsSuggestionsContainer = container.querySelector(".restrictions-suggestions-container");
+    if (restrictionsSuggestionsContainer) {
+        const validRestrictions = Array.from(restrictionsSuggestionsContainer.querySelectorAll(".suggestion-item"))
+            .map((item) => item.textContent.trim());
+
+        const enteredRestrictions = value.split(",").map((item) => item.trim());
+
+        const invalidRestrictions = enteredRestrictions.filter(
+            (restriction) => !validRestrictions.includes(restriction)
+        );
+
+        if (invalidRestrictions.length > 0) {
+            showErrorMessage(
+                `Invalid restrictions: ${invalidRestrictions.join(", ")}. Please select valid options from the suggestions`
+            );
+            console.error("Invalid restrictions found:", invalidRestrictions);
+            return false;
+        }
+    }
+    return true;
+}
+
+function validateGuide(container) {
+    const allGuides = container.querySelectorAll(".editable[data-field='guide']");
+    let validationFailed = false;
+
+    allGuides.forEach((guide) => {
+        const guideValue = guide.textContent.trim();
+        if (!guideValue.startsWith("https://")) {
+            showErrorMessage("The guide must start with 'https://'");
+            console.error("Guide validation failed:", guideValue);
+            validationFailed = true;
+        }
     });
 
-    container.querySelectorAll(".fa-xmark").forEach((icon) => {
-        icon.addEventListener("click", () => {
-            const parent = icon.closest("p");
-            const editableSpans = parent.querySelectorAll(".editable");
-            const editIcon = parent.querySelector(".fa-pen-to-square");
-            const saveIcon = parent.querySelector(".fa-check");
-            const cancelIcon = parent.querySelector(".fa-xmark");
-            const addIcon = parent.querySelector(".fa-plus");
-            const mapNameSuggestionsContainer = document.querySelector(".map-name-suggestions-container");
-            const nicknameSuggestionsContainer = document.querySelector(".creator-suggestions-container");
-            const mechanicsSuggestionsContainer = document.querySelector(".mechanics-suggestions-container");
-            const restrictionsSuggestionsContainer = document.querySelector(".restrictions-suggestions-container");
-            const mapTypeSuggestionsContainer = document.querySelector(".map-types-suggestions-container");
-            const mapDifficultySuggestionsContainer = document.querySelector(".map-difficulty-suggestions-container");
-    
-            editableSpans.forEach((editableSpan) => {
-                const originalValue = editableSpan.getAttribute("data-original");
-                const placeholder = editableSpan.getAttribute("placeholder");
-    
-                if (!originalValue || editableSpan.classList.contains("placeholder") || editableSpan.textContent.trim() === placeholder) {
-                    console.log(`Nouvelle ou incorrecte entrée supprimée (${editableSpan.getAttribute("data-field")}):`, editableSpan.textContent);
-                    editableSpan.remove();
-                } else {
-                    editableSpan.textContent = originalValue;
-                    editableSpan.setAttribute("contenteditable", "false");
-                    editableSpan.classList.remove("placeholder");
-                }
-            });
-    
-            if (editIcon) editIcon.style.display = "inline";
-            if (saveIcon) saveIcon.style.display = "none";
-            if (cancelIcon) cancelIcon.style.display = "none";
-            if (addIcon) addIcon.style.display = "none";
-            if (mapNameSuggestionsContainer) mapNameSuggestionsContainer.style.display = "none";
-            if (nicknameSuggestionsContainer) nicknameSuggestionsContainer.style.display = "none";
-            if (mechanicsSuggestionsContainer) mechanicsSuggestionsContainer.style.display = "none";
-            if (restrictionsSuggestionsContainer) restrictionsSuggestionsContainer.style.display = "none";
-            if (mapTypeSuggestionsContainer) mapTypeSuggestionsContainer.style.display = "none";
-            if (mapDifficultySuggestionsContainer) mapDifficultySuggestionsContainer.style.display = "none";
+    return !validationFailed;
+}
 
-            shortenLinks(parent);
-    
-            console.log("Toutes les modifications ont été annulées ou les nouvelles entrées supprimées");
-        });
+function validateMapType(value, container) {
+    const mapTypeSuggestionsContainer = container.querySelector(".map-types-suggestions-container");
+    if (mapTypeSuggestionsContainer) {
+        const suggestions = Array.from(mapTypeSuggestionsContainer.querySelectorAll(".suggestion-item"))
+            .map((item) => item.textContent.trim());
+
+        if (!suggestions.includes(value)) {
+            showErrorMessage("Incorrect map type");
+            console.error("Map type not found in suggestions:", value);
+            return false;
+        }
+    }
+    return true;
+}
+
+function validateQuality(value) {
+    const qualityValue = parseFloat(value);
+
+    if (isNaN(qualityValue) || qualityValue < 0 || qualityValue > 6) {
+        showErrorMessage("Quality must be a number between 0 and 6");
+        console.error("Quality validation failed:", value);
+        return false;
+    }
+
+    return true;
+}
+
+function setupAddIconListeners(container) {
+    container.querySelectorAll(".fa-plus").forEach((icon) => {
+        icon.addEventListener("click", () => addNewField(icon, container));
     });
-    
+}
+
+function addNewField(icon, container) {
+    const parent = icon.closest("p");
+    if (!parent) {
+        console.error("Parent <p> introuvable pour le bouton :", icon);
+        return;
+    }
+
+    const textContainer = parent.querySelector(".text-add");
+    if (!textContainer) {
+        console.error("Conteneur '.text-add' introuvable dans :", parent);
+        return;
+    }
+
+    const fieldType = textContainer.querySelector(".editable")?.getAttribute("data-field");
+    if (!fieldType) {
+        console.error("Champ 'data-field' introuvable pour '.editable' :", textContainer);
+        return;
+    }
+
+    const lastEditableField = textContainer.querySelector(".editable:last-child");
+
+    if (lastEditableField && (lastEditableField.textContent.trim() === "" || lastEditableField.classList.contains("placeholder"))) {
+        showErrorMessage("Please fill in all the fields before adding another");
+        return;
+    }
+
+    let newField;
+    if (fieldType === "guide") {
+        newField = createEditableField("guide", "New Guide");
+    } else if (fieldType === "creator") {
+        newField = createEditableField("creator", "Creator name");
+    } else {
+        console.error("Type de champ inconnu :", fieldType);
+        return;
+    }
+
+    applyPlaceholderBehavior(newField);
+    textContainer.appendChild(newField);
+    console.log(`Nouvelle entrée ajoutée pour ${fieldType} :`, newField.textContent);
+}
+
+function createEditableField(field, placeholder) {
+    const span = document.createElement("span");
+    span.classList.add("editable");
+    span.setAttribute("contenteditable", "true");
+    span.setAttribute("data-field", field);
+    span.setAttribute("placeholder", placeholder);
+    span.style.marginLeft = "10px";
+    span.style.padding = "2px 5px";
+    span.style.borderRadius = "5px";
+    span.style.cursor = "text";
+    return span;
+}
+
+function setupGlobalEditButton(container) {
     const globalEditButton = container.querySelector(".global-edit-button");
     const dropdownMenu = container.querySelector(".dropdown-menu-edit");
     const confirmButton = container.querySelector(".confirm-button");
 
-    globalEditButton.addEventListener("click", () => {
-        if (dropdownMenu.style.display === "none" || dropdownMenu.style.display === "") {
-            dropdownMenu.style.display = "block";
-        } else {
-            dropdownMenu.style.display = "none";
-        }
-
-        confirmButton.style.display = "none";
-    });
-
+    globalEditButton.addEventListener("click", () => toggleDropdown(dropdownMenu));
+    
     container.querySelectorAll(".dropdown-menu-edit ul li").forEach((menuItem) => {
-        menuItem.addEventListener("click", () => {
-            const selectedValue = menuItem.dataset.value;
-            globalEditButton.textContent = selectedValue;
-
-            dropdownMenu.style.display = "none";
-            confirmButton.style.display = "inline";
-        });
+        menuItem.addEventListener("click", () => handleDropdownSelection(menuItem, globalEditButton, dropdownMenu));
     });
 
     confirmButton.addEventListener("click", () => {
         const selectedOption = globalEditButton.textContent;
         showConfirmationMessage(`Option confirmed: ${selectedOption}`);
     });
-
-    container.querySelectorAll(".fa-plus").forEach((icon) => {
-        icon.addEventListener("click", () => {
-            const parent = icon.closest("p");
-            if (!parent) {
-                console.error("Parent <p> introuvable pour le bouton :", icon);
-                return;
-            }
-    
-            const textContainer = parent.querySelector(".text-add");
-            if (!textContainer) {
-                console.error("Conteneur '.text' introuvable dans :", parent);
-                return;
-            }
-    
-            const fieldType = textContainer.querySelector(".editable")?.getAttribute("data-field");
-            if (!fieldType) {
-                console.error("Champ 'data-field' introuvable pour '.editable' :", textContainer);
-                return;
-            }
-    
-            if (fieldType === "guide") {
-                const newGuide = document.createElement("span");
-                newGuide.classList.add("editable");
-                newGuide.setAttribute("contenteditable", "true");
-                newGuide.setAttribute("data-field", "guide");
-                newGuide.setAttribute("placeholder", "New Guide");
-                newGuide.style.marginLeft = "10px";
-                newGuide.style.padding = "2px 5px";
-                newGuide.style.borderRadius = "5px";
-                newGuide.style.cursor = "text";
-    
-                textContainer.appendChild(newGuide);
-                applyPlaceholderBehavior(newGuide);
-                console.log("Nouvelle entrée ajoutée pour guide :", newGuide.textContent);
-            } else if (fieldType === "creator") {
-                const newCreator = document.createElement("span");
-                newCreator.classList.add("editable");
-                newCreator.setAttribute("contenteditable", "true");
-                newCreator.setAttribute("data-field", "creator");
-                newCreator.setAttribute("placeholder", "Creator name");
-                newCreator.style.marginLeft = "10px";
-                newCreator.style.padding = "2px 5px";
-                newCreator.style.borderRadius = "5px";
-                newCreator.style.cursor = "text";
-    
-                textContainer.appendChild(newCreator);
-                applyPlaceholderBehavior(newCreator);
-                console.log("Nouveau champ créateur ajouté :", newCreator.textContent);
-            } else {
-                console.error("Type de champ inconnu :", fieldType);
-            }
-        });
-    });    
 }
 
-function applyPlaceholderBehavior(element) {
-    const placeholderText = element.getAttribute("placeholder");
-
-    element.style.minWidth = "40px";
-    element.style.display = "inline-block";
-
-    if (!element.textContent.trim()) {
-        element.classList.add("placeholder");
-        element.textContent = placeholderText;
+function toggleDropdown(dropdownMenu) {
+    if (dropdownMenu.style.display === "none" || dropdownMenu.style.display === "") {
+        dropdownMenu.style.display = "block";
+    } else {
+        dropdownMenu.style.display = "none";
     }
+}
 
-    element.addEventListener("focus", (event) => {
-        event.stopPropagation();
-        if (element.textContent.trim() === placeholderText) {
-            element.textContent = "";
-            element.classList.remove("placeholder");
-        }
-    });
+function handleDropdownSelection(menuItem, globalEditButton, dropdownMenu) {
+    const selectedValue = menuItem.dataset.value;
+    globalEditButton.textContent = selectedValue;
 
-    element.addEventListener("blur", () => {
-        if (!element.textContent.trim()) {
-            element.textContent = placeholderText;
-            element.classList.add("placeholder");
-        }
-    });
+    dropdownMenu.style.display = "none";
+}
 
-    element.addEventListener("click", (event) => {
-        event.stopPropagation();
-        if (element.textContent.trim() === placeholderText) {
-            element.textContent = "";
-            element.classList.remove("placeholder");
-        }
-        element.focus();
+function hideAllSuggestions(container) {
+    const suggestionClasses = [
+        ".map-name-suggestions-container",
+        ".creator-suggestions-container",
+        ".map-code-suggestions-container",
+        ".mechanics-suggestions-container",
+        ".restrictions-suggestions-container",
+        ".map-types-suggestions-container",
+        ".map-difficulty-suggestions-container"
+    ];
+
+    suggestionClasses.forEach(className => {
+        const suggestions = container.querySelector(className);
+        if (suggestions) suggestions.style.display = "none";
     });
 }
 
@@ -748,7 +864,6 @@ function shortenLinks(container, maxLength = 15) {
     });
 }
 
-// Suggestions
 function showConfirmationMessage(message) {
     const confirmationPopup = document.createElement('div');
     confirmationPopup.className = 'confirmation-popup';
@@ -780,6 +895,53 @@ function showErrorMessage(message) {
         errorPopup.remove();
     }, 2000);
 }
+
+/**
+*
+* @param {HTMLElement} field
+*/
+function applyPlaceholderBehavior(field) {
+    const placeholder = field.getAttribute('placeholder');
+
+    if (!placeholder) {
+        console.warn('Aucun attribut "placeholder" trouvé pour l\'élément:', field);
+        return;
+    }
+
+    function showPlaceholder() {
+        if (field.textContent.trim() === '') {
+            field.textContent = placeholder;
+            field.classList.add('placeholder');
+        }
+    }
+
+    function hidePlaceholder() {
+        if (field.classList.contains('placeholder')) {
+            field.textContent = '';
+            field.classList.remove('placeholder');
+        }
+    }
+
+    showPlaceholder();
+
+    field.addEventListener('focus', hidePlaceholder);
+
+    field.addEventListener('blur', showPlaceholder);
+
+    field.addEventListener('input', () => {
+        if (field.classList.contains('placeholder') && field.textContent.trim() !== '') {
+            field.classList.remove('placeholder');
+        }
+    });
+
+    field.addEventListener('keydown', (event) => {
+        if (field.classList.contains('placeholder') && event.key === 'Enter') {
+            event.preventDefault();
+        }
+    });
+}
+
+//Suggestions
 
 function showMapCodeSuggestions(event) {
     const input = event.target;
@@ -878,7 +1040,6 @@ function positionSuggestionsContainer(input, suggestionsContainer, parentCard) {
     suggestionsContainer.style.left = `${rect.left - parentRect.left}px`;
     suggestionsContainer.style.width = `${rect.width}px`;
 }
-
 
 function showMapNameSuggestions(event) {
     const input = event.target;
@@ -1359,6 +1520,10 @@ function showMapTypesSuggestions(event) {
 }
 
 function setInputValidationClass(input, isValid) {
+    if (input.closest('.map-card')) {
+        return;
+    }
+
     if (isValid) {
         input.classList.remove("invalid");
         input.classList.add("valid");

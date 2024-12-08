@@ -18,6 +18,14 @@ body {
     overflow-x: hidden;
 }
 
+.content {
+    background-color: #fff;
+    padding: 20px;
+    margin: auto;
+    width: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
 .container {
     flex: 1;
     margin-top: 20px;
@@ -215,6 +223,26 @@ body {
     margin-left: 15px;
 }
 
+.editable {
+    cursor: text;
+    outline: none;
+    display: inline-block;
+}
+
+.editable[contenteditable="true"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 5px;
+    background-color: #444444;
+    min-width: 150px;
+    max-width: 400px;
+    width: auto;
+    display: inline-block;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow: hidden;
+}
+
 .map-card .text-add {
     flex: 1;
     display: inline-block;
@@ -342,19 +370,6 @@ body {
     color: #ffffff;
 }
 
-.editable {
-    cursor: text;
-    outline: none;
-    display: inline;
-}
-
-.editable[contenteditable="true"] {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 2px;
-    background-color: #444444;
-}
-
 /* Global map edit */
 .global-edit-container {
     position: absolute;
@@ -384,7 +399,7 @@ body {
     position: absolute;
     top: 40px;
     right: 0;
-    background-color: rgba(87, 87, 87, 0.2);
+    background-color: #2b2b2b;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1000;
@@ -419,11 +434,10 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.2s ease;
-    display: none;
 }
 
 .confirm-button:hover {
-    background-color: #0056b3;
+    background-color: #218838;
 }
 
 .confirmation-popup {
