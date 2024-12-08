@@ -9,6 +9,8 @@
             "completions": "Completions",
             "community": "Community",
             "news": "News",
+            "newsfeed": "Newsfeed",
+            "announcements": "Announcements",
             "tutorial": "Tutorial",
             "statistics": "Statistics",
             "login": "Login",
@@ -20,7 +22,6 @@
         "hero": {
             "packOpening": "Pack opening",
             "clickHere": "Click here",
-            "newsfeed": "Newsfeed",
             "comingSoon": "Coming soon"
         },
         "achievements": {
@@ -178,6 +179,31 @@
             "score": "Score: ",
             "highest_score": "Highest score: ",
             "press_space_to_jump": "Press Space to jump!"
+        },
+        "newsfeed": {
+            "new_wr": "{nickname} has set a new World Record!",
+            "promoted": "{nickname} got promoted!",
+            "new_map": "{nickname} has submitted a new {difficulty} map on {map_name}!",
+            "has_posted_guide": "{nickname} has posted a guide for {map_code}",
+            "watch_guide": "Watch guide",
+            "changed_code": "{map_code} has been changed:",
+            "details_command": "Use the command",
+            "click_here": "Click here"
+        },
+        "common": {
+            "na": "N/A",
+            "no_description": "No description available",
+            "error": "Error",
+            "loading": "Loading...",
+            "to_see_details": "to see the details!",
+            "timestamp_format": "{month} {day}, {year} at {hour}:{minute} {AMorPM}"
+          },
+        "pagination": {
+        "first": "« First",
+        "prev": "‹ Prev",
+        "next": "Next ›",
+        "last": "Last »",
+        "page_of": "Page {current} of {total}"
         }
     },
     "fr": {
@@ -190,6 +216,8 @@
             "completions": "Complétions",
             "community": "Communauté",
             "news": "Actualités",
+            "newsfeed": "Flux d'actualités",
+            "announcements": "Annonces",
             "tutorial": "Tutoriels",
             "statistics": "Statistiques",
             "login": "Connexion",
@@ -201,7 +229,6 @@
         "hero": {
             "packOpening": "Ouverture de pack",
             "clickHere": "Cliquez ici",
-            "newsfeed": "Flux d'actualités",
             "comingSoon": "Bientôt disponible"
         },
         "achievements": {
@@ -359,6 +386,31 @@
             "score": "Score : ",
             "highest_score": "Meilleur score : ",
             "press_space_to_jump": "Appuie sur Espace pour sauter !"
+        },
+        "newsfeed": {
+            "new_wr": "{nickname} a établi un nouveau record du monde !",
+            "promoted": "{nickname} a obtenu une promotion !",
+            "new_map": "{nickname} a posté une nouvelle carte {difficulty} sur {map_name} !",
+            "has_posted_guide": "{nickname} a publié un guide pour {map_code}",
+            "watch_guide": "Voir le guide",
+            "changed_code": "{map_code} a été modifié :",
+            "details_command": "Utilisez la commande",
+            "click_here": "Cliquez ici"
+        },
+        "common": {
+            "na": "N/D",
+            "no_description": "Aucune description disponible",
+            "error": "Erreur",
+            "loading": "Chargement...",
+            "to_see_details": "pour voir les détails !",
+            "timestamp_format": "{day} {month} {year}, {hour}h{minute}"
+        },
+        "pagination": {
+            "first": "« Premier",
+            "prev": "‹ Précédent",
+            "next": "Suivant ›",
+            "last": "Dernier »",
+            "page_of": "Page {current} sur {total}"
         }
     },
     "ru": {
@@ -371,6 +423,8 @@
             "completions": "Прохождения",
             "community": "Сообщество",
             "news": "Новости",
+            "newsfeed": "Лента новостей",
+            "announcements": "Объявления",
             "tutorial": "Руководство",
             "statistics": "Статистика",
             "login": "Вход в систему",
@@ -381,7 +435,6 @@
         "hero": {
             "packOpening": "Открытие комплектов",
             "clickHere": "Нажмите здесь",
-            "newsfeed": "Лента новостей",
             "comingSoon": "Скоро"
         },
         "achievements": {

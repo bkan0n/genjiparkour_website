@@ -1,10 +1,24 @@
 body {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
-    background: #36393f;
+    background: radial-gradient(circle, rgba(82,82,82,1) 0%, rgba(43,43,43,1) 100%);
     color: #dcddde;
     width: 100%;
     max-width: 100%;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
 }
 
 .newsfeed-container {
@@ -36,6 +50,8 @@ body {
     font-size: 1rem;
     font-weight: bold;
     color: #ffffff;
+    max-width: 600px;
+    word-wrap: break-word;
 }
 
 .news-header p {
@@ -151,22 +167,14 @@ body {
 
 /* Nouvelle map */
 
-.thumbnail-wrapper {
+.map-banner {
     position: relative;
     display: inline-block;
     width: 90%;
     max-width: 500px;
     border-radius: 8px;
+    margin-top: 10px;
     overflow: hidden;
-}
-
-.news-thumbnail img {
-    width: 90%;
-    max-width: 500px;
-    height: auto;
-    border-radius: 8px;
-    margin: 0px;
-    display: block;
 }
 
 .difficulty-badge {
@@ -214,6 +222,14 @@ body {
     border-left: 4px solid #faa61a;
 }
 
+.news-card.record {
+    border-left: 4px solid #fc3512;
+}
+
+.news-card.map_edit{
+    border-left: 4px solid #7712fc;
+}
+
 /* Nouveau guide */
 .news-header a {
     color: #7289da;
@@ -222,6 +238,21 @@ body {
 
 .news-header a:hover {
     text-decoration: underline;
+}
+
+.embedded-video iframe {
+    width: 100%;
+    max-width: 560px;
+    height: 315px;
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: none;
+}
+
+.video-error {
+    color: red;
+    font-weight: bold;
 }
 
 /* Timestamps */
@@ -311,13 +342,13 @@ body {
 }
 
 .news-card.new_map .click-here a {
-    color: #5865f2; /* Couleur bleue pour le lien */
+    color: #5865f2;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .news-card.new_map .click-here a:hover {
-    color: #7289da; /* Couleur plus claire au survol */
+    color: #7289da;
     text-decoration: underline;
 }
 
@@ -468,3 +499,44 @@ body {
     margin-top: 5px;
     text-align: center;
 }
+
+/* Nouveau record */
+.verified-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Styles de pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .pagination-container button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagination-container button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+  }
+  
+  .pagination-container button:hover {
+    background-color: #777;
+  }
+  
+  .pagination-container span {
+    color: #fff;
+    padding: 5px 10px;
+  }

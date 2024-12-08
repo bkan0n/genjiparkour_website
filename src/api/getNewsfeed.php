@@ -1,7 +1,11 @@
 <?php
 require_once 'config.php';
-function fetchNewsfeed($apiKey, $apiRoot) {
-    $url = rtrim($apiRoot, '/') . '/v1/newsfeed';
+
+$page_number = isset($_GET['page_number']) ? (int)$_GET['page_number'] : 1;
+$page_size = isset($_GET['page_size']) ? (int)$_GET['page_size'] : 10;
+
+function fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size) {
+    $url = rtrim($apiRoot, '/') . '/v1/newsfeed?page_size=' . $page_size . '&page_number=' . $page_number;
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -12,14 +16,15 @@ function fetchNewsfeed($apiKey, $apiRoot) {
     ]);
 
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
     $response = curl_exec($ch);
 
     if (curl_errno($ch)) {
         $error = curl_error($ch);
         curl_close($ch);
-        return ['error' => "Erreur lors de la requête : $error"];
+        header('Content-Type: application/json');
+        echo json_encode(['error' => "Request error: $error"]);
+        exit;
     }
 
     curl_close($ch);
@@ -27,29 +32,31 @@ function fetchNewsfeed($apiKey, $apiRoot) {
     $data = json_decode($response, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        return ['error' => 'Réponse JSON invalide : ' . json_last_error_msg()];
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Invalid JSON response: ' . json_last_error_msg()]);
+        exit;
     }
 
     return $data;
+}
 
-    if (isset($newsfeed['error'])) {
-        die('<p>Erreur : ' . htmlspecialchars($newsfeed['error']) . '</p>');
+header('Content-Type: application/json');
+
+$newsfeed = fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size);
+
+if (!empty($newsfeed)) {
+    $totalResults = null;
+    foreach ($newsfeed as $item) {
+        if (isset($item['total_results'])) {
+            $totalResults = $item['total_results'];
+            break;
+        }
     }
+
+    echo json_encode([
+        'total_results' => $totalResults,
+        'data' => $newsfeed
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+} else {
+    echo json_encode(['error' => 'No newsfeed data found']);
 }
-
-$newsfeed = fetchNewsfeed($apiKey, $apiRoot);
-
-function normalizeRole($role) {
-    return preg_replace('/\s*\++$/', '', $role);
-}
-
-$roleColors = [
-    'Ninja' => 'ninja',
-    'Jumper' => 'jumper',
-    'Skilled' => 'skilled',
-    'Pro' => 'pro',
-    'Master' => 'master',
-    'Grandmaster' => 'grandmaster',
-    'God' => 'god',
-];
-//error_log(print_r($newsfeed, true));
