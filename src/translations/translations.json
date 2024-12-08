@@ -120,14 +120,14 @@
             "speedrunnerDescription": "Check out the most famous speedrunner in the West, aka Jack"
         },
         "chart": {
-            "mapDifficultyDistribution": "Map Difficulty Distribution",
-            "amountOfMaps": "Amount of Maps",
+            "mapDifficultyDistribution": "Map difficulty Distribution",
+            "amountOfMaps": "Amount of maps",
             "difficultyLevel": "Difficulty level",
-            "popularCreators": "Map Creators by Average Quality",
-            "mapAmountLogScale": "Amount of Maps (Log Scale)",
-            "averageQuality": "Average Quality",
-            "topMapsFor": "Top Maps for",
-            "mapCodes": "Map Codes",
+            "popularCreators": "Map creators by Average quality",
+            "mapAmountLogScale": "Amount of maps (Log Scale)",
+            "averageQuality": "Average quality",
+            "topMapsFor": "Most popular maps for difficulty {difficulty}",
+            "mapCodes": "Map codes",
             "completions": "Completions",
             "rank": "Rank",
             "playersIn": "Players in {tier}",
@@ -153,6 +153,31 @@
             "rare": "Rare",
             "epic": "Epic",
             "legendary": "Legendary"
+        },
+        "game": {
+            "dialogues": {
+                "genji_dead": "You're too weak!",
+                "mercy_warning": "Oh no, this is the end...",
+                "mercy_alert": "Hurry up, he's here!",
+                "jack_intro": "Did you really think you could steal my girlfriend?",
+                "genji_success": "You did it, Genji!",
+                "now_die": "Now die!"
+            },
+            "characters": {
+                "genji": "You",
+                "jack": "JackHerer",
+                "mercy": "Mercy"
+            },
+            "gameplay": {
+                "game_over": "GAME OVER",
+                "restart_prompt": "Press Restart to play again",
+                "press_start": "Press \"Restart\" to begin!"
+            },
+            "title": "Genji Parkour Mini Game",
+            "restart_button": "Restart",
+            "score": "Score: ",
+            "highest_score": "Highest score: ",
+            "press_space_to_jump": "Press Space to jump!"
         }
     },
     "fr": {
@@ -309,6 +334,31 @@
             "rare": "Rare",
             "epic": "Épique",
             "legendary": "Légendaire"
+        },
+        "game": {
+            "dialogues": {
+                "genji_dead": "Tu es trop faible !",
+                "mercy_warning": "Oh non, c'est la fin...",
+                "mercy_alert": "Dépêche-toi, il est là !",
+                "jack_intro": "Tu pensais vraiment pouvoir voler ma petite amie ?",
+                "genji_success": "Tu l'as fait, Genji !",
+                "now_die": "Maintenant, meurs !"
+            },
+            "characters": {
+                "genji": "Toi",
+                "jack": "JackHerer",
+                "mercy": "Mercy"
+            },
+            "gameplay": {
+                "game_over": "FIN DU JEU",
+                "restart_prompt": "Appuie sur Redémarrer pour rejouer",
+                "press_start": "Appuie sur \"Redémarrer\" pour commencer !"
+            },
+            "title": "Mini-jeu Genji Parkour",
+            "restart_button": "Redémarrer",
+            "score": "Score : ",
+            "highest_score": "Meilleur score : ",
+            "press_space_to_jump": "Appuie sur Espace pour sauter !"
         }
     },
     "ru": {
@@ -413,7 +463,7 @@
             "mapVideo":"Видео",
             "mapXP":"Опыт",
             "mapSkillRank":"Ранг навыков",
-            "mapWR":"Мировые рекорды",
+            "mapWR":"Мировой рекорд",
             "mapMade":"Сделанные карты",
             "mapPlaytestsVotes":"Голоса в плейтесте",
             "mapTierRank": "Уровень",
@@ -437,7 +487,7 @@
             "popularCreators": "Создатели карт по среднему качеству",
             "mapAmountLogScale": "Количество карт (Логарифмическая шкала)",
             "averageQuality": "Среднее качество",
-            "topMapsFor": "Лучшие карты для",
+            "topMapsFor": "Лучшие карты для {difficulty}",
             "mapCodes": "Коды карт",
             "completions": "Прохождения",
             "rank": "Ранг",
@@ -468,24 +518,46 @@
     },
     "languages": {
         "en": {
-          "name": "EN",
-          "flag": "flag-united-states"
-        },
-        "fr": {
-          "name": "FR",
-          "flag": "flag-france"
+            "name": "EN",
+            "flag": "flag-united-states",
+            "translated": true,
+            "modalMessage": "The translation for this language isn't available yet. If you want to contribute, please contact <strong>.aiapaec</strong> on Discord.",
+            "closeButtonText": "Close"
         },
         "de": {
-          "name": "DE",
-          "flag": "flag-germany"
+            "name": "DE",
+            "flag": "flag-germany",
+            "translated": false,
+            "modalMessage": "Die Übersetzung für diese Sprache ist noch nicht verfügbar. Wenn Sie mithelfen möchten, kontaktieren Sie bitte <strong>.aiapaec</strong> auf Discord.",
+            "closeButtonText": "Schließen"
         },
         "ru": {
             "name": "RU",
-            "flag": "flag-russia"
+            "flag": "flag-russia",
+            "translated": true,
+            "modalMessage": "Перевод для этого языка еще не доступен. Если вы хотите помочь с переводом, свяжитесь с <strong>.aiapaec</strong> в Discord.",
+            "closeButtonText": "Закрыть"
         },
         "cn": {
-          "name": "中文",
-          "flag": "flag-china"
+            "name": "CN",
+            "flag": "flag-china",
+            "translated": false,
+            "modalMessage": "此语言的翻译尚不可用。如果您想协助翻译，请通过 Discord 联系 <strong>.aiapaec</strong>。",
+            "closeButtonText": "关闭"
+        },
+        "jp": {
+            "name": "JP",
+            "flag": "flag-japan",
+            "translated": false,
+            "modalMessage": "この言語の翻訳はまだ利用できません。翻訳に協力したい場合は、Discord で <strong>.aiapaec</strong> に連絡してください。",
+            "closeButtonText": "閉じる"
+        },
+        "fr": {
+            "name": "FR",
+            "flag": "flag-france",
+            "translated": true,
+            "modalMessage": "La traduction pour cette langue n'est pas encore disponible. Si vous souhaitez contribuer, veuillez contacter <strong>.aiapaec</strong> sur Discord.",
+            "closeButtonText": "Fermer"
         }
     }
 }

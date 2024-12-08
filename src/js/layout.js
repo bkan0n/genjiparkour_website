@@ -165,3 +165,62 @@ function activateSectionFromURL() {
 }
 
 window.addEventListener("load", activateSectionFromURL);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const unavailableLinks = document.querySelectorAll('a.unavailable');
+    const modal = document.getElementById('translationModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const closeModal = document.getElementById('closeModal');
+
+    unavailableLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const message = link.getAttribute('data-message');
+            const closeText = link.getAttribute('data-close-text');
+
+            modalMessage.innerHTML = message;
+            closeModal.textContent = closeText;
+
+            modal.style.display = 'flex';
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const logoIcon = document.getElementById("logoIcon");
+
+    logoIcon.addEventListener("mouseenter", () => {
+        logoIcon.src = "assets/img-2/favicon-anim.gif";
+    });
+
+    logoIcon.addEventListener("mouseleave", () => {
+        logoIcon.src = "assets/img-2/favicon.png";
+    });
+
+    logoIcon.addEventListener("click", () => {
+        window.location.href = "404.php";
+    });
+});
+
+function checkConnectivity() {
+    if (!navigator.onLine) {
+        window.location.href = './404.php';
+    }
+}
+
+checkConnectivity();
+
+window.addEventListener('offline', () => {
+    checkConnectivity();
+});

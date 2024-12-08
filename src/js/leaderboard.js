@@ -596,5 +596,3 @@ function applyRoundedCorners() {
 
 document.addEventListener('DOMContentLoaded', applyRoundedCorners);
 document.addEventListener('updateSearchResults', applyRoundedCorners);
-
-

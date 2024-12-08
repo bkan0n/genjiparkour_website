@@ -14,13 +14,13 @@ async function loadTranslations() {
 }
 
 function t(key, params = {}) {
-    const keys = key.split('.'); // Découpe la clé en parties
+    const keys = key.split('.');
     let translation = translations;
 
     for (let i = 0; i < keys.length; i++) {
         if (!translation[keys[i]]) {
             console.warn(`Clé de traduction manquante : ${key}`);
-            return key; // Retourne la clé brute si elle est manquante
+            return key;
         }
         translation = translation[keys[i]];
     }

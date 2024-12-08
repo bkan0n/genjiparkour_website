@@ -16,7 +16,7 @@ if (empty($value)) {
     exit;
 }
 
-$url = $apiRoot . "/v1/autocomplete/creators?" . http_build_query([
+$url = $apiRoot . "/v1/autocomplete/map-types?" . http_build_query([
     'value' => $value,
     'page_size' => $pageSize
 ]);

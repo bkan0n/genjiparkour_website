@@ -7,7 +7,7 @@ define('BASE_PATH', __DIR__ . '/');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Session Expired</title>
-    <link rel="stylesheet" href="styles/style-session_expired.css">
+    <link rel="stylesheet" href="styles/session_expired.css">
 </head>
 <body>
     <div class="modal-overlay">
