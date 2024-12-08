@@ -44,16 +44,19 @@ include BASE_PATH . "discord/header.php";
                 <?= htmlspecialchars($translations['navbar']['community']) ?> <span class="arrow"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="news.php"><?= htmlspecialchars($translations['navbar']['news']) ?></a></li>
+                    <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['newsfeed']) ?></a></li>
+                    <li><a href="announcements.php"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
             </li>
         </ul>
         <div class="navbar-right">
-            <a href="moderator.php" class="moderator-btn">
-                <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
-            </a>
+            <?php if (isset($_SESSION['is_moderator']) && $_SESSION['is_moderator'] === true): ?>
+                <a href="moderator.php" class="moderator-btn">
+                    <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+                </a>
+            <?php endif; ?>
             <ul class="lang-menu">
                 <li class="lang-dropdown-nav">
                     <button class="dropdown-toggle-nav">
@@ -215,8 +218,8 @@ include BASE_PATH . "discord/header.php";
             <div class="table-wrapper">
                 <table id="leaderboard"></table>
             </div>
-            <div class="pagination-container"></div>
         </div>
+        <div class="pagination-container" id="paginationContainer"></div>
     </div>
     <footer>
         <div class="footer-left">Genji Parkour © 2024</div>

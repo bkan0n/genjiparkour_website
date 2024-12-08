@@ -12,7 +12,7 @@ $discordAuthUrl = DISCORD_API_URL . '/oauth2/authorize?' . http_build_query([
     'client_id' => DISCORD_CLIENT_ID,
     'redirect_uri' => DISCORD_REDIRECT_URI,
     'response_type' => 'code',
-    'scope' => 'identify guilds',
+    'scope' => 'identify guilds guilds.members.read',
     'state' => $_SESSION['state']
 ]);
 

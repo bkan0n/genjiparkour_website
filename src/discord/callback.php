@@ -6,7 +6,6 @@ if (!defined('BASE_PATH')) {
 require BASE_PATH . 'discord/config.php';
 
 $_SESSION['LAST_ACTIVITY'] = time();
-
 session_regenerate_id(true);
 
 function log_event($message) {
@@ -20,13 +19,14 @@ if (!isset($_SESSION['login_attempts'])) {
 }
 if ($_SESSION['login_attempts'] > 5 && (time() - ($_SESSION['LAST_ACTIVITY'] ?? 0) < 900)) {
     log_event("Rate limit exceeded for IP: " . $_SERVER['REMOTE_ADDR']);
-    exit("Too many login attempts. Try again later.");
+    exit("Too many login attempts. Try again later");
 }
 
 $code = filter_input(INPUT_GET, 'code', FILTER_SANITIZE_SPECIAL_CHARS);
 $state = filter_input(INPUT_GET, 'state', FILTER_SANITIZE_SPECIAL_CHARS);
 
 if (!$code || !$state || $state !== $_SESSION['state']) {
+    log_event("Invalid or missing state parameter. State: {$state}");
     exit('Invalid or missing state parameter');
 }
 unset($_SESSION['state']);
@@ -38,7 +38,8 @@ $data = [
     'client_secret' => DISCORD_CLIENT_SECRET,
     'grant_type' => 'authorization_code',
     'code' => $code,
-    'redirect_uri' => DISCORD_REDIRECT_URI
+    'redirect_uri' => DISCORD_REDIRECT_URI,
+    'scope' => 'identify guilds guilds.members.read'
 ];
 
 $options = [
@@ -50,7 +51,13 @@ $options = [
 ];
 
 $context = stream_context_create($options);
-$response = file_get_contents($tokenUrl, false, $context);
+$response = @file_get_contents($tokenUrl, false, $context);
+
+if ($response === FALSE) {
+    log_event("Failed to connect to token endpoint.");
+    exit('Failed to connect to token endpoint');
+}
+
 $tokenData = json_decode($response, true);
 
 if (!isset($tokenData['access_token'])) {
@@ -63,6 +70,7 @@ $_SESSION['encryption_key'] = base64_encode($encryption_key);
 $_SESSION['access_token'] = openssl_encrypt($tokenData['access_token'], 'aes-256-cbc', $encryption_key, 0, '1234567890123456');
 
 $access_token = openssl_decrypt($_SESSION['access_token'], 'aes-256-cbc', $encryption_key, 0, '1234567890123456');
+
 $userUrl = DISCORD_API_URL . '/users/@me';
 $options = [
     'http' => [
@@ -71,7 +79,7 @@ $options = [
 ];
 
 $context = stream_context_create($options);
-$userResponse = file_get_contents($userUrl, false, $context);
+$userResponse = @file_get_contents($userUrl, false, $context);
 $userData = json_decode($userResponse, true);
 
 if (!isset($userData['id'])) {
@@ -95,7 +103,7 @@ $options = [
 ];
 
 $context = stream_context_create($options);
-$guildsResponse = file_get_contents($guildsUrl, false, $context);
+$guildsResponse = @file_get_contents($guildsUrl, false, $context);
 $guildsData = json_decode($guildsResponse, true);
 
 $_SESSION['user_guilds'] = [];
@@ -111,6 +119,75 @@ if (is_array($guildsData)) {
 
 $returnUrl = $_SESSION['return_url'] ?? REDIRECT_URL . 'index.php';
 unset($_SESSION['return_url']);
+
+$targetGuildId = '842778964673953812';
+$authorizedRoleIds = ['842790097312153610', '1128014001318666423'];
+
+$guild = null;
+foreach ($guildsData as $g) {
+    if ($g['id'] === $targetGuildId) {
+        $guild = $g;
+        break;
+    }
+}
+
+if (!$guild) {
+    log_event("User {$userData['id']} is not a member of discord {$targetGuildId}");
+    header('Location: ' . $returnUrl);
+}
+
+$memberUrl = DISCORD_API_URL . "/users/@me/guilds/{$targetGuildId}/member";
+
+$options = [
+    'http' => [
+        'header' => 'Authorization: Bearer ' . $access_token,
+        'method' => 'GET'
+    ]
+];
+
+$context = stream_context_create($options);
+$memberResponse = @file_get_contents($memberUrl, false, $context);
+
+$httpcode = 0;
+if ($http_response_header) {
+    foreach ($http_response_header as $header) {
+        if (preg_match('/^HTTP\/.* (\d+)/', $header, $matches)) {
+            $httpcode = intval($matches[1]);
+            break;
+        }
+    }
+}
+
+if ($memberResponse === FALSE || $httpcode !== 200) {
+    log_event("Failed to retrieve member information for user {$userData['id']} in guild {$targetGuildId}. HTTP Code: {$httpcode}");
+    header('Location: ' . $returnUrl);
+    exit('Error fetching user data. Some functionnalities will be removed');
+}
+
+$memberData = json_decode($memberResponse, true);
+
+if (!isset($memberData['roles'])) {
+    log_event("Invalid member data received: " . $memberResponse);
+
+    header('Location: ' . $returnUrl);
+    exit('Error fetching user data. Some functionnalities will be removed');
+}
+
+$userRoles = $memberData['roles'];
+$hasAuthorizedRole = false;
+
+foreach ($userRoles as $roleId) {
+    if (in_array($roleId, $authorizedRoleIds)) {
+        $hasAuthorizedRole = true;
+        break;
+    }
+}
+
+if ($hasAuthorizedRole) {
+    $_SESSION['is_moderator'] = true;
+} else {
+    $_SESSION['is_moderator'] = false;
+}
 
 header('Location: ' . $returnUrl);
 exit;
