@@ -33,6 +33,7 @@ const filters = {};
 const selectedFilters = [];
 let mechanicsOptions = [];
 let restrictionsOptions = [];
+let translations = {};
 let currentSection = "";
 let currentPage = 1;
 const pageSize = 25;
@@ -110,14 +111,33 @@ async function loadTranslations() {
         const response = await fetch("translations/translations.json");
         const data = await response.json();
         const currentLang = document.documentElement.lang || "en";
-        translations = data[currentLang]?.thead || {};
+        
+        const currentLangData = data[currentLang] || {};
+        
+        const { thead = {}, pagination = {} } = currentLangData;
+        
+        translations = { thead, pagination };
+
+        console.log("Traductions chargées :", translations);
     } catch (error) {
         console.error("Erreur lors du chargement des traductions :", error);
     }
 }
 
-function t(key) {
-    return translations[key] || key;
+function t(path, params = {}) {
+    const parts = path.split('.');
+    let result = translations;
+    for (const part of parts) {
+        result = result?.[part];
+        if (!result) break;
+    }
+    if (!result) {
+        return path;
+    }
+    for (const key in params) {
+        result = result.replace(`{${key}}`, params[key]);
+    }
+    return result;
 }
 
 async function loadDynamicOptions() {
@@ -831,16 +851,16 @@ async function displayMapSearchResults(data) {
             </colgroup>
             <thead>
                 <tr>
-                    <th class="mapCode">${t("mapCode")}</th>
-                    <th class="mapName">${t("mapName")}</th>
-                    <th class="mapType">${t("mapType")}</th>
-                    <th class="mapCreator">${t("mapCreator")}</th>
-                    <th class="mapDifficulty hidden-mobile">${t("mapDifficulty")}</th>
-                    <th class="mapQuality hidden-mobile">${t("mapQuality")}</th>
-                    <th class="mapGold hidden-mobile">${t("mapGold")}</th>
-                    <th class="mapSilver hidden-mobile">${t("mapSilver")}</th>
-                    <th class="mapBronze hidden-mobile">${t("mapBronze")}</th>
-                    <th class="mapDetails">${t("mapDetails")}</th>
+                    <th class="mapCode">${t("thead.mapCode")}</th>
+                    <th class="mapName">${t("thead.mapName")}</th>
+                    <th class="mapType">${t("thead.mapType")}</th>
+                    <th class="mapCreator">${t("thead.mapCreator")}</th>
+                    <th class="mapDifficulty hidden-mobile">${t("thead.mapDifficulty")}</th>
+                    <th class="mapQuality hidden-mobile">${t("thead.mapQuality")}</th>
+                    <th class="mapGold hidden-mobile">${t("thead.mapGold")}</th>
+                    <th class="mapSilver hidden-mobile">${t("thead.mapSilver")}</th>
+                    <th class="mapBronze hidden-mobile">${t("thead.mapBronze")}</th>
+                    <th class="mapDetails">${t("thead.mapDetails")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -1025,12 +1045,12 @@ async function displayPersonalRecordsResults(results) {
             </colgroup>
             <thead>
                 <tr>
-                    <th class="mapCode">${t("mapCode")}</th>
-                    <th class="nickname">${t("mapNickname")}</th>
-                    <th class="discordTag">${t("mapDiscordTag")}</th>
-                    <th class="difficulty">${t("mapDifficulty")}</th>
-                    <th class="time">${t("mapTime")}</th>
-                    <th class="medal">${t("mapMedal")}</th>
+                    <th class="mapCode">thead.mapCode")}</th>
+                    <th class="nickname">${t("thead.mapNickname")}</th>
+                    <th class="discordTag">${t("thead.mapDiscordTag")}</th>
+                    <th class="difficulty">${t("thead.mapDifficulty")}</th>
+                    <th class="time">${t("thead.mapTime")}</th>
+                    <th class="medal">${t("thead.mapMedal")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -1084,12 +1104,12 @@ async function displayCompletionsResults(results) {
             </colgroup>
             <thead>
                 <tr>
-                    <th class="mapCode">${t("mapCode")}</th>
-                    <th class="nickname">${t("mapNickname")}</th>
-                    <th class="discordTag">${t("mapDiscordTag")}</th>
-                    <th class="time">${t("mapTime")}</th>
-                    <th class="medal">${t("mapMedal")}</th>
-                    <th class="video">${t("mapVideo")}</th>
+                    <th class="mapCode">${t("thead.mapCode")}</th>
+                    <th class="nickname">${t("thead.mapNickname")}</th>
+                    <th class="discordTag">${t("thead.mapDiscordTag")}</th>
+                    <th class="time">${t("thead.mapTime")}</th>
+                    <th class="medal">${t("thead.mapMedal")}</th>
+                    <th class="video">${t("thead.mapVideo")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -1135,8 +1155,8 @@ async function displayGuideResults(results) {
         <table class="results-table">
             <thead>
                 <tr>
-                    <th class="mapCode">${t("mapCode")}</th>
-                    <th class="guideVideo">${t("mapVideo")}</th>
+                    <th class="mapCode">${t("thead.mapCode")}</th>
+                    <th class="guideVideo">${t("thead.mapVideo")}</th>
                 </tr>
             </thead>
             <tbody>
@@ -1185,8 +1205,10 @@ function getEmbedUrl(url) {
     return null;
 }
 
-function renderPaginationButtons() {
+async function renderPaginationButtons() {
+    await loadTranslations();
     const paginationContainer = document.getElementById("paginationContainer");
+    if(!paginationContainer) return;
     paginationContainer.innerHTML = "";
 
     if (totalPages <= 1) {
@@ -1194,29 +1216,29 @@ function renderPaginationButtons() {
     }
 
     const firstButton = document.createElement("button");
-    firstButton.textContent = "« First";
+    firstButton.textContent = t("pagination.first");
     firstButton.disabled = currentPage === 1;
     firstButton.addEventListener("click", () => changePage(1));
     paginationContainer.appendChild(firstButton);
 
     const prevButton = document.createElement("button");
-    prevButton.textContent = "‹ Prev";
+    prevButton.textContent = t('pagination.prev');
     prevButton.disabled = currentPage === 1;
     prevButton.addEventListener("click", () => changePage(currentPage - 1));
     paginationContainer.appendChild(prevButton);
 
     const pageIndicator = document.createElement("span");
-    pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+    pageIndicator.textContent = t('pagination.page_of', {current: currentPage, total: totalPages});
     paginationContainer.appendChild(pageIndicator);
 
     const nextButton = document.createElement("button");
-    nextButton.textContent = "Next ›";
+    nextButton.textContent = t('pagination.next');
     nextButton.disabled = currentPage === totalPages;
     nextButton.addEventListener("click", () => changePage(currentPage + 1));
     paginationContainer.appendChild(nextButton);
 
     const lastButton = document.createElement("button");
-    lastButton.textContent = "Last »";
+    lastButton.textContent = t('pagination.last');
     lastButton.disabled = currentPage === totalPages;
     lastButton.addEventListener("click", () => changePage(totalPages));
     paginationContainer.appendChild(lastButton);
@@ -1227,7 +1249,10 @@ function changePage(pageNumber) {
     applyFilters();
 }
 
-applyFiltersButton.removeEventListener("click", applyFilters);
+applyFiltersButton.addEventListener("click", () => {
+    currentPage = 1;
+    applyFilters();
+});
 
 async function fetchMapCompletionStatistics(mapCode) {
     try {
