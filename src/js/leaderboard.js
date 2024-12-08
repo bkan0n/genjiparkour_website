@@ -26,14 +26,33 @@ async function loadTranslations() {
         const response = await fetch("translations/translations.json");
         const data = await response.json();
         const currentLang = document.documentElement.lang || "en";
-        translations = data[currentLang]?.thead || {};
+        
+        const currentLangData = data[currentLang] || {};
+        
+        const { thead = {}, pagination = {} } = currentLangData;
+        
+        translations = { thead, pagination };
+
+        console.log("Traductions chargées :", translations);
     } catch (error) {
         console.error("Erreur lors du chargement des traductions :", error);
     }
 }
 
-function t(key) {
-    return translations[key] || key;
+function t(path, params = {}) {
+    const parts = path.split('.');
+    let result = translations;
+    for (const part of parts) {
+        result = result?.[part];
+        if (!result) break;
+    }
+    if (!result) {
+        return path;
+    }
+    for (const key in params) {
+        result = result.replace(`{${key}}`, params[key]);
+    }
+    return result;
 }
 
 window.addEventListener('scroll', function () {
@@ -56,6 +75,36 @@ function handleSortClick(event) {
     const column = button.getAttribute('data-column');
     sortTableAjax(event, column, button);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const currentLang = document.documentElement.lang || "en";
+    if (currentLang.toLowerCase() === 'ru') {
+        const checkboxesContainer = document.getElementById("checkboxes-container");
+        if (checkboxesContainer) {
+            checkboxesContainer.style.maxWidth = '1000px';
+        }
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const currentLang = document.documentElement.lang || "en";
+    if (currentLang.toLowerCase() === 'ru') {
+        const leaderboardContainer = document.getElementById("leaderboard");
+        if (leaderboardContainer) {
+            leaderboardContainer.style.maxWidth = '80vw';
+        }
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const currentLang = document.documentElement.lang || "en";
+    if (currentLang.toLowerCase() === 'fr') {
+        const leaderboardContainer = document.getElementById("leaderboard");
+        if (leaderboardContainer) {
+            leaderboardContainer.style.maxWidth = '80vw';
+        }
+    }
+});
 
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -82,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             <div class="thead-container">
                 <tr class="thead-wrapper">
                     <th class="col-nickname">
-                        ${t("mapNickname")}
+                        ${t("thead.mapNickname")}
                         <span class="vertical-bar"></span>
                         <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -92,7 +141,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-xp">
-                        ${t("mapXP")}    
+                        ${t("thead.mapXP")}    
                         <span class="vertical-bar"></span>
                         <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -102,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-tier">
-                        ${t("mapTierRank")}
+                        ${t("thead.mapTierRank")}
                         <span class="vertical-bar"></span>
                         <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -112,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-skill-rank">
-                        ${t("mapSkillRank")}
+                        ${t("thead.mapSkillRank")}
                         <span class="vertical-bar"></span>
                         <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -122,7 +171,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-wr">
-                        ${t("mapWR")}
+                        ${t("thead.mapWR")}
                         <span class="vertical-bar"></span>
                         <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -132,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-maps">
-                        ${t("mapMade")}
+                        ${t("thead.mapMade")}
                         <span class="vertical-bar"></span>
                         <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -142,7 +191,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-playtest">
-                        ${t("mapPlaytestsVotes")}
+                        ${t("thead.mapPlaytestsVotes")}
                         <span class="vertical-bar"></span>
                         <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -152,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     </th>
                     <th class="col-discord-tag">
-                        ${t("mapDiscordTag")}
+                        ${t("thead.mapDiscordTag")}
                         <span class="vertical-bar"></span>
                         <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
                             <div class="stroke stroke1"></div>
@@ -258,7 +307,7 @@ function getSkillRankClass(skillRank) {
     }
 }
 
-function renderPagination(totalResults, currentPage, resultsPerPage) {
+async function renderPagination(totalResults, currentPage, resultsPerPage) {
     const paginationContainer = document.querySelector(".pagination-container");
     paginationContainer.innerHTML = "";
 
@@ -269,30 +318,29 @@ function renderPagination(totalResults, currentPage, resultsPerPage) {
     }
 
     const firstButton = document.createElement("button");
-    firstButton.textContent = "« First";
+    firstButton.textContent = t("pagination.first");
     firstButton.disabled = currentPage === 1;
     firstButton.addEventListener("click", () => changePage(1));
     paginationContainer.appendChild(firstButton);
 
     const prevButton = document.createElement("button");
-    prevButton.textContent = "‹ Prev";
+    prevButton.textContent = t('pagination.prev');
     prevButton.disabled = currentPage === 1;
     prevButton.addEventListener("click", () => changePage(currentPage - 1));
     paginationContainer.appendChild(prevButton);
 
     const pageIndicator = document.createElement("span");
-    pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
-    pageIndicator.classList.add("page-indicator");
+    pageIndicator.textContent = t('pagination.page_of', {current: currentPage, total: totalPages});
     paginationContainer.appendChild(pageIndicator);
 
     const nextButton = document.createElement("button");
-    nextButton.textContent = "Next ›";
+    nextButton.textContent = t('pagination.next');
     nextButton.disabled = currentPage === totalPages;
     nextButton.addEventListener("click", () => changePage(currentPage + 1));
     paginationContainer.appendChild(nextButton);
 
     const lastButton = document.createElement("button");
-    lastButton.textContent = "Last »";
+    lastButton.textContent = t('pagination.last');
     lastButton.disabled = currentPage === totalPages;
     lastButton.addEventListener("click", () => changePage(totalPages));
     paginationContainer.appendChild(lastButton);

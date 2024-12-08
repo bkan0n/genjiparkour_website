@@ -4,7 +4,7 @@ body, html {
 }
 
 body {
-  background: radial-gradient(circle, rgb(131, 130, 130) 0%, rgba(43,43,43,1) 100%);
+  background: radial-gradient(circle, rgba(82,82,82,1) 0%, rgba(43,43,43,1) 100%);
 }
 
 h1 {
