@@ -42,14 +42,14 @@ function buildMapSearchUrl(
     if ($creator !== null) $params['creator'] = $creator;
     if ($difficulty !== null) $params['difficulty'] = $difficulty;
     if ($minimum_quality !== null) $params['minimum_quality'] = $minimum_quality;
-    if ($only_playtest!== null) {
-        $params['only_playtest'] = $only_playtest === 'true' ? 'true' : 'false';
+    if ($only_playtest !== null) {
+        $params['only_playtest'] = filter_var($only_playtest, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
     }
     if ($only_maps_with_medals !== null) {
-        $params['only_maps_with_medals'] = $only_maps_with_medals === 'true' ? 'true' : 'false';
+        $params['only_maps_with_medals'] = filter_var($only_maps_with_medals, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
     }
     if ($ignore_completions !== null) {
-        $params['ignore_completions'] = $ignore_completions === 'true' ? 'true' : 'false';
+        $params['ignore_completions'] = filter_var($ignore_completions, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
     }
     if ($desc !== null) $params['desc'] = $desc;
     if (!$count_only) {
