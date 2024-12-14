@@ -12,7 +12,7 @@ include BASE_PATH . "discord/header.php";
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <title>Genji Parkour - Lootbox</title>
     <link href="styles/lootbox2.css" rel="stylesheet">
     <link href="styles/layout.css" rel="stylesheet">
@@ -34,7 +34,7 @@ include BASE_PATH . "discord/header.php";
 <body class="overwatch">
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
+            <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -56,7 +56,7 @@ include BASE_PATH . "discord/header.php";
                 </button>
                 <ul class="dropdown-menu">
                     <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['newsfeed']) ?></a></li>
-                    <li><a href="announcements.php"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
+                    <li><a href="newsfeed.php?type=announcement"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
@@ -65,7 +65,7 @@ include BASE_PATH . "discord/header.php";
         <div class="navbar-right">
             <?php if (isset($_SESSION['is_moderator']) && $_SESSION['is_moderator'] === true): ?>
                 <a href="moderator.php" class="moderator-btn">
-                    <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+                    <img src="assets/img/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
                 </a>
             <?php endif; ?>
             <ul class="lang-menu">

@@ -13,7 +13,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Graphs</title>
-    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/graphs.css">
@@ -26,7 +26,7 @@ include BASE_PATH . "discord/header.php";
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
+            <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -48,7 +48,7 @@ include BASE_PATH . "discord/header.php";
                 </button>
                 <ul class="dropdown-menu">
                     <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['newsfeed']) ?></a></li>
-                    <li><a href="announcements.php"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
+                    <li><a href="newsfeed.php?type=announcement"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
@@ -57,7 +57,7 @@ include BASE_PATH . "discord/header.php";
         <div class="navbar-right">
             <?php if (isset($_SESSION['is_moderator']) && $_SESSION['is_moderator'] === true): ?>
                 <a href="moderator.php" class="moderator-btn">
-                    <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+                    <img src="assets/img/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
                 </a>
             <?php endif; ?>
             <ul class="lang-menu">

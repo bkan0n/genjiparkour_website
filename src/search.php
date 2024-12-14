@@ -13,7 +13,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Maps</title>
-    <link rel="icon" type="image/png" href="assets/img-2/favicon.png">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/search.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,7 +23,7 @@ include BASE_PATH . "discord/header.php";
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
+            <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -45,7 +45,7 @@ include BASE_PATH . "discord/header.php";
                 </button>
                 <ul class="dropdown-menu">
                     <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['newsfeed']) ?></a></li>
-                    <li><a href="announcements.php"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
+                    <li><a href="newsfeed.php?type=announcement"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
@@ -54,7 +54,7 @@ include BASE_PATH . "discord/header.php";
         <div class="navbar-right">
             <?php if (isset($_SESSION['is_moderator']) && $_SESSION['is_moderator'] === true): ?>
                 <a href="moderator.php" class="moderator-btn">
-                    <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+                    <img src="assets/img/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
                 </a>
             <?php endif; ?>
             <ul class="lang-menu">
@@ -130,32 +130,18 @@ include BASE_PATH . "discord/header.php";
                 <?= htmlspecialchars($translations['search']['selectMode']) ?>
             </div>
             <div class="filter-actions" id="filterActions" style="display: none;">
-                <button class="add-filter-btn" id="addFilterBtn" onmouseover="showFilterOptions()"></button>
-                <button class="apply-filters-btn" id="applyFiltersBtn">✔</button>
-                <button class="clear-filters-btn" id="clearFiltersBtn" onclick="clearFilters()">✖</button>
-                <div class="filter-options" id="filterOptions" onmouseleave="hideFilterOptions()"></div>
+                <div class="toolbar-container">
+                    <div id="icon-name" class="icon-name"></div>
+                    <div class="toolbar">
+                        <div class="selection-circle"></div>
+                    </div>
+                </div>  
             </div>
-        </div>
-        <div class="intuitive-mode" id="intuitiveMode" style="display: none;">
-            <?= htmlspecialchars($translations['search']['addFilterHint']) ?>
         </div>
         <div class="filter-section" id="dynamicFilters">
-            <div class="filters-container" id="filtersContainer">
-                <div class="filter">
-                    <input type="text" id="mapNameInput" placeholder="<?= htmlspecialchars($translations['search']['mapNamePlaceholder']) ?>" />
-                    <div id="mapNameSuggestionsContainer" class="suggestions"></div>
-                </div>
-                <div class="filter">
-                    <input type="text" id="mapCodeInput" placeholder="<?= htmlspecialchars($translations['search']['mapCodePlaceholder']) ?>" />
-                    <div id="mapCodeSuggestionsContainer" class="suggestions"></div>
-                </div>
-                <div class="filter">
-                    <input type="text" id="nicknameInput" placeholder="<?= htmlspecialchars($translations['search']['nicknamePlaceholder']) ?>" />
-                    <div id="nicknameSuggestionsContainer" class="suggestions"></div>
-                </div>
-            </div>
+            <div class="filters-container" id="filtersContainer"></div>
         </div>
-        <div id="loadingContainer">
+        <div class="loading-bar" id="loadingContainer">
             <div class="line"></div>
         </div>
         <div class="results-container" id="resultsContainer"></div>

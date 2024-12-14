@@ -13,6 +13,7 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Newsfeed</title>
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/newsfeed.css">
     <script src="js/layout.js" defer></script>
@@ -21,7 +22,7 @@ include BASE_PATH . "discord/header.php";
 <body>
 <nav class="navbar">
         <div class="navbar-left">
-            <img src="assets/img-2/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
+            <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
             <span class="logo-text">GENJI PARKOUR</span>
         </div>
         <ul class="navbar-menu">
@@ -43,7 +44,7 @@ include BASE_PATH . "discord/header.php";
                 </button>
                 <ul class="dropdown-menu">
                     <li><a href="newsfeed.php"><?= htmlspecialchars($translations['navbar']['newsfeed']) ?></a></li>
-                    <li><a href="announcements.php"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
+                    <li><a href="newsfeed.php?type=announcement"><?= htmlspecialchars($translations['navbar']['announcements']) ?></a></li>
                     <li><a href="tutorial.php"><?= htmlspecialchars($translations['navbar']['tutorial']) ?></a></li>
                     <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
                 </ul>
@@ -52,7 +53,7 @@ include BASE_PATH . "discord/header.php";
         <div class="navbar-right">
             <?php if (isset($_SESSION['is_moderator']) && $_SESSION['is_moderator'] === true): ?>
                 <a href="moderator.php" class="moderator-btn">
-                    <img src="assets/img-2/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
+                    <img src="assets/img/moderator-dashboard.png" alt="Moderator Dashboard" class="moderator-icon">
                 </a>
             <?php endif; ?>
             <ul class="lang-menu">
@@ -114,9 +115,25 @@ include BASE_PATH . "discord/header.php";
             <div id="modalDetailsContainer"></div>
         </div>
     </div>
-    <div class="main-container">
-        <div class="newsfeed-container" id="newsfeedContainer"></div>
-        <div class="pagination-container" id="paginationContainer"></div>
+    <div class="newsfeed-header">
+        <div class="custom-select-large">
+            <span class="select-trigger"><?= htmlspecialchars($translations['newsfeed']['search_by_filter']) ?></span>
+            <div class="custom-options">
+                <div class="custom-option" data-value="map_edit"><?= htmlspecialchars($translations['newsfeed']['map_edit_filter']) ?></div>
+                <div class="custom-option" data-value="guide"><?= htmlspecialchars($translations['newsfeed']['guide_filter']) ?></div>
+                <div class="custom-option" data-value="new_map"><?= htmlspecialchars($translations['newsfeed']['new_map_filter']) ?></div>
+                <div class="custom-option" data-value="role"><?= htmlspecialchars($translations['newsfeed']['role_filter']) ?></div>
+                <div class="custom-option" data-value="record"><?= htmlspecialchars($translations['newsfeed']['record_filter']) ?></div>
+                <div class="custom-option" data-value="announcement"><?= htmlspecialchars($translations['newsfeed']['announcement_filter']) ?></div>
+            </div>
+        </div>
+        <button class="reset-filters-btn"><?= htmlspecialchars($translations['newsfeed']['reset_filter']) ?></button>
+    </div>
+    <div class="newsfeed">
+        <div class="main-container">
+            <div class="newsfeed-container" id="newsfeedContainer"></div>
+            <div class="pagination-container" id="paginationContainer"></div>
+        </div>
     </div>
     <footer>
         <div class="footer-left">Genji Parkour © 2024</div>
