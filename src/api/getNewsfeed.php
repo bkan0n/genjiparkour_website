@@ -3,9 +3,14 @@ require_once 'config.php';
 
 $page_number = isset($_GET['page_number']) ? (int)$_GET['page_number'] : 1;
 $page_size = isset($_GET['page_size']) ? (int)$_GET['page_size'] : 10;
+$type = isset($_GET['type']) ? $_GET['type'] : null;
 
-function fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size) {
+function fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size, $type) {
     $url = rtrim($apiRoot, '/') . '/v1/newsfeed?page_size=' . $page_size . '&page_number=' . $page_number;
+
+    if ($type) {
+        $url .= '&type=' . urlencode($type);
+    }
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -42,7 +47,7 @@ function fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size) {
 
 header('Content-Type: application/json');
 
-$newsfeed = fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size);
+$newsfeed = fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size, $type);
 
 if (!empty($newsfeed)) {
     $totalResults = null;
