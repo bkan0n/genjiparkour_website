@@ -15,9 +15,17 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
     width: 100%;
     max-width: 800px;
+    margin: auto;
+}
+
+.newsfeed {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
     margin: auto;
 }
 
@@ -50,7 +58,7 @@ body {
     font-size: 1rem;
     font-weight: bold;
     color: #ffffff;
-    max-width: 600px;
+    max-width: 30rem;
     word-wrap: break-word;
 }
 
@@ -58,6 +66,7 @@ body {
     margin: 0;
     font-size: 0.9rem;
     color: #b9bbbe;
+    z-index: 5;
 }
 
 /* Nouveau role */
@@ -161,20 +170,79 @@ body {
     right: 10px;
     width: 100px;
     height: auto;
-    z-index: 10;
+    z-index: 4;
+}
+
+/* Annonce */
+.userprofile-header {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 4;
+}
+
+.userprofile-logo {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+.user-name {
+    font-size: 1rem;
+    margin-left: 10px;
+    font-weight: bold;
+    color: hsl(175, 100%, 51%);
+}
+
+.announcement-content strong {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.announcement-content strong:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #dcddde;
+    cursor: pointer;
+}
+
+#translateButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #2a2e31;
+    color: white;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#translateButton:hover {
+    background-color: #2d3133;
 }
 
 
 /* Nouvelle map */
-
 .map-banner {
-    position: relative;
-    display: inline-block;
+    float: left;
     width: 90%;
     max-width: 500px;
     border-radius: 8px;
+    left: 0;
+    top: 0;
     margin-top: 10px;
-    overflow: hidden;
+    border-radius: 5px;
+    z-index: 1;
 }
 
 .difficulty-badge {
@@ -189,11 +257,10 @@ body {
 
 .news-card.new_map code {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff; /* Couleur du texte */
+    color: #ffffff;
     padding: 2px 4px;
     border-radius: 4px;
     font-size: 0.9rem;
-    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
     display: inline-block;
 }
@@ -206,6 +273,8 @@ body {
 
 
 .news-card.new_map {
+    display: flex;
+    align-items: flex-start;
     position: relative;
 }
 
@@ -226,8 +295,12 @@ body {
     border-left: 4px solid #fc3512;
 }
 
-.news-card.map_edit{
+.news-card.map_edit {
     border-left: 4px solid #7712fc;
+}
+
+.news-card.announcement {
+    border-left: 4px solid #eeeeee;
 }
 
 /* Nouveau guide */
@@ -257,12 +330,15 @@ body {
 
 /* Timestamps */
 .timestamp {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
     font-size: 0.75rem;
     color: #72767d;
-    margin-top: 5px;
+    padding: 5px;
+    margin: 0;
     text-align: right;
 }
-
 
 /* Pagination */
 .pagination-container {
@@ -303,7 +379,7 @@ body {
     position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 10;
+    z-index: 4;
 }
 
 .genjibot-logo {
@@ -514,9 +590,9 @@ body {
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
-  }
+}
   
-  .pagination-container button {
+.pagination-container button {
     padding: 8px 12px;
     margin: 0 5px;
     border: none;
@@ -525,18 +601,134 @@ body {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .pagination-container button:disabled {
+}
+
+.pagination-container button:disabled {
     background-color: #555;
     cursor: not-allowed;
-  }
-  
-  .pagination-container button:hover {
+}
+
+.pagination-container button:hover {
     background-color: #777;
-  }
-  
-  .pagination-container span {
+}
+
+.pagination-container span {
     color: #fff;
     padding: 5px 10px;
-  }
+}
+
+/* Filtres */
+.newsfeed-header {
+    display: flex;
+    margin-top: 15px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+button.reset-filters-btn {
+    font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
+    padding: 12px 30px;
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.reset-filters-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-select-large {
+    position: relative;
+    width: 160px;
+    background-color: #2b2b2b;
+    color: #fff;
+    border-radius: 5px;
+    padding: 12px 15px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    z-index: 4;
+}
+
+.custom-select-large:hover .custom-options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.custom-select-large .select-trigger {
+    padding: 5px;
+    background-color: transparent;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.custom-select-large .custom-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 100;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.custom-select-large .custom-option {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-select-large .custom-option:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.custom-select-large .custom-option.selected {
+    background-color: #333;
+    color: #fff;
+}
+
+.custom-select-large .custom-options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-select-large .custom-options::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.custom-select-large .custom-options::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* Responsive design */
+@media screen and (max-width: 1024px) {
+    .news-header h3 {
+        max-width: 28rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .news-header h3 {
+        max-width: 25rem;
+    }
+}
+@media screen and (max-width: 480px) {
+    .news-header h3 {
+        max-width: 20rem;
+    }
+}

@@ -99,6 +99,7 @@ input[type="text"]:focus {
       vertical-align: middle;
       position: relative;
       margin: 0;
+      flex-shrink: 0;
       margin-bottom: 12px;
       cursor: pointer;
       border: 1px solid var(--bc, var(--border));
@@ -230,8 +231,6 @@ table {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
   border: 3px solid rgba(255, 255, 255, 0.5);
   overflow: hidden;
-  width: 100%;
-  max-width: 70vw;
   margin: 0 auto;
   padding: 0.5rem;
   font-size: 1rem;
@@ -239,7 +238,10 @@ table {
 
 #leaderboard {
   width: 100%;
-  table-layout: auto;
+  max-width: 70vw;
+  table-layout: fixed;
+  word-wrap: break-word;
+  overflow: hidden;
 }
 
 /* Style des informations secondaires comme les rangs, XP, WR */
@@ -301,7 +303,7 @@ thead th {
 
 .thead-wrapper th {
   background-color: rgba(255, 255, 255, 0.2);
-  padding: 20px;
+  padding: 15px 2px;
   color: #fff;
   text-align: center;
   border: none;
@@ -332,7 +334,7 @@ thead th {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 0px;
   max-width: 700px;
   margin: 0 auto 10px auto;
   z-index: 4;
@@ -469,9 +471,6 @@ th {
   z-index: 100;
   border-radius: 5px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.custom-select-large .custom-options {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
@@ -773,35 +772,127 @@ th, td {
     font-size: 0.9rem;
   }
 
+  #leaderboard {
+    max-width: 100%;
+    width: 100%;
+  }
+
   th, td {
     padding: 0.6rem;
   }
 }
 
 @media (max-width: 768px) {
-  .table-wrapper {
-    padding: 0 10px;
+  h1 {
+      font-size: 1.2rem;
+      padding: 0.5rem;
   }
 
-  table {
-    font-size: 0.8rem;
-    border-spacing: 0;
+  .form-container {
+      flex-direction: column;
+      gap: 0.5rem;
+  }
+
+  input[type="text"] {
+      width: 80%;
+      max-width: 15rem;
+  }
+
+  #leaderboard {
+      max-width: 100%;
   }
 
   th, td {
-    padding: 0.5rem;
-    text-align: left;
+      font-size: 0.85rem;
+      padding: 0.5rem;
+  }
+
+  .pagination-container button {
+      padding: 6px 8px;
+  }
+
+  .custom-select-large, .custom-select {
+      width: 30%;
+      padding: 10px;
   }
 }
 
 @media (max-width: 480px) {
+  h1 {
+      font-size: 1rem;
+      padding: 0.3rem;
+  }
+
+  .form-container {
+      gap: 0.3rem;
+      margin: 0.5rem 0;
+  }
+
+  input[type="text"] {
+      width: 100%;
+      max-width: 12rem;
+  }
+
+  #checkboxes-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+    padding: 0.5rem;
+    justify-items: start;
+    align-items: center;
+  }
+
+  #leaderboard {
+    max-width: 100%;
+    width: 100%;
+  }
+
   table {
-    font-size: 0.7rem;
+      font-size: 0.75rem;
   }
 
   th, td {
-    padding: 0.3rem;
     text-align: left;
+    padding: 0.4rem;
+    font-size: 0.6rem;
+  }
+
+  .thead-wrapper th, .thead-wrapper td {
+    font-size: 0.45rem;
+    padding: 0.4rem;
+    padding-top: 0.6rem;
+  }
+
+  .sort-btn {
+    display: none;
+  }
+
+  .vertical-bar {
+    display: none;
+  }
+
+
+  td {
+      font-size: 0.5rem;
+      padding: 0.4rem 0.6rem;
+  }
+
+  .pagination-container button {
+      padding: 5px 7px;
+      font-size: 0.8rem;
+  }
+
+  .custom-select-large, .custom-select {
+      padding: 8px;
+      font-size: 0.8rem;
+  }
+
+  .no-results-message {
+      font-size: 16px;
+  }
+
+  .sort-btn {
+      font-size: 16px;
   }
 }
 

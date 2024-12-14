@@ -263,3 +263,85 @@ body {
         gap: 40px;
     }
 }
+
+@media (max-width: 480px) {
+    .bg-container {
+        top: 49%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: auto;
+    }
+
+    .hero {
+        min-height: 80vh;
+        padding: 0 10px;
+    }
+
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-content .recent-stats {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    .side-section {
+        width: 90%;
+        padding: 15px;
+        margin: 10px auto;
+    }
+
+    .side-section p {
+        font-size: 1rem;
+    }
+
+    .cta-btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .scroll-btn {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    .scroll-btn i {
+        font-size: 18px;
+    }
+
+    #next-section.achievements {
+        padding: 40px 10px;
+    }
+
+    #next-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .event-grid {
+        gap: 10px;
+    }
+
+    .event-item {
+        max-width: 90%;
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+
+    .event-item h3 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+
+    .event-item p {
+        font-size: 0.9rem;
+    }
+}

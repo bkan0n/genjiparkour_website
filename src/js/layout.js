@@ -127,23 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
-
-function forceScrollbar() {
-    const body = document.body;
-    const hasScrollbar = window.innerWidth > document.documentElement.clientWidth;
-
-    if (!hasScrollbar) {
-        body.style.overflowY = "scroll";
-    } else {
-        body.style.overflowY = "auto";
-    }
-}
-
-window.addEventListener("load", forceScrollbar);
-
-window.addEventListener("resize", forceScrollbar);
-
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
@@ -201,11 +184,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoIcon = document.getElementById("logoIcon");
 
     logoIcon.addEventListener("mouseenter", () => {
-        logoIcon.src = "assets/img-2/favicon-anim.gif";
+        logoIcon.src = "assets/img/favicon-anim.gif";
     });
 
     logoIcon.addEventListener("mouseleave", () => {
-        logoIcon.src = "assets/img-2/favicon.png";
+        logoIcon.src = "assets/img/favicon.png";
     });
 
     logoIcon.addEventListener("click", () => {

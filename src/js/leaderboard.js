@@ -18,7 +18,6 @@ let activeFilters = {
 };
 
 const currentLang = document.documentElement.lang || "en";
-console.log(`Langue actuelle : ${currentLang}`);
 const navbar = document.querySelector('nav');
 
 async function loadTranslations() {
@@ -33,9 +32,9 @@ async function loadTranslations() {
         
         translations = { thead, pagination };
 
-        console.log("Traductions chargées :", translations);
+        //console.log("Traductions chargées :", translations);
     } catch (error) {
-        console.error("Erreur lors du chargement des traductions :", error);
+        //console.error("Erreur lors du chargement des traductions :", error);
     }
 }
 
@@ -76,37 +75,6 @@ function handleSortClick(event) {
     sortTableAjax(event, column, button);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const currentLang = document.documentElement.lang || "en";
-    if (currentLang.toLowerCase() === 'ru') {
-        const checkboxesContainer = document.getElementById("checkboxes-container");
-        if (checkboxesContainer) {
-            checkboxesContainer.style.maxWidth = '1000px';
-        }
-    }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const currentLang = document.documentElement.lang || "en";
-    if (currentLang.toLowerCase() === 'ru') {
-        const leaderboardContainer = document.getElementById("leaderboard");
-        if (leaderboardContainer) {
-            leaderboardContainer.style.maxWidth = '80vw';
-        }
-    }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const currentLang = document.documentElement.lang || "en";
-    if (currentLang.toLowerCase() === 'fr') {
-        const leaderboardContainer = document.getElementById("leaderboard");
-        if (leaderboardContainer) {
-            leaderboardContainer.style.maxWidth = '80vw';
-        }
-    }
-});
-
-
 document.addEventListener("DOMContentLoaded", async function () {
     await loadTranslations();
     const leaderboardContainer = document.getElementById('leaderboard');
@@ -144,19 +112,19 @@ document.addEventListener("DOMContentLoaded", async function () {
                         ${t("thead.mapXP")}    
                         <span class="vertical-bar"></span>
                         <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
+                            <div class="stroke stroke1 resize1"></div>
+                            <div class="stroke stroke2 bounce"></div>
+                            <div class="stroke stroke3 resize2"></div>
                             <div class="tap-circle"></div>
                         </button>
                     </th>
                     <th class="col-tier">
                         ${t("thead.mapTierRank")}
                         <span class="vertical-bar"></span>
-                        <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
+                        <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
+                            <div class="stroke stroke1 resize1"></div>
+                            <div class="stroke stroke2 bounce"></div>
+                            <div class="stroke stroke3 resize2"></div>
                             <div class="tap-circle"></div>
                         </button>
                     </th>
@@ -248,7 +216,7 @@ async function updateLeaderboard(params = {}) {
 
     const combinedParams = { ...defaults, ...params };
 
-    console.log("Params combinés :", combinedParams);
+    //console.log("Params combinés :", combinedParams);
 
     const data = await fetchLeaderboard(combinedParams);
 
@@ -262,7 +230,7 @@ async function updateLeaderboard(params = {}) {
         console.log("Tri Skill Rank déclenché !");
         renderLeaderboard(sortBySkillRank(data, combinedParams.sort_direction));
     } else {
-        console.log("Render normal");
+        //console.log("Render normal");
         renderLeaderboard(data);
     }
 

@@ -440,48 +440,6 @@ body {
     background-color: #218838;
 }
 
-.confirmation-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #28a745;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.confirmation-popup.show {
-    opacity: 1;
-    transform: translate(-50%, -50%) translateY(-10px);
-}
-
-.error-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #dc3545;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.error-popup.show {
-    opacity: 1;
-    transform: translate(-50%, -50%) translateY(-10px);
-}
-
 /* Conteneur suggestions*/
 .map-code-suggestions-container, 
 .map-name-suggestions-container, 

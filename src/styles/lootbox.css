@@ -185,6 +185,7 @@
     animation: legendary-glow 2s infinite alternate;
 }
 
+/* Img rewards*/
 .reward-shuriken_badge.card-back {
     background-image: url('images/shuriken_badge.png');
 }
@@ -225,6 +226,7 @@
     margin-bottom: 10px;
 }
 
+/* Effets rareté*/
 @keyframes common-glow {
     0% {
         box-shadow: 0 0 1px #BEBEBE, 0 0 2px #BEBEBE, 0 0 3px #BEBEBE, 0 0 4px #BEBEBE;
@@ -287,6 +289,7 @@
     z-index: -1;
 }
 
+/* Anim flip*/
 .card.flip-common .card-inner,
 .card.flip-rare .card-inner {
     animation: flipBasic 0.8s ease-in-out;
