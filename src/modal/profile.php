@@ -15,7 +15,7 @@ $username = $_SESSION['username'] ?? "Guest";
 $user_flags = $_SESSION['user_flags'] ?? 0;
 $user_premium = $_SESSION['user_premium'] ?? 0;
 
-$avatar_url = $user_id && $user_avatar ? "https://cdn.discordapp.com/avatars/$user_id/$user_avatar" . is_animated($user_avatar) : "assets/img-2/default-avatar.jpg";
+$avatar_url = $user_id && $user_avatar ? "https://cdn.discordapp.com/avatars/$user_id/$user_avatar" . is_animated($user_avatar) : "assets/img/default-avatar.jpg";
 $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/banners/$user_id/{$_SESSION['user_banner']}" . is_animated($_SESSION['user_banner']) : null;
 ?>
 
@@ -55,11 +55,11 @@ $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/bann
                     <?php
                     for ($i = 0; $i < 20; $i++) {
                         if ($user_flags & (1 << $i)) {
-                            echo '<img src="assets/img/badges/' . $i . '.svg" height="22" alt="Badge">';
+                            echo '<img src="assets/discord/badges/' . $i . '.svg" height="22" alt="Badge">';
                         }
                     }
-                    if ($user_premium > 0) echo '<img src="assets/img/badges/nitro.svg" height="22" alt="Nitro Badge">';
-                    if ($user_premium > 1) echo '<img src="assets/img/badges/boost.svg" height="22" alt="Boost Badge">';
+                    if ($user_premium > 0) echo '<img src="assets/discord/badges/nitro.svg" height="22" alt="Nitro Badge">';
+                    if ($user_premium > 1) echo '<img src="assets/discord/badges/boost.svg" height="22" alt="Boost Badge">';
                     ?>
                 </div>
             </div>
