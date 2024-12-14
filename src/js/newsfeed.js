@@ -13,6 +13,7 @@ const pageSize = 20;
 let totalResults = 0;
 let totalPages = 0;
 let translations = {};
+let selectedType = null;
 
 async function loadTranslations() {
     try {
@@ -51,29 +52,42 @@ function updateTimestamps() {
         const date = new Date(serverTimestamp);
         if (isNaN(date.getTime())) return;
 
+        const currentLang = document.documentElement.lang || "en";
+
         const format = translations.common.timestamp_format || "{month} {day}, {year} at {hour}:{minute} {AMorPM}";
 
-        const monthName = date.toLocaleString('en-US', { month: 'long' });
+        const monthName = date.toLocaleString(currentLang, { month: 'long' });
         const day = date.getDate();
         const year = date.getFullYear();
 
         let hours = date.getHours();
         const minutes = date.getMinutes().toString().padStart(2, '0');
-        const AMorPM = hours < 12 ? 'AM' : 'PM';
-        hours = hours % 12 || 12;
 
-        let formattedTimestamp = format
-            .replace("{month}", monthName)
-            .replace("{day}", day)
-            .replace("{year}", year)
-            .replace("{hour}", hours)
-            .replace("{minute}", minutes)
-            .replace("{AMorPM}", AMorPM);
+        let formattedTimestamp;
 
-        timestampElement.textContent = formattedTimestamp;
+        if (currentLang === "fr" || currentLang === "ru" || currentLang === "de") {
+            formattedTimestamp = format
+                .replace("{month}", monthName)
+                .replace("{day}", day)
+                .replace("{year}", year)
+                .replace("{hour}", hours)
+                .replace("{minute}", minutes)
+                .replace("{AMorPM}", "");
+        } else {
+            const AMorPM = hours < 12 ? 'AM' : 'PM';
+            const hour12 = hours % 12 || 12;
+            formattedTimestamp = format
+                .replace("{month}", monthName)
+                .replace("{day}", day)
+                .replace("{year}", year)
+                .replace("{hour}", hour12)
+                .replace("{minute}", minutes)
+                .replace("{AMorPM}", AMorPM);
+        }
+
+        timestampElement.textContent = formattedTimestamp.trim();
     });
 }
-
 
 function openMapDetailsModal(mapCode) {
     const modalOverlay = document.getElementById("detailsModalOverlay");
@@ -142,7 +156,7 @@ function openMapDetailsModal(mapCode) {
                                     <h2>Map Details</h2>
                                     <p><strong>Code:</strong> ${map.map_code || t('common.na')}</p>
                                     <p><strong>Name:</strong> ${map.map_name || t('common.na')}</p>
-                                    <p><strong>Type:</strong> ${map.map_type?.[0]?.join(", ") || t('common.na')}</p>
+                                    <p><strong>Type:</strong> ${Array.isArray(map.map_type) ? map.map_type.join(", ") : t('common.na')}</p>
                                     <p><strong>Creator:</strong> ${map.creators?.join(", ") || t('common.na')}</p>
                                     <p><strong>Difficulty:</strong> ${map.difficulty || t('common.na')}</p>
                                     <p><strong>Checkpoints:</strong> ${map.checkpoints || t('common.na')}</p>
@@ -181,10 +195,17 @@ document.getElementById("detailsModalOverlay").addEventListener("click", (event)
     }
 });
 
+//Load
 async function loadNewsfeed() {
-    await loadTranslations(); // Charger les traductions avant de charger le newsfeed
+    await loadTranslations();
+
     try {
-        const response = await fetch(`api/getNewsfeed.php?page_number=${currentPage}&page_size=${pageSize}`);
+        let url = `api/getNewsfeed.php?page_number=${currentPage}&page_size=${pageSize}`;
+        if (selectedType) {
+            url += `&type=${encodeURIComponent(selectedType)}`;
+        }
+
+        const response = await fetch(url);
         const newsfeed = await response.json();
         const container = document.getElementById("newsfeedContainer");
 
@@ -192,7 +213,7 @@ async function loadNewsfeed() {
         totalPages = Math.ceil(totalResults / pageSize);
 
         container.innerHTML = newsfeed.data.map(createNewsCard).join("");
-        
+
         newsfeed.data.forEach(item => {
             if (item.type === "guide" && item.data.map.guide && item.data.map.guide[0]) {
                 createEmbeddedVideo(`videoContainer-${item.data.map.map_code}`, item.data.map.guide[0]);
@@ -206,10 +227,56 @@ async function loadNewsfeed() {
     }
 }
 
+
 function createNewsCard(item) {
     const { type, data, timestamp } = item;
 
-    let content = `
+    const userId = data?.user?.user_id || null;
+    let nickname = data?.user?.nickname || "Unknown User";
+
+    if (nickname === "nebula") {
+        nickname = "joe";
+    }
+
+    let profileImage = "assets/profile/genjibot.png";
+    if (userId === 141372217677053952) {
+        profileImage = "assets/profile/joe.jpg";
+    } else if (userId === 273775694008549376) {
+        profileImage = "assets/profile/fishofire.jpg";
+    }
+
+    let content;
+
+    if (type === "role" || type === "record" || type === "map_edit") {
+        content += `<img class="role-banner" src="assets/img/card-banner.png" alt="Role Banner">`;
+    }
+
+    if (type === "announcement") {
+        const formattedMessageContent = data.message.content
+            .replace(/<@&1073292414271356938>/g, "<strong>@General Announcements</strong>")
+            .replace(/\n/g, "<br>");
+    
+        content = `
+        <div class="news-card ${type}">
+            <div class="loading-bar" id="loadingIndicator" style="display: none;"></div>
+            <div class="userprofile-header">
+                <img class="userprofile-logo" src="${profileImage}" alt="${nickname}'s Profile">
+                <div class="userprofile-text">
+                    <span class="user-name">${nickname}</span>
+                </div>
+            </div>
+            <div class="news-header announcement">
+                <h3>${t('newsfeed.announcement')}</h3>
+                <p class="announcement-content">${formattedMessageContent}</p>
+            </div>
+            <p id="translatedText"></p>
+            <button id="translateButton">${t('newsfeed.translate_button')}</button>
+            <div class="timestamp" data-timestamp="${timestamp}"></div>
+        </div>`;
+        return content;
+    }
+
+    content = `
     <div class="news-card ${type}">
         <div class="genjibot-header">
             <img class="genjibot-logo" src="assets/profile/genjibot.png" alt="GenjiBot Logo">
@@ -219,31 +286,30 @@ function createNewsCard(item) {
             </div>
         </div>`;
 
-    if (type === "role" || type === "record" || type === "map_edit") {
-        content += `<img class="role-banner" src="assets/img-2/card-banner.png" alt="Role Banner">`;
-    }
-
     if (type === "new_map") {
         const bannerPath = `assets/banners/${formatMapName(data.map.map_name)}.png`;
         const difficultyLogo = formatImageName(data.map.difficulty);
-        // {nickname} a soumis une nouvelle carte {difficulty} sur {map_name} !
         content += `
         <img class="difficulty-badge" src="assets/ranks/${difficultyLogo}" alt="${data.map.difficulty} Badge">
         <div class="news-header">
             <h3>${t('newsfeed.new_map', {nickname: data.user.nickname, difficulty: data.map.difficulty, map_name: data.map.map_name})}</h3>
             <p>
-                ${t('newsfeed.details_command')} <code>/map-search map_code:${data.map.map_code}</code>
+                ${t('newsfeed.details_command')} 
+                <code class="map-code" data-map-code="/map-search map_code:${data.map.map_code}">
+                    /map-search map_code:${data.map.map_code}
+                </code>
                 <span class="click-here"> 
-                    <a href="javascript:void(0)" onclick="openMapDetailsModal('${data.map.map_code}')">${t('newsfeed.click_here')}</a>
+                    <a href="javascript:void(0)" onclick="openMapDetailsModal('${data.map.map_code}')">
+                        ${t('newsfeed.click_here')}
+                    </a>
                 </span>
-                ${t('common.to_see_details',"TODO:ajouter traduction")} 
+                ${t('common.to_see_details')}
                 <img class="map-banner" src="${bannerPath}" alt="${data.map.map_name} Banner" onerror="this.style.display='none'">
             </p>
         </div>`;
     }
 
     if (type === "guide") {
-        // {nickname} has posted a guide for {map_code}
         content += `
         <div class="news-header">
             <h3>${t('newsfeed.has_posted_guide', {nickname: data.user.nickname, map_code: data.map.map_code})}</h3>
@@ -253,11 +319,10 @@ function createNewsCard(item) {
     }
 
     if (type === "record") {
-        // {nickname} has set a new World Record!
         content += `
         <div class="news-header">
             <h3>${t('newsfeed.new_wr', {nickname: data.user.nickname})}</h3>
-            <p><strong>${data.map.map_name}</strong> by ${data.map.creators} (${data.map.map_code})</p>
+            <p><strong>${t('newsfeed.new_wr_info', {map_name: data.map.map_name, creators: data.map.creators, map_code: data.map.map_code})}</strong></p>
             <div class="record-details">
                 <p>
                     <span class="record-label">Record:</span> ${data.record.record}
@@ -265,14 +330,13 @@ function createNewsCard(item) {
                 </p>
                 <p>
                     <span class="video-label">Video:</span>
-                    <a href="${data.record.video}" target="_blank">Link</a>
+                    <a href="${data.record.video}" target="_blank">${t('newsfeed.link')}</a>
                 </p>
             </div>
         </div>`;
     }
 
     if (type === "role") {
-        // {nickname} got promoted!
         content += `
         <div class="news-header">
             <h3>${t('newsfeed.promoted', {nickname: data.user.nickname})}</h3>
@@ -291,17 +355,62 @@ function createNewsCard(item) {
     }
 
     if (type === "map_edit") {
-        // {map_code} has been changed:
+        let changes = "";
+    
+        for (const [key, value] of Object.entries(data.map)) {
+            if (value !== null && key !== "map_code") {
+                if (key === "new_map_code") {
+                    changes += `<p><strong style="color: #FFFFFF;">Code:</strong> ${value}</p>`;
+                } else {
+                    const formattedKey = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+                    changes += `<p><strong style="color: #FFFFFF;">${formattedKey}:</strong> ${value}</p>`;
+                }
+            }
+        }
+    
         content += `
         <div class="news-header">
-            <h3>${t('newsfeed.changed_code', {map_code: data.map.map_code})}</h3>
-            <p><strong>Code:</strong> ${data.map.new_map_code || t('common.na')}</p>
+            <h3>${t('newsfeed.changed_code', { map_code: data.map.map_code })}</h3>
+            ${changes || `<p>${t('newsfeed.no_changes')}</p>`}
         </div>`;
     }
 
     content += `<div class="timestamp" data-timestamp="${timestamp}"></div></div>`;
     return content;
 }
+
+document.addEventListener('click', async (event) => {
+    if (event.target.id === 'translateButton') {
+        const originalTextElement = document.querySelector('.announcement-content');
+        if (!originalTextElement) return;
+
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const originalText = originalTextElement.textContent;
+        const targetLang = document.documentElement.lang || 'en';
+
+        loadingIndicator.style.display = 'flex';
+        event.target.disabled = true;
+
+        try {
+            const response = await fetch('api/getTranslations.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ text: originalText, targetLang })
+            });
+
+            const data = await response.json();
+            document.getElementById('translatedText').innerHTML = data.translatedText || 'Translation failed.';
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('translatedText').innerHTML = 'Error occurred during translation.';
+        } finally {
+            loadingIndicator.style.display = 'none';
+            event.target.disabled = false;
+        }
+    }
+});
 
 function formatImageName(text) {
     return text ? text.toLowerCase().replace(/[+\-\s]/g, "") + ".png" : "default.png";
@@ -405,3 +514,115 @@ function changePage(pageNumber) {
     currentPage = pageNumber;
     loadNewsfeed();
 }
+
+//Clipboard
+document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("click", (event) => {
+        const target = event.target;
+        
+        if (target.classList.contains("map-code")) {
+            const mapCodeText = target.dataset.mapCode || target.textContent;
+
+            navigator.clipboard.writeText(mapCodeText)
+                .then(() => {
+                    console.log("Texte copié:", mapCodeText);
+                    showConfirmationMessage(t('newsfeed.copy_clipboard'));
+                })
+                .catch(err => {
+                    console.error("Erreur de copie:", err);
+                    showErrorMessage(t('newsfeed.copy_clipboard_error'));
+                });
+        }
+    });
+});
+
+function showConfirmationMessage(message) {
+    const existingPopup = document.querySelector('.confirmation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const confirmationPopup = document.createElement('div');
+    confirmationPopup.className = 'confirmation-popup';
+    confirmationPopup.textContent = message;
+
+    document.body.appendChild(confirmationPopup);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.addEventListener('transitionend', () => {
+            confirmationPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
+function showErrorMessage(message) {
+    const errorPopup = document.createElement('div');
+    errorPopup.className = 'error-popup';
+    errorPopup.textContent = message;
+
+    document.body.appendChild(errorPopup);
+
+    setTimeout(() => {
+        errorPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        errorPopup.classList.add('fade-out');
+        errorPopup.addEventListener('transitionend', () => {
+            errorPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
+//Filtres
+document.addEventListener("DOMContentLoaded", () => {
+    const selectTrigger = document.querySelector(".select-trigger");
+    const customSelect = document.querySelector(".custom-select-large");
+    const customOptions = document.querySelectorAll(".custom-option");
+    const resetFiltersButton = document.querySelector(".reset-filters-btn");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    selectedType = urlParams.get("type") || null;
+
+    if (selectedType) {
+        const matchingOption = Array.from(customOptions).find(option => option.dataset.value === selectedType);
+        if (matchingOption) {
+            selectTrigger.textContent = matchingOption.textContent;
+            matchingOption.classList.add("selected");
+        }
+    } else {
+        selectTrigger.textContent = "Search by";
+    }
+
+    customOptions.forEach(option => {
+        option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectedType = e.target.dataset.value;
+            selectTrigger.textContent = e.target.textContent;
+            customOptions.forEach(opt => opt.classList.remove("selected"));
+            e.target.classList.add("selected");
+            customSelect.classList.remove("open");
+            loadNewsfeed();
+        });
+    });
+
+    resetFiltersButton.addEventListener("click", () => {
+        selectedType = null;
+        selectTrigger.textContent = "Search by";
+        customOptions.forEach(opt => opt.classList.remove("selected"));
+        loadNewsfeed();
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!customSelect.contains(e.target)) {
+            customSelect.classList.remove("open");
+        }
+    });
+
+    loadNewsfeed();
+});

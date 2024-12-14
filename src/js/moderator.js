@@ -865,6 +865,11 @@ function shortenLinks(container, maxLength = 15) {
 }
 
 function showConfirmationMessage(message) {
+    const existingPopup = document.querySelector('.confirmation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
     const confirmationPopup = document.createElement('div');
     confirmationPopup.className = 'confirmation-popup';
     confirmationPopup.textContent = message;
@@ -876,8 +881,11 @@ function showConfirmationMessage(message) {
     }, 10);
 
     setTimeout(() => {
-        confirmationPopup.remove();
-    }, 2000);
+        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.addEventListener('transitionend', () => {
+            confirmationPopup.remove();
+        }, { once: true });
+    }, 800);
 }
 
 function showErrorMessage(message) {
@@ -892,14 +900,13 @@ function showErrorMessage(message) {
     }, 10);
 
     setTimeout(() => {
-        errorPopup.remove();
-    }, 2000);
+        errorPopup.classList.add('fade-out');
+        errorPopup.addEventListener('transitionend', () => {
+            errorPopup.remove();
+        }, { once: true });
+    }, 800);
 }
 
-/**
-*
-* @param {HTMLElement} field
-*/
 function applyPlaceholderBehavior(field) {
     const placeholder = field.getAttribute('placeholder');
 

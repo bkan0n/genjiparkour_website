@@ -11,7 +11,7 @@
             "news": "News",
             "newsfeed": "Newsfeed",
             "announcements": "Announcements",
-            "tutorial": "Tutorial",
+            "tutorial": "Tutorials",
             "statistics": "Statistics",
             "login": "Login",
             "logout": "Logout",
@@ -150,6 +150,7 @@
         "lootbox": {
             "give_key": "Give key",
             "open_pack": "Open pack",
+            "pick_a_card": "Pick one card",
             "common": "Common",
             "rare": "Rare",
             "epic": "Epic",
@@ -182,13 +183,27 @@
         },
         "newsfeed": {
             "new_wr": "{nickname} has set a new World Record!",
+            "new_wr_info": "{map_name} by {creators} ({map_code})",
             "promoted": "{nickname} got promoted!",
             "new_map": "{nickname} has submitted a new {difficulty} map on {map_name}!",
             "has_posted_guide": "{nickname} has posted a guide for {map_code}",
             "watch_guide": "Watch guide",
             "changed_code": "{map_code} has been changed:",
             "details_command": "Use the command",
-            "click_here": "Click here"
+            "click_here": "Click here",
+            "link": "Link",
+            "copy_clipboard": "Command has been copied to clipboard",
+            "copy_clipboard_error": "Failed to copy command to clipboard",
+            "announcement": "New announcement",
+            "search_by_filter": "Search by",
+            "map_edit_filter": "Map edit",
+            "guide_filter": "Guide",
+            "new_map_filter": "New map",
+            "role_filter": "Role",
+            "record_filter": "Record",
+            "announcement_filter": "Announcement",
+            "reset_filter": "Reset filter",
+            "translate_button": "Translate"
         },
         "common": {
             "na": "N/A",
@@ -197,14 +212,54 @@
             "loading": "Loading...",
             "to_see_details": "to see the details!",
             "timestamp_format": "{month} {day}, {year} at {hour}:{minute} {AMorPM}"
-          },
+        },
         "pagination": {
-        "first": "« First",
-        "prev": "‹ Prev",
-        "next": "Next ›",
-        "last": "Last »",
-        "page_of": "Page {current} of {total}"
-        }
+            "first": "« First",
+            "prev": "‹ Prev",
+            "next": "Next ›",
+            "last": "Last »",
+            "page_of": "Page {current} of {total}"
+        },
+        "popup": {
+            "login_required_btn": "Login required",
+            "login_required_msg": "Login is required on this page",
+            "login_required_pr": "Login is required to view personal records",
+            "login_required_filter": "Login is required to use this filter",
+            "map_code_required": "Enter a map code",
+            "no_results": "No results found",
+            "filter_applied": "Filter applied for {filterId}: {value}",
+            "filters_cleared": "All filters have been cleared"
+        },
+        "filters_toolbar": {
+            "creator": "Creator",
+            "enter_creator": "Enter creator",
+            "map_name": "Map name",
+            "enter_map_name": "Enter map name",
+            "nickname": "User name",
+            "enter_nickname": "Enter user name",
+            "map_code": "Map code",
+            "enter_map_code": "Enter map code",
+            "difficulty": "Difficulty",
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "very hard": "Very Hard",
+            "extreme": "Extreme",
+            "hell": "Hell",
+            "map_type": "Map type",
+            "classic": "Classic",
+            "increasing_difficulty": "Increasing difficulty",
+            "tournament": "Tournament",
+            "mechanics": "Mechanics",
+            "restrictions": "Restrictions",
+            "only_playtest": "Only playtest",
+            "only_true": "True",
+            "only_false": "False",
+            "ignore_completions": "Ignore completions",
+            "only_medals": "Only medals",
+            "apply_filters": "Apply filters",
+            "clear_filters": "Clear filters"
+       }
     },
     "fr": {
         "navbar": {
@@ -356,7 +411,8 @@
         },
         "lootbox": {
             "give_key": "Donner une clé",
-            "open_pack": "Ouvrir le pack",
+            "open_pack": "Ouvrir un pack",
+            "pick_a_card": "Choisis une carte",
             "common": "Commun",
             "rare": "Rare",
             "epic": "Épique",
@@ -389,13 +445,27 @@
         },
         "newsfeed": {
             "new_wr": "{nickname} a établi un nouveau record du monde !",
+            "new_wr_info": "{map_name} par {creators} ({map_code})",
             "promoted": "{nickname} a obtenu une promotion !",
             "new_map": "{nickname} a posté une nouvelle carte {difficulty} sur {map_name} !",
             "has_posted_guide": "{nickname} a publié un guide pour {map_code}",
             "watch_guide": "Voir le guide",
             "changed_code": "{map_code} a été modifié :",
             "details_command": "Utilisez la commande",
-            "click_here": "Cliquez ici"
+            "click_here": "Cliquez ici",
+            "link": "Lien",
+            "copy_clipboard": "La commande a été copiée dans le presse-papiers",
+            "copy_clipboard_error": "Échec de la copie de la commande dans le presse-papiers",
+            "announcement": "Nouvelle annonce",
+            "search_by_filter": "Rechercher par",
+            "map_edit_filter": "Edition de map",
+            "guide_filter": "Guide",
+            "new_map_filter": "Nouvelle map",
+            "role_filter": "Rôle",
+            "record_filter": "Record",
+            "announcement_filter": "Annonce",
+            "reset_filter": "Réinitialiser le filtre",
+            "translate_button": "Traduire"
         },
         "common": {
             "na": "N/D",
@@ -411,7 +481,47 @@
             "next": "Suivant ›",
             "last": "Dernier »",
             "page_of": "Page {current} sur {total}"
-        }
+        },
+        "popup": {
+            "login_required_btn": "Connexion requise",
+            "login_required_msg": "La connexion est requise sur cette page",
+            "login_required_pr": "La connexion est requise pour voir les records personnels",
+            "login_required_filter": "La connexion est requise pour utiliser ce filtre",
+            "map_code_required": "Entrez un code de carte",
+            "no_results": "Pas de résultats trouvé",
+            "filter_applied": "Filtre apppliqué pour {filterId}: {value}",
+            "filters_cleared": "Tout les filtres ont été supprimés"
+        },
+       "filters_toolbar": {
+            "creator": "Créateur",
+            "enter_creator": "Entre le nom du créateur",
+            "map_name": "Nom de la carte",
+            "enter_map_name": "Entre le nom de la carte",
+            "nickname": "Nom du joueur",
+            "enter_nickname": "Entre le nom du joueur",
+            "map_code": "Code de carte",
+            "enter_map_code": "Entre le code de la carte",
+            "difficulty": "Difficulté",
+            "easy": "Facile",
+            "medium": "Moyen",
+            "hard": "Difficile",
+            "very hard": "Très difficile",
+            "extreme": "Extrême",
+            "hell": "Enfer",
+            "map_type": "Type de carte",
+            "classic": "Classique",
+            "increasing_difficulty": "Difficulté progressive",
+            "tournament": "Tournoi",
+            "mechanics": "Mécaniques",
+            "restrictions": "Restrictions",
+            "only_playtest": "Seulement playtest",
+            "only_true": "Oui",
+            "only_false": "Non",
+            "ignore_completions": "Ignorer les complétions",
+            "only_medals": "Seulement les médailles",
+            "apply_filters": "Appliquer les filtres",
+            "clear_filters": "Réinitialiser les filtres"
+       }
     },
     "ru": {
         "navbar": {
@@ -561,13 +671,118 @@
             "mapsTooltip": "{count} карт"
         },
         "lootbox": {
-        "give_key": "Дать ключ",
-        "open_pack": "Открыть пакет",
-        "common": "Обычный",
-        "rare": "Редкий",
-        "epic": "Эпический",
-        "legendary": "Легендарный"
-        }
+            "give_key": "Дать ключ",
+            "open_pack": "Открыть пакет",
+            "pick_a_card": "Pick one card",
+            "common": "Обычный",
+            "rare": "Редкий",
+            "epic": "Эпический",
+            "legendary": "Легендарный"
+        },
+        "game": {
+            "dialogues": {
+                "genji_dead": "You're too weak!",
+                "mercy_warning": "Oh no, this is the end...",
+                "mercy_alert": "Hurry up, he's here!",
+                "jack_intro": "Did you really think you could steal my girlfriend?",
+                "genji_success": "You did it, Genji!",
+                "now_die": "Now die!"
+            },
+            "characters": {
+                "genji": "You",
+                "jack": "JackHerer",
+                "mercy": "Mercy"
+            },
+            "gameplay": {
+                "game_over": "GAME OVER",
+                "restart_prompt": "Press Restart to play again",
+                "press_start": "Press \"Restart\" to begin!"
+            },
+            "title": "Genji Parkour Mini Game",
+            "restart_button": "Restart",
+            "score": "Score: ",
+            "highest_score": "Highest score: ",
+            "press_space_to_jump": "Press Space to jump!"
+        },
+        "newsfeed": {
+            "new_wr": "{nickname} has set a new World Record!",
+            "new_wr_info": "{map_name} by {creators} ({map_code})",
+            "promoted": "{nickname} got promoted!",
+            "new_map": "{nickname} has submitted a new {difficulty} map on {map_name}!",
+            "has_posted_guide": "{nickname} has posted a guide for {map_code}",
+            "watch_guide": "Watch guide",
+            "changed_code": "{map_code} has been changed:",
+            "details_command": "Use the command",
+            "click_here": "Click here",
+            "link": "Link",
+            "copy_clipboard": "Command has been copied to clipboard",
+            "copy_clipboard_error": "Failed to copy command to clipboard",
+            "announcement": "New announcement",
+            "search_by_filter": "Search by",
+            "map_edit_filter": "Map edit",
+            "guide_filter": "Guide",
+            "new_map_filter": "New map",
+            "role_filter": "Role",
+            "record_filter": "Record",
+            "announcement_filter": "Announcement",
+            "reset_filter": "Reset filter",
+            "translate_button": "Translate"
+        },
+        "common": {
+            "na": "N/A",
+            "no_description": "No description available",
+            "error": "Error",
+            "loading": "Loading...",
+            "to_see_details": "to see the details!",
+            "timestamp_format": "{day} {month} {year}, {hour}h{minute}"
+        },
+        "pagination": {
+            "first": "« First",
+            "prev": "‹ Prev",
+            "next": "Next ›",
+            "last": "Last »",
+            "page_of": "Page {current} of {total}"
+        },
+        "popup": {
+            "login_required_btn": "Login required",
+            "login_required_msg": "Login is required on this page",
+            "login_required_pr": "Login is required to view personal records",
+            "login_required_filter": "Login is required to use this filter",
+            "map_code_required": "Enter a map code",
+            "no_results": "No results found",
+            "filter_applied": "Filter applied for {filterId}: {value}",
+            "filters_cleared": "All filters have been cleared"
+        },
+        "filters_toolbar": {
+            "creator": "Creator",
+            "enter_creator": "Enter creator",
+            "map_name": "Map name",
+            "enter_map_name": "Enter map name",
+            "nickname": "User name",
+            "enter_nickname": "Enter user name",
+            "map_code": "Map code",
+            "enter_map_code": "Enter map code",
+            "difficulty": "Difficulty",
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "very hard": "Very Hard",
+            "extreme": "Extreme",
+            "hell": "Hell",
+            "map_type": "Map type",
+            "classic": "Classic",
+            "increasing_difficulty": "Increasing difficulty",
+            "tournament": "Tournament",
+            "mechanics": "Mechanics",
+            "restrictions": "Restrictions",
+            "only_playtest": "Only playtest",
+            "only_true": "True",
+            "only_false": "False",
+            "ignore_completions": "Ignore completions",
+            "only_medals": "Only medals",
+            "apply_filters": "Apply filters",
+            "clear_filters": "Clear filters"
+       }
     },
     "languages": {
         "en": {

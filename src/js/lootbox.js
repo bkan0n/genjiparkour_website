@@ -1,7 +1,3 @@
-var allHeroes = [];
-var allItems = [];
-var refinedItems = [];
-var rareItems = [];
 var isRunning = false;
 var openSound = new Audio('assets/sounds/open-box.ogg');
 var volume = 0.25;
@@ -12,6 +8,7 @@ let rewardKeyType = "";
 let rewardNonce = "";
 let keys = 0;
 let packOpened = false;
+let translations = {};
 const sounds = {
     common: new Audio('assets/sounds/common-sound.ogg'),
     rare: new Audio('assets/sounds/common-sound.ogg'),
@@ -37,6 +34,48 @@ $('.js-volume').click(function() {
         $(this).text('volume_up').removeClass('is-off').addClass('is-on');
         openSound.muted = false;
     }
+});
+
+async function loadTranslations() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        const currentLang = document.documentElement.lang || "en";
+        
+        const currentLangData = data[currentLang] || {};
+        
+        const { lootbox = {}, error = {} } = currentLangData;
+        
+        translations = { lootbox, error };
+
+        console.log("Traductions chargées :", translations);
+    } catch (error) {
+        console.error("Erreur lors du chargement des traductions :", error);
+    }
+}
+
+function t(path, params = {}) {
+    const parts = path.split('.');
+    let result = translations;
+    for (const part of parts) {
+        result = result?.[part];
+        if (!result) break;
+    }
+    if (!result) {
+        return path;
+    }
+    for (const key in params) {
+        result = result.replace(`{${key}}`, params[key]);
+    }
+    return result;
+}
+
+async function initializeApp() {
+    await loadTranslations();
+}
+
+$(document).ready(() => {
+    initializeApp();
 });
 
 function getRandomRewards(userId, keyType) {
@@ -73,7 +112,7 @@ function getRandomRewards(userId, keyType) {
 
 $('.generate').click(function() {
     if (!userId) {
-        alert("Login is required on this page");
+        showErrorMessage(t('error.login_required_msg'));
         return;
     }
 
@@ -107,14 +146,14 @@ $('.generate').click(function() {
         },
         error: function(xhr, status, error) {
             console.error("Erreur AJAX :", error);
-            alert("Erreur de connexion à l'API.");
+            alert("Erreur de connexion à l'API");
         }
     });
 });
 
 function proceedWithLootBoxOpening() {
     if (keys <= 0) {
-        alert("Vous n'avez plus de clés pour ouvrir une loot box.");
+        showErrorMessage("You don't have enough keys top open a lootbox");
         console.log("Pas assez de clés, loot box non ouverte");
         return;
     }
@@ -247,11 +286,12 @@ function fetchKeys(userId) {
     });
 }
 
-function updateKeyDisplay() {
+async function updateKeyDisplay() {
+    await loadTranslations();
     if (userId) {
         $('#key-count').html(`<i class="fas fa-key key-icon"></i> <span id="key-number">${keys}</span>`);
     } else {
-        $('#key-count').html("Login required");
+        $('#key-count').html(t('error.login_required_btn'));
     }
     console.log(`Clés restantes : ${keys}`);
 }
@@ -274,7 +314,7 @@ function displayRewards(rewards) {
         const card = $('<li/>').addClass(`card shadow animated bounceInDown crate-${index}`);
         const cardInner = $('<div/>').addClass('card-inner');
         const cardFront = $('<div/>').addClass('card-front');
-        const frontText = $('<span/>').addClass('front-text').text('Pick one card');
+        const frontText = $('<span/>').addClass('front-text').text(t('lootbox.pick_a_card'));
         cardFront.append(frontText);
 
         const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
@@ -405,10 +445,53 @@ function playSound(quality) {
     sound.play().catch(error => console.log("Erreur lors de la lecture du son:", error));
 }
 
+function showConfirmationMessage(message) {
+    const existingPopup = document.querySelector('.confirmation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const confirmationPopup = document.createElement('div');
+    confirmationPopup.className = 'confirmation-popup';
+    confirmationPopup.textContent = message;
+
+    document.body.appendChild(confirmationPopup);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.addEventListener('transitionend', () => {
+            confirmationPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
+function showErrorMessage(message) {
+    const errorPopup = document.createElement('div');
+    errorPopup.className = 'error-popup';
+    errorPopup.textContent = message;
+
+    document.body.appendChild(errorPopup);
+
+    setTimeout(() => {
+        errorPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.addEventListener('transitionend', () => {
+            confirmationPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
 // Temporary 
 $('#giveKeyButton').click(function () {
     if (!userId) {
-        alert("Please login first");
+        showErrorMessage("Please login first");
         return;
     }
 
