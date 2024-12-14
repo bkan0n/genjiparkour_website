@@ -28,7 +28,6 @@ async function loadTranslations() {
     }
 }
 
-
 function initializeDialogues() {
     currentDialogueText = translations.dialogues?.genji_success || "Text Missing";
     jackCurrentDialogue = translations.dialogues?.jack_intro || "Text Missing";
@@ -45,6 +44,32 @@ function applyTranslations() {
     restartButton.innerHTML = translations?.restart_button || "Restart";
     scoreDisplay.innerHTML = `${translations?.score || "Score"} 0`;
     highScoreDisplay.innerHTML = `${translations?.highest_score || "Highest score"} 0`;
+}
+
+const sounds = {
+    gameRunning: new Audio('assets/sounds/gameRunning.ogg'),
+    gameFreemode: new Audio('assets/sounds/gameFreemode.ogg'),
+    genjiJump: new Audio('assets/sounds/genjiJump.ogg'),
+    genjiDead: new Audio('assets/sounds/genjiDead.ogg'),
+    genjiKilled: new Audio('assets/sounds/genjiKilled.ogg'),
+    gameDial: new Audio("assets/sounds/gameDial.ogg"),
+};
+
+sounds.gameRunning.loop = true;
+sounds.gameFreemode.loop = true;
+
+function stopAllSounds() {
+    Object.values(sounds).forEach((sound) => {
+        sound.pause();
+        sound.currentTime = 0;
+    });
+}
+
+function playSound(sound) {
+    stopAllSounds();
+    sound.play().catch(error => {
+        console.error("Erreur lors de la lecture du son:", error);
+    });
 }
 
 canvas.width = 800;
@@ -72,6 +97,7 @@ let jumpFrames = [];
 let genjiNeutral = null;
 let mercyFrames = [];
 let mercyStandFrames = [];
+let hasShownJackWarning = false;
 let genjiFrameIndex = 0;
 let genjiJumpFrameIndex = 0;
 let mercyFrameIndex = 0;
@@ -92,6 +118,7 @@ let jackState = 'neutral1';
 let jackLastFrameTime = 0;
 let jackFrameSpeed = 300;
 let jackStartTime = performance.now();
+let maxScore = 10000;
 const genjiYOffset = -30;
 const keyPressed = {};
 
@@ -155,7 +182,7 @@ function drawGenji() {
         return;
     }
 
-    const shouldAnimate = isMoving || score < 10000;
+    const shouldAnimate = isMoving || score < maxScore;
 
     if (genji.isJumping) {
         ctx.drawImage(
@@ -405,7 +432,7 @@ function generateObstacle() {
 function drawObstacles() {
     for (let i = 0; i < obstacles.length; i++) {
         const obs = obstacles[i];
-        obs.x -= 4;
+        obs.x -= 6;
 
         ctx.drawImage(obs.image, obs.x, obs.y, obs.width, obs.height);
 
@@ -486,7 +513,6 @@ function updateGame() {
         drawGenji();
         drawMercy();
         drawJack();
-        drawObstacles();
 
         if (!isFreeMode) {
             drawObstacles();
@@ -511,10 +537,14 @@ function updateGame() {
             generateObstacle();
         }
 
-        if (score >= 10000) {
+        if (score >= maxScore) {
             isFreeMode = true;
             obstacles = [];
             maxScoreReached = true;
+
+            sounds.gameRunning.pause();
+            sounds.gameRunning.currentTime = 0;
+            sounds.gameFreemode.play();
         }
 
         if (!maxScoreReached) {
@@ -535,6 +565,8 @@ function displayGameOver() {
     const restartPromptText = translations?.gameplay?.restart_prompt || "Press Restart to play again";
 
     if (jackKilledGenji) {
+        stopAllSounds();
+        sounds.genjiKilled.play();
         setTimeout(() => {
             ctx.fillStyle = 'white';
             ctx.font = 'bold 24px Arial';
@@ -547,6 +579,8 @@ function displayGameOver() {
             cancelAnimationFrame(animationFrame);
         }, 2000);
     } else {
+        stopAllSounds();
+        sounds.genjiDead.play();
         ctx.fillStyle = 'white';
         ctx.font = 'bold 24px Arial';
         ctx.textAlign = 'center';
@@ -584,6 +618,9 @@ document.addEventListener('keydown', (e) => {
     if (key === ' ' && genji.y === 150) {
         genji.velocityY = -10;
         genji.isJumping = true;
+
+        sounds.genjiJump.currentTime = 0;
+        sounds.genjiJump.play();
     }
 });
 
@@ -602,6 +639,10 @@ restartButton.addEventListener('focus', () => {
 
 restartButton.addEventListener('click', () => {
     restartButton.blur();
+
+    stopAllSounds();
+    sounds.gameRunning.currentTime = 0;
+    playSound(sounds.gameRunning);
 
     gameRunning = true;
     isGenjiDead = false;
@@ -770,3 +811,21 @@ function startGame() {
     gameRunning = true;
     updateGame();
 }
+
+// Volume
+const volumeSlider = document.querySelector('.level');
+
+function updateGameVolume(level) {
+    const volume = level / 100;
+    Object.values(sounds).forEach(sound => {
+        sound.volume = volume;
+    });
+}
+
+volumeSlider.addEventListener('input', (event) => {
+    const volumeLevel = event.target.value;
+    updateGameVolume(volumeLevel);
+});
+
+volumeSlider.value = 50;
+updateGameVolume(volumeSlider.value);
