@@ -125,7 +125,7 @@ include BASE_PATH . "discord/header.php";
         </section>
         <section class="hero-section" id="hero2">
             <div class="hero-image">
-                <img src="assets/img-2/parkour_tutorial.jpg" alt="<?= htmlspecialchars($translations['tutorial']['techniquesImageAlt']) ?>" loading="lazy">
+                <img src="assets/img/parkour_tutorial.jpg" alt="<?= htmlspecialchars($translations['tutorial']['techniquesImageAlt']) ?>" loading="lazy">
             </div>
             <div class="hero-content">
                 <h1><?= htmlspecialchars($translations['tutorial']['tutorialTitle']) ?></h1>
