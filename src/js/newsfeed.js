@@ -8,6 +8,16 @@ const roleColors = {
     God: "god",
 };
 
+const difficultyColors = {
+    "Beginner": "#00ff1a",
+    "Easy": "#cdff3a",
+    "Medium": "#fbdf00",
+    "Hard": "#ff9700",
+    "Very Hard": "#ff4500",
+    "Extreme": "#ff0000",
+    "Hell": "#9a0000",
+};
+
 let currentPage = 1;
 const pageSize = 20;
 let totalResults = 0;
@@ -96,14 +106,20 @@ function openMapDetailsModal(mapCode) {
     modalContainer.innerHTML = `<p>${t('common.loading')}</p>`;
     modalOverlay.style.display = "flex";
 
-    const getStars = (quality) => {
-        if (!quality) return t('common.na');
+    const getStars = (quality, maxStars = 6) => {
         let stars = '';
         const starCount = Math.floor(quality);
+        const emptyStarCount = maxStars - starCount;
+    
         for (let i = 0; i < starCount; i++) {
-            stars += '⭐';
+            stars += '<span class="star-full">★</span>';
         }
-        return stars || t('common.na');
+    
+        for (let i = 0; i < emptyStarCount; i++) {
+            stars += '<span class="star-empty">☆</span>';
+        }
+    
+        return stars || t("common.na");
     };
 
     fetch('api/search/getMapSearch.php', {
@@ -153,17 +169,17 @@ function openMapDetailsModal(mapCode) {
                         <div id="modalLayout" class="modal-layout">
                             <div class="map-details">
                                 <div id="modalTextSection" class="modal-text-section">
-                                    <h2>Map Details</h2>
-                                    <p><strong>Code:</strong> ${map.map_code || t('common.na')}</p>
-                                    <p><strong>Name:</strong> ${map.map_name || t('common.na')}</p>
-                                    <p><strong>Type:</strong> ${Array.isArray(map.map_type) ? map.map_type.join(", ") : t('common.na')}</p>
-                                    <p><strong>Creator:</strong> ${map.creators?.join(", ") || t('common.na')}</p>
-                                    <p><strong>Difficulty:</strong> ${map.difficulty || t('common.na')}</p>
-                                    <p><strong>Checkpoints:</strong> ${map.checkpoints || t('common.na')}</p>
-                                    <p><strong>Quality:</strong> ${getStars(map.quality)}</p>
-                                    <p><strong>Mechanics:</strong> ${mechanics}</p>
-                                    <p><strong>Restrictions:</strong> ${restrictions}</p>
-                                    <p><strong>Description:</strong> ${description}</p>
+                                    <h2>${t("thead.mapDetails")}</h2>
+                                    <p><strong>${t("thead.mapCode")}:</strong> ${map.map_code || t('common.na')}</p>
+                                    <p><strong>${t("thead.mapName")}:</strong> ${map.map_name || t('common.na')}</p>
+                                    <p><strong>${t("thead.mapType")}:</strong> ${Array.isArray(map.map_type) ? map.map_type.join(", ") : t('common.na')}</p>
+                                    <p><strong>${t("thead.mapCreator")}:</strong> ${map.creators?.join(", ") || t('common.na')}</p>
+                                    <p><strong>${t("thead.mapDifficulty")}:</strong> <span style="color: ${difficultyColors[normalizeDifficulty(map.difficulty)] || '#fff'}"> ${map.difficulty || t('common.na')}</span></p>
+                                    <p><strong>${t("thead.mapCheckpoints")}:</strong> ${map.checkpoints || t('common.na')}</p>
+                                    <p><strong>${t("thead.mapQuality")}:</strong> <span class="modal-stars">${getStars(map.quality) || t('common.na')}</span></p>
+                                    <p><strong>${t("thead.mapMechanics")}:</strong> ${mechanics}</p>
+                                    <p><strong>${t("thead.mapRestrictions")}:</strong> ${restrictions}</p>
+                                    <p><strong>${t("thead.mapDescription")}:</strong> ${description}</p>
                                 </div>
                             </div>
                             <div id="modalBannerSection" class="modal-banner-section">
@@ -186,6 +202,11 @@ function openMapDetailsModal(mapCode) {
 function closeDetailsModal() {
     const modalOverlay = document.getElementById("detailsModalOverlay");
     modalOverlay.style.display = "none";
+}
+
+function normalizeDifficulty(difficulty) {
+    if (!difficulty) return '';
+    return difficulty.replace(/\s*[+-]$/, '').trim();
 }
 
 document.getElementById("detailsModalOverlay").addEventListener("click", (event) => {
@@ -596,7 +617,10 @@ document.addEventListener("DOMContentLoaded", () => {
             matchingOption.classList.add("selected");
         }
     } else {
-        selectTrigger.textContent = "Search by";
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadTranslations();
+            selectTrigger.textContent = t("newsfeed.search_by_filter");
+        });
     }
 
     customOptions.forEach(option => {
@@ -613,7 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     resetFiltersButton.addEventListener("click", () => {
         selectedType = null;
-        selectTrigger.textContent = "Search by";
+        selectTrigger.textContent = t("newsfeed.search_by_filter");
         customOptions.forEach(opt => opt.classList.remove("selected"));
         loadNewsfeed();
     });

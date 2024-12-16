@@ -715,6 +715,27 @@ button.reset-filters-btn:hover {
     background-color: #555;
 }
 
+/* Stars */
+.star-full {
+    color: gold;
+    font-size: 20px;
+}
+
+.star-empty {
+    color: lightgray;
+    font-size: 20px;
+}
+
+.modal-stars .star-full {
+    font-size: 16px;
+    color: gold;
+}
+
+.modal-stars .star-empty {
+    font-size: 16px;
+    color: lightgray;
+}
+
 /* Responsive design */
 @media screen and (max-width: 1024px) {
     .news-header h3 {
