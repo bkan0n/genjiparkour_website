@@ -1781,12 +1781,6 @@ z-index: 50;
         font-size: 0.5rem;
     }
 
-    .results-table tr {
-        height: auto;
-        margin-bottom: 0.25rem;
-        width: 100%;
-    }
-
     .star-full,
     .star-empty {
         font-size: 14px;
@@ -1966,12 +1960,6 @@ z-index: 50;
         color: #fff;
     }
 
-    .results-table tr {
-        height: auto;
-        margin-bottom: 0.25rem;
-        width: 100%;
-    }
-
     .results-table3 {
         font-size: 0.625rem;
         padding: 0.3125rem;
@@ -2107,11 +2095,5 @@ z-index: 50;
 
     .inner-table td.details {
         padding-right: 3.8%;
-    }
-
-    .results-table tr {
-        height: auto;
-        margin-bottom: 0.25rem;
-        width: 100%;
     }
 }
