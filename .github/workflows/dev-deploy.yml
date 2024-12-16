@@ -24,6 +24,8 @@ jobs:
         envkey_X_API_KEY: ${{ secrets.X_API_KEY }}
         envkey_DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
+        envkey_TRANSLATION_API_KEY: ${{ secrets.TRANSLATION_API_KEY }}
+        envkey_TRANSLATION_API_ROOT: ${{ secrets.TRANSLATION_API_ROOT }}
         file_name: .env
         fail_on_empty: false
         sort_keys: false
