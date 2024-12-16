@@ -1784,6 +1784,7 @@ z-index: 50;
     .results-table tr {
         height: auto;
         margin-bottom: 0.25rem;
+        width: 100%;
     }
 
     .star-full,
@@ -1968,6 +1969,7 @@ z-index: 50;
     .results-table tr {
         height: auto;
         margin-bottom: 0.25rem;
+        width: 100%;
     }
 
     .results-table3 {
@@ -2105,5 +2107,11 @@ z-index: 50;
 
     .inner-table td.details {
         padding-right: 3.8%;
+    }
+
+    .results-table tr {
+        height: auto;
+        margin-bottom: 0.25rem;
+        width: 100%;
     }
 }
