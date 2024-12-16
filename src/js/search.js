@@ -207,6 +207,7 @@ async function selectSection(sectionId) {
 
     initializeToolbarButtons();
     applyFilters();
+    clearFilters();
 }
 
 //Toolbar
@@ -415,27 +416,27 @@ function initializeToolbarButtons() {
 
             switch (icon.id) {
                 case "map_code":
-                    input = getOrCreateInput("mapCodeInput", "Enter code", buttonId);
+                    input = getOrCreateInput("mapCodeInput", t("filters_toolbar.enter_map_code"), buttonId);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getMapCodesAutoComplete.php", "mapCodeSuggestionsContainer", "map_code")
                     );
                     break;
 
                 case "creator":
-                    input = getOrCreateInput("mapCreatorInput", "Enter creator", buttonId);
+                    input = getOrCreateInput("mapCreatorInput", t("filters_toolbar.enter_creator"), buttonId);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getUsersAutoComplete.php", "creatorSuggestionsContainer", "name")
                     );
                     break;
 
                 case "map_name":
-                    input = getOrCreateInput("mapNameInput", "Enter map name", buttonId);
+                    input = getOrCreateInput("mapNameInput", t("filters_toolbar.enter_map_name"), buttonId);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getMapNamesAutoComplete.php", "mapNameSuggestionsContainer", "name")
                     );
                     break;
                 case "nickname":
-                    input = getOrCreateInput("userNicknameInput", "Enter player name", buttonId);
+                    input = getOrCreateInput("userNicknameInput", t("filters_toolbar.enter_nickname"), buttonId);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getUsersAutoComplete.php", "nicknameSuggestionsContainer", "name")
                     );
@@ -500,7 +501,7 @@ function initializeToolbarButtons() {
                     break;
 
                 case "apply_filters":
-                    updateActiveFilters();
+                    applyFilters(activeFilters);
                     break;
 
                 case "clear_filters":
@@ -635,6 +636,7 @@ function showOptionsContainer(id, options, buttonRect, useWrapper = false) {
                 value: option.textContent.trim()
             });
             showConfirmationMessage(translatedMessage);
+            updateActiveFilters();
         });
     });
 
@@ -738,11 +740,14 @@ function updateActiveFilters() {
             }
         }
 
-        const checkboxes = optionsContainer.querySelectorAll('.custom-checkbox:checked');
-        if (checkboxes.length > 0) {
-            activeFilters[mappedFilterId] = Array.from(checkboxes).map(cb => cb.nextElementSibling.textContent.trim());
-            return;
-        }
+        setTimeout(() => {
+            const checkboxes = optionsContainer.querySelectorAll('.custom-checkbox:checked');
+            if (checkboxes.length > 0) {
+                activeFilters[mappedFilterId] = Array.from(checkboxes).map(cb => cb.nextElementSibling.textContent.trim());
+            } else {
+                delete activeFilters[mappedFilterId];
+            }
+        }, 0);
 
         const input = document.getElementById(`${filterId}Input`);
         if (input && input.value.trim()) {
@@ -772,8 +777,20 @@ function updateActiveFilters() {
     }
 
     console.log("Filtres actifs mis à jour :", activeFilters);
+    updateToolbarButtonStates();
+}
 
-    applyFilters(activeFilters);
+function updateToolbarButtonStates() {
+    const buttons = document.querySelectorAll(".toolbar-button");
+
+    buttons.forEach((button) => {
+        const filterId = button.id.replace("FilterButton", "");
+        if (activeFilters[filterId]) {
+            button.classList.add("active-filter");
+        } else {
+            button.classList.remove("active-filter");
+        }
+    });
 }
 
 //Reset filtres
@@ -787,6 +804,8 @@ function removeFilter(filterId, filterElement) {
 
 function clearFilters() {
     const hasActiveFilters = Object.keys(activeFilters).some(key => key !== 'page_size' && key !== 'page_number') || selectedFilters.length > 0;
+    const clearFiltersButton = document.getElementById("clear_filtersFilterButton");
+
     selectedFilters.length = 0;
     currentPage = 1;
     activeFilters = {};
@@ -818,9 +837,17 @@ function clearFilters() {
     document.querySelectorAll('.custom-option.selected').forEach(option => {
         option.classList.remove('selected');
     });
+    
+    document.querySelectorAll(".toolbar-button").forEach(button => {
+        button.classList.remove("active-filter");
+    });
 
-    if (hasActiveFilters) {
-        showConfirmationMessage(t("popup.filters_cleared"));
+    if (clearFiltersButton) {
+        clearFiltersButton.onclick = () => {
+            if (hasActiveFilters) {
+                showConfirmationMessage(t("popup.filters_cleared"));
+            }
+        };
     }
 }
 
@@ -992,6 +1019,7 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
 
                             showConfirmationMessage(translatedMessage);
                             suggestionsContainer.style.display = "none";
+                            updateActiveFilters();
                         });
 
                         suggestionsContainer.appendChild(suggestion);
@@ -1196,16 +1224,17 @@ function displayMapSearchResults(data) {
                 <div id="modalLayout" class="modal-layout">
                     <div class="map-details">
                         <div id="modalTextSection" class="modal-text-section">
-                            <h2>Map Details</h2>
-                            <p><strong>Code:</strong> ${result.map_code || "N/A"}</p>
-                            <p><strong>Name:</strong> ${result.map_name || "N/A"}</p>
-                            <p><strong>Type:</strong> ${Array.isArray(result.map_type) ? result.map_type.join(", ") : "N/A"}</p>
-                            <p><strong>Creator:</strong> ${result.creators ? result.creators.join(", ") : "N/A"}</p>
-                            <p><strong>Difficulty:</strong> <span style="color: ${difficultyColors[normalizeDifficulty(result.difficulty)] || '#fff'}"> ${result.difficulty || "N/A"}</span></p>
-                            <p><strong>Quality:</strong> <span class="modal-stars">${getStars(result.quality) || "N/A"}</span></p>
-                            <p><strong>Mechanics:</strong> ${mechanics}</p>
-                            <p><strong>Restrictions:</strong> ${restrictions}</p>
-                            <p><strong>Description:</strong> ${description}</p>
+                            <h2>${t("thead.mapDetails")}</h2>
+                            <p><strong>${t("thead.mapCode")}:</strong> ${result.map_code || "N/A"}</p>
+                            <p><strong>${t("thead.mapName")}:</strong> ${result.map_name || "N/A"}</p>
+                            <p><strong>${t("thead.mapType")}:</strong> ${Array.isArray(result.map_type) ? result.map_type.join(", ") : "N/A"}</p>
+                            <p><strong>${t("thead.mapCreator")}:</strong> ${result.creators ? result.creators.join(", ") : "N/A"}</p>
+                            <p><strong>${t("thead.mapDifficulty")}:</strong> <span style="color: ${difficultyColors[normalizeDifficulty(result.difficulty)] || '#fff'}"> ${result.difficulty || "N/A"}</span></p>
+                            <p><strong>${t("thead.mapCheckpoints")}:</strong> ${result.checkpoints || t('common.na')}</p>
+                            <p><strong>${t("thead.mapQuality")}:</strong> <span class="modal-stars">${getStars(result.quality) || "N/A"}</span></p>
+                            <p><strong>${t("thead.mapMechanics")}:</strong> ${mechanics}</p>
+                            <p><strong>${t("thead.mapRestrictions")}:</strong> ${restrictions}</p>
+                            <p><strong>${t("thead.mapDescription")}:</strong> ${description}</p>
                         </div>
                         <div id="modalBannerSection" class="modal-banner-section">
                             <img src="${bannerPath}" alt="${mapName} Banner" class="modal-banner-image" onerror="this.style.display='none'" />
@@ -1375,7 +1404,7 @@ function displayGuideResults(results) {
     }
 
     resultsContainer.innerHTML = `
-        <table class="results-table">
+        <table class="results-table4">
             <thead>
                 <tr>
                     <th class="mapCode">${t("thead.mapCode")}</th>
@@ -1614,7 +1643,7 @@ async function fetchProgression(mapCode) {
         if (data.error && data.login_required) {
             chartContainer.innerHTML = `
                 <p style="text-align: center; font-weight: bold; color: red;">
-                    ⚠️ Please login to see your progression
+                    ⚠️ ${t('popup.login_required_progression')}
                 </p>
             `;
             return [];
@@ -1632,7 +1661,7 @@ async function fetchProgression(mapCode) {
         if (!Array.isArray(data) || data.length === 0) {
             chartContainer.innerHTML = `
                 <p style="text-align: center; font-weight: bold; color: white;">
-                    No valid progression data available to display
+                    ${t('popup.no_results')}
                 </p>
             `;
             return [];
