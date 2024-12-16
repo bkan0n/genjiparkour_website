@@ -257,6 +257,7 @@ footer {
 
 .navbar-menu a,
 .dropdown-nav .dropdown-toggle-nav {
+  font-family: 'Mona Sans', Helvetica, Arial, sans-serif;
   color: #fff;
   text-decoration: none;
   padding: 8px 12px;
@@ -450,6 +451,7 @@ footer {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
+  font-family: 'Mona Sans', Helvetica, Arial, sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -547,10 +549,12 @@ footer {
 .discord-logo i {
   font-size: 24px;
   color: #ffffff;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .discord-logo i:hover {
-  color: #cccccc;
+  color: #5865F2;
+  transform: scale(1.08);
 }
 
 .login-btn {
