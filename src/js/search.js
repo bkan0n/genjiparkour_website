@@ -67,9 +67,9 @@ const circle = document.querySelector(".selection-circle");
 
 function initializeIcons() {
     icons = [
-        "map_code", "nickname", "creator", "map_name", "difficulty", 
+        "map_code", "user", "creator", "map_name", "difficulty", 
         "map_type", "mechanics", "restrictions", "only_playtest", 
-        "ignore_completions", "only_medals", "apply_filters", "clear_filters"
+        "ignore_completions", "only_maps_with_medals", "apply_filters", "clear_filters"
     ].map(id => ({
         id,
         name: t(`filters_toolbar.${id}`) || id.replace('_', ' ').toUpperCase(),
@@ -82,6 +82,7 @@ function getIconSVG(id) {
         "map_code": `<path d="M15 9H15.01M15 15C18.3137 15 21 12.3137 21 9C21 5.68629 18.3137 3 15 3C11.6863 3 9 5.68629 9 9C9 9.27368 9.01832 9.54308 9.05381 9.80704C9.11218 10.2412 9.14136 10.4583 9.12172 10.5956C9.10125 10.7387 9.0752 10.8157 9.00469 10.9419C8.937 11.063 8.81771 11.1823 8.57913 11.4209L3.46863 16.5314C3.29568 16.7043 3.2092 16.7908 3.14736 16.8917C3.09253 16.9812 3.05213 17.0787 3.02763 17.1808C3 17.2959 3 17.4182 3 17.6627V19.4C3 19.9601 3 20.2401 3.10899 20.454C3.20487 20.6422 3.35785 20.7951 3.54601 20.891C3.75992 21 4.03995 21 4.6 21H6.33726C6.58185 21 6.70414 21 6.81923 20.9724C6.92127 20.9479 7.01881 20.9075 7.10828 20.8526C7.2092 20.7908 7.29568 20.7043 7.46863 20.5314L12.5791 15.4209C12.8177 15.1823 12.937 15.063 13.0581 14.9953C13.1843 14.9248 13.2613 14.8987 13.4044 14.8783C13.5417 14.8586 13.7588 14.8878 14.193 14.9462C14.4569 14.9817 14.7263 15 15 15Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "nickname": `<path d="M16.5 14C16.2164 12.8589 14.981 12 13.5 12C12.019 12 10.7836 12.8589 10.5 14M13.5 8H13.51M18 21H10.2C7.67976 21 6.41965 21 5.45704 20.5095C4.61031 20.0781 3.9219 19.3897 3.49047 18.543C3 17.5804 3 16.3202 3 13.8V6M9.2 18H17.8C18.9201 18 19.4802 18 19.908 17.782C20.2843 17.5903 20.5903 17.2843 20.782 16.908C21 16.4802 21 15.9201 21 14.8V6.2C21 5.0799 21 4.51984 20.782 4.09202C20.5903 3.71569 20.2843 3.40973 19.908 3.21799C19.4802 3 18.9201 3 17.8 3H9.2C8.0799 3 7.51984 3 7.09202 3.21799C6.71569 3.40973 6.40973 3.71569 6.21799 4.09202C6 4.51984 6 5.07989 6 6.2V14.8C6 15.9201 6 16.4802 6.21799 16.908C6.40973 17.2843 6.71569 17.5903 7.09202 17.782C7.51984 18 8.0799 18 9.2 18ZM14.5 8C14.5 8.55228 14.0523 9 13.5 9C12.9477 9 12.5 8.55228 12.5 8C12.5 7.44772 12.9477 7 13.5 7C14.0523 7 14.5 7.44772 14.5 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "creator": `<path d="M16.5 14C16.2164 12.8589 14.981 12 13.5 12C12.019 12 10.7836 12.8589 10.5 14M13.5 8H13.51M18 21H10.2C7.67976 21 6.41965 21 5.45704 20.5095C4.61031 20.0781 3.9219 19.3897 3.49047 18.543C3 17.5804 3 16.3202 3 13.8V6M9.2 18H17.8C18.9201 18 19.4802 18 19.908 17.782C20.2843 17.5903 20.5903 17.2843 20.782 16.908C21 16.4802 21 15.9201 21 14.8V6.2C21 5.0799 21 4.51984 20.782 4.09202C20.5903 3.71569 20.2843 3.40973 19.908 3.21799C19.4802 3 18.9201 3 17.8 3H9.2C8.0799 3 7.51984 3 7.09202 3.21799C6.71569 3.40973 6.40973 3.71569 6.21799 4.09202C6 4.51984 6 5.07989 6 6.2V14.8C6 15.9201 6 16.4802 6.21799 16.908C6.40973 17.2843 6.71569 17.5903 7.09202 17.782C7.51984 18 8.0799 18 9.2 18ZM14.5 8C14.5 8.55228 14.0523 9 13.5 9C12.9477 9 12.5 8.55228 12.5 8C12.5 7.44772 12.9477 7 13.5 7C14.0523 7 14.5 7.44772 14.5 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+        "user": `<path d="M16.5 14C16.2164 12.8589 14.981 12 13.5 12C12.019 12 10.7836 12.8589 10.5 14M13.5 8H13.51M18 21H10.2C7.67976 21 6.41965 21 5.45704 20.5095C4.61031 20.0781 3.9219 19.3897 3.49047 18.543C3 17.5804 3 16.3202 3 13.8V6M9.2 18H17.8C18.9201 18 19.4802 18 19.908 17.782C20.2843 17.5903 20.5903 17.2843 20.782 16.908C21 16.4802 21 15.9201 21 14.8V6.2C21 5.0799 21 4.51984 20.782 4.09202C20.5903 3.71569 20.2843 3.40973 19.908 3.21799C19.4802 3 18.9201 3 17.8 3H9.2C8.0799 3 7.51984 3 7.09202 3.21799C6.71569 3.40973 6.40973 3.71569 6.21799 4.09202C6 4.51984 6 5.07989 6 6.2V14.8C6 15.9201 6 16.4802 6.21799 16.908C6.40973 17.2843 6.71569 17.5903 7.09202 17.782C7.51984 18 8.0799 18 9.2 18ZM14.5 8C14.5 8.55228 14.0523 9 13.5 9C12.9477 9 12.5 8.55228 12.5 8C12.5 7.44772 12.9477 7 13.5 7C14.0523 7 14.5 7.44772 14.5 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "map_name": `<path d="M14.4996 8.5001H14.5096M16.2196 19.9601L10.5508 14.2705C9.7579 13.4747 9.36143 13.0768 8.90391 12.9277C8.50148 12.7966 8.06782 12.7965 7.66534 12.9275C7.20776 13.0764 6.81115 13.4742 6.01792 14.2697L4.30299 15.9897M12.2385 15.9644L12.6069 15.5951C13.4081 14.7996 13.8087 14.4018 14.2689 14.2554C14.6737 14.1267 15.109 14.1302 15.5117 14.2654C15.9696 14.4191 16.3638 14.8232 17.1522 15.6314L18.8889 17.3881M18.8889 17.3881L21.5377 12.8001C21.706 12.5087 21.7901 12.3629 21.823 12.208C21.8522 12.0709 21.8522 11.9293 21.823 11.7922C21.7901 11.6373 21.706 11.4915 21.5377 11.2001L17.4615 4.13984C17.2932 3.8484 17.2091 3.70268 17.0914 3.5967C16.9872 3.50293 16.8645 3.43209 16.7313 3.38879C16.5806 3.33984 16.4124 3.33984 16.0758 3.33984H7.92336C7.58683 3.33984 7.41856 3.33984 7.26793 3.38879C7.13465 3.43209 7.01196 3.50293 6.90782 3.5967C6.79011 3.70268 6.70598 3.8484 6.53772 4.13984L2.46148 11.2001C2.29321 11.4915 2.20908 11.6373 2.17615 11.7922C2.14701 11.9293 2.14701 12.0709 2.17615 12.208C2.20908 12.3629 2.29321 12.5087 2.46148 12.8001L4.30299 15.9897M18.8889 17.3881L17.4615 19.8604C17.2932 20.1518 17.2091 20.2975 17.0914 20.4035C16.9872 20.4973 16.8645 20.5681 16.7313 20.6114C16.5806 20.6604 16.4124 20.6604 16.0758 20.6604H7.92336C7.58683 20.6604 7.41856 20.6604 7.26793 20.6114C7.13465 20.5681 7.01196 20.4973 6.90782 20.4035C6.79011 20.2975 6.70598 20.1518 6.53772 19.8604L4.30299 15.9897M14.9996 8.5001C14.9996 8.77624 14.7757 9.0001 14.4996 9.0001C14.2235 9.0001 13.9996 8.77624 13.9996 8.5001C13.9996 8.22396 14.2235 8.0001 14.4996 8.0001C14.7757 8.0001 14.9996 8.22396 14.9996 8.5001Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "difficulty": `<path d="M4 8L6 20H18L20 8M4 8L5.71624 9.37299C6.83218 10.2657 7.39014 10.7121 7.95256 10.7814C8.4453 10.8421 8.94299 10.7173 9.34885 10.4314C9.81211 10.1051 10.0936 9.4483 10.6565 8.13476L12 5M4 8C4.55228 8 5 7.55228 5 7C5 6.44772 4.55228 6 4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8ZM20 8L18.2838 9.373C17.1678 10.2657 16.6099 10.7121 16.0474 10.7814C15.5547 10.8421 15.057 10.7173 14.6511 10.4314C14.1879 10.1051 13.9064 9.4483 13.3435 8.13476L12 5M20 8C20.5523 8 21 7.55228 21 7C21 6.44772 20.5523 6 20 6C19.4477 6 19 6.44772 19 7C19 7.55228 19.4477 8 20 8ZM12 5C12.5523 5 13 4.55228 13 4C13 3.44772 12.5523 3 12 3C11.4477 3 11 3.44772 11 4C11 4.55228 11.4477 5 12 5ZM12 4H12.01M20 7H20.01M4 7H4.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "map_type": `<path d="M11 8L16 8.00053M11 12L16 12.0005M11 16L16 16.0005M8 16H8.01M8 12H8.01M8 8H8.01M7.2 4H16.8C17.9201 4 18.4802 4 18.908 4.21799C19.2843 4.40973 19.5903 4.71569 19.782 5.09202C20 5.51984 20 6.0799 20 7.2V16.8C20 17.9201 20 18.4802 19.782 18.908C19.5903 19.2843 19.2843 19.5903 18.908 19.782C18.4802 20 17.9201 20 16.8 20H7.2C6.0799 20 5.51984 20 5.09202 19.782C4.71569 19.5903 4.40973 19.2843 4.21799 18.908C4 18.4802 4 17.9201 4 16.8V7.2C4 6.0799 4 5.51984 4.21799 5.09202C4.40973 4.71569 4.71569 4.40973 5.09202 4.21799C5.51984 4 6.0799 4 7.2 4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -92,7 +93,7 @@ function getIconSVG(id) {
         "restrictions": `<path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "only_playtest": `<path d="M14.2639 15.9376L12.5958 14.2835C11.7909 13.4852 11.3884 13.0861 10.9266 12.9402C10.5204 12.8119 10.0838 12.8166 9.68048 12.9537C9.22188 13.1096 8.82814 13.5173 8.04068 14.3327L4.04409 18.2802M14.2639 15.9376L14.6053 15.5991C15.4112 14.7999 15.8141 14.4003 16.2765 14.2544C16.6831 14.1262 17.12 14.1312 17.5236 14.2688C17.9824 14.4252 18.3761 14.834 19.1634 15.6515L20 16.4936M14.2639 15.9376L18.275 19.9566M18.275 19.9566C17.9176 20.0001 17.4543 20.0001 16.8 20.0001H7.2C6.07989 20.0001 5.51984 20.0001 5.09202 19.7821C4.71569 19.5904 4.40973 19.2844 4.21799 18.9081C4.12796 18.7314 4.07512 18.5322 4.04409 18.2802M18.275 19.9566C18.5293 19.9257 18.7301 19.8728 18.908 19.7821C19.2843 19.5904 19.5903 19.2844 19.782 18.9081C20 18.4803 20 17.9202 20 16.8001V16.4936M12.5 4L7.2 4.00011C6.07989 4.00011 5.51984 4.00011 5.09202 4.21809C4.71569 4.40984 4.40973 4.7158 4.21799 5.09213C4 5.51995 4 6.08 4 7.20011V16.8001C4 17.4576 4 17.9222 4.04409 18.2802M20 11.5V16.4936M14 10.0002L16.0249 9.59516C16.2015 9.55984 16.2898 9.54219 16.3721 9.5099C16.4452 9.48124 16.5146 9.44407 16.579 9.39917C16.6515 9.34859 16.7152 9.28492 16.8425 9.1576L21 5.00015C21.5522 4.44787 21.5522 3.55244 21 3.00015C20.4477 2.44787 19.5522 2.44787 19 3.00015L14.8425 7.1576C14.7152 7.28492 14.6515 7.34859 14.6009 7.42112C14.556 7.4855 14.5189 7.55494 14.4902 7.62801C14.4579 7.71033 14.4403 7.79862 14.4049 7.97518L14 10.0002Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "ignore_completions": `<path d="M9 12L11 14L15 10M12 3L13.9101 4.87147L16.5 4.20577L17.2184 6.78155L19.7942 7.5L19.1285 10.0899L21 12L19.1285 13.9101L19.7942 16.5L17.2184 17.2184L16.5 19.7942L13.9101 19.1285L12 21L10.0899 19.1285L7.5 19.7942L6.78155 17.2184L4.20577 16.5L4.87147 13.9101L3 12L4.87147 10.0899L4.20577 7.5L6.78155 6.78155L7.5 4.20577L10.0899 4.87147L12 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
-        "only_medals": `<path d="M12 11L8 3H4L8.5058 12.4622M12 11L16 3H20L15.4942 12.4622M12 11C13.344 11 14.5848 11.5635 15.4942 12.4622M12 11C10.656 11 9.41518 11.5635 8.5058 12.4622M15.4942 12.4622C16.4182 13.3753 17 14.6344 17 16C17 18.7614 14.7614 21 12 21C9.23858 21 7 18.7614 7 16C7 14.6344 7.58179 13.3753 8.5058 12.4622" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
+        "only_maps_with_medals": `<path d="M12 11L8 3H4L8.5058 12.4622M12 11L16 3H20L15.4942 12.4622M12 11C13.344 11 14.5848 11.5635 15.4942 12.4622M12 11C10.656 11 9.41518 11.5635 8.5058 12.4622M15.4942 12.4622C16.4182 13.3753 17 14.6344 17 16C17 18.7614 14.7614 21 12 21C9.23858 21 7 18.7614 7 16C7 14.6344 7.58179 13.3753 8.5058 12.4622" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
         "apply_filters": `<path d="M4 12.6111L8.92308 17.5L20 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         "clear_filters": `<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
 
@@ -110,9 +111,9 @@ async function loadTranslations() {
         
         const currentLangData = data[currentLang] || {};
         
-        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {} } = currentLangData;
+        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {}, chart = {} } = currentLangData;
         
-        translations = { thead, pagination, popup, filters_toolbar };
+        translations = { thead, pagination, popup, filters_toolbar, chart };
 
         //console.log("Traductions chargées :", translations);
     } catch (error) {
@@ -385,8 +386,8 @@ function initializeToolbarButtons() {
     clearToolbarButtons();
 
     const sectionIconsMap = {
-        mapSearch: icons.filter(icon => icon.id !== 'nickname'),
-        completions: icons.filter(icon => ['map_code', 'nickname', 'apply_filters', 'clear_filters'].includes(icon.id)),
+        mapSearch: icons.filter(icon => icon.id !== 'user'),
+        completions: icons.filter(icon => ['map_code', 'user', 'apply_filters', 'clear_filters'].includes(icon.id)),
         guide: icons.filter(icon => ['map_code', 'apply_filters', 'clear_filters'].includes(icon.id)),
         personalRecords: icons.filter(icon => ['map_code', 'apply_filters', 'clear_filters'].includes(icon.id))
     };
@@ -435,7 +436,7 @@ function initializeToolbarButtons() {
                         showSuggestions(event, "getMapNamesAutoComplete.php", "mapNameSuggestionsContainer", "name")
                     );
                     break;
-                case "nickname":
+                case "user":
                     input = getOrCreateInput("userNicknameInput", t("filters_toolbar.enter_nickname"), buttonId);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getUsersAutoComplete.php", "nicknameSuggestionsContainer", "name")
@@ -492,7 +493,7 @@ function initializeToolbarButtons() {
                     );
                     break;
 
-                case "only_medals":
+                case "only_maps_with_medals":
                     optionsContainer = showOptionsContainer(
                         "onlyMedalsOptions",
                         ["True", "False"],
@@ -717,6 +718,8 @@ function updateActiveFilters() {
         mapQuality: "minimum_quality",
         onlyPlaytest: "only_playtest",
         onlyMedals: "only_maps_with_medals",
+        mechanics: "mechanics",
+        restrictions: "restrictions",
         ignoreCompletions: "ignore_completions",
     };
 
@@ -729,63 +732,60 @@ function updateActiveFilters() {
         if (["only_playtest", "only_maps_with_medals", "ignore_completions"].includes(filterId)) {
             const selectedOption = optionsContainer.querySelector('.custom-option.selected');
             if (selectedOption) {
-                activeFilters[mappedFilterId] = selectedOption.textContent.trim().toLowerCase() === 'true' ? true : false;
-                return;
-            }
-        } else {
-            const selectedOption = optionsContainer.querySelector('.custom-option.selected');
-            if (selectedOption) {
-                activeFilters[mappedFilterId] = encodeURIComponent(selectedOption.textContent.trim());
+                activeFilters[mappedFilterId] = selectedOption.textContent.trim().toLowerCase() === 'true';
                 return;
             }
         }
 
-        setTimeout(() => {
-            const checkboxes = optionsContainer.querySelectorAll('.custom-checkbox:checked');
-            if (checkboxes.length > 0) {
-                activeFilters[mappedFilterId] = Array.from(checkboxes).map(cb => cb.nextElementSibling.textContent.trim());
-            } else {
-                delete activeFilters[mappedFilterId];
-            }
-        }, 0);
+        if (filterId === "mechanics" || filterId === "restrictions") {
+            setTimeout(() => {
+                const checkboxes = optionsContainer.querySelectorAll('.custom-checkbox:checked');
+                if (checkboxes.length > 0) {
+                    activeFilters[mappedFilterId] = Array.from(checkboxes).map(cb => cb.nextElementSibling.textContent.trim());
+                } else {
+                    delete activeFilters[mappedFilterId];
+                }
+            }, 0);
+            return;
+        }
 
-        const input = document.getElementById(`${filterId}Input`);
-        if (input && input.value.trim()) {
-            activeFilters[mappedFilterId] = encodeURIComponent(input.value.trim());
+        const selectedOption = optionsContainer.querySelector('.custom-option.selected');
+        if (selectedOption) {
+            activeFilters[mappedFilterId] = encodeURIComponent(selectedOption.textContent.trim());
+            return;
         }
     });
 
-    const mapCodeInput = document.getElementById("mapCodeInput");
-    const mapNameInput = document.getElementById("mapNameInput");
-    const creatorInput = document.getElementById("mapCreatorInput");
-    const nickNameInput = document.getElementById("userNicknameInput");
+    const textInputs = {
+        mapCodeInput: "map_code",
+        mapNameInput: "map_name",
+        mapCreatorInput: "creator",
+        userNicknameInput: "user"
+    };
 
-    if (mapCodeInput && mapCodeInput.value.trim()) {
-        activeFilters[filterMappings.mapCode] = encodeURIComponent(mapCodeInput.value.trim());
-    }
-
-    if (mapNameInput && mapNameInput.value.trim()) {
-        activeFilters[filterMappings.mapName] = encodeURIComponent(mapNameInput.value.trim());
-    }
-
-    if (creatorInput && creatorInput.value.trim()) {
-        activeFilters[filterMappings.mapCreator] = encodeURIComponent(creatorInput.value.trim());
-    }
-
-    if (nickNameInput && nickNameInput.value.trim()) {
-        activeFilters[filterMappings.nickname] = encodeURIComponent(nickNameInput.value.trim());
+    for (const [inputId, filterKey] of Object.entries(textInputs)) {
+        const input = document.getElementById(inputId);
+        if (input && input.value.trim()) {
+            activeFilters[filterKey] = encodeURIComponent(input.value.trim());
+        } else {
+            delete activeFilters[filterKey];
+        }
     }
 
     console.log("Filtres actifs mis à jour :", activeFilters);
-    updateToolbarButtonStates();
+    setTimeout(updateToolbarButtonStates, 0);
 }
 
 function updateToolbarButtonStates() {
     const buttons = document.querySelectorAll(".toolbar-button");
 
     buttons.forEach((button) => {
-        const filterId = button.id.replace("FilterButton", "");
-        if (activeFilters[filterId]) {
+        const filterId = button.id.replace("FilterButton", "").toLowerCase();
+        const isActive = !!activeFilters[filterId];
+
+        console.log(`Etat bouton : ${filterId}, Actif: ${isActive}`);
+
+        if (isActive) {
             button.classList.add("active-filter");
         } else {
             button.classList.remove("active-filter");
@@ -861,10 +861,23 @@ async function applyFilters(filters) {
         activeFilters.user_id = user_id;
     }
 
-    if (currentSection === 'guide' && Object.keys(filters).length === 0 && !activeFilters.map_code) {
-        showErrorMessage(t('popup.map_code_required'));
-        hideLoadingBar();
-        return;
+    if (currentSection === 'guide') {
+        const hasFilters = filters && Object.keys(filters).length > 0;
+        const hasActiveMapCode = activeFilters && activeFilters.map_code;
+
+        if (!hasFilters && !hasActiveMapCode) {
+            if (!activeFilters) {
+                activeFilters = {};
+            }
+
+            if (!activeFilters.map_code) {
+                activeFilters.map_code = "008EX";
+            } else {
+                showErrorMessage(t('popup.map_code_required'));
+                hideLoadingBar();
+                return;
+            }
+        }
     }
 
     activeFilters.page_size = pageSize;
@@ -1667,18 +1680,17 @@ async function fetchProgression(mapCode) {
             return [];
         }
 
-        const sortedData = data
-            .map(item => ({
+        const sortedData = (Array.isArray(data) && data.length > 0)
+            ? data.map(item => ({
                 time: parseFloat(item.time),
                 timestamp: new Date(item.inserted_at).toLocaleString(),
                 inserted_at: new Date(item.inserted_at),
-            }))
-            .sort((a, b) => a.inserted_at - b.inserted_at)
-            .slice(0, 5);
+            })).sort((a, b) => a.inserted_at - b.inserted_at)
+            : [];
 
         renderProgressionChart(sortedData);
         return sortedData;
-
+        
     } catch (error) {
         console.error("Error fetching progression data:", error);
         document.getElementById("chartContainer").innerHTML = `
@@ -1726,14 +1738,14 @@ function renderProgressionChart(data, stats = { min: null, max: null, avg: null 
             labels: labels,
             datasets: [
                 {
-                    label: "Time Progression",
+                    label: t("chart.user_record_progression"),
                     data: times,
                     borderColor: "rgba(75, 192, 192, 1)",
                     backgroundColor: "rgba(75, 192, 192, 0.2)",
                     borderWidth: 2,
                 },
                 {
-                    label: "Average Time",
+                    label: t("chart.average_time"),
                     data: avgData,
                     borderColor: "rgba(255, 205, 86, 1)",
                     borderDash: [5, 5],
@@ -1741,7 +1753,7 @@ function renderProgressionChart(data, stats = { min: null, max: null, avg: null 
                     fill: false,
                 },
                 {
-                    label: "Min Time",
+                    label: t("chart.min_time"),
                     data: minData,
                     borderColor: "rgba(54, 162, 235, 1)",
                     borderDash: [5, 5],
@@ -1749,7 +1761,7 @@ function renderProgressionChart(data, stats = { min: null, max: null, avg: null 
                     fill: false,
                 },
                 {
-                    label: "Max Time",
+                    label: t("chart.max_time"),
                     data: maxData,
                     borderColor: "rgba(255, 99, 132, 1)",
                     borderDash: [5, 5],
@@ -1781,7 +1793,7 @@ function renderProgressionChart(data, stats = { min: null, max: null, avg: null 
                 },
                 title: {
                     display: true,
-                    text: 'Record Progression Over Time',
+                    text: t("chart.record_progression_time"),
                     color: '#FFFFFF',
                     font: {
                         family: 'Roboto',
