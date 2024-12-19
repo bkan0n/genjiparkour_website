@@ -26,12 +26,7 @@ $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/bann
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genji Parkour - Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style> 
-        .header-banner img { width: 100%; border-radius: 10px; }
-        .header-avatar img { border-radius: 50%; width: 100px; height: 100px; }
-        .header-username { font-size: 24px; font-weight: bold; }
-        .header-badges img { margin: 5px; }
-    </style>
+    <link rel="stylesheet" href="styles/profile.css">
 </head>
 <body>
     <main class="container-profile">
@@ -63,7 +58,6 @@ $banner_url = isset($_SESSION['user_banner']) ? "https://cdn.discordapp.com/bann
                     ?>
                 </div>
             </div>
-
             <div class="body-wrapper mt-4">
                 <a class="btn btn-lg btn-danger btn-block" href="discord/logout.php"><?= htmlspecialchars($translations['navbar']['logout']) ?></a>
             </div>
