@@ -128,6 +128,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+//Responsive design for dropdown/lan
+document.addEventListener("DOMContentLoaded", () => {
+    const currentLang = document.documentElement.lang || "en";
+    
+    if (currentLang === "cn") {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            const parentLi = menu.closest('li');
+            if (!parentLi || !parentLi.classList.contains('lang-dropdown-nav')) {
+                menu.style.width = "150px";
+            }
+        });
+    }
+});
+
 //Search redirect
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
