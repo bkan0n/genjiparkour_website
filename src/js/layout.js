@@ -1,3 +1,4 @@
+//Session
 document.addEventListener("DOMContentLoaded", function() {
     fetch("discord/check_session.php")
         .then(response => response.json())
@@ -8,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 });
 
+//Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
     const profileModal = document.getElementById("profileModal");
@@ -21,25 +23,23 @@ document.addEventListener("DOMContentLoaded", function () {
     if (profileBtn && profileModal) {
         profileBtn.addEventListener("click", () => {
             profileModal.style.display = "block";
-            document.body.style.overflowY = "hidden";
         });
 
         if (closeModal) {
             closeModal.addEventListener("click", () => {
                 profileModal.style.display = "none";
-                document.body.style.overflowY = "auto";
             });
         }
 
         window.addEventListener("click", (event) => {
             if (event.target === profileModal) {
                 profileModal.style.display = "none";
-                document.body.style.overflowY = "auto";
             }
         });
     }
 });
 
+//Prevent spam
 function preventExcessiveRefresh(maxRefreshes, timeWindow) {
     const storageKey = 'pageRefreshes';
     const now = Date.now();
@@ -60,9 +60,10 @@ function preventExcessiveRefresh(maxRefreshes, timeWindow) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    preventExcessiveRefresh(5, 5000);
+    preventExcessiveRefresh(5, 2000);
 });
 
+//Arrow rotations
 document.addEventListener("DOMContentLoaded", () => {
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle-nav');
     const avatarIcon = document.getElementById("avatar-icon");
@@ -127,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+//Search redirect
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
@@ -149,6 +151,7 @@ function activateSectionFromURL() {
 
 window.addEventListener("load", activateSectionFromURL);
 
+//Translation dropdown
 document.addEventListener('DOMContentLoaded', () => {
     const unavailableLinks = document.querySelectorAll('a.unavailable');
     const modal = document.getElementById('translationModal');
@@ -180,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+//Favicon navbar
 document.addEventListener("DOMContentLoaded", () => {
     const logoIcon = document.getElementById("logoIcon");
 
@@ -196,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+//Redirect 404
 function checkConnectivity() {
     if (!navigator.onLine) {
         window.location.href = './404.php';
@@ -207,3 +212,75 @@ checkConnectivity();
 window.addEventListener('offline', () => {
     checkConnectivity();
 });
+
+//Rankcard
+function loadScript(url) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = url;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const rankCardBtn = document.getElementById("user-rankcard");
+    const rankCardModal = document.getElementById("rankCardModal");
+
+    if (!rankCardBtn || !rankCardModal) {
+        console.warn("Bouton ou modal manquant.");
+        return;
+    }
+
+    rankCardBtn.addEventListener("click", async () => {
+        try {
+            await loadTranslationsRankcard();
+    
+            const response = await fetch('modal/rank_card.php');
+            const html = await response.text();
+    
+            rankCardModal.innerHTML = html;
+            rankCardModal.style.display = "flex";
+            document.body.classList.add("modal-active");
+    
+            await loadScript("js/rank_card.js");
+    
+            if (typeof initRankCard === "function") {
+                initRankCard();
+            } else {
+                throw new Error("Fonction initRankCard non définie");
+            }
+        } catch (error) {
+            console.error("Erreur chargement modal :", error);
+        }
+    });
+});
+
+async function loadTranslationsRankcard() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        const currentLang = document.documentElement.lang || "en";
+        const currentLangData = data[currentLang] || {};
+        translations = { rank_card: currentLangData.rank_card || {} };
+    } catch (error) {
+        console.error("Erreur chargement traductions :", error);
+    }
+}
+
+function t(path, params = {}) {
+    const parts = path.split('.');
+    let result = translations;
+    for (const part of parts) {
+        result = result?.[part];
+        if (!result) break;
+    }
+    if (!result) return path;
+
+    for (const key in params) {
+        result = result.replace(`{${key}}`, params[key]);
+    }
+    return result;
+}
