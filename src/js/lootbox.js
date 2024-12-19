@@ -278,7 +278,7 @@ function fetchKeys(userId) {
                 updateKeyDisplay();
                 //console.log("User Keys:", response);
             } else {
-                $('#key-count').html("<i class='fas fa-key key-icon'></i> No keys available");
+                $('#key-count').html(`<i class='fas fa-key key-icon'></i> ${t('lootbox.no_keys_available')}`);
             }
         },
         error: function(xhr, status, error) {
