@@ -848,7 +848,7 @@
         "rank_card": {
             "tab_rankcard": "Личная карта",
             "tab_badges": "Значки",
-            "search_placerholder": "Введите имя пользователя",
+            "search_placeholder": "Введите имя пользователя",
             "search_button": "Искать",
             "completions": "Прохождения: {amount}"
        }
