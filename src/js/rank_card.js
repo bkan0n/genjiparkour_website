@@ -1,6 +1,3 @@
-console.log("rank_card.js chargé avec succès.");
-let selectedUserId = null;
-
 function initRankCard() {
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
