@@ -3,7 +3,9 @@ let checkSessionInterval;
 function checkSession() {
     if (!isLoggedIn) return;
 
-    fetch(`${REDIRECT_URL}discord/check_session.php`)
+    //console.log("Vérification de la session à", new Date().toLocaleTimeString());
+
+    fetch(`${REDIRECT_URL}discord/check_session.php?nocache=${Date.now()}`)
         .then(response => response.json())
         .then(data => {
             //console.log("Session expired status:", data.session_expired);
@@ -14,6 +16,7 @@ function checkSession() {
         })
         .catch(error => console.error('Erreur lors de la vérification de la session:', error));
 }
+
 
 function displaySessionExpiredModal() {
     fetch(`${REDIRECT_URL}modal/session_expired.php`)
@@ -35,7 +38,7 @@ function displaySessionExpiredModal() {
 sessionStorage.setItem('returnUrl', window.location.href);
 
 function startSessionCheck() {
-    checkSessionInterval = setInterval(checkSession, 5000);
+    checkSessionInterval = setInterval(checkSession, 15000);
 }
 
 if (isLoggedIn) {

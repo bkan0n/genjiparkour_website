@@ -4,8 +4,11 @@ if (!defined('BASE_PATH')) {
 }
 
 if (!defined('SESSION_TIMEOUT')) {
-    define('SESSION_TIMEOUT', 3600);
+    define('SESSION_TIMEOUT', 600);
 }
+
+ini_set('session.gc_maxlifetime', SESSION_TIMEOUT);
+ini_set('session.cookie_lifetime', 0);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -21,13 +24,15 @@ if (!defined('REDIRECT_URL')) {
     }
 }
 
+session_regenerate_id(true);
 
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > SESSION_TIMEOUT)) {
     $_SESSION['session_expired'] = true;
     session_write_close();
-    error_log("Session expired set to true");
+    //error_log("Session expired set to true");
 } else {
     $_SESSION['LAST_ACTIVITY'] = time();
     $_SESSION['session_expired'] = false;
-    error_log("Session expired set to false");
+    session_write_close();
+    //error_log("Session expired set to false");
 }
