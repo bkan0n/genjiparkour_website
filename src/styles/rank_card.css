@@ -27,6 +27,7 @@
     justify-content: flex-start;
     position: relative;
     border: 1px solid #838383;
+    overflow: hidden;
 }
 
 /* Header */
@@ -136,13 +137,15 @@
     width: 95%;
     max-width: 1200px;
     height: auto;
-    max-height: 90%;
-    margin: 25px auto;
+    max-height: calc(100% - 60px);
+    margin: 25px auto 0;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5px;
     border-radius: 20px;
+    position: relative;
+    overflow: auto;
 }
 
 .rank-card-image-wrapper {
@@ -177,7 +180,6 @@
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     border: 1px solid #cacaca;
-    position: relative;
 }
 
 ::-webkit-scrollbar {
