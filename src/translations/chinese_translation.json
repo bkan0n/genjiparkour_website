@@ -1,5 +1,5 @@
 {
-    "cn": {
+    "en": {
         "navbar": {
             "home": "Home",
             "leaderboard": "Leaderboard",
@@ -9,17 +9,20 @@
             "completions": "Completions",
             "community": "Community",
             "news": "News",
-            "tutorial": "Tutorial",
+            "newsfeed": "Newsfeed",
+            "announcements": "Announcements",
+            "tutorial": "Tutorials",
             "statistics": "Statistics",
             "login": "Login",
             "logout": "Logout",
             "lootbox": "Lootbox",
-            "profile": "Profile"
+            "profile": "Profile",
+            "language": "Language",
+            "rank_card": "Rank Card"
         },
         "hero": {
             "packOpening": "Pack opening",
             "clickHere": "Click here",
-            "newsfeed": "Newsfeed",
             "comingSoon": "Coming soon"
         },
         "achievements": {
@@ -89,6 +92,7 @@
             "mapType": "Type",
             "mapCreator": "Creator",
             "mapDifficulty": "Difficulty",
+            "mapCheckpoints": "Checkpoints",
             "mapQuality": "Quality",
             "mapGold": "Gold",
             "mapSilver": "Silver",
@@ -105,7 +109,10 @@
             "mapMade":"Maps Made",
             "mapPlaytestsVotes":"Playtest Votes",
             "mapTierRank": "Tier",
-            "mapRankDistribution": "Ranks distribution"
+            "mapRankDistribution": "Ranks distribution",
+            "mapMechanics": "Mechanics",
+            "mapRestrictions": "Restrictions",
+            "mapDescription": "Description"
         },
         "tutorial": {
             "genjiParkourTechsTitle": "Genji Parkour Techs",
@@ -119,14 +126,14 @@
             "speedrunnerDescription": "Check out the most famous speedrunner in the West, aka Jack"
         },
         "chart": {
-            "mapDifficultyDistribution": "Map Difficulty Distribution",
-            "amountOfMaps": "Amount of Maps",
+            "mapDifficultyDistribution": "Map difficulty Distribution",
+            "amountOfMaps": "Amount of maps",
             "difficultyLevel": "Difficulty level",
-            "popularCreators": "Map Creators by Average Quality",
-            "mapAmountLogScale": "Amount of Maps (Log Scale)",
-            "averageQuality": "Average Quality",
-            "topMapsFor": "Top Maps for",
-            "mapCodes": "Map Codes",
+            "popularCreators": "Map creators by Average quality",
+            "mapAmountLogScale": "Amount of maps (Log Scale)",
+            "averageQuality": "Average quality",
+            "topMapsFor": "Most popular maps for difficulty {difficulty}",
+            "mapCodes": "Map codes",
             "completions": "Completions",
             "rank": "Rank",
             "playersIn": "Players in {tier}",
@@ -143,7 +150,138 @@
             "very hard": "Very Hard",
             "extreme": "Extreme",
             "hell": "Hell",
-            "mapsTooltip": "{count} maps"
-        }
+            "mapsTooltip": "{count} maps",
+            "record_progression_time": "Record progression over time",
+            "user_record_progression": "Your progression",
+            "average_time": "Average time",
+            "min_time": "Minimum time",
+            "max_time": "Maximum time"
+        },
+        "lootbox": {
+            "give_key": "Give key",
+            "open_pack": "Open pack",
+            "pick_a_card": "Pick one card",
+            "common": "Common",
+            "rare": "Rare",
+            "epic": "Epic",
+            "legendary": "Legendary"
+        },
+        "game": {
+            "dialogues": {
+                "genji_dead": "You're too weak!",
+                "mercy_warning": "Oh no, this is the end...",
+                "mercy_alert": "Hurry up, he's here!",
+                "jack_intro": "Did you really think you could steal my girlfriend?",
+                "genji_success": "You did it, Genji!",
+                "now_die": "Now die!"
+            },
+            "characters": {
+                "genji": "You",
+                "jack": "JackHerer",
+                "mercy": "Mercy"
+            },
+            "gameplay": {
+                "game_over": "GAME OVER",
+                "restart_prompt": "Press Restart to play again",
+                "press_start": "Press \"Restart\" to begin!"
+            },
+            "title": "Genji Parkour Mini Game",
+            "restart_button": "Restart",
+            "score": "Score: ",
+            "highest_score": "Highest score: ",
+            "press_space_to_jump": "Press Space to jump!"
+        },
+        "newsfeed": {
+            "new_wr": "{nickname} has set a new World Record!",
+            "new_wr_info": "{map_name} by {creators} ({map_code})",
+            "promoted": "{nickname} got promoted!",
+            "new_map": "{nickname} has submitted a new {difficulty} map on {map_name}!",
+            "has_posted_guide": "{nickname} has posted a guide for {map_code}",
+            "watch_guide": "Watch guide",
+            "changed_code": "{map_code} has been changed:",
+            "details_command": "Use the command",
+            "click_here": "Click here",
+            "link": "Link",
+            "copy_clipboard": "Command has been copied to clipboard",
+            "copy_clipboard_error": "Failed to copy command to clipboard",
+            "announcement": "New announcement",
+            "search_by_filter": "Search by",
+            "map_edit_filter": "Map edit",
+            "guide_filter": "Guide",
+            "new_map_filter": "New map",
+            "role_filter": "Role",
+            "record_filter": "Record",
+            "announcement_filter": "Announcement",
+            "reset_filter": "Reset filter",
+            "translate_button": "Translate",
+            "archived_map": "{map_code} has been archived",
+            "archived_description": "This map will not appear in the map search unless searched by map code. You cannot submit records for archived maps",
+            "creator": "Creator",
+            "map_code": "Map code",
+            "difficulty": "Difficulty"
+        },
+        "common": {
+            "na": "N/A",
+            "no_description": "No description available",
+            "error": "Error",
+            "loading": "Loading...",
+            "to_see_details": "to see the details!",
+            "timestamp_format": "{month} {day}, {year} at {hour}:{minute} {AMorPM}"
+        },
+        "pagination": {
+            "first": "« First",
+            "prev": "‹ Prev",
+            "next": "Next ›",
+            "last": "Last »",
+            "page_of": "Page {current} of {total}"
+        },
+        "popup": {
+            "login_required_btn": "Login required",
+            "login_required_msg": "Login is required on this page",
+            "login_required_pr": "Login is required to view personal records",
+            "login_required_filter": "Login is required to use this filter",
+            "login_required_progression": "Please login to see your progression",
+            "map_code_required": "Enter a map code",
+            "no_results": "No results found",
+            "filter_applied": "Filter applied for {filterId}: {value}",
+            "filters_cleared": "All filters have been cleared"
+        },
+        "filters_toolbar": {
+            "creator": "Creator",
+            "enter_creator": "Enter creator",
+            "map_name": "Map name",
+            "enter_map_name": "Enter map name",
+            "user": "User name",
+            "enter_nickname": "Enter user name",
+            "map_code": "Map code",
+            "enter_map_code": "Enter map code",
+            "difficulty": "Difficulty",
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "very hard": "Very Hard",
+            "extreme": "Extreme",
+            "hell": "Hell",
+            "map_type": "Map type",
+            "classic": "Classic",
+            "increasing_difficulty": "Increasing difficulty",
+            "tournament": "Tournament",
+            "mechanics": "Mechanics",
+            "restrictions": "Restrictions",
+            "only_playtest": "Only playtest",
+            "only_true": "True",
+            "only_false": "False",
+            "ignore_completions": "Ignore completions",
+            "only_maps_with_medals": "Only medals",
+            "apply_filters": "Apply filters",
+            "clear_filters": "Clear filters"
+       },
+       "rank_card": {
+            "tab_rankcard": "Rank Card",
+            "tab_badges": "Badges",
+            "search_placeholder": "Enter user name",
+            "search_button": "Search",
+            "completions": "Completions: {amount}"
+       }
     }
 }

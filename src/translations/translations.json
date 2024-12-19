@@ -17,7 +17,8 @@
             "logout": "Logout",
             "lootbox": "Lootbox",
             "profile": "Profile",
-            "language": "Language"
+            "language": "Language",
+            "rank_card": "Rank Card"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -149,7 +150,12 @@
             "very hard": "Very Hard",
             "extreme": "Extreme",
             "hell": "Hell",
-            "mapsTooltip": "{count} maps"
+            "mapsTooltip": "{count} maps",
+            "record_progression_time": "Record progression over time",
+            "user_record_progression": "Your progression",
+            "average_time": "Average time",
+            "min_time": "Minimum time",
+            "max_time": "Maximum time"
         },
         "lootbox": {
             "give_key": "Give key",
@@ -207,7 +213,12 @@
             "record_filter": "Record",
             "announcement_filter": "Announcement",
             "reset_filter": "Reset filter",
-            "translate_button": "Translate"
+            "translate_button": "Translate",
+            "archived_map": "{map_code} has been archived",
+            "archived_description": "This map will not appear in the map search unless searched by map code. You cannot submit records for archived maps",
+            "creator": "Creator",
+            "map_code": "Map code",
+            "difficulty": "Difficulty"
         },
         "common": {
             "na": "N/A",
@@ -240,7 +251,7 @@
             "enter_creator": "Enter creator",
             "map_name": "Map name",
             "enter_map_name": "Enter map name",
-            "nickname": "User name",
+            "user": "User name",
             "enter_nickname": "Enter user name",
             "map_code": "Map code",
             "enter_map_code": "Enter map code",
@@ -261,9 +272,16 @@
             "only_true": "True",
             "only_false": "False",
             "ignore_completions": "Ignore completions",
-            "only_medals": "Only medals",
+            "only_maps_with_medals": "Only medals",
             "apply_filters": "Apply filters",
             "clear_filters": "Clear filters"
+       },
+       "rank_card": {
+            "tab_rankcard": "Rank Card",
+            "tab_badges": "Badges",
+            "search_placeholder": "Enter user name",
+            "search_button": "Search",
+            "completions": "Completions: {amount}"
        }
     },
     "fr": {
@@ -284,7 +302,8 @@
             "logout": "Déconnexion",
             "lootbox": "Coffres",
             "profile": "Profil",
-            "language": "Langue"
+            "language": "Langue",
+            "rank_card": "Carte de rang"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -416,7 +435,12 @@
             "very hard": "Très difficile",
             "extreme": "Extrême",
             "hell": "Enfer",
-            "mapsTooltip": "{count} cartes"
+            "mapsTooltip": "{count} cartes",
+            "record_progression_time": "Progression de records au fur et à mesure du temps",
+            "user_record_progression": "Votre progression",
+            "average_time": "Temps moyen",
+            "min_time": "Temps minimum",
+            "max_time": "Temps maximum"
         },
         "lootbox": {
             "give_key": "Donner une clé",
@@ -474,7 +498,12 @@
             "record_filter": "Record",
             "announcement_filter": "Annonce",
             "reset_filter": "Réinitialiser le filtre",
-            "translate_button": "Traduire"
+            "translate_button": "Traduire",
+            "archived_map": "{map_code} a été archivé",
+            "archived_description": "Cette carte n'apparaîtra pas dans la recherche de cartes si elle n'est pas recherchée par son code. Vous ne pouvez pas soumettre d'enregistrements pour des cartes archivées",
+            "creator": "Créateur",
+            "map_code": "Code de carte",
+            "difficulty": "Difficulté"
         },
         "common": {
             "na": "N/D",
@@ -507,7 +536,7 @@
             "enter_creator": "Nom du créateur",
             "map_name": "Nom de la carte",
             "enter_map_name": "Nom de la carte",
-            "nickname": "Nom du joueur",
+            "user": "Nom du joueur",
             "enter_nickname": "Nom du joueur",
             "map_code": "Code de carte",
             "enter_map_code": "Code de la carte",
@@ -528,10 +557,17 @@
             "only_true": "Oui",
             "only_false": "Non",
             "ignore_completions": "Ignorer les complétions",
-            "only_medals": "Seulement les médailles",
+            "only_maps_with_medals": "Seulement les médailles",
             "apply_filters": "Appliquer les filtres",
             "clear_filters": "Réinitialiser les filtres"
-       }
+       },
+       "rank_card": {
+        "tab_rankcard": "Rank Card",
+        "tab_badges": "Badges",
+        "search_placeholder": "Nom du joueur",
+        "search_button": "Rechercher",
+        "completions": "Complétions: {amount}"
+        }
     },
     "ru": {
         "navbar": {
@@ -550,7 +586,8 @@
             "login": "Вход в систему",
             "logout": "Выход из системы",
             "lootbox": "Лутбокс",
-            "profile": "Профиль"
+            "profile": "Профиль",
+            "rank_card": "Rank Card"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -682,7 +719,12 @@
             "very hard": "Очень сложная",
             "extreme": "Экстрим",
             "hell": "Ад",
-            "mapsTooltip": "{count} карт"
+            "mapsTooltip": "{count} карт",
+            "record_progression_time": "Record progression over time",
+            "user_record_progression": "Your progression",
+            "average_time": "Average time",
+            "min_time": "Minimum time",
+            "max_time": "Maximum time"
         },
         "lootbox": {
             "give_key": "Дать ключ",
@@ -740,7 +782,12 @@
             "record_filter": "Запись",
             "announcement_filter": "Оповещение",
             "reset_filter": "Сбросить фильтр",
-            "translate_button": "Перевести"
+            "translate_button": "Перевести",
+            "archived_map": "{map_code} has been archived",
+            "archived_description": "This map will not appear in the map search unless searched by map code. You cannot submit records for archived maps",
+            "creator": "Создатель",
+            "map_code": "Код карты",
+            "difficulty": "Сложность"
         },
         "common": {
             "na": "Пусто",
@@ -773,7 +820,7 @@
             "enter_creator": "Введите создателя",
             "map_name": "Имя карты",
             "enter_map_name": "Введите имя карты",
-            "nickname": "Имя пользователя",
+            "user": "Имя пользователя",
             "enter_nickname": "Введите имя пользователя",
             "map_code": "Код карты",
             "enter_map_code": "Введите код карты",
@@ -794,10 +841,17 @@
             "only_true": "Да",
             "only_false": "Нет",
             "ignore_completions": "Игнорировать прохождения",
-            "only_medals": "Только медали",
+            "only_maps_with_medals": "Только медали",
             "apply_filters": "Применить фильтры",
             "clear_filters": "Очистить фильтры"
-        }
+        },
+        "rank_card": {
+            "tab_rankcard": "Rank Card",
+            "tab_badges": "Badges",
+            "search_placerholder": "Enter user name",
+            "search_button": "Search",
+            "completions": "Completions: {amount}"
+       }
     },
     "languages": {
         "en": {
