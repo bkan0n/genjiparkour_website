@@ -18,7 +18,7 @@ curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HTTPGET, true);
 curl_setopt($curl, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
-    "Authorization: Bearer $apiKey"
+    'X-API-KEY: ' . $apiKey
 ]);
 
 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);

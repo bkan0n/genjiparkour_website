@@ -47,5 +47,11 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     exit;
 }
 
+foreach ($data as &$user) {
+    if (isset($user['user_id'])) {
+        $user['user_id'] = (string) $user['user_id'];
+    }
+}
+
 echo json_encode($data);
 ?>

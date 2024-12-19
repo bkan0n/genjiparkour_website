@@ -25,7 +25,7 @@ $data = json_encode([
 $options = [
     'http' => [
         'header' => [
-            "Authorization: Bearer {$apiKey}",
+            'X-API-KEY: ' . $apiKey,
             'Content-Type: application/json',
             'Content-Length: ' . strlen($data)
         ],

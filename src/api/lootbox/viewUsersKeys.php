@@ -10,8 +10,8 @@ if (isset($_GET['user_id'])) {
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Authorization: Bearer $apiKey",
-        "Content-Type: application/json"
+        'Content-Type: application/json',
+        'X-API-KEY: ' . $apiKey
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
