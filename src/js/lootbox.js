@@ -320,7 +320,7 @@ function displayRewards(rewards) {
         cardFront.append(frontText);
 
         const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
-        const rewardImage = $('<img/>').addClass('reward-image').attr('src', `images/${reward.name}.jpg`);
+        const rewardImage = $('<img/>').addClass('reward-image').attr('src', `assets/rewards/${reward.name}.jpg`);
 
         const rewardName = $('<div/>').addClass('reward-name').text(`Name: ${reward.name}`);
         const rewardType = $('<div/>').addClass('reward-type').text(`Type: ${reward.type}`);
