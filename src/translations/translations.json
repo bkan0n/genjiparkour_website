@@ -587,7 +587,7 @@
             "logout": "Выход из системы",
             "lootbox": "Лутбокс",
             "profile": "Профиль",
-            "rank_card": "Rank Card"
+            "rank_card": "Личная карта"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -668,20 +668,20 @@
             "mapBronze": "Бронза",
             "mapDetails": "Детали",
             "mapNickname": "Никнейм",
-            "mapDiscordTag":"Тэг в дискорде",
-            "mapTime":"Время",
-            "mapMedal":"Медаль",
-            "mapVideo":"Видео",
-            "mapXP":"Опыт",
-            "mapSkillRank":"Ранг навыков",
-            "mapWR":"Мировой рекорд",
-            "mapMade":"Сделанные карты",
-            "mapPlaytestsVotes":"Голоса в плейтесте",
+            "mapDiscordTag": "Тэг в дискорде",
+            "mapTime": "Время",
+            "mapMedal": "Медаль",
+            "mapVideo": "Видео",
+            "mapXP": "Опыт",
+            "mapSkillRank": "Ранг навыков",
+            "mapWR": "Мировой рекорд",
+            "mapMade": "Сделанные карты",
+            "mapPlaytestsVotes": "Голоса в плейтесте",
             "mapTierRank": "Уровень",
             "mapRankDistribution": "Распределение рангов",
             "mapMechanics": "Механики",
             "mapRestrictions": "Ограничения",
-            "mapDescription": "описания"
+            "mapDescription": "Описание"
         },
         "tutorial": {
             "genjiParkourTechsTitle": "Техники в Гендзи Паркуре",
@@ -720,11 +720,11 @@
             "extreme": "Экстрим",
             "hell": "Ад",
             "mapsTooltip": "{count} карт",
-            "record_progression_time": "Record progression over time",
-            "user_record_progression": "Your progression",
-            "average_time": "Average time",
-            "min_time": "Minimum time",
-            "max_time": "Maximum time"
+            "record_progression_time": "Запись прогресса с течением времени",
+            "user_record_progression": "Твой прогресс",
+            "average_time": "Среднее время",
+            "min_time": "Минимальное время",
+            "max_time": "Максимальное время"
         },
         "lootbox": {
             "give_key": "Дать ключ",
@@ -783,8 +783,8 @@
             "announcement_filter": "Оповещение",
             "reset_filter": "Сбросить фильтр",
             "translate_button": "Перевести",
-            "archived_map": "{map_code} has been archived",
-            "archived_description": "This map will not appear in the map search unless searched by map code. You cannot submit records for archived maps",
+            "archived_map": "{map_code} была архивирована",
+            "archived_description": "Эта карта не появится в поиске по карте, но ее можно будет найти по коду карты. Вы не можете подтверждать прохохдения для архивированных карт",
             "creator": "Создатель",
             "map_code": "Код карты",
             "difficulty": "Сложность"
@@ -846,11 +846,11 @@
             "clear_filters": "Очистить фильтры"
         },
         "rank_card": {
-            "tab_rankcard": "Rank Card",
-            "tab_badges": "Badges",
-            "search_placerholder": "Enter user name",
-            "search_button": "Search",
-            "completions": "Completions: {amount}"
+            "tab_rankcard": "Личная карта",
+            "tab_badges": "Значки",
+            "search_placerholder": "Введите имя пользователя",
+            "search_button": "Искать",
+            "completions": "Прохождения: {amount}"
        }
     },
     "languages": {
