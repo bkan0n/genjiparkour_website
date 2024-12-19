@@ -47,6 +47,8 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    opacity: 0;
+    transform: translateY(20px);
 }
 
 .news-header {
@@ -196,24 +198,15 @@ body {
     color: hsl(175, 100%, 51%);
 }
 
-.announcement-content strong {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-bottom: 5px;
+.discord-emoji {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin: 0 2px;
+    image-rendering: auto;
 }
 
-.announcement-content strong:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #dcddde;
-    cursor: pointer;
-}
-
-#translateButton {
+.translate-button {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -227,10 +220,84 @@ body {
     transition: background-color 0.3s ease;
 }
 
-#translateButton:hover {
+.translate-button:hover {
     background-color: #2d3133;
 }
 
+.translated-text {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.code-highlight {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.95em;
+}
+
+.strong {
+    font-weight: bold;
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.grey-highlight {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.grey-highlight:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #dcddde;
+    cursor: pointer;
+}
+
+/* Archive */
+.archive-description {
+    max-width: 32rem;
+    margin-bottom: 10px !important;
+}
+
+.news-card.archive strong {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+}
+
+.news-card.archive strong:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #dcddde;
+    cursor: pointer;
+}
+
+.archive-details p {
+    margin: 0;
+}
+
+.archive-details p strong {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.archive-details p br {
+    margin-bottom: 5px;
+    display: block;
+    content: "";
+}
 
 /* Nouvelle map */
 .map-banner {
@@ -303,6 +370,10 @@ body {
     border-left: 4px solid #eeeeee;
 }
 
+.news-card.archive {
+    border-left: 4px solid #1cd88a;
+}
+
 /* Nouveau guide */
 .news-header a {
     color: #7289da;
@@ -338,6 +409,7 @@ body {
     padding: 5px;
     margin: 0;
     text-align: right;
+    z-index: 1000;
 }
 
 /* Pagination */

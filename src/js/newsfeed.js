@@ -99,6 +99,32 @@ function updateTimestamps() {
     });
 }
 
+async function fetchEmoji(emojiName, emojiId) {
+    try {
+        const response = await fetch('api/getEmoji.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                emojiName: emojiName,
+                emojiId: emojiId
+            })
+        });
+
+        const result = await response.json();
+        if (result.emoji) {
+            return result.emoji;
+        } else {
+            console.warn("Émoji introuvable :", emojiName);
+            return `<span class="missing-emoji">:${emojiName}:</span>`;
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'émoji :", error);
+        return `<span class="missing-emoji">:${emojiName}:</span>`;
+    }
+}
+
 function openMapDetailsModal(mapCode) {
     const modalOverlay = document.getElementById("detailsModalOverlay");
     const modalContainer = document.getElementById("modalDetailsContainer");
@@ -233,7 +259,19 @@ async function loadNewsfeed() {
         totalResults = newsfeed.total_results || 0;
         totalPages = Math.ceil(totalResults / pageSize);
 
-        container.innerHTML = newsfeed.data.map(createNewsCard).join("");
+        const cards = await Promise.all(newsfeed.data.map(item => createNewsCard(item)));
+
+        container.innerHTML = cards.join("");
+
+        const newsCards = container.querySelectorAll(".news-card");
+
+        newsCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.transition = "opacity 0.5s ease-out, transform 0.5s ease-out";
+                card.style.opacity = "1";
+                card.style.transform = "translateY(0)";
+            }, index * 100);         
+        });
 
         newsfeed.data.forEach(item => {
             if (item.type === "guide" && item.data.map.guide && item.data.map.guide[0]) {
@@ -249,7 +287,7 @@ async function loadNewsfeed() {
 }
 
 
-function createNewsCard(item) {
+async function createNewsCard(item) {
     const { type, data, timestamp } = item;
 
     const userId = data?.user?.user_id || null;
@@ -273,11 +311,10 @@ function createNewsCard(item) {
     }
 
     if (type === "announcement") {
-        const formattedMessageContent = data.message.content
-            .replace(/<@&1073292414271356938>/g, "<strong>@General Announcements</strong>")
-            .replace(/\n/g, "<br>");
-    
-        content = `
+        let messageContent = data.message.content;
+        const formattedMessageContent = await formatMessageContent(messageContent);
+
+        const content = `
         <div class="news-card ${type}">
             <div class="loading-bar" id="loadingIndicator" style="display: none;"></div>
             <div class="userprofile-header">
@@ -290,8 +327,8 @@ function createNewsCard(item) {
                 <h3>${t('newsfeed.announcement')}</h3>
                 <p class="announcement-content">${formattedMessageContent}</p>
             </div>
-            <p id="translatedText"></p>
-            <button id="translateButton">${t('newsfeed.translate_button')}</button>
+            <p class="translated-text"></p>
+            <button class="translate-button">${t('newsfeed.translate_button')}</button>
             <div class="timestamp" data-timestamp="${timestamp}"></div>
         </div>`;
         return content;
@@ -357,6 +394,22 @@ function createNewsCard(item) {
         </div>`;
     }
 
+    if (type === "archive") {
+        content += `
+        <div class="news-header">
+            <h3>${t('newsfeed.archived_map', { map_code: data.map.map_code})}</h3>
+
+                <p class="archive-description">${t('newsfeed.archived_description')}</p>
+                <div class="archive-details">
+                    <p>
+                        <strong>${t('newsfeed.map_code')}:</strong> ${data.map.map_code}<br>
+                        <strong>${t('newsfeed.creator')}:</strong> ${data.map.creators.join(", ")}<br>
+                        <strong>${t('newsfeed.difficulty')}:</strong> ${data.map.difficulty}
+                    </p>
+                </div>
+        </div>`;
+    }
+
     if (type === "role") {
         content += `
         <div class="news-header">
@@ -400,14 +453,50 @@ function createNewsCard(item) {
     return content;
 }
 
-document.addEventListener('click', async (event) => {
-    if (event.target.id === 'translateButton') {
-        const originalTextElement = document.querySelector('.announcement-content');
-        if (!originalTextElement) return;
+//Replace
+async function formatMessageContent(messageContent) {
+    const emojiRegex = /<:(\w+):(\d+)>/g;
+    const emojiPromises = [];
 
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        const originalText = originalTextElement.textContent;
+    let match;
+    while ((match = emojiRegex.exec(messageContent)) !== null) {
+        const [fullMatch, emojiName, emojiId] = match;
+        emojiPromises.push(
+            fetchEmoji(emojiName, emojiId).then(emojiHTML => {
+                messageContent = messageContent.replace(fullMatch, emojiHTML);
+            })
+        );
+    }
+
+    await Promise.all(emojiPromises);
+
+    return messageContent
+        .replace(/<@&1073292414271356938>/g, '<span class="grey-highlight">@General Announcements</span>')
+        .replace(/<#1316560101360013443>/g, '<span class="grey-highlight">#change-requests</span>')
+        .replace(/`([^`]+)`/g, '<span class="code-highlight">$1</span>')
+        .replace(/\*\*\*([^*]+)\*\*\*/g, '<span class="strong">$1</span>')
+        .replace(/\n/g, "<br>");
+}
+
+//Trad
+document.addEventListener('click', async (event) => {
+    if (event.target.classList.contains('translate-button')) {
+        const newsCard = event.target.closest('.news-card');
+        const originalTextElement = newsCard.querySelector('.announcement-content');
+        const translatedTextElement = newsCard.querySelector('.translated-text');
+        const loadingIndicator = newsCard.querySelector('.loading-bar');
+
+        if (!originalTextElement || !translatedTextElement || !loadingIndicator) return;
+
+        const originalText = originalTextElement.innerHTML.replace(/<br>/g, "\n");
         const targetLang = document.documentElement.lang || 'en';
+
+        const emojiRegex = /https:\/\/cdn\.discordapp\.com\/emojis\/(\d+)\.png/g;
+        const emojiMap = new Map();
+        let match;
+        while ((match = emojiRegex.exec(originalText)) !== null) {
+            emojiMap.set(match[1], match[0]);
+        }
 
         loadingIndicator.style.display = 'flex';
         event.target.disabled = true;
@@ -422,10 +511,14 @@ document.addEventListener('click', async (event) => {
             });
 
             const data = await response.json();
-            document.getElementById('translatedText').innerHTML = data.translatedText || 'Translation failed.';
+            const correctedEmojisText = data.translatedText.replace(/https:\/\/cdn\.discordapp\.com\/emojis\/(\d+)\.png/g, (match, emojiId) => {
+                return emojiMap.has(emojiId) ? emojiMap.get(emojiId) : match;
+            }).replace(/\n/g, "<br>");
+
+            translatedTextElement.innerHTML = correctedEmojisText || 'Translation failed.';
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('translatedText').innerHTML = 'Error occurred during translation.';
+            translatedTextElement.innerHTML = 'Error occurred during translation.';
         } finally {
             loadingIndicator.style.display = 'none';
             event.target.disabled = false;
@@ -493,6 +586,7 @@ function createEmbeddedVideo(containerId, videoUrl) {
     }
 }
 
+//Pag
 function renderPaginationButtons() {
     const paginationContainer = document.getElementById("paginationContainer");
     if(!paginationContainer) return;
