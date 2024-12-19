@@ -111,9 +111,9 @@ async function loadTranslations() {
         
         const currentLangData = data[currentLang] || {};
         
-        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {}, chart = {} } = currentLangData;
+        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {}, chart = {}, mechanics = {}, restrictions = {} } = currentLangData;
         
-        translations = { thead, pagination, popup, filters_toolbar, chart };
+        translations = { thead, pagination, popup, filters_toolbar, chart, mechanics, restrictions };
 
         //console.log("Traductions chargées :", translations);
     } catch (error) {
@@ -144,16 +144,31 @@ function t(path, params = {}) {
 //Mechanics et restrictions autocomplete
 async function loadDynamicOptions() {
     try {
+        // Vérifiez la langue
+        const currentLang = document.documentElement.lang || "en";
+
+        // Récupérez les options des mécaniques
         const mechanicsResponse = await fetch('./api/autocomplete/getMapMechanicsAutoComplete.php');
         if (!mechanicsResponse.ok) throw new Error('Failed to fetch mechanics');
-        window.mechanicsOptions = (await mechanicsResponse.json()).map(item => item.name);
+        let mechanicsOptions = (await mechanicsResponse.json()).map(item => item.name);
 
+        // Récupérez les options des restrictions
         const restrictionsResponse = await fetch('./api/autocomplete/getMapRestrictionsAutoComplete.php');
         if (!restrictionsResponse.ok) throw new Error('Failed to fetch restrictions');
-        window.restrictionsOptions = (await restrictionsResponse.json()).map(item => item.name);
+        let restrictionsOptions = (await restrictionsResponse.json()).map(item => item.name);
 
-        //console.log('Mechanics Options:', mechanicsResponse);
-        //console.log('Restrictions Options:', restrictionsResponse);
+        // Traduisez les options si la langue est "cn"
+        if (currentLang === "cn") {
+            mechanicsOptions = mechanicsOptions.map(option => t(`mechanics.${option.toLowerCase().replace(/ /g, '_')}`) || option);
+            restrictionsOptions = restrictionsOptions.map(option => t(`restrictions.${option.toLowerCase().replace(/ /g, '_')}`) || option);            
+        }
+
+        // Stockez les options globalement
+        window.mechanicsOptions = mechanicsOptions;
+        window.restrictionsOptions = restrictionsOptions;
+
+        //console.log('Mechanics Options:', mechanicsOptions);
+        //console.log('Restrictions Options:', restrictionsOptions);
     } catch (error) {
         console.error('Error loading dynamic options:', error);
     }
@@ -446,7 +461,14 @@ function initializeToolbarButtons() {
                 case "difficulty":
                     optionsContainer = showOptionsContainer(
                         "difficultyOptions",
-                        ["Beginner", "Easy", "Medium", "Hard", "Very Hard", "Extreme", "Hell"],
+                        [
+                            t("filters_toolbar.beginner"),
+                            t("filters_toolbar.easy"),
+                            t("filters_toolbar.medium"),
+                            t("filters_toolbar.hard"),
+                            t("filters_toolbar.very_hard"),
+                            t("filters_toolbar.extreme"),
+                            t("filters_toolbar.hell")],
                         buttonRect
                     );
                     break;
@@ -454,7 +476,7 @@ function initializeToolbarButtons() {
                 case "map_type":
                     optionsContainer = showOptionsContainer(
                         "mapTypeOptions",
-                        ["Classic", "Increasing Difficulty", "Tournament"],
+                        [t("filters_toolbar.classic"), t("filters_toolbar.increasing_difficulty"), t("filters_toolbar.tournament")],
                         buttonRect
                     );
                     break;
@@ -480,7 +502,7 @@ function initializeToolbarButtons() {
                 case "ignore_completions":
                     optionsContainer = showOptionsContainer(
                         "ignoreCompletionsOptions",
-                        ["True", "False"],
+                        [t("filters_toolbar.only_true"), t("filters_toolbar.only_false")],
                         buttonRect
                     );
                     break;
@@ -488,7 +510,7 @@ function initializeToolbarButtons() {
                 case "only_playtest":
                     optionsContainer = showOptionsContainer(
                         "onlyPlaytestOptions",
-                        ["True", "False"],
+                        [t("filters_toolbar.only_true"), t("filters_toolbar.only_false")],
                         buttonRect
                     );
                     break;
@@ -496,7 +518,7 @@ function initializeToolbarButtons() {
                 case "only_maps_with_medals":
                     optionsContainer = showOptionsContainer(
                         "onlyMedalsOptions",
-                        ["True", "False"],
+                        [t("filters_toolbar.only_true"), t("filters_toolbar.only_false")],
                         buttonRect
                     );
                     break;
