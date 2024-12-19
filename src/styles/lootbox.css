@@ -433,3 +433,51 @@
         opacity: 0;
     }
 }
+
+
+@media (max-width: 480px) {
+    .loot-card-stack {
+        margin-left: 1rem !important;
+        margin-bottom: 1rem;;
+    }
+
+    .loot-card {
+        width: 7rem;
+        height: 12rem;
+    }
+
+    .container.main {
+        margin: 0;
+    }
+
+    .card-container { 
+        max-width: 40rem;
+        margin-bottom: -2rem;
+        width: 105%;
+    }
+
+    #crate {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        list-style: none;
+        height: 16rem;
+        width: 40rem;
+        padding: 0;
+        margin: 0;
+    }
+
+    #crate .card {
+        margin: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .front-text { 
+        top: 30px;
+        font-size: 0.5em;
+    }
+}
