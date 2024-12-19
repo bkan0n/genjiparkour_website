@@ -87,8 +87,9 @@ include BASE_PATH . "discord/header.php";
                 <div class="user-avatar-dropdown">
                     <img src="https://cdn.discordapp.com/avatars/<?php echo htmlspecialchars($_SESSION['user_id']); ?>/<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>.png" alt="User Avatar" class="user-avatar" id="avatar-icon" />
                     <ul class="dropdown-menu avatar-menu">
-                        <li><a href="lootbox.php">Lootbox</a></li>
-                        <li><a id="user-profile">Profile</a></li>
+                        <li><a href="lootbox.php"><?= htmlspecialchars($translations['navbar']['lootbox']) ?></a></li>
+                        <li><a id="user-profile"><?= htmlspecialchars($translations['navbar']['profile']) ?></a></li>
+                        <li><a id="user-rankcard"><?= htmlspecialchars($translations['navbar']['rank_card']) ?></a></li>
                     </ul>
                 </div>
             <?php else: ?>
@@ -107,11 +108,13 @@ include BASE_PATH . "discord/header.php";
             <?php include BASE_PATH . 'modal/profile.php'; ?>
         </div>
     </div>
+    <div id="rankCardModal" class="modal-overlay" style="display: none;"></div>
     <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
         <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
         </div>
     </div>
     <div class="container">
+        <h2 class="wip-title">This page is WIP, only front-end works</h2>
         <div class="tab-buttons">
             <button class="tab-button edit-user" id="edit-user-btn">Edit User</button>
             <button class="tab-button edit-map" id="edit-map-btn">Edit Map</button>

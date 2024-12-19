@@ -87,6 +87,7 @@ include BASE_PATH . "discord/header.php";
                     <ul class="dropdown-menu avatar-menu">
                         <li><a href="lootbox.php"><?= htmlspecialchars($translations['navbar']['lootbox']) ?></a></li>
                         <li><a id="user-profile"><?= htmlspecialchars($translations['navbar']['profile']) ?></a></li>
+                        <li><a id="user-rankcard"><?= htmlspecialchars($translations['navbar']['rank_card']) ?></a></li>
                     </ul>
                 </div>
             <?php else: ?>
@@ -109,6 +110,7 @@ include BASE_PATH . "discord/header.php";
         <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
         </div>
     </div>
+    <div id="rankCardModal" class="modal-overlay" style="display: none;"></div>
     <div id="detailsModalOverlay" class="modal-overlay-custom" style="display:none;">
         <div id="detailsModalBox" class="modal-box-custom">
             <span id="detailsModalClose" class="modal-close-button" onclick="closeDetailsModal()">&times;</span>
