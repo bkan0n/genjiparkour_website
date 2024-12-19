@@ -160,9 +160,6 @@ include BASE_PATH . "discord/header.php";
                         </select>
                     </div>
                 </div>
-                <div class="XP-container">
-                    <canvas id="xpRankChart"></canvas>
-                </div>
             </div>
         </div>
     </main>
