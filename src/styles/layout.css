@@ -687,6 +687,8 @@ footer {
 }
 
 .lang-dropdown-nav .dropdown-toggle-nav {
+  display: inline-flex;
+  align-items: center;
   background: none;
   border: none;
   color: #fff;
@@ -695,9 +697,8 @@ footer {
   padding: 8px 0px;
   margin-right: 5px;
   transition: background-color 0.3s ease, border-radius 0.3s ease;
-  display: flex;
-  align-items: center;
   gap: 5px;
+  line-height: 1;
 }
 
 .lang-dropdown-nav .arrow {
@@ -767,11 +768,29 @@ footer {
   gap: 10px;
 }
 
-i.flag::before {
+.lang-name {
+  font-size: 1rem;
+  line-height: 1;
   display: inline-block;
+  vertical-align: middle;
+}
+
+@supports (-moz-appearance: none) {
+  i.flag::before {
+    margin-top: 4px;
+  }
+}
+
+i.flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+i.flag::before {
+  display: block;
   width: 16px;
   height: 12px;
-  vertical-align: middle;
   content: "";
   background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
 }
