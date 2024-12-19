@@ -13,7 +13,7 @@ const skillRankOrder = [
 let activeFilters = {
     sort_column: 'xp_amount',
     sort_direction: 'desc',
-    rank: '',
+    skill_rank: '',
     search: ''
 };
 
@@ -214,9 +214,7 @@ async function updateLeaderboard(params = {}) {
         page_number: currentPage
     };
 
-    const combinedParams = { ...defaults, ...params };
-
-    //console.log("Params combinés :", combinedParams);
+    const combinedParams = { ...defaults, ...activeFilters, ...params };
 
     const data = await fetchLeaderboard(combinedParams);
 
@@ -227,15 +225,12 @@ async function updateLeaderboard(params = {}) {
     }
 
     if (combinedParams.sort_column === 'skill_rank') {
-        console.log("Tri Skill Rank déclenché !");
         renderLeaderboard(sortBySkillRank(data, combinedParams.sort_direction));
     } else {
-        //console.log("Render normal");
         renderLeaderboard(data);
     }
 
     renderPagination(data[0]?.total_results || 0, combinedParams.page_number, combinedParams.page_size);
-
     reapplySortEvents();
     reapplyColumnVisibility();
 }
@@ -316,7 +311,8 @@ async function renderPagination(totalResults, currentPage, resultsPerPage) {
 
 async function changePage(pageNumber) {
     currentPage = pageNumber;
-    await updateLeaderboard({ page_number: currentPage });
+    const params = { ...activeFilters, page_number: currentPage };
+    await updateLeaderboard(params);
 }
 
 function applyColumnVisibility(column, isVisible) {
@@ -417,12 +413,14 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function applyFilters() {
-    const sortValue = document.getElementById('selected-sort').value;
-    const rankValue = document.getElementById('selected-rank').value;
+    const sortValue = document.getElementById('selected-sort').value || 'xp_amount';
+    const rankValue = document.getElementById('selected-rank').value || '';
+
+    activeFilters.sort_column = sortValue;
+    activeFilters.skill_rank = rankValue;
 
     const params = {
-        sort_column: sortValue,
-        skill_rank: rankValue,
+        ...activeFilters,
         page_number: 1
     };
 
@@ -439,21 +437,23 @@ document.addEventListener("DOMContentLoaded", function () {
         option.addEventListener('click', function () {
             const sortValue = this.getAttribute('data-value');
             sortTrigger.textContent = this.textContent;
-            activeFilters.sort = sortValue;
-            document.getElementById('selected-sort').value = this.getAttribute('data-value');
-            applyFilters(activeFilters);
+            activeFilters.sort_column = sortValue;
+            document.getElementById('selected-sort').value = sortValue;
+    
+            applyFilters();
         });
     });
-
+    
     rankOptions.forEach(option => {
         option.addEventListener('click', function () {
             const rankValue = this.getAttribute('data-value');
             rankTrigger.textContent = this.textContent;
-            activeFilters.rank = rankValue;
-            document.getElementById('selected-rank').value = this.getAttribute('data-value');
-            applyFilters(activeFilters);
+            activeFilters.skill_rank = rankValue;
+            document.getElementById('selected-rank').value = rankValue;
+    
+            applyFilters();
         });
-    });
+    });    
 
     updateLeaderboard(activeFilters);
 });
@@ -568,9 +568,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (sortTrigger) sortTrigger.textContent = 'Sort by';
             if (rankTrigger) rankTrigger.textContent = 'All Ranks';
 
-            updateLeaderboard({
+            activeFilters = {
                 sort_column: 'xp_amount',
                 sort_direction: 'desc',
+                skill_rank: '',
+                search: ''
+            };
+
+            updateLeaderboard({
+                ...activeFilters,
                 page_number: 1
             });
         });
