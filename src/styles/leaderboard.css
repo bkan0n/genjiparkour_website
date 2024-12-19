@@ -643,9 +643,6 @@ th {
 }
 
 .filter-icon {
-  width: 20px;
-  height: 17px;
-  margin-right: 20px;
   background-color: transparent;
   display: flex;
   cursor: pointer;
@@ -885,6 +882,8 @@ th, td {
   .custom-select-large, .custom-select {
       padding: 8px;
       font-size: 0.8rem;
+      max-width: 12rem;
+      width: 100% !important;
   }
 
   .no-results-message {
@@ -893,6 +892,16 @@ th, td {
 
   .sort-btn {
       font-size: 16px;
+  }
+
+  button.reset-filters-btn {
+    max-width: 12rem;
+    width: 100%;
+  }
+
+  .filter-icon {
+    height: 10px;
+
   }
 }
 

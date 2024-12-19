@@ -11,9 +11,9 @@ let packOpened = false;
 let translations = {};
 const sounds = {
     common: new Audio('assets/sounds/common-sound.ogg'),
-    rare: new Audio('assets/sounds/common-sound.ogg'),
-    epic: new Audio('assets/sounds/epic-sound.mp3'),
-    legendary: new Audio('assets/sounds/legendary-sound.mp3')
+    rare: new Audio('assets/sounds/rare-sound.ogg'),
+    epic: new Audio('assets/sounds/epic-sound.ogg'),
+    legendary: new Audio('assets/sounds/legendary-sound.ogg')
 };
 
 var value;
@@ -44,11 +44,11 @@ async function loadTranslations() {
         
         const currentLangData = data[currentLang] || {};
         
-        const { lootbox = {}, error = {} } = currentLangData;
+        const { lootbox = {}, popup = {} } = currentLangData;
         
-        translations = { lootbox, error };
+        translations = { lootbox, popup };
 
-        console.log("Traductions chargées :", translations);
+        //console.log("Traductions chargées :", translations);
     } catch (error) {
         console.error("Erreur lors du chargement des traductions :", error);
     }
@@ -94,8 +94,8 @@ function getRandomRewards(userId, keyType) {
             if (Array.isArray(response.rewards)) {
                 generatedRewards = response.rewards;
                 rewardNonce = response.nonce;
-                console.log("Récompenses générées :", generatedRewards);
-                console.log("Nonce :", rewardNonce);
+                //console.log("Récompenses générées :", generatedRewards);
+                //console.log("Nonce :", rewardNonce);
 
                 proceedWithLootBoxOpening();
             } else {
@@ -112,7 +112,7 @@ function getRandomRewards(userId, keyType) {
 
 $('.generate').click(function() {
     if (!userId) {
-        showErrorMessage(t('error.login_required_msg'));
+        showErrorMessage(t('popup.login_required_msg'));
         return;
     }
 
@@ -154,7 +154,7 @@ $('.generate').click(function() {
 function proceedWithLootBoxOpening() {
     if (keys <= 0) {
         showErrorMessage("You don't have enough keys top open a lootbox");
-        console.log("Pas assez de clés, loot box non ouverte");
+        //console.log("Pas assez de clés, loot box non ouverte");
         return;
     }
 
@@ -185,21 +185,27 @@ function proceedWithLootBoxOpening() {
         const delays = packOpened ? subsequentDelays : firstTimeDelays;
 
         if (!packOpened) {
-            console.log("Première ouverture : animation de séparation et bounceOutUp");
+            //console.log("Première ouverture : animation de séparation et bounceOutUp");
 
-            $('.card1').animate({ left: '-=250px', top: '0px', opacity: 1 }, delays.separation, 'swing');
-            $('.card2').animate({ left: '0px', top: '10px', opacity: 1 }, delays.separation, 'swing');
-            $('.card3').animate({ left: '+=250px', top: '20px', opacity: 1 }, delays.separation, 'swing');
+            if ($(window).width() <= 480) {
+                $('.card1').animate({ left: '-=120px', top: '0px', opacity: 1 }, delays.separation, 'swing');
+                $('.card2').animate({ left: '0px', top: '10px', opacity: 1 }, delays.separation, 'swing');
+                $('.card3').animate({ left: '+=120px', top: '20px', opacity: 1 }, delays.separation, 'swing');
+            } else {
+                $('.card1').animate({ left: '-=250px', top: '0px', opacity: 1 }, delays.separation, 'swing');
+                $('.card2').animate({ left: '0px', top: '10px', opacity: 1 }, delays.separation, 'swing');
+                $('.card3').animate({ left: '+=250px', top: '20px', opacity: 1 }, delays.separation, 'swing');
+            }
 
             setTimeout(function () {
-                console.log("Ajout de bounceOutUp aux cartes après séparation.");
+                //console.log("Ajout de bounceOutUp aux cartes après séparation.");
                 $('.card1, .card2, .card3').each(function () {
                     $(this).removeClass('flip animated bounceInDown').addClass('animated bounceOutUp');
                 });
             }, delays.separation);
 
             setTimeout(() => {
-                console.log("Suppression et apparition des nouvelles cartes");
+                //console.log("Suppression et apparition des nouvelles cartes");
                 deleteCards();
                 displayRewards(generatedRewards);
 
@@ -243,10 +249,6 @@ function proceedWithLootBoxOpening() {
     }
 }
 
-
-
-
-
 function pauseCrate() {
     $('.generate').attr('disabled', 'disabled').css('cursor', 'not-allowed');
 }
@@ -274,7 +276,7 @@ function fetchKeys(userId) {
                 keys = response.reduce((sum, key) => sum + key.amount, 0);
                 rewardKeyType = response[0].key_type;
                 updateKeyDisplay();
-                console.log("User Keys:", response);
+                //console.log("User Keys:", response);
             } else {
                 $('#key-count').html("<i class='fas fa-key key-icon'></i> No keys available");
             }
@@ -291,9 +293,9 @@ async function updateKeyDisplay() {
     if (userId) {
         $('#key-count').html(`<i class="fas fa-key key-icon"></i> <span id="key-number">${keys}</span>`);
     } else {
-        $('#key-count').html(t('error.login_required_btn'));
+        $('#key-count').html(t('popup.login_required_btn'));
     }
-    console.log(`Clés restantes : ${keys}`);
+    //console.log(`Clés restantes : ${keys}`);
 }
 
 $(document).ready(function() {
@@ -396,16 +398,16 @@ function grantReward(userId, rewardType) {
         success: function(response) {
             if (response && response.error) {
                 console.error("Erreur lors de l'attribution de la récompense :", response.error);
-                alert("Erreur lors de l'attribution de la récompense.");
+                console.log("Erreur lors de l'attribution de la récompense.");
             } else if (response) {
-                console.log("Récompense attribuée avec succès.");
+                //console.log("Récompense attribuée avec succès.");
             } else {
-                console.warn("La réponse de l'API est vide ou invalide.");
+                //console.warn("Récompense attribuée");
             }
         },
         error: function(xhr, status, error) {
             console.error("Erreur AJAX :", error);
-            alert("Erreur lors de la connexion à l'API.");
+            console.log("Erreur lors de la connexion à l'API.");
         }
     });
 }
@@ -442,6 +444,7 @@ function playSound(quality) {
         case 'legendary': sound = sounds.legendary; break;
         default: sound = new Audio('path/to/default-sound.mp3'); break;
     }
+
     sound.play().catch(error => console.log("Erreur lors de la lecture du son:", error));
 }
 

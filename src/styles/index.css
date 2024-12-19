@@ -266,10 +266,10 @@ body {
 
 @media (max-width: 480px) {
     .bg-container {
-        top: 49%;
+        top: 63%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 80%;
+        width: 90%;
         height: auto;
     }
 

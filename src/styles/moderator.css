@@ -786,3 +786,13 @@ body {
     color: #6c757d;
     font-style: italic;
 }
+
+/* WIP */
+.wip-title {
+    font-size: 1.8rem;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    text-align: center;
+}

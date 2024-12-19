@@ -1717,6 +1717,7 @@ z-index: 50;
     .toolbar {
         max-width: 30rem !important;
         padding: 8px;
+        margin-top: 10px;
     }
 
     .toolbar-button {
@@ -1819,7 +1820,7 @@ z-index: 50;
 
 @media (max-width: 768px) {
     body {
-        font-size: 0.75rem;
+        font-size: 1rem;
     }
 
     .tab-buttons {
@@ -1852,7 +1853,7 @@ z-index: 50;
 
     .results-table {
         width: 100%;
-        table-layout: fixed;
+        table-layout: auto;
         font-size: 0.525rem;
         padding: 0.20rem;
         max-width: 100%;
@@ -1861,51 +1862,50 @@ z-index: 50;
 
     .results-table col.hidden-mobile {
         display: none;
+        width: 0%;
+        visibility: collapse;
     }
 
-    .results-table th:nth-child(1),
-    .results-table col:nth-child(1) {
+    .results-table col:not(.hidden-mobile) {
+        width: auto;
+    }
+
+    .results-table th:not(.hidden-mobile):nth-child(1),
+    .results-table col:not(.hidden-mobile):nth-child(1) {
         width: 17%;
+        padding-right: 2.5%;
     }
 
-    .results-table th:nth-child(2),
-    .results-table col:nth-child(2) {
+    .results-table th:not(.hidden-mobile):nth-child(2),
+    .results-table col:not(.hidden-mobile):nth-child(2) {
         width: 25%;
-    }
-
-    .results-table th:nth-child(2) {
         text-align: right;
-        padding-right: 7%;
+        padding-right: 9.5%;
     }
 
-    .results-table th:nth-child(3),
-    .results-table col:nth-child(3) {
+    .results-table th:not(.hidden-mobile):nth-child(3),
+    .results-table col:not(.hidden-mobile):nth-child(3) {
+        width: 15%;
+        text-align: right;
+        padding-right: 6%;
+    }
+
+    .results-table th:not(.hidden-mobile):nth-child(4),
+    .results-table col:not(.hidden-mobile):nth-child(4) {
         width: 20%;
-    }
-
-    .results-table th:nth-child(3) {
         text-align: right;
-        padding-right: 7%;
+        padding-right: 4%;
     }
 
-    .results-table th:nth-child(4),
-    .results-table col:nth-child(4) {
+    .results-table th:not(.hidden-mobile):nth-child(10),
+    .results-table col:not(.hidden-mobile):nth-child(10) {
         width: 25%;
-    }
-
-    .results-table th:nth-child(4) {
-        text-align: right;
-        padding-right: 8.4%;
-    }
-
-    .results-table th:nth-child(10),
-    .results-table col:nth-child(10) {
-        width: 20%;
+        padding-right: 6.7%;
     }
 
     .results-table th:nth-child(10) {
         text-align: right;
-        padding-right: 7.2%;
+        padding-right: 6.2%;
     }
 
     .inner-table td.mapCode {
@@ -2095,5 +2095,12 @@ z-index: 50;
 
     .inner-table td.details {
         padding-right: 3.8%;
+    }
+
+    .toolbar-button.active-filter::before {
+        top: 3px;
+        left: 3px;
+        width: calc(75%);
+        height: calc(75%);
     }
 }

@@ -7,7 +7,7 @@ async function loadTranslations() {
         const data = await response.json();
         const currentLang = document.documentElement.lang || "en";
         translations = data[currentLang]?.chart || {};
-        console.log("Traductions chargées :", translations);
+        //console.log("Traductions chargées :", translations);
     } catch (error) {
         console.error("Erreur lors du chargement des traductions :", error);
     }
