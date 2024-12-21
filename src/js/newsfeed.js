@@ -159,10 +159,21 @@ function openMapDetailsModal(mapCode) {
                 modalContainer.innerHTML = `<p>${t('common.error')}: ${result.error}</p>`;
             } else {
                 const map = result[0];
-                const mechanics = map.mechanics ? map.mechanics.join(", ") : t('common.na');
-                const restrictions = map.restrictions ? map.restrictions.join(", ") : t('common.na');
+                
+                const currentLang = document.documentElement.lang || "en";
+
+                let mechanicsOptions = map.mechanics || [];
+                let restrictionsOptions = map.restrictions || [];
+
+                if (currentLang === "cn") {
+                    mechanicsOptions = mechanicsOptions.map(option => t(`mechanics.${option.toLowerCase().replace(/ /g, '_')}`) || option);
+                    restrictionsOptions = restrictionsOptions.map(option => t(`restrictions.${option.toLowerCase().replace(/ /g, '_')}`) || option);
+                }
+
+                const mechanics = mechanicsOptions.length ? mechanicsOptions.join(", ") : t('common.na');
+                const restrictions = restrictionsOptions.length ? restrictionsOptions.join(", ") : t('common.na');
                 const description = map.desc || t('common.no_description');
-                const bannerPath = `assets/banners/${map.map_name?.toLowerCase().replace(/\s+/g, "")}.png`;
+                const bannerPath = `assets/banners/${map.map_name?.toLowerCase().replace(/[\s()]+/g, "")}.png`;
                 
                 const medals = [];
                 if (map.gold && map.gold !== "N/A") {
@@ -312,6 +323,8 @@ async function createNewsCard(item) {
 
     if (type === "announcement") {
         let messageContent = data.message.content;
+
+        messageContent = await convertTenorLinks(messageContent);
         const formattedMessageContent = await formatMessageContent(messageContent);
 
         const content = `
@@ -476,6 +489,47 @@ async function formatMessageContent(messageContent) {
         .replace(/`([^`]+)`/g, '<span class="code-highlight">$1</span>')
         .replace(/\*\*\*([^*]+)\*\*\*/g, '<span class="strong">$1</span>')
         .replace(/\n/g, "<br>");
+}
+
+async function convertTenorLinks(messageContent) {
+    const tenorViewRegex = /https:\/\/tenor\.com\/view\/[\w-]+-(\d+)/g;
+
+    const promises = [];
+    let updatedContent = messageContent;
+
+    let match;
+    while ((match = tenorViewRegex.exec(messageContent)) !== null) {
+        const tenorUrl = match[0];
+        const gifId = match[1];
+
+        const fetchGifUrl = fetch(`api/getGif.php?gifId=${gifId}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.results && result.results.length > 0) {
+                    const correctGifUrl = result.results[0].media_formats.gif.url;
+
+                    const reformattedGifUrl = correctGifUrl.replace(
+                        "https://media.tenor.com/",
+                        "https://c.tenor.com/"
+                    ).replace(".gif", "/tenor.gif");
+
+                    //console.log(`GIF converti : ${tenorUrl} -> ${reformattedGifUrl}`);
+
+                    const gifImage = `
+                        <img src="${reformattedGifUrl}" alt="GIF Tenor" class="embedded-gif" style="max-width:100%; height:auto;">
+                    `;
+                    updatedContent = updatedContent.replace(tenorUrl, gifImage);
+                }
+            })
+            .catch(error => {
+                console.error(`Erreur lors de la récupération du GIF : ${error}`);
+            });
+
+        promises.push(fetchGifUrl);
+    }
+
+    await Promise.all(promises);
+    return updatedContent;
 }
 
 //Trad

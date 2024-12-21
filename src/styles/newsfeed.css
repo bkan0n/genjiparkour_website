@@ -262,6 +262,31 @@ body {
     cursor: pointer;
 }
 
+.embedded-gif {
+    max-width: 100%;
+    max-height: 300px;
+    display: block;
+    margin: 10px auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Mise en page générale */
+.news-card .announcement-content img.embedded-gif {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Effet de survol */
+.embedded-gif:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+
 /* Archive */
 .archive-description {
     max-width: 32rem;
