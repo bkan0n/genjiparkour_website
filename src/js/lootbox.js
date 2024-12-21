@@ -82,7 +82,7 @@ function getRandomRewards(userId, keyType) {
     $.ajax({
         url: `api/lootbox/getRandomItems.php`,
         type: 'GET',
-        data: { user_id: userId, key_type: rewardKeyType, amount: 3 },
+        data: { user_id: userId, key_type: keyType, amount: 3 },
         dataType: 'json',
         success: function(response) {
             if (response.error) {
@@ -320,7 +320,7 @@ function displayRewards(rewards) {
         cardFront.append(frontText);
 
         const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
-        const rewardImage = $('<img/>').addClass('reward-image').attr('src', `assets/rewards/${reward.name}.png`);
+        const rewardImage = $('<img/>').addClass('reward-image').attr('src', reward.url);
 
         const rewardName = $('<div/>').addClass('reward-name').text(`Name: ${reward.name}`);
         const rewardType = $('<div/>').addClass('reward-type').text(`Type: ${reward.type}`);
@@ -370,7 +370,7 @@ function displayRewards(rewards) {
     function flipCard(card, reward, grantRewardFlag) {
         card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
         playSound(reward.rarity);
-        addGifParticles(card.find('.card-back'), reward.rarity);
+        //addGifParticles(card.find('.card-back'), reward.rarity);
 
         if (card.hasClass('flip')) {
             card.find('.front-text').text('Oops');
