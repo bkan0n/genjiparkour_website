@@ -20,6 +20,8 @@ services:
       - TRANSLATION_API_ROOT=${TRANSLATION_API_ROOT}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
       - TENOR_API_KEY=${TENOR_API_KEY}
+    volumes:
+      - /home/nebula/genjipk_assets/assets:/var/www/html/assets
 
 networks:
   contabo_network:
