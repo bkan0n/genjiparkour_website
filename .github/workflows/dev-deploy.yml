@@ -26,6 +26,8 @@ jobs:
         envkey_DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
         envkey_TRANSLATION_API_KEY: ${{ secrets.TRANSLATION_API_KEY }}
         envkey_TRANSLATION_API_ROOT: ${{ secrets.TRANSLATION_API_ROOT }}
+        envkey_TENOR_API_KEY: ${{ secrets.TENOR_API_KEY }}
+        envkey_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         file_name: .env
         fail_on_empty: false
         sort_keys: false
