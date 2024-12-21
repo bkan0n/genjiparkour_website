@@ -214,7 +214,7 @@ function proceedWithLootBoxOpening() {
                 });
             }, delays.separation + delays.bounceOutUp);
         } else {
-            console.log("Ouverture ultérieure : flip et disintegration");
+            //console.log("Ouverture ultérieure : flip et disintegration");
             $('.card').each(function () {
                 const card = $(this);
 
@@ -376,7 +376,7 @@ function displayRewards(rewards) {
             card.find('.front-text').text('Oops');
 
             if (grantRewardFlag && !rewardGranted) {
-                grantReward(userId, reward.name);
+                grantReward(userId, reward.type, reward.name);
                 card.addClass('rewarded');
                 rewardGranted = true;
             }
@@ -384,7 +384,7 @@ function displayRewards(rewards) {
     }
 }
 
-function grantReward(userId, rewardType) {
+function grantReward(userId, rewardType, rewardName) {
     $.ajax({
         url: 'api/lootbox/grantRewardToUser.php',
         type: 'POST',
@@ -392,6 +392,7 @@ function grantReward(userId, rewardType) {
             user_id: userId,
             key_type: rewardKeyType,
             reward_type: rewardType,
+            reward_name: rewardName,
             nonce: rewardNonce
         },
         dataType: 'json',
