@@ -46,7 +46,19 @@ function is_animated($image) {
         </div>
         <div id="rankCardContent" class="tab-content active"></div>
         <div id="badgeMasteryContent" class="tab-content hidden"></div>
+        <div id="badgeViewer" class="badge-viewer-overlay">
+            <div class="badge-viewer-container">
+                <img src="" alt="Badge Enlarged" id="badgeViewerImage" class="badge-viewer-rotatable">
+                <button class="badge-viewer-close" onclick="closeBadgeViewer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <div id="rewardsContainer"></div>
         <div id="loadingContainer" class="loading-bar"></div>
+        <div id="buttonContainer" class="active">
+            <button class="change-button-settings" id="changeBadges">Change badges</button>
+            <button class="change-button-settings" id="changeAvatar">Change avatar</button>
+            <button class="change-button-settings" id="changeBackground">Change background</button>
+        </div>
     </div>
 </body>
 </html>

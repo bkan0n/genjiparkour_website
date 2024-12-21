@@ -8,15 +8,15 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 5rem;
+    padding-top: 3rem;
     z-index: 1000;
 }
 
 .rank-card-container {
     background: #2b2b2b;
     width: 100%;
-    max-width: 90rem;
-    height: 85vh;
+    max-width: 95rem;
+    height: 90vh;
     border-radius: 20px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
     padding: 40px;
@@ -36,7 +36,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     height: auto;
     flex-wrap: wrap;
     gap: 1rem;
@@ -78,7 +78,7 @@
     font-size: 16px;
     border: 1px solid #fff;
     border-radius: 5px;
-    background: #2b2b2b;
+    background: rgba(0, 0, 0, 0.5);
     color: #fff;
     width: 200px;
     height: 30px;
@@ -134,33 +134,19 @@
 
 /* Rank card */
 #rankCardContent {
-    width: 95%;
+    width: 100%;
     max-width: 1200px;
-    height: auto;
-    max-height: calc(100% - 60px);
-    margin: 25px auto 0;
+    height: 100%;
+    max-height: 80vh;
+    margin: 10px auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px;
     border-radius: 20px;
     position: relative;
-    overflow: auto;
-}
-
-.rank-card-image-wrapper {
-    padding: 5px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 15px;
-    border: 1px solid #cacaca;
-}
-
-.rank-card-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    display: block;
-    margin: 0 auto;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 20px;
 }
 
 /* Badges */
@@ -221,6 +207,16 @@
     height: 80px;
     object-fit: contain;
     margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.badge-icon:hover {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+    transform: scale(1.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .badge-name {
@@ -266,6 +262,103 @@
     transform: scale(1.2);
 }
 
+/* Edit */
+#buttonContainer {
+    display: none;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+#buttonContainer.active {
+    display: flex;
+    position: relative;
+}
+
+.change-button-settings {
+    border: 2px solid #fff;
+    padding: 5px 30px;
+    background: transparent;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 200px;
+    max-width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.change-button-settings:hover {
+    background-color: #fff;
+    color: #2b2b2b;
+}
+
+/* Change badge container*/
+#rewardsContainer {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    border-radius: 5px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+}
+
+.badge-items {
+    padding: 8px;
+    cursor: pointer;
+    color: #2b2b2b;
+}
+
+.badge-items:hover {
+    background-color: #f0f0f0;
+}
+
+/* Add or remove badge container*/
+#circleContainer {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background-color: #dddddd;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+.circle {
+    width: 60px;
+    height: 60px;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.circle:hover {
+    background-color: #e0e7ff;
+    border-color: #999;
+}
+
 /* Animation */
 @keyframes fadeInUp {
     from {
@@ -285,11 +378,12 @@
     left: 0;
     width: 100%;
     max-height: 200px;
-    background: #2b2b2b;
+    background: rgba(0, 0, 0, 0.8);
     color: #fff;
     border: 1px solid #fff;
     border-radius: 5px;
     overflow-y: auto;
+    z-index: 50;
     display: none;
 }
 
@@ -307,7 +401,7 @@
     background: #424242;
 }
 
-/* Responsive Design */
+/* Responsive Design main */
 @media (max-width: 1024px) {
     .header-avatar img {
         width: 50px;
@@ -381,4 +475,782 @@
         opacity: 1;
         transform: translateY(0);
     }
-  }
+}
+
+/* Rank card*/
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Bold-Oblique.otf') format('opentype');
+    font-weight: bold;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Medium-Oblique.otf') format('opentype');
+    font-weight: 500;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Light-Oblique.otf') format('opentype');
+    font-weight: 300;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Regular-Oblique.otf') format('opentype');
+    font-weight: normal;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Calibri';
+    src: url('fonts/Calibri.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.rank-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6);
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.content-rankcard {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.rank-card-container {
+    background: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    max-width: 90rem;
+    height: 85vh;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    border: 1px solid #838383;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.rank-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    height: 100%;
+    gap: 20px;
+}
+
+.rank-section-container, .player-info {
+    flex: 1;
+    height: 100%;
+}
+
+.rank-section-container {
+    flex: 2;
+    display: flex;
+    font-family: 'Calibri';
+    font-weight: normal;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: hidden;
+}
+
+.combined-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.rank-section {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.rank-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.rank-row:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.rank-row .info-overlay {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+}
+
+.rank-row:hover .info-overlay {
+    display: block;
+}
+
+.rank-title {
+    width: 100px;
+    text-align: left;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.progress-bar {
+    flex: 3;
+    height: 15px;
+    background-color: #333;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 5px;
+    width: 0;
+    transition: width 1s ease-in-out;
+}
+
+.progress.easy {
+    background-color: #90ee90;
+}
+
+.progress.medium {
+    background-color: #ffd700;
+}
+
+.progress.hard {
+    background-color: #ff8c00;
+}
+
+.progress.very-hard {
+    background-color: #ff4500;
+}
+
+.progress.extreme {
+    background-color: #dc143c;
+}
+
+.progress.hell {
+    background-color: #800000;
+}
+
+.medals-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.7em;
+    text-align: right;
+}
+
+.medals-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.medals-row {
+    display: flex;
+    gap: 10px;
+    font-size: 1.5em;
+    justify-content: center;
+}
+
+.medals-icons {
+    display: flex;
+    justify-content: space-around;
+    width: 60px;
+    font-size: 1.2em;
+}
+
+.medals-values {
+    display: flex;
+    justify-content: space-around;
+    width: 60px;
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+.medals-icons span {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+}
+
+.medals-values span {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+}
+
+
+.stats-section {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    max-width: 35%;
+    height: auto;
+    overflow: hidden;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.stat-value {
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.rewards-container {
+    position: absolute;
+    bottom: 70px;
+    left: 20px;
+    width: 80%;
+    height: 200px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    z-index: 2;
+}
+
+/* badges */
+.badges-container {
+    flex: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 65%;
+}
+
+.badges-container img {
+    width: 18%;
+    min-width: 80px;
+    max-width: 150px;
+    height: auto;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+/* players info */
+.player-info {
+    flex: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.player-rank-name {
+    font-family: 'BankSans', sans-serif;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    align-self: center;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.player-avatar {
+    width: 120px;
+    height: calc(100% - 180px);
+    object-fit: contain;
+}
+
+.player-rank-badge {
+    width: 100px;
+    height: auto;
+    align-self: center;
+}
+
+.player-name {
+    font-family: 'BankSans', sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+}
+
+
+/* Inspection badges */
+.badge-viewer-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.badge-viewer-container {
+    position: relative;
+    background: transparent;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.badge-viewer-container img {
+    width: 300px;
+    height: auto;
+    cursor: grab;
+    transition: transform 0.3s ease;
+}
+
+.badge-viewer-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.badge-viewer-close:hover {
+    color: red;
+}
+
+.badge-viewer-rotatable {
+    transform-origin: center;
+    transition: transform 0.2s ease-out;
+    cursor: grab;
+}
+
+.badge-viewer-rotatable:active {
+    cursor: grabbing;
+}
+
+
+/* Responsive design player info */
+@media (max-width: 1024px) {
+    #rankCardContent {
+        width:100%;
+        padding: 15px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+    
+    .player-info {
+        width: 170px;
+        padding: 10px;
+    }
+
+    .player-rank-name {
+        font-size: 1em;
+    }
+
+    .player-avatar {
+        width: 100px;
+        height: calc(100% - 200px);
+    }
+
+    .player-rank-badge {
+        width: 80px;
+    }
+
+    .player-name {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    #rankCardContent {
+        width:100%;
+        padding: 10px;
+    }
+
+    .content {
+        padding: 10px;
+    }
+
+    .player-info {
+        width: 65px;
+        padding: 8px;
+    }
+
+    .player-rank-name {
+        font-size: 0.2em;
+    }
+
+    .player-avatar {
+        width: 80px;
+        height: calc(100% - 180px);
+    }
+
+    .player-rank-badge {
+        width: 70px;
+    }
+
+    .player-name {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #rankCardContent {
+        width:100%;
+        padding: 5px;
+    }
+
+    .content {
+        padding: 10px;
+    }
+
+    .player-info {
+        width: 120px;
+        padding: 5px;
+    }
+
+    .player-rank-name {
+        font-size: 0.4em;
+    }
+
+    .player-avatar {
+        width: 60px;
+        height: calc(100% - 105px);
+    }
+
+    .player-rank-badge {
+        width: 50px;
+    }
+
+    .player-name {
+        font-size: 1.2em;
+        margin-bottom: 5px;
+    }
+}
+
+/* Responsive design  rank container*/
+@media (max-width: 1024px) {
+    .rank-section {
+        padding: 12px;
+        gap: 12px;
+        border-radius: 8px;
+    }
+
+    .rank-row {
+        gap: 8px;
+    }
+
+    .rank-title {
+        font-size: 0.9em;
+        width: 90px;
+    }
+
+    .medals-icons {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 768px) {
+    .rank-section {
+        padding: 10px;
+        gap: 10px;
+        border-radius: 6px;
+    }
+
+    .rank-row {
+        gap: 6px;
+    }
+
+    .rank-title {
+        font-size: 0.85em;
+        width: 80px;
+    }
+
+    .medals-icons {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .rank-section {
+        padding: 8px;
+        gap: 0px;
+        border-radius: 5px;
+    }
+
+    .rank-row {
+        gap: 1px;
+    }
+
+    .rank-title {
+        font-size: 0.75em;
+        width: 60px;
+    }
+
+    .medals-icons {
+        font-size: 0.9em;
+    }
+}
+
+/* Responsive design stats section*/
+@media (max-width: 1024px) {
+    .stats-section {
+        padding: 8px;
+        border-radius: 8px;
+        max-width: 40%;
+    }
+
+    .stat-item {
+        gap: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.85em;
+    }
+
+    .stat-value {
+        font-size: 1em;
+    }
+
+    .combined-container {
+        gap: 15px;
+        border-radius: 8px;
+    }
+
+    .badges-container {
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 60%;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-section {
+        padding: 6px;
+        border-radius: 6px;
+        max-width: 50%;
+    }
+
+    .stat-item {
+        gap: 3px;
+    }
+
+    .stat-label {
+        font-size: 0.8em;
+    }
+
+    .stat-value {
+        font-size: 0.95em;
+    }
+
+    .combined-container {
+        flex-direction: row;
+        gap: 12px;
+        border-radius: 6px;
+    }
+
+    .badges-container {
+        padding: 8px;
+        border-radius: 6px;
+        max-width: 75%;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-section {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 5px;
+        border-radius: 5px;
+        max-width: 100%;
+    }
+
+    .stat-item {
+        gap: 2px;
+    }
+
+    .stat-label {
+        font-size: 0.2em;
+    }
+
+    .stat-value {
+        font-size: 0.2em;
+    }
+
+    .combined-container {
+        flex-direction: row;
+        gap: 10px;
+        border-radius: 5px;
+        align-items: flex-start;
+    }
+
+    .badges-container {
+        padding: 6px;
+        border-radius: 5px;
+        max-width: 60%;
+        height: 45px;
+    }
+}
+
+/* Responsive design max height*/
+@media (max-height: 800px) {
+    .player-rank-name {
+        font-size: 0.7em;
+    }
+
+    .player-rank-badge {
+        width: 80px;
+    }
+
+    .rank-section {
+        gap: 5px;
+    }
+
+    .player-avatar {
+        height: calc(100% - 160px);
+    }
+}
