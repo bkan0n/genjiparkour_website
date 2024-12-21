@@ -1,7 +1,7 @@
 <?php
 require '../config.php';
 
-if (!isset($_POST['user_id']) || !isset($_POST['key_type']) || !isset($_POST['reward_type']) || !isset($_POST['nonce'])) {
+if (!isset($_POST['user_id']) || !isset($_POST['key_type']) || !isset($_POST['reward_type']) || !isset($_POST['reward_name']) || !isset($_POST['nonce'])) {
     echo json_encode(['error' => 'Missing required parameters']);
     exit;
 }
@@ -10,6 +10,7 @@ session_start();
 $userId = htmlspecialchars($_POST['user_id']);
 $keyType = htmlspecialchars($_POST['key_type']);
 $rewardType = htmlspecialchars($_POST['reward_type']);
+$rewardName = htmlspecialchars($_POST['reward_name']);
 $nonce = htmlspecialchars($_POST['nonce']);
 
 if ($nonce !== $_SESSION['reward_nonce']) {
@@ -17,7 +18,7 @@ if ($nonce !== $_SESSION['reward_nonce']) {
     exit;
 }
 
-$url = "{$apiRoot}/v1/lootbox/users/{$userId}/{$keyType}/{$rewardType}";
+$url = "{$apiRoot}/v1/lootbox/users/{$userId}/{$keyType}/{$rewardType}/{$rewardName}";
 $data = json_encode([
     'nonce' => $nonce
 ]);
