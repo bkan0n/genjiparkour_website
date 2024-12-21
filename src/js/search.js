@@ -1221,8 +1221,19 @@ function displayMapSearchResults(data) {
 
     window.showDetailsModal = async function(index) {
         const result = filteredResults[index];
-        const mechanics = result.mechanics ? result.mechanics.join(", ") : "N/A";
-        const restrictions = result.restrictions ? result.restrictions.join(", ") : "N/A";
+    
+        let mechanicsOptions = result.mechanics || [];
+        let restrictionsOptions = result.restrictions || [];
+    
+        const currentLang = document.documentElement.lang || "en";
+    
+        if (currentLang === "cn") {
+            mechanicsOptions = mechanicsOptions.map(option => t(`mechanics.${option.toLowerCase().replace(/ /g, '_')}`) || option);
+            restrictionsOptions = restrictionsOptions.map(option => t(`restrictions.${option.toLowerCase().replace(/ /g, '_')}`) || option);            
+        }
+    
+        const mechanics = mechanicsOptions.length ? mechanicsOptions.join(", ") : "N/A";
+        const restrictions = restrictionsOptions.length ? restrictionsOptions.join(", ") : "N/A";
         const description = result.desc || "No description available";
     
         const mapName = result.map_name ? result.map_name.toLowerCase().replace(/[()\s]/g, "") : "default";
@@ -1288,18 +1299,19 @@ function displayMapSearchResults(data) {
     
         document.getElementById("modalDetailsContainer").innerHTML = detailsContent;
         document.getElementById("detailsModalOverlay").style.display = "flex";
-
+    
         const [stats, progressionData] = await Promise.all([
             fetchMapCompletionStatistics(result.map_code),
             fetchProgression(result.map_code),
         ]);
-
+    
         if (stats && Array.isArray(progressionData) && progressionData.length > 0) {
             renderProgressionChart(progressionData, stats);
         } else {
             console.log("No valid data to render chart");
         }
     };
+    
 
     window.closeDetailsModal = function() {
         document.getElementById("detailsModalOverlay").style.display = "none";
