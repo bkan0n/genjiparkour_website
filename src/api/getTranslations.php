@@ -5,6 +5,11 @@ function translateText($text, $targetLang) {
     global $translationApiKey;
     global $translationApiRoot;
 
+    if ($targetLang === 'cn') {
+        $targetLang = 'zh';
+        $text = preg_replace('/<[^>]*>/', '', $text);
+    }
+
     $postData = [
         'q' => $text,
         'source' => 'auto',
