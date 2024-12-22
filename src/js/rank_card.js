@@ -4,10 +4,17 @@ function initRankCard() {
     const btnRankCard = document.getElementById("btnRankCard");
     const btnBadges = document.getElementById("btnBadges");
     const buttonContainer = document.getElementById("buttonContainer");
+    const searchButton = document.getElementById("searchButton");
 
     const updateButtonContainerClass = () => {
-        if (btnRankCard.classList.contains("active")) {
-            buttonContainer.classList.add("active");
+        const currentUserId = getCurrentUserId();
+
+        if (selectedUserId === currentUserId || selectedUserId === null) {
+            if (btnRankCard.classList.contains("active")) {
+                buttonContainer.classList.add("active");
+            } else {
+                buttonContainer.classList.remove("active");
+            }
         } else {
             buttonContainer.classList.remove("active");
         }
@@ -23,12 +30,27 @@ function initRankCard() {
         updateButtonContainerClass();
     });
 
-    updateButtonContainerClass();
+    searchButton.addEventListener("click", () => {
+        updateButtonContainerClass();
+    });
+
+    resetFilter.addEventListener("click", () => {
+        loadRankCardContent();
+        loadUserMasteryContent();
+        buttonContainer.classList.add("active");
+    });
+
     loadRankCardContent();
     loadUserMasteryContent();
     createSearchSuggestions();
 
-    initRewardDisplay();
+    initBadgesChanges();
+}
+
+function getCurrentUserId() {
+    const currentUserInput = document.getElementById("currentUserId");
+    const currentUserId = currentUserInput ? currentUserInput.value : null;
+    return currentUserId;
 }
 
 //Recherche rankcard self
@@ -339,22 +361,22 @@ async function fetchUserRankCard() {
                                         <span>🥉</span>
                                     </div>
                                 </div>
-                            ${Object.entries(data.difficulties).map(([level, stats]) => `
-                                <div class="rank-row">
-                                    <span class="rank-title">${level.toUpperCase()}</span>
-                                    <div class="progress-bar">
-                                        <div class="progress ${level.toLowerCase().replace(/\s+/g, '-')}" data-width="${(stats.completed / stats.total) * 100}"></div>
+                                ${Object.entries(data.difficulties).map(([level, stats]) => `
+                                    <div class="rank-row">
+                                        <span class="rank-title">${level.toUpperCase()}</span>
+                                        <div class="progress-bar">
+                                            <div class="progress ${level.toLowerCase().replace(/\s+/g, '-')}" data-width="${(stats.completed / stats.total) * 100}"></div>
+                                        </div>
+                                        <div class="medals-values">
+                                            <span>${stats.gold}</span>
+                                            <span>${stats.silver}</span>
+                                            <span>${stats.bronze}</span>
+                                        </div>
+                                        <div class="info-overlay">
+                                            Completed: ${stats.completed} / Total: ${stats.total}
+                                        </div>
                                     </div>
-                                    <div class="medals-values">
-                                        <span>${stats.gold}</span>
-                                        <span>${stats.silver}</span>
-                                        <span>${stats.bronze}</span>
-                                    </div>
-                                    <div class="info-overlay">
-                                        Completed: ${stats.completed} / Total: ${stats.total}
-                                    </div>
-                                </div>
-                            `).join("")}
+                                `).join("")}
                             </div>
 
                             <div class="combined-container">
@@ -533,7 +555,8 @@ document.addEventListener("click", (event) => {
     }
 });
 
-function initRewardDisplay() {
+//Change Badges
+function initBadgesChanges() {
     const changeBadgesButton = document.getElementById("changeBadges");
     const rankCardContainer = document.querySelector(".rank-card-container");
 
@@ -542,8 +565,40 @@ function initRewardDisplay() {
     circleContainer.style.display = "none";
     rankCardContainer.appendChild(circleContainer);
 
+    const saveBadgeChangesButton = document.createElement("button");
+    saveBadgeChangesButton.id = "saveBadgeChanges";
+    saveBadgeChangesButton.className = "save-badge-changes";
+    saveBadgeChangesButton.textContent = "✔";
+    circleContainer.appendChild(saveBadgeChangesButton);
+
+    const resetBadgesButton = document.createElement("button");
+    resetBadgesButton.id = "resetBadges";
+    resetBadgesButton.className = "reset-badges ";
+    resetBadgesButton.textContent = "Reset badges";
+    circleContainer.appendChild(resetBadgesButton);
+
+    let badgeData = {};
+
+    resetBadgesButton.addEventListener("click", () => {
+        circles.forEach((circle, index) => {
+            circle.innerHTML = "";
+            circle.textContent = (index + 1).toString();
+            circle.title = "";
+    
+            badgeData[`badge_name${index + 1}`] = null;
+            badgeData[`badge_type${index + 1}`] = null;
+            badgeData[`badge_url${index + 1}`] = null;
+        });
+    
+        console.log("Badges réinitialisés localement :", badgeData);
+    });
+    
+
     const circles = [];
+    const badgeTypeMap = {};
     let activeCircle = null;
+    let preloadedRewards = [];
+
     for (let i = 0; i < 6; i++) {
         const circle = document.createElement("div");
         circle.className = "circle";
@@ -551,7 +606,8 @@ function initRewardDisplay() {
         circleContainer.appendChild(circle);
         circles.push(circle);
 
-        circle.addEventListener("click", () => {
+        circle.addEventListener("click", (event) => {
+            event.stopPropagation();
             activeCircle = circle;
             displayRewardsContainer(circle);
         });
@@ -573,11 +629,18 @@ function initRewardDisplay() {
             })
             .then(data => {
                 circles.forEach((circle, index) => {
-                    const badgeName = data[`badge_name${index + 1}`];
-                    const badgeType = data[`badge_type${index + 1}`];
-                    if (badgeName && badgeType) {
-                        circle.textContent = badgeName;
-                        circle.title = `Type: ${badgeType}`;
+                    const badgeUrl = data[`badge_url${index + 1}`];
+                    circle.innerHTML = "";
+
+                    if (badgeUrl) {
+                        const badgeImage = document.createElement("img");
+                        badgeImage.src = badgeUrl;
+                        badgeImage.alt = data[`badge_name${index + 1}`];
+                        badgeImage.style.width = "100%";
+                        badgeImage.style.height = "100%";
+                        badgeImage.style.borderRadius = "50%";
+
+                        circle.appendChild(badgeImage);
                     } else {
                         circle.textContent = (index + 1).toString();
                         circle.title = "";
@@ -593,7 +656,7 @@ function initRewardDisplay() {
             });
     };
 
-    const fetchAndDisplayRewards = () => {
+    const preloadRewards = () => {
         fetch(`api/lootbox/viewUserRewards.php`)
             .then(response => {
                 if (!response.ok) {
@@ -602,48 +665,27 @@ function initRewardDisplay() {
                 return response.json();
             })
             .then(data => {
-                const uniqueBadges = new Set();
-                const badges = data
-                    .filter(reward => reward.type === "badge")
-                    .filter(reward => {
-                        if (uniqueBadges.has(reward.name)) {
-                            return false;
-                        } else {
-                            uniqueBadges.add(reward.name);
-                            return true;
-                        }
-                    });
+                preloadedRewards = data
+                    .filter(reward => reward.type === "spray" || reward.type === "mastery")
+                    .filter((reward, index, self) =>
+                        index === self.findIndex(r => r.name === reward.name)
+                    );
 
-                rewardsContainer.innerHTML = "";
-                rewardsContainer.style.display = "block";
-
-                if (badges.length > 0) {
-                    badges.forEach(badge => {
-                        const badgeElement = document.createElement("div");
-                        badgeElement.className = "badge-items";
-                        badgeElement.textContent = `${badge.name} (${badge.rarity})`;
-                        rewardsContainer.appendChild(badgeElement);
-
-                        badgeElement.addEventListener("click", () => {
-                            if (activeCircle) {
-                                activeCircle.textContent = badge.name;
-                                activeCircle.title = `Type: ${badge.rarity}`;
-                                rewardsContainer.style.display = "none";
-                                activeCircle = null;
-                            }
-                        });
-                    });
-                } else {
-                    rewardsContainer.textContent = "No badges found.";
-                }
+                preloadedRewards.forEach(badge => {
+                    badgeTypeMap[badge.name] = badge.type;
+                });
             })
             .catch(error => {
-                console.error("Error:", error);
-                rewardsContainer.textContent = "Failed to load badges.";
+                console.error("Error preloading rewards:", error);
             });
     };
 
     const displayRewardsContainer = (circle) => {
+        if (preloadedRewards.length === 0) {
+            console.error("No rewards preloaded");
+            return;
+        }
+
         const circleRect = circle.getBoundingClientRect();
         const parentRect = rankCardContainer.getBoundingClientRect();
 
@@ -652,17 +694,175 @@ function initRewardDisplay() {
         rewardsContainer.style.width = "auto";
         rewardsContainer.style.display = "block";
 
-        fetchAndDisplayRewards();
+        rewardsContainer.innerHTML = "";
+
+        preloadedRewards.forEach(badge => {
+            const badgeElement = document.createElement("div");
+            badgeElement.className = "badge-items";
+            badgeElement.textContent = `${badge.name} (${badge.rarity})`;
+            rewardsContainer.appendChild(badgeElement);
+
+            badgeElement.addEventListener("click", (event) => {
+                event.stopPropagation();
+                if (activeCircle) {
+                    activeCircle.innerHTML = "";
+
+                    const badgeImage = document.createElement("img");
+                    badgeImage.src = badge.url;
+                    badgeImage.alt = badge.name;
+                    badgeImage.style.width = "100%";
+                    badgeImage.style.height = "100%";
+                    badgeImage.style.borderRadius = "50%";
+
+                    activeCircle.appendChild(badgeImage);
+
+                    rewardsContainer.style.display = "none";
+                    activeCircle = null;
+                }
+            });
+        });
     };
 
+    fetchEquippedBadges();
+    preloadRewards();
+
     changeBadgesButton.addEventListener("click", () => {
-        fetchEquippedBadges();
         circleContainer.style.display = "flex";
     });
+
+    saveBadgeChangesButton.addEventListener("click", () => {
+        fetch(`api/rankcard/getBadgesSettings.php`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch existing badges.");
+                }
+                return response.json();
+            })
+            .then(existingBadges => {
+                const badgeData = {};
+
+                circles.forEach((circle, index) => {
+                    const badgeImage = circle.querySelector("img");
+                    const badgeNameKey = `badge_name${index + 1}`;
+                    const badgeTypeKey = `badge_type${index + 1}`;
+                    const badgeUrlKey = `badge_url${index + 1}`;
+
+
+                    if (!badgeImage) {
+                        badgeData[badgeNameKey] = null;
+                        badgeData[badgeTypeKey] = null;
+                        badgeData[badgeUrlKey] = null;
+                    } else {
+                        const badgeName = badgeImage.alt;
+                        let badgeUrl = badgeImage.src;
+    
+                        if (badgeUrl.includes("assets/")) {
+                            badgeUrl = badgeUrl.substring(badgeUrl.indexOf("assets/"));
+                        } else {
+                            badgeUrl = null;
+                        }
+    
+                        if (
+                            badgeName !== existingBadges[badgeNameKey] ||
+                            badgeUrl !== existingBadges[badgeUrlKey]
+                        ) {
+                            badgeData[badgeNameKey] = badgeName;
+                            badgeData[badgeTypeKey] = badgeTypeMap[badgeName] || "Unknown";
+                            badgeData[badgeUrlKey] = badgeUrl;
+                        } else {
+                            badgeData[badgeNameKey] = existingBadges[badgeNameKey];
+                            badgeData[badgeTypeKey] = existingBadges[badgeTypeKey];
+                            badgeData[badgeUrlKey] = existingBadges[badgeUrlKey];
+                        }
+                    }
+                });
+
+                console.log("Badge data final envoyé :", badgeData);
+
+                return fetch(`api/rankcard/setBadgesSettings.php`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(badgeData)
+                });
+            })
+            .then(response => {
+                if (response.status === 200 || response.status === 201) {
+                    return response.json();
+                } else {
+                    throw new Error(`Erreur API: ${response.status}`);
+                }
+            })
+            .then(data => {
+                if (data.response) {
+                    try {
+                        const parsedResponse = JSON.parse(data.response);
+
+                        if (
+                            parsedResponse.user_id &&
+                            Object.keys(parsedResponse).some(key => key.startsWith("badge_name"))
+                        ) {
+                            //console.log("Données sauvegardées :", parsedResponse);
+                            circleContainer.style.display = "none";
+                            updateBadgesContainer(parsedResponse);
+
+                            return;
+                        }
+                    } catch (parseError) {
+                        console.error("Erreur lors de l'analyse de la réponse API :", parseError);
+                    }
+                }
+
+                if (data.success) {
+                    circleContainer.style.display = "none";
+                } else {
+                    console.error(data.error || "Réponse inattendue de l'API.");
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors de la requête API :", error);
+            });
+    });    
 
     document.addEventListener("click", (event) => {
         if (!rewardsContainer.contains(event.target) && !circleContainer.contains(event.target)) {
             rewardsContainer.style.display = "none";
         }
     });
+
+    document.addEventListener("click", (event) => {
+        const isClickInsideRewardsContainer = rewardsContainer.contains(event.target);
+        const isClickInsideCircleContainer = circleContainer.contains(event.target);
+        const isClickOnChangeBadgesButton = changeBadgesButton.contains(event.target);
+    
+        if (!isClickInsideRewardsContainer) {
+            rewardsContainer.style.display = "none";
+        }
+    
+        if (!isClickInsideCircleContainer && !isClickOnChangeBadgesButton) {
+            circleContainer.style.display = "none";
+        }
+    });    
+}
+
+function updateBadgesContainer(badgesData) {
+    const badgesContainer = document.querySelector(".badges-container");
+    if (!badgesContainer) return;
+
+    badgesContainer.innerHTML = "";
+
+    for (let i = 1; i <= 6; i++) {
+        const badgeUrl = badgesData[`badge_url${i}`];
+        const badgeName = badgesData[`badge_name${i}`];
+
+        if (badgeUrl && badgeUrl.startsWith("assets/")) {
+            const badgeImg = document.createElement("img");
+            badgeImg.src = badgeUrl;
+            badgeImg.alt = badgeName || `Badge ${i}`;
+            badgeImg.className = "badge";
+
+            badgesContainer.appendChild(badgeImg);
+        }
+    }
 }

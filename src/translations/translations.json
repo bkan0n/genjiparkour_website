@@ -283,7 +283,8 @@
             "tab_badges": "Badges",
             "search_placeholder": "Enter user name",
             "search_button": "Search",
-            "completions": "Completions: {amount}"
+            "completions": "Completions: {amount}",
+            "reset_filter_button": "Reset filter"
        }
     },
     "fr": {
@@ -570,7 +571,8 @@
         "tab_badges": "Badges",
         "search_placeholder": "Nom du joueur",
         "search_button": "Rechercher",
-        "completions": "Complétions: {amount}"
+        "completions": "Complétions: {amount}",
+        "reset_filter_button": "Réintialiser le filtre"
         }
     },
     "ru": {
@@ -856,7 +858,8 @@
             "tab_badges": "Значки",
             "search_placeholder": "Введите имя пользователя",
             "search_button": "Искать",
-            "completions": "Прохождения: {amount}"
+            "completions": "Прохождения: {amount}",
+            "reset_filter_button": "Очистить фильтры"
        }
     },
     "cn": {
@@ -1143,7 +1146,8 @@
             "tab_badges": "徽章",
             "search_placeholder": "输入用户名",
             "search_button": "搜索",
-            "completions": "完成次数: {amount}"
+            "completions": "完成次数: {amount}",
+            "reset_filter_button": "清除筛选条件"
        },
         "mechanics": {
             "edge_climb": "扒",

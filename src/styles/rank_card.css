@@ -272,6 +272,8 @@
 #buttonContainer.active {
     display: flex;
     position: relative;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .change-button-settings {
@@ -316,16 +318,23 @@
     background-color: #f0f0f0;
 }
 
+.no-badges {
+    color: black;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+}
+
 /* Add or remove badge container*/
 #circleContainer {
     display: none;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 300px;
     height: 300px;
-    background-color: #dddddd;
+    background-color: #0c0c0c;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -359,6 +368,57 @@
     border-color: #999;
 }
 
+.save-badge-changes {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 16px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.save-badge-changes:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.save-badge-changes:active {
+    transform: scale(1);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.reset-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 15px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #c02a2a;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reset-badges:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reset-badges:active {
+    transform: scale(1);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+
 /* Animation */
 @keyframes fadeInUp {
     from {
@@ -378,7 +438,7 @@
     left: 0;
     width: 100%;
     max-height: 200px;
-    background: rgba(0, 0, 0, 0.8);
+    background: #0c0c0c;
     color: #fff;
     border: 1px solid #fff;
     border-radius: 5px;
@@ -398,7 +458,8 @@
 }
 
 .suggestion-item:hover {
-    background: #424242;
+    background: #ffffff;
+    color:#1e1e1e;
 }
 
 /* Responsive Design main */
@@ -459,9 +520,9 @@
     .search-container button,
     .button-group button {
         width: 100%;
-        max-width: 300px;
         box-sizing: border-box;
         text-align: center;
+        padding: 3px 15px;
     }
 }
 
@@ -589,7 +650,7 @@
 }
 
 .rank-card-container {
-    background: rgba(0, 0, 0, 0.8);
+    background: #0c0c0c;
     width: 100%;
     max-width: 90rem;
     height: 85vh;
@@ -839,21 +900,23 @@
 .badges-container {
     flex: 2;
     display: flex;
+    position: relative;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 15px;
+    padding: 1px 15px 1px 15px;
     border-radius: 10px;
     overflow: hidden;
     max-width: 65%;
+    gap: 30px;
 }
 
 .badges-container img {
-    width: 18%;
-    min-width: 80px;
-    max-width: 150px;
+    width: auto;
     height: auto;
+    max-height: clamp(20px, 3vw, 60px);
+    max-width: clamp(20px, 3vw, 60px);
     object-fit: contain;
     transition: all 0.3s ease;
 }
@@ -971,6 +1034,10 @@
 
 /* Responsive design player info */
 @media (max-width: 1024px) {
+    .rank-card-container {
+        padding: 25px;
+    }
+
     #rankCardContent {
         width:100%;
         padding: 15px;
@@ -1005,6 +1072,10 @@
 }
 
 @media (max-width: 768px) {
+    .rank-card-container {
+        padding: 30px;
+    }
+
     #rankCardContent {
         width:100%;
         padding: 10px;
@@ -1039,6 +1110,10 @@
 }
 
 @media (max-width: 480px) {
+    .rank-card-container {
+        padding: 10px;
+    }
+
     #rankCardContent {
         width:100%;
         padding: 5px;
@@ -1198,6 +1273,11 @@
         border-radius: 6px;
         max-width: 75%;
     }
+
+    .badges-container img {
+        max-height: 25px;
+        max-width: 25px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1234,6 +1314,23 @@
         max-width: 60%;
         height: 45px;
     }
+
+    .badges-container {
+        padding: 4px; /* Réduit le padding global */
+        border-radius: 6px; /* Arrondi inchangé */
+        max-width: 75%; /* Largeur maximale du conteneur */
+        display: flex; /* Flexbox pour organiser les badges */
+        flex-wrap: wrap; /* Autorise le retour à la ligne */
+        justify-content: center; /* Centre les badges */
+        gap: 4px; /* Réduit l’espacement entre les éléments */
+    }
+    
+    .badges-container img {
+        max-height: 20px; /* Réduit la hauteur des images */
+        max-width: 20px; /* Réduit la largeur des images */
+        margin: 0; /* Élimine toute marge autour des images */
+    }
+    
 }
 
 /* Responsive design max height*/
@@ -1252,5 +1349,43 @@
 
     .player-avatar {
         height: calc(100% - 160px);
+    }
+}
+
+/* Responsive design buttonContainer */
+@media (max-width: 1024px) {
+    #buttonContainer {
+        justify-content: center;
+    }
+
+    .change-button-settings {
+        padding: 5px 20px;
+        font-size: 15px;
+        width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    #buttonContainer {
+        justify-content: center;
+    }
+
+    .change-button-settings {
+        padding: 5px 15px;
+        font-size: 14px;
+        width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    #buttonContainer {
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .change-button-settings {
+        padding: 5px 10px;
+        font-size: 12px;
+        width: 100%;
     }
 }

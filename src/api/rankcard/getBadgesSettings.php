@@ -11,7 +11,7 @@ if (!$user_id) {
     exit;
 }
 
-$url = "$apiRoot/v1/rank_card/settings/badges/$user_id/view";
+$url = "$apiRoot/v1/rank_card/settings/badges/$user_id";
 
 $ch = curl_init($url);
 

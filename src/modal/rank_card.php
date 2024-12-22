@@ -42,6 +42,7 @@ function is_animated($image) {
             <div class="search-container">
                 <input type="text" id="searchUserName" placeholder="<?= htmlspecialchars($translations['rank_card']['search_placeholder']) ?>" />
                 <button id="searchButton"><?= htmlspecialchars($translations['rank_card']['search_button']) ?></button>
+                <button id="resetFilter"><?= htmlspecialchars($translations['rank_card']['reset_filter_button']) ?></button>
             </div>
         </div>
         <div id="rankCardContent" class="tab-content active"></div>
@@ -52,13 +53,13 @@ function is_animated($image) {
                 <button class="badge-viewer-close" onclick="closeBadgeViewer()"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
-        <div id="rewardsContainer"></div>
         <div id="loadingContainer" class="loading-bar"></div>
         <div id="buttonContainer" class="active">
             <button class="change-button-settings" id="changeBadges">Change badges</button>
             <button class="change-button-settings" id="changeAvatar">Change avatar</button>
             <button class="change-button-settings" id="changeBackground">Change background</button>
         </div>
+        <input type="hidden" id="currentUserId" value="<?= htmlspecialchars($user_id) ?>">
     </div>
 </body>
 </html>
