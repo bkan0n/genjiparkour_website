@@ -1649,40 +1649,21 @@
     }
 
     .badges-container {
-        padding: 4px; /* Réduit le padding global */
-        border-radius: 6px; /* Arrondi inchangé */
-        max-width: 75%; /* Largeur maximale du conteneur */
-        display: flex; /* Flexbox pour organiser les badges */
-        flex-wrap: wrap; /* Autorise le retour à la ligne */
-        justify-content: center; /* Centre les badges */
-        gap: 4px; /* Réduit l’espacement entre les éléments */
+        padding: 4px;
+        border-radius: 6px;
+        max-width: 75%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
     }
     
     .badges-container img {
-        max-height: 20px; /* Réduit la hauteur des images */
-        max-width: 20px; /* Réduit la largeur des images */
-        margin: 0; /* Élimine toute marge autour des images */
+        max-height: 20px;
+        max-width: 20px;
+        margin: 0;
     }
     
-}
-
-/* Responsive design max height*/
-@media (max-height: 800px) {
-    .player-rank-name {
-        font-size: 0.7em;
-    }
-
-    .player-rank-badge {
-        width: 80px;
-    }
-
-    .rank-section {
-        gap: 5px;
-    }
-
-    .player-avatar {
-        height: calc(100% - 160px);
-    }
 }
 
 /* Responsive design buttonContainer */
@@ -1720,5 +1701,140 @@
         padding: 5px 10px;
         font-size: 12px;
         width: 100%;
+    }
+}
+
+/* Max height responsive design */
+@media (max-height: 768px) {
+    .rank-card-container {
+        padding: 8px;
+    }
+
+    #rankCardContent {
+        width: 100%;
+        padding: 6px;
+    }
+
+    .content {
+        padding: 6px;
+    }
+
+    .player-info {
+        width: 120px;
+        padding: 8px;
+    }
+
+    .player-avatar {
+        width: 60px;
+        height: calc(100% - 120px);
+    }
+
+    .player-rank-badge {
+        width: 50px;
+    }
+
+    .player-name {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+
+    .player-rank-name {
+        font-size: 0.85em;
+    }
+
+    .rank-section {
+        padding: 8px;
+        gap: 6px;
+        border-radius: 6px;
+    }
+
+    .rank-row {
+        gap: 4px;
+    }
+
+    .rank-title {
+        font-size: 0.8em;
+        width: 70px;
+    }
+
+    .medals-icons {
+        font-size: 1em;
+    }
+
+    .stats-section {
+        padding: 6px;
+        border-radius: 6px;
+        max-width: 50%;
+    }
+
+    .stat-item {
+        gap: 3px;
+    }
+
+    .stat-label {
+        font-size: 0.8em;
+    }
+
+    .stat-value {
+        font-size: 0.95em;
+    }
+
+    .combined-container {
+        flex-direction: row;
+        gap: 10px;
+        border-radius: 6px;
+    }
+
+    .badges-container {
+        padding: 6px;
+        border-radius: 6px;
+        max-width: 60%;
+    }
+
+    .badges-container img {
+        max-height: 25px;
+        max-width: 25px;
+    }
+
+    #buttonContainer {
+        justify-content: center;
+    }
+
+    .change-button-settings {
+        padding: 5px 10px;
+        font-size: 14px;
+        width: 150px;
+    }
+
+    .close-modal {
+        bottom: 10px !important;
+        right: 15px;
+        top: auto;
+    }
+}
+
+@media (max-width: 480px) and (max-height: 768px) {
+    .rank-section {
+        gap: 1px;
+    }
+
+    .stat-label {
+        font-size: 0.3em;
+    }
+
+    .stat-value {
+        font-size: 0.4em;
+    }
+}
+
+@media (max-width: 1024px) and (max-height: 768px) {
+    .player-rank-name {
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 480px) and (max-height: 768px) {
+    .player-rank-name {
+        font-size: 0.45em;
     }
 }
