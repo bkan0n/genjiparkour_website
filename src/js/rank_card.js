@@ -46,21 +46,25 @@ async function initRankCard() {
         buttonContainer.classList.add("active");
     });
     
-    await loadTranslations();
+    showLoadingBar();
+    await Promise.all([
+        loadTranslations(),
+        preloadAvatarPreviews(),
+        preloadAvatarOptions(),
+        preloadBackgroundsOptions(),
+        preloadBackgroundPreview(),
+    ]);
+
     initBadgesChanges();
     initBackgroundChanges();
     initAvatarChanges();
 
-    preloadCurrentBackground();
-    preloadBackgrounds();
-
-    preloadAvatarPreviews();
+    loadUserMasteryContent();
+    createSearchSuggestions();
 
     loadRankCardContent().then(() => {
         buttonContainer.classList.add("active");
     });
-    loadUserMasteryContent();
-    createSearchSuggestions();
 }
 
 function getCurrentUserId() {
@@ -73,15 +77,12 @@ function getCurrentUserId() {
 async function loadRankCardContent(user_id) {
     const rankCardContent = document.getElementById("rankCardContent");
 
-    showLoadingBar();
-
     try {
         const response = await fetch(`api/rankcard/getRankCard.php`);
         const data = await response.json();
 
         if (data.error) {
             console.error(data.error);
-            hideLoadingBar();
             return;
         }
 
@@ -1053,7 +1054,7 @@ function initBackgroundChanges() {
     });
 }
 
-function preloadCurrentBackground() {
+function preloadBackgroundPreview() {
     return fetch(`api/rankcard/getBackground.php`)
         .then(response => {
             if (!response.ok) throw new Error(`Failed to fetch the current background. Status: ${response.status}`);
@@ -1077,7 +1078,7 @@ function preloadCurrentBackground() {
         });
 }
 
-function preloadBackgrounds() {
+function preloadBackgroundsOptions() {
     return fetch(`api/lootbox/viewUserRewards.php`)
         .then(response => {
             if (!response.ok) throw new Error("Failed to fetch user rewards");
@@ -1120,6 +1121,10 @@ function updateBackgroundContainer(responseData) {
 }
 
 //Change avatar
+if (typeof availableAvatars === "undefined") {
+    var availableAvatars = { skins: [], poses: [] };
+}
+
 function initAvatarChanges() {
     const changeAvatarButton = document.getElementById("changeAvatar");
     const rankCardContainer = document.querySelector(".rank-card-container");
@@ -1186,7 +1191,6 @@ function initAvatarChanges() {
     let selectedPose = null;
     let currentSkin = "Overwatch 1";
     let currentPose = "heroic";
-    let availableAvatars = { skins: [], poses: [] };
 
     const toggleActiveClass = (button) => {
         changeSkinButton.classList.remove("active");
@@ -1258,19 +1262,6 @@ function initAvatarChanges() {
             .catch(error => {
                 console.error("Erreur lors de la récupération des avatars actuels :", error);
             });
-    };
-
-    const preloadAvatarOptions = () => {
-        fetch(`api/lootbox/viewUserRewards.php`)
-            .then(response => {
-                if (!response.ok) throw new Error("Erreur lors du chargement des récompenses.");
-                return response.json();
-            })
-            .then(data => {
-                availableAvatars.skins = data.filter(reward => reward.type === "skin");
-                availableAvatars.poses = data.filter(reward => reward.type === "pose");
-            })
-            .catch(error => console.error("Erreur lors du préchargement des options d'avatar :", error));
     };
 
     const displayAvatarOptions = (type) => {
@@ -1400,7 +1391,6 @@ function initAvatarChanges() {
     changeAvatarButton.addEventListener("click", () => {
         avatarContainer.style.display = "flex";
         fetchCurrentAvatar();
-        preloadAvatarOptions();
     });
 }
 
@@ -1426,45 +1416,74 @@ function preloadAvatarPreviews() {
     const avatarSkinPreview = document.getElementById("avatarSkinPreview");
     const avatarPosePreview = document.getElementById("avatarPosePreview");
 
-    fetch(`api/rankcard/getAvatarSkin.php`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Erreur lors de la récupération des skins.");
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.url) {
-                avatarSkinPreview.style.backgroundImage = `url(${data.url})`;
-                avatarSkinPreview.textContent = "";
-            } else {
-                avatarSkinPreview.style.backgroundImage = "none";
-                avatarSkinPreview.textContent = "+";
-            }
-        })
-        .catch(error => {
-            console.error("Erreur lors du préchargement de l'avatarSkinPreview :", error);
-        });
+    if (avatarSkinPreview) {
+        fetch(`api/rankcard/getAvatarSkin.php`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur lors de la récupération des skins.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.url) {
+                    avatarSkinPreview.style.backgroundImage = `url(${data.url})`;
+                    avatarSkinPreview.textContent = "";
+                } else {
+                    avatarSkinPreview.style.backgroundImage = "none";
+                    avatarSkinPreview.textContent = "+";
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors du préchargement de l'avatarSkinPreview :", error);
+            });
+    }
 
-    fetch(`api/rankcard/getAvatarPose.php`)
+    if (avatarPosePreview) {
+        fetch(`api/rankcard/getAvatarPose.php`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur lors de la récupération des poses.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.url) {
+                    avatarPosePreview.style.backgroundImage = `url(${data.url})`;
+                    avatarPosePreview.textContent = "";
+                } else {
+                    avatarPosePreview.style.backgroundImage = "none";
+                    avatarPosePreview.textContent = "+";
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors du préchargement de l'avatarPosePreview :", error);
+            });
+    }
+}
+function preloadAvatarOptions() {
+    return fetch(`api/lootbox/viewUserRewards.php`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error("Erreur lors de la récupération des poses.");
-            }
+            if (!response.ok) throw new Error("Erreur lors du chargement des récompenses.");
             return response.json();
         })
         .then(data => {
-            if (data && data.url) {
-                avatarPosePreview.style.backgroundImage = `url(${data.url})`;
-                avatarPosePreview.textContent = "";
-            } else {
-                avatarPosePreview.style.backgroundImage = "none";
-                avatarPosePreview.textContent = "+";
-            }
+            availableAvatars.skins = data.filter(reward => reward.type === "skin");
+            availableAvatars.poses = data.filter(reward => reward.type === "pose");
+
+            //console.log("Skins chargés :", availableAvatars.skins);
+            //console.log("Poses chargées :", availableAvatars.poses);
+
+            availableAvatars.skins.forEach(skin => {
+                const img = new Image();
+                img.src = skin.url;
+            });
+
+            availableAvatars.poses.forEach(pose => {
+                const img = new Image();
+                img.src = pose.url;
+            });
         })
-        .catch(error => {
-            console.error("Erreur lors du préchargement de l'avatarPosePreview :", error);
-        });
+        .catch(error => console.error("Erreur lors du préchargement des options d'avatar :", error));
 }
 
 //Trad
