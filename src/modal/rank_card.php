@@ -54,10 +54,10 @@ function is_animated($image) {
             </div>
         </div>
         <div id="loadingContainer" class="loading-bar"></div>
-        <div id="buttonContainer" class="active">
-            <button class="change-button-settings" id="changeBadges">Change badges</button>
-            <button class="change-button-settings" id="changeAvatar">Change avatar</button>
-            <button class="change-button-settings" id="changeBackground">Change background</button>
+        <div id="buttonContainer">
+            <button class="change-button-settings" id="changeBadges"><?= htmlspecialchars($translations['rank_card']['change_badges_button']) ?></button>
+            <button class="change-button-settings" id="changeAvatar"><?= htmlspecialchars($translations['rank_card']['change_avatar_button']) ?></button>
+            <button class="change-button-settings" id="changeBackground"><?= htmlspecialchars($translations['rank_card']['change_background_button']) ?></button>
         </div>
         <input type="hidden" id="currentUserId" value="<?= htmlspecialchars($user_id) ?>">
     </div>

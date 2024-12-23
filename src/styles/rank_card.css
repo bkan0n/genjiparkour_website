@@ -418,6 +418,283 @@
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* Add or remove background container*/
+#backgroundContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    background-color: #0c0c0c;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+#backgroundPreview {
+    width: 100%;
+    height: 200px;
+    border: 1px dashed #ccc;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#backgroundPreview:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.save-background-changes {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 16px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.save-background-changes:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.save-background-changes:active {
+    transform: scale(1);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.reset-background {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 15px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #c02a2a;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reset-background:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reset-background:active {
+    transform: scale(1);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+#backgroundOptions {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    border-radius: 5px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+}
+
+.background-option {
+    padding: 8px;
+    cursor: pointer;
+    color: #2b2b2b;
+}
+
+.background-option:hover {
+    background-color: #f0f0f0;
+}
+
+/* Add or remove avatar container*/
+#avatarContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    background-color: #0c0c0c;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+#avatarSkinPreview,
+#avatarPosePreview {
+    width: 60%;
+    height: 70%;
+    margin-top: 90px;
+    border: 1px dashed #ccc;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    cursor: pointer;
+    display: none;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    font-size: 20px;
+    z-index: 1000;
+    color: #999;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+#avatarSkinPreview:hover,
+#avatarPosePreview:hover {
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+#avatarContainer .avatar-button-group {
+    position: absolute;
+    top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+#avatarContainer .avatar-button-group .active {
+    background-color: #fff;
+    color: #2b2b2b;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.save-avatar-changes {
+    font-size: 16px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.save-avatar-changes:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.save-avatar-changes:active {
+    transform: scale(1);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.reset-avatar {
+    font-size: 15px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #c02a2a;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.reset-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reset-avatar:active {
+    transform: scale(1);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+#avatarOptions {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    border-radius: 5px;
+    overflow-y: auto;
+    z-index: 1100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    width: 100%;
+}
+
+.avatar-option {
+    padding: 8px;
+    cursor: pointer;
+    color: #2b2b2b;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.avatar-option:hover {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.change-skin-btn,
+.change-pose-btn {
+    border: 2px solid #fff;
+    padding: 5px 25px;
+    background: transparent;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 200px;
+    max-width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.change-skin-btn:hover,
+.change-pose-btn:hover {
+    background-color: #fff;
+    color: #2b2b2b;
+}
+
+.change-skin-btn:active,
+.change-pose-btn:active {
+    background-color: rgba(255, 255, 255, 0.4);
+}
 
 /* Animation */
 @keyframes fadeInUp {
@@ -1031,6 +1308,59 @@
     cursor: grabbing;
 }
 
+/* Pop up*/
+.confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    z-index: 1200;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .confirmation-popup.show {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  
+  .confirmation-popup.fade-out {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  
+  .error-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #dc3545;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    z-index: 1200;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .error-popup.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(-10px);
+  }
+  
+  .error-popup.fade-out {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  
 
 /* Responsive design player info */
 @media (max-width: 1024px) {
@@ -1095,7 +1425,7 @@
     }
 
     .player-avatar {
-        width: 80px;
+        width: 60px;
         height: calc(100% - 180px);
     }
 
@@ -1283,10 +1613,13 @@
 @media (max-width: 480px) {
     .stats-section {
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
         padding: 5px;
+        gap: 7px;
         border-radius: 5px;
         max-width: 100%;
+        height: 45px;
     }
 
     .stat-item {

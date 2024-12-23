@@ -1,4 +1,6 @@
-function initRankCard() {
+let selectedUserId = null;
+
+async function initRankCard() {
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
     const btnRankCard = document.getElementById("btnRankCard");
@@ -35,16 +37,32 @@ function initRankCard() {
     });
 
     resetFilter.addEventListener("click", () => {
+        const inputField = document.getElementById("searchUserName");
+        if (inputField) {
+            inputField.value = "";
+        }
+
+        selectedUserId = null;
         loadRankCardContent();
         loadUserMasteryContent();
         buttonContainer.classList.add("active");
     });
+    
+    await loadTranslations();
+    initBadgesChanges();
+    initBackgroundChanges();
+    initAvatarChanges();
 
-    loadRankCardContent();
+    preloadCurrentBackground();
+    preloadBackgrounds();
+
+    preloadAvatarPreviews();
+
+    loadRankCardContent().then(() => {
+        buttonContainer.classList.add("active");
+    });
     loadUserMasteryContent();
     createSearchSuggestions();
-
-    initBadgesChanges();
 }
 
 function getCurrentUserId() {
@@ -90,7 +108,7 @@ async function loadRankCardContent(user_id) {
                                 </div>
                                 ${Object.entries(data.difficulties).map(([level, stats]) => `
                                     <div class="rank-row">
-                                        <span class="rank-title">${level.toUpperCase()}</span>
+                                        <span class="rank-title">${t(`rank_card.difficulties.${level.toLowerCase().replace(/\s+/g, '_')}`)}</span>
                                         <div class="progress-bar">
                                             <div class="progress ${level.toLowerCase().replace(/\s+/g, '-')}" data-width="${(stats.completed / stats.total) * 100}"></div>
                                         </div>
@@ -100,7 +118,7 @@ async function loadRankCardContent(user_id) {
                                             <span>${stats.bronze}</span>
                                         </div>
                                         <div class="info-overlay">
-                                            Completed: ${stats.completed} / Total: ${stats.total}
+                                            ${t("rank_card.completed_total", { completed: stats.completed, total: stats.total })}
                                         </div>
                                     </div>
                                 `).join("")}
@@ -114,15 +132,15 @@ async function loadRankCardContent(user_id) {
                                 </div>
                                 <div class="stats-section">
                                     <div class="stat-item">
-                                        <span class="stat-label">Maps</span>
+                                        <span class="stat-label">${t("rank_card.maps_label")}</span>
                                         <span class="stat-value" data-value="${data.total_maps_created}">0</span>
                                     </div>
                                     <div class="stat-item">
-                                        <span class="stat-label">Playtests</span>
+                                        <span class="stat-label">${t("rank_card.playtests_label")}</span>
                                         <span class="stat-value" data-value="${data.total_playtests}">0</span>
                                     </div>
                                     <div class="stat-item">
-                                        <span class="stat-label">World Records</span>
+                                        <span class="stat-label">${t("rank_card.world_records_label")}</span>
                                         <span class="stat-value" data-value="${data.world_records}">0</span>
                                     </div>
                                 </div>
@@ -330,6 +348,10 @@ function createSearchSuggestions() {
 async function fetchUserRankCard() {
     const rankCardContent = document.getElementById("rankCardContent");
 
+    if (!selectedUserId) {
+        return;
+    }
+
     showLoadingBar();
 
     try {
@@ -363,7 +385,7 @@ async function fetchUserRankCard() {
                                 </div>
                                 ${Object.entries(data.difficulties).map(([level, stats]) => `
                                     <div class="rank-row">
-                                        <span class="rank-title">${level.toUpperCase()}</span>
+                                        <span class="rank-title">${t(`rank_card.difficulties.${level.toLowerCase().replace(/\s+/g, '_')}`)}</span>
                                         <div class="progress-bar">
                                             <div class="progress ${level.toLowerCase().replace(/\s+/g, '-')}" data-width="${(stats.completed / stats.total) * 100}"></div>
                                         </div>
@@ -387,15 +409,15 @@ async function fetchUserRankCard() {
                                 </div>
                                 <div class="stats-section">
                                     <div class="stat-item">
-                                        <span class="stat-label">Maps</span>
+                                        <span class="stat-label">${t("rank_card.maps_label")}</span>
                                         <span class="stat-value" data-value="${data.total_maps_created}">0</span>
                                     </div>
                                     <div class="stat-item">
-                                        <span class="stat-label">Playtests</span>
+                                        <span class="stat-label">${t("rank_card.playtests_label")}</span>
                                         <span class="stat-value" data-value="${data.total_playtests}">0</span>
                                     </div>
                                     <div class="stat-item">
-                                        <span class="stat-label">World Records</span>
+                                        <span class="stat-label">${t("rank_card.world_records_label")}</span>
                                         <span class="stat-value" data-value="${data.world_records}">0</span>
                                     </div>
                                 </div>
@@ -438,7 +460,6 @@ async function fetchUserRankCard() {
 //Recherche badges user_id
 async function fetchUserMastery() {
     if (!selectedUserId) {
-        alert("Veuillez sélectionner un utilisateur valide.");
         return;
     }
 
@@ -574,7 +595,7 @@ function initBadgesChanges() {
     const resetBadgesButton = document.createElement("button");
     resetBadgesButton.id = "resetBadges";
     resetBadgesButton.className = "reset-badges ";
-    resetBadgesButton.textContent = "Reset badges";
+    resetBadgesButton.textContent = t("rank_card.reset_badges_button"); 
     circleContainer.appendChild(resetBadgesButton);
 
     let badgeData = {};
@@ -590,9 +611,8 @@ function initBadgesChanges() {
             badgeData[`badge_url${index + 1}`] = null;
         });
     
-        console.log("Badges réinitialisés localement :", badgeData);
+        //console.log("Badges réinitialisés localement :", badgeData);
     });
-    
 
     const circles = [];
     const badgeTypeMap = {};
@@ -682,7 +702,7 @@ function initBadgesChanges() {
 
     const displayRewardsContainer = (circle) => {
         if (preloadedRewards.length === 0) {
-            console.error("No rewards preloaded");
+            showErrorMessage(t("rank_card.no_badges_found"));
             return;
         }
 
@@ -747,7 +767,6 @@ function initBadgesChanges() {
                     const badgeTypeKey = `badge_type${index + 1}`;
                     const badgeUrlKey = `badge_url${index + 1}`;
 
-
                     if (!badgeImage) {
                         badgeData[badgeNameKey] = null;
                         badgeData[badgeTypeKey] = null;
@@ -777,7 +796,7 @@ function initBadgesChanges() {
                     }
                 });
 
-                console.log("Badge data final envoyé :", badgeData);
+                //console.log("Badge data envoyé :", badgeData);
 
                 return fetch(`api/rankcard/setBadgesSettings.php`, {
                     method: "POST",
@@ -806,7 +825,7 @@ function initBadgesChanges() {
                             //console.log("Données sauvegardées :", parsedResponse);
                             circleContainer.style.display = "none";
                             updateBadgesContainer(parsedResponse);
-
+                            showConfirmationMessage(t("rank_card.badges_saved"));
                             return;
                         }
                     } catch (parseError) {
@@ -865,4 +884,670 @@ function updateBadgesContainer(badgesData) {
             badgesContainer.appendChild(badgeImg);
         }
     }
+}
+
+//Change background
+function initBackgroundChanges() {
+    const changeBackgroundButton = document.getElementById("changeBackground");
+    const rankCardContainer = document.querySelector(".rank-card-container");
+
+    const backgroundContainer = document.createElement("div");
+    backgroundContainer.id = "backgroundContainer";
+    backgroundContainer.style.display = "none";
+    rankCardContainer.appendChild(backgroundContainer);
+
+    const saveBackgroundChangesButton = document.createElement("button");
+    saveBackgroundChangesButton.id = "saveBackgroundChanges";
+    saveBackgroundChangesButton.className = "save-background-changes";
+    saveBackgroundChangesButton.textContent = "✔";
+    backgroundContainer.appendChild(saveBackgroundChangesButton);
+
+    const resetBackgroundButton = document.createElement("button");
+    resetBackgroundButton.id = "resetBackground";
+    resetBackgroundButton.className = "reset-background";
+    resetBackgroundButton.textContent = t("rank_card.reset_background_button");
+    backgroundContainer.appendChild(resetBackgroundButton);
+
+    let selectedBackground = null;
+
+    const backgroundPreview = document.createElement("div");
+    backgroundPreview.id = "backgroundPreview";
+    backgroundPreview.textContent = "+";
+    backgroundPreview.style.display = "flex";
+    backgroundPreview.style.justifyContent = "center";
+    backgroundPreview.style.alignItems = "center";
+    backgroundPreview.style.fontSize = "24px";
+    backgroundPreview.style.color = "#999";
+    backgroundPreview.style.fontWeight = "bold";
+    backgroundContainer.appendChild(backgroundPreview);
+
+    const optionsContainer = document.createElement("div");
+    optionsContainer.id = "backgroundOptions";
+    optionsContainer.innerHTML = "";
+    optionsContainer.style.display = "none";
+    backgroundContainer.appendChild(optionsContainer);
+
+    resetBackgroundButton.addEventListener("click", () => {
+        selectedBackground = null;
+        backgroundPreview.style.backgroundImage = "none";
+        backgroundPreview.textContent = "+";
+        //console.log("Background réinitialisé localement");
+    });
+
+    const displayBackgroundOptions = () => {
+        if (preloadedBackgrounds.length === 0) {
+            showErrorMessage(t("rank_card.no_backgrounds_found"));
+            return;
+        }
+
+        const previewRect = backgroundPreview.getBoundingClientRect();
+        const containerRect = backgroundContainer.getBoundingClientRect();
+
+        optionsContainer.innerHTML = "";
+        optionsContainer.style.display = "block";
+        optionsContainer.style.position = "absolute";
+        optionsContainer.style.top = `${previewRect.bottom - containerRect.top}px`;
+        optionsContainer.style.left = `${previewRect.left - containerRect.left}px`;
+        optionsContainer.style.width = `${backgroundPreview.offsetWidth}px`;
+        optionsContainer.style.maxHeight = "150px";
+        optionsContainer.style.overflowY = "auto";
+
+        preloadedBackgrounds.forEach(background => {
+            const backgroundOption = document.createElement("div");
+            backgroundOption.className = "background-option";
+            backgroundOption.textContent = `${background.name} (${background.rarity})`;
+            optionsContainer.appendChild(backgroundOption);
+
+            backgroundOption.addEventListener("click", () => {
+                selectedBackground = {
+                    name: background.name,
+                    url: background.url,
+                };
+                backgroundPreview.style.backgroundImage = `url(${background.url})`;
+                backgroundPreview.textContent = "";
+                optionsContainer.style.display = "none";
+            });
+        });
+    };
+
+    backgroundPreview.addEventListener("click", () => {
+        if (optionsContainer.style.display === "block") {
+            optionsContainer.style.display = "none";
+        } else {
+            displayBackgroundOptions();
+        }
+    });
+
+    saveBackgroundChangesButton.addEventListener("click", () => {
+        if (!selectedBackground) {
+            selectedBackground = { name: "placeholder", url: "assets/rank_card/background/placeholder.png" };
+        }
+    
+        //console.log("Envoi du background : ", selectedBackground);
+    
+        const payload = {
+            background: {
+                name: selectedBackground.name,
+                url: selectedBackground.url
+            }
+        };
+    
+        fetch(`api/rankcard/setBackground.php`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                backgroundContainer.style.display = "none";
+    
+                if (data.url) {
+                    updateBackgroundContainer(data);
+    
+                    backgroundPreview.style.backgroundImage = `url(${data.url})`;
+                    backgroundPreview.textContent = "";
+    
+                    currentBackground = {
+                        url: data.url,
+                        name: data.name || "placeholder"
+                    };
+    
+                    //console.log("Background mis à jour :", currentBackground);
+                    showConfirmationMessage(t("rank_card.background_saved"));
+                } else {
+                    console.error("Aucune URL valide");
+                }
+            })
+            .catch(error => {
+                console.error("Erreur sauvegarde :", error);
+            });
+    });
+
+    document.addEventListener("click", (event) => {
+        const isClickInsideOptionsContainer = optionsContainer.contains(event.target);
+        const isClickInsideBackgroundContainer = backgroundContainer.contains(event.target);
+        const isClickOnChangeBackgroundButton = changeBackgroundButton.contains(event.target);
+
+        if (!isClickInsideOptionsContainer && !backgroundPreview.contains(event.target)) {
+            optionsContainer.style.display = "none";
+        }
+
+        if (!isClickInsideBackgroundContainer && !isClickOnChangeBackgroundButton) {
+            backgroundContainer.style.display = "none";
+        }
+    });
+
+    changeBackgroundButton.addEventListener("click", () => {
+        if (currentBackground) {
+            backgroundPreview.style.backgroundImage = `url(${currentBackground.url})`;
+            backgroundPreview.textContent = "";
+        } else {
+            backgroundPreview.style.backgroundImage = "none";
+            backgroundPreview.textContent = "+";
+        }
+
+        backgroundContainer.style.display = "flex";
+    });
+}
+
+function preloadCurrentBackground() {
+    return fetch(`api/rankcard/getBackground.php`)
+        .then(response => {
+            if (!response.ok) throw new Error(`Failed to fetch the current background. Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.url) {
+                currentBackground = {
+                    url: data.url,
+                    name: data.name || "Default Background"
+                };
+                //console.log("Background actuel préchargé :", currentBackground);
+            } else {
+                currentBackground = null;
+                console.warn("Aucun background actuel trouvé :", data);
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors du préchargement du background actuel :", error);
+            currentBackground = null;
+        });
+}
+
+function preloadBackgrounds() {
+    return fetch(`api/lootbox/viewUserRewards.php`)
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to fetch user rewards");
+            return response.json();
+        })
+        .then(data => {
+            preloadedBackgrounds = data.filter(reward => reward.type === "background");
+            preloadedBackgrounds.forEach(background => {
+                const img = new Image();
+                img.src = background.url;
+            });
+            //console.log("Backgrounds disponibles préchargés :", preloadedBackgrounds);
+        })
+        .catch(error => {
+            console.error("Erreur lors du préchargement des backgrounds :", error);
+        });
+}
+
+function updateBackgroundContainer(responseData) {
+    const backgroundContainer = document.querySelector(".background");
+    if (!backgroundContainer) {
+        console.error("Élément avec la classe .background introuvable.");
+        return;
+    }
+
+    backgroundContainer.innerHTML = "";
+
+    if (!responseData || !responseData.url) {
+        console.error("Les données du background sont invalides :", responseData);
+        return;
+    }
+
+    const backgroundImg = document.createElement("img");
+    backgroundImg.src = responseData.url;
+    backgroundImg.alt = responseData.name || "Background";
+    backgroundImg.className = "background-image";
+
+    backgroundContainer.appendChild(backgroundImg);
+    //console.log("Background mis à jour :", responseData);
+}
+
+//Change avatar
+function initAvatarChanges() {
+    const changeAvatarButton = document.getElementById("changeAvatar");
+    const rankCardContainer = document.querySelector(".rank-card-container");
+
+    const avatarContainer = document.createElement("div");
+    avatarContainer.id = "avatarContainer";
+    avatarContainer.style.display = "none";
+    rankCardContainer.appendChild(avatarContainer);
+
+    const buttonGroup = document.createElement("div");
+    buttonGroup.className = "avatar-button-group";
+
+    const changeSkinButton = document.createElement("button");
+    changeSkinButton.id = "changeSkinButton";
+    changeSkinButton.textContent = t("rank_card.change_skin_button");
+    changeSkinButton.className = "change-skin-btn";
+    buttonGroup.appendChild(changeSkinButton);
+
+    const changePoseButton = document.createElement("button");
+    changePoseButton.id = "changePoseButton";
+    changePoseButton.textContent = t("rank_card.change_pose_button");
+    changePoseButton.className = "change-pose-btn";
+    buttonGroup.appendChild(changePoseButton);
+
+    avatarContainer.appendChild(buttonGroup);
+
+    const saveAvatarChangesButton = document.createElement("button");
+    saveAvatarChangesButton.id = "saveAvatarChanges";
+    saveAvatarChangesButton.className = "save-avatar-changes";
+    saveAvatarChangesButton.textContent = "✔";
+    avatarContainer.appendChild(saveAvatarChangesButton);
+
+    const resetAvatarButton = document.createElement("button");
+    resetAvatarButton.id = "resetAvatar";
+    resetAvatarButton.className = "reset-avatar";
+    resetAvatarButton.textContent = t("rank_card.reset_avatar_button");
+    avatarContainer.appendChild(resetAvatarButton);
+
+    const avatarSkinPreview = document.createElement("div");
+    avatarSkinPreview.id = "avatarSkinPreview";
+    avatarSkinPreview.textContent = "+";
+    avatarSkinPreview.style.fontSize = "24px";
+    avatarSkinPreview.style.color = "#999";
+    avatarSkinPreview.style.fontWeight = "bold";
+    avatarSkinPreview.style.display = "none";
+    avatarContainer.appendChild(avatarSkinPreview);
+
+    const avatarPosePreview = document.createElement("div");
+    avatarPosePreview.id = "avatarPosePreview";
+    avatarPosePreview.textContent = "+";
+    avatarPosePreview.style.fontSize = "24px";
+    avatarPosePreview.style.color = "#999";
+    avatarPosePreview.style.fontWeight = "bold";
+    avatarPosePreview.style.display = "none";
+    avatarContainer.appendChild(avatarPosePreview);
+
+    const optionsContainer = document.createElement("div");
+    optionsContainer.id = "avatarOptions";
+    optionsContainer.innerHTML = "";
+    optionsContainer.style.display = "none";
+    avatarContainer.appendChild(optionsContainer);
+
+    let selectedSkin = null;
+    let selectedPose = null;
+    let currentSkin = "Overwatch 1";
+    let currentPose = "heroic";
+    let availableAvatars = { skins: [], poses: [] };
+
+    const toggleActiveClass = (button) => {
+        changeSkinButton.classList.remove("active");
+        changePoseButton.classList.remove("active");
+        button.classList.add("active");
+
+        if (button === changeSkinButton) {
+            avatarSkinPreview.style.display = "flex";
+            avatarPosePreview.style.display = "none";
+        } else if (button === changePoseButton) {
+            avatarSkinPreview.style.display = "none";
+            avatarPosePreview.style.display = "flex";
+        }
+    };
+
+    changeSkinButton.addEventListener("click", () => {
+        toggleActiveClass(changeSkinButton);
+    });
+
+    changePoseButton.addEventListener("click", () => {
+        toggleActiveClass(changePoseButton);
+    });
+
+    resetAvatarButton.addEventListener("click", () => {
+        selectedSkin = "Overwatch 1";
+        selectedPose = "heroic";
+
+        const formattedSkin = selectedSkin.toLowerCase().replace(/ /g, "_");
+        const skinPoseUrl = `assets/rank_card/avatar/${formattedSkin}/${selectedPose}.png`;
+
+        avatarSkinPreview.style.backgroundImage = `url(${skinPoseUrl})`;
+        avatarSkinPreview.textContent = "";
+
+        avatarPosePreview.style.backgroundImage = `url(${skinPoseUrl})`;
+        avatarPosePreview.textContent = "";
+
+        updatePlayerAvatar({
+            name: selectedSkin,
+            url: skinPoseUrl
+        });
+
+        //console.log("Avatar par défaut ", selectedSkin, selectedPose);
+    });
+
+    const fetchCurrentAvatar = () => {
+        Promise.all([
+            fetch(`api/rankcard/getAvatarSkin.php`).then(response => response.json()),
+            fetch(`api/rankcard/getAvatarPose.php`).then(response => response.json())
+        ])
+            .then(([skinData, poseData]) => {
+                if (skinData.url) {
+                    currentSkin = skinData.skin || currentSkin;
+                    avatarSkinPreview.style.backgroundImage = `url(${skinData.url})`;
+                    avatarSkinPreview.textContent = "";
+                } else {
+                    avatarSkinPreview.style.backgroundImage = "none";
+                    avatarSkinPreview.textContent = "+";
+                }
+
+                if (poseData.url) {
+                    currentPose = poseData.pose || currentPose;
+                    avatarPosePreview.style.backgroundImage = `url(${poseData.url})`;
+                    avatarPosePreview.textContent = "";
+                } else {
+                    avatarPosePreview.style.backgroundImage = "none";
+                    avatarPosePreview.textContent = "+";
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors de la récupération des avatars actuels :", error);
+            });
+    };
+
+    const preloadAvatarOptions = () => {
+        fetch(`api/lootbox/viewUserRewards.php`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur lors du chargement des récompenses.");
+                return response.json();
+            })
+            .then(data => {
+                availableAvatars.skins = data.filter(reward => reward.type === "skin");
+                availableAvatars.poses = data.filter(reward => reward.type === "pose");
+            })
+            .catch(error => console.error("Erreur lors du préchargement des options d'avatar :", error));
+    };
+
+    const displayAvatarOptions = (type) => {
+        const avatars = type === "skin" ? availableAvatars.skins : availableAvatars.poses;
+
+        if (!avatars || avatars.length === 0) {
+            showErrorMessage(t("rank_card.no_type_found", { type }));
+            return;
+        }
+
+        optionsContainer.innerHTML = "";
+
+        avatars.forEach(avatar => {
+            const avatarOption = document.createElement("div");
+            avatarOption.className = "avatar-option";
+            avatarOption.textContent = `${avatar.name} (${avatar.rarity})`;
+
+            avatarOption.addEventListener("click", () => {
+                if (type === "skin") {
+                    selectedSkin = avatar.name;
+                    avatarSkinPreview.style.backgroundImage = `url(${avatar.url})`;
+                    avatarSkinPreview.textContent = "";
+                } else if (type === "pose") {
+                    selectedPose = avatar.name;
+                    avatarPosePreview.style.backgroundImage = `url(${avatar.url})`;
+                    avatarPosePreview.textContent = "";
+                }
+                optionsContainer.style.display = "none";
+            });
+
+            optionsContainer.appendChild(avatarOption);
+        });
+
+        const previewRect =
+            type === "skin" ? avatarSkinPreview.getBoundingClientRect() : avatarPosePreview.getBoundingClientRect();
+        const containerRect = avatarContainer.getBoundingClientRect();
+
+        optionsContainer.style.display = "block";
+        optionsContainer.style.top = `${previewRect.bottom - containerRect.top}px`;
+        optionsContainer.style.left = `${previewRect.left - containerRect.left}px`;
+        optionsContainer.style.width = `${type === "skin" ? avatarSkinPreview.offsetWidth : avatarPosePreview.offsetWidth}px`;
+        optionsContainer.style.maxHeight = "150px";
+        optionsContainer.style.overflowY = "auto";
+    };
+
+    avatarSkinPreview.addEventListener("click", () => {
+        displayAvatarOptions("skin");
+    });
+
+    avatarPosePreview.addEventListener("click", () => {
+        displayAvatarOptions("pose");
+    });
+
+    saveAvatarChangesButton.addEventListener("click", () => {
+        const promises = [];
+
+        if (selectedSkin && selectedSkin !== currentSkin) {
+            const skinUrl = `api/rankcard/setAvatarSkin.php`;
+            //console.log("Envoi de skin :", selectedSkin);
+            promises.push(
+                fetch(`${skinUrl}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ avatarSkin: selectedSkin }),
+                })
+            );
+        }
+
+        if (selectedPose && selectedPose !== currentPose) {
+            const poseUrl = `api/rankcard/setAvatarPose.php`;
+            //console.log("Envoi de pose :", selectedPose);
+            promises.push(
+                fetch(`${poseUrl}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ avatarPose: selectedPose }),
+                })
+            );
+        }
+
+        Promise.all(promises)
+            .then((responses) => {
+                if (responses.some((response) => !response.ok)) {
+                    throw new Error("Erreur lors de la sauvegarde des avatars.");
+                }
+                return Promise.all(responses.map((response) => response.json()));
+            })
+            .then((data) => {
+                avatarContainer.style.display = "none";
+
+                const formattedSkin = (selectedSkin || currentSkin).toLowerCase().replace(/ /g, "_");
+                const formattedPose = (selectedPose || currentPose).toLowerCase();
+
+                updatePlayerAvatar({
+                    name: selectedSkin || currentSkin,
+                    url: `assets/rank_card/avatar/${formattedSkin}/${formattedPose}.png`
+                });
+                //console.log("Réponses API :", data);
+
+                currentSkin = selectedSkin || currentSkin;
+                currentPose = selectedPose || currentPose;
+                showConfirmationMessage(t("rank_card.avatar_saved"));
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la sauvegarde :", error);
+            });
+    });
+
+    document.addEventListener("click", (event) => {
+        const isClickInsideOptionsContainer = optionsContainer.contains(event.target);
+        const isClickInsideAvatarContainer = avatarContainer.contains(event.target);
+        const isClickOnChangeAvatarButton = changeAvatarButton.contains(event.target);
+
+        if (!isClickInsideOptionsContainer && !avatarSkinPreview.contains(event.target) && !avatarPosePreview.contains(event.target)) {
+            optionsContainer.style.display = "none";
+        }
+
+        if (!isClickInsideAvatarContainer && !isClickOnChangeAvatarButton) {
+            avatarContainer.style.display = "none";
+        }
+    });
+
+    changeAvatarButton.addEventListener("click", () => {
+        avatarContainer.style.display = "flex";
+        fetchCurrentAvatar();
+        preloadAvatarOptions();
+    });
+}
+
+function updatePlayerAvatar(responseData) {
+    const playerAvatar = document.querySelector(".player-avatar");
+    if (!playerAvatar) {
+        console.error("Élément avec la classe .player-avatar introuvable.");
+        return;
+    }
+
+    if (!responseData || !responseData.url) {
+        console.error("Les données de l'avatar sont invalides :", responseData);
+        return;
+    }
+
+    playerAvatar.src = responseData.url;
+    playerAvatar.alt = responseData.name || "Player Avatar";
+    
+    //console.log("Avatar maj :", responseData);
+}
+
+function preloadAvatarPreviews() {
+    const avatarSkinPreview = document.getElementById("avatarSkinPreview");
+    const avatarPosePreview = document.getElementById("avatarPosePreview");
+
+    fetch(`api/rankcard/getAvatarSkin.php`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur lors de la récupération des skins.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.url) {
+                avatarSkinPreview.style.backgroundImage = `url(${data.url})`;
+                avatarSkinPreview.textContent = "";
+            } else {
+                avatarSkinPreview.style.backgroundImage = "none";
+                avatarSkinPreview.textContent = "+";
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors du préchargement de l'avatarSkinPreview :", error);
+        });
+
+    fetch(`api/rankcard/getAvatarPose.php`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur lors de la récupération des poses.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.url) {
+                avatarPosePreview.style.backgroundImage = `url(${data.url})`;
+                avatarPosePreview.textContent = "";
+            } else {
+                avatarPosePreview.style.backgroundImage = "none";
+                avatarPosePreview.textContent = "+";
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors du préchargement de l'avatarPosePreview :", error);
+        });
+}
+
+//Pop up 
+function showConfirmationMessage(message) {
+    const existingPopup = document.querySelector('.confirmation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const confirmationPopup = document.createElement('div');
+    confirmationPopup.className = 'confirmation-popup';
+    confirmationPopup.textContent = message;
+
+    document.body.appendChild(confirmationPopup);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.addEventListener('transitionend', () => {
+            confirmationPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
+function showErrorMessage(message) {
+    const errorPopup = document.createElement('div');
+    errorPopup.className = 'error-popup';
+    errorPopup.textContent = message;
+
+    document.body.appendChild(errorPopup);
+
+    setTimeout(() => {
+        errorPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        errorPopup.classList.add('fade-out');
+        errorPopup.addEventListener('transitionend', () => {
+            errorPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
+//Trad
+async function loadTranslations() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        const currentLang = document.documentElement.lang || "en";
+        
+        const currentLangData = data[currentLang] || {};
+        
+        const { rank_card = {} } = currentLangData;
+        
+        translations = { rank_card };
+
+        //console.log("Traductions chargées :", translations);
+    } catch (error) {
+        console.error("Erreur lors du chargement des traductions :", error);
+    }
+}
+
+function t(path, params = {}) {
+    const parts = path.split('.');
+    let result = translations;
+    for (const part of parts) {
+        result = result?.[part];
+        if (!result) break;
+    }
+    if (!result) {
+        return path;
+    }
+    for (const key in params) {
+        result = result.replace(`{${key}}`, params[key]);
+        if (!result) {
+            console.error(`Clé de traduction introuvable: ${path}`);
+            return path;
+        }
+    }
+    return result;
 }
