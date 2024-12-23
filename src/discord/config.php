@@ -57,7 +57,7 @@ if (!defined('BASE_PATH')) {
 }
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_set_cookie_params(3600);
+    session_set_cookie_params(31536000);
     session_start();
 }
 
