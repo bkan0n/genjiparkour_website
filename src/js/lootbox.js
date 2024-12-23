@@ -322,11 +322,12 @@ function displayRewards(rewards) {
         const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
         const rewardImage = $('<img/>').addClass('reward-image').attr('src', reward.url);
 
-        const rewardName = $('<div/>').addClass('reward-name').text(`Name: ${reward.name}`);
-        const rewardType = $('<div/>').addClass('reward-type').text(`Type: ${reward.type}`);
-        const rewardRarity = $('<div/>').addClass('reward-rarity').text(`Rarity: ${reward.rarity}`);
-
-        cardBack.append(rewardImage, rewardName, rewardType, rewardRarity);
+        const toTitleCase = (str) =>str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        const rewardName = $('<div/>').addClass('reward-name').text(`${toTitleCase(reward.name)}`);
+        const rewardType = $('<div/>').addClass('reward-type').text(`${toTitleCase(reward.type)}`);
+        const rewardsInfo = $('<div/>').addClass('rewards-info').append(rewardName, rewardType);
+        
+        cardBack.append(rewardImage, rewardsInfo);
         cardInner.append(cardFront).append(cardBack);
         card.append(cardInner);
         $('#crate').append(card);
@@ -344,6 +345,7 @@ function displayRewards(rewards) {
                     if (!$(this).hasClass('flip')) {
                         const otherReward = rewards[$(this).index()];
                         revealCard($(this), otherReward, false);
+                        $(this).addClass('dashed-line');
                     }
                 });
             }, 1000);
@@ -357,11 +359,10 @@ function displayRewards(rewards) {
                 flipCard(card, reward, grantRewardFlag);
             });
         } else if (reward.rarity === 'legendary') {
-            card.find('.card-inner').addClass('random-shake');
-            setTimeout(() => {
+            card.find('.card-inner').addClass('random-shake').one('animationend', function () {
                 card.find('.card-inner').removeClass('random-shake');
                 flipCard(card, reward, grantRewardFlag);
-            }, 1000);
+            });
         } else {
             flipCard(card, reward, grantRewardFlag);
         }
@@ -370,7 +371,6 @@ function displayRewards(rewards) {
     function flipCard(card, reward, grantRewardFlag) {
         card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
         playSound(reward.rarity);
-        //addGifParticles(card.find('.card-back'), reward.rarity);
 
         if (card.hasClass('flip')) {
             card.find('.front-text').text('Oops');
@@ -383,6 +383,7 @@ function displayRewards(rewards) {
         }
     }
 }
+
 
 function grantReward(userId, rewardType, rewardName) {
     $.ajax({

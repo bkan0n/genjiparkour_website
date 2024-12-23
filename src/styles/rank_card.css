@@ -1323,6 +1323,7 @@
     z-index: 1200;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    transform-origin: center;
   }
   
   .confirmation-popup.show {
