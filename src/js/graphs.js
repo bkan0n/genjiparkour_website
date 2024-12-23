@@ -1,5 +1,4 @@
 const currentLang = document.documentElement.lang || "en";
-console.log(`Langue actuelle : ${currentLang}`);
 
 async function loadTranslations() {
     try {

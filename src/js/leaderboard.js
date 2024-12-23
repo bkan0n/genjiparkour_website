@@ -476,7 +476,7 @@ function animation(button) {
 
 document.querySelectorAll('.sort-btn').forEach(button => {
     button.addEventListener('click', function (event) {
-        console.log(`Bouton cliqué : ${button.id}`);
+        //console.log(`Bouton cliqué : ${button.id}`);
         const column = button.getAttribute('data-column');
         sortTableAjax(event, column, button);
     });
@@ -487,7 +487,7 @@ function sortTableAjax(event, column, button) {
     event.preventDefault();
 
     if (isSorting) {
-        console.warn("Un tri est déjà en cours.");
+        console.warn("Un tri est déjà en cours");
         return;
     }
 
@@ -504,7 +504,7 @@ function sortTableAjax(event, column, button) {
         page_number: currentPage,
     };
 
-    console.log(`Tri sur la colonne "${column}" avec ordre "${newOrder}"`);
+    //console.log(`Tri sur la colonne "${column}" avec ordre "${newOrder}"`);
 
     fetch(`api/getFullLeaderboard.php?${new URLSearchParams(params).toString()}`)
         .then(response => {
@@ -514,7 +514,7 @@ function sortTableAjax(event, column, button) {
             return response.json();
         })
         .then(data => {
-            console.log("Données récupérées :", data);
+            //console.log("Données récupérées :", data);
             updateLeaderboard(params);
         })
         .catch(error => {
@@ -528,7 +528,7 @@ function sortTableAjax(event, column, button) {
 
 
 function sortBySkillRank(data, order = 'asc') {
-    console.log("Données initiales : ", data.map(item => item.skill_rank));
+    //console.log("Données initiales : ", data.map(item => item.skill_rank));
 
     const sortedData = data.sort((a, b) => {
         const rankA = skillRankOrder.indexOf(a.skill_rank.trim());

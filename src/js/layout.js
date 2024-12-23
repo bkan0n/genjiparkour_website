@@ -272,6 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//Trad
 async function loadTranslationsRankcard() {
     try {
         const response = await fetch("translations/translations.json");
@@ -297,4 +298,48 @@ function t(path, params = {}) {
         result = result.replace(`{${key}}`, params[key]);
     }
     return result;
+}
+
+//Popup
+function showConfirmationMessage(message) {
+    const existingPopup = document.querySelector('.confirmation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const confirmationPopup = document.createElement('div');
+    confirmationPopup.className = 'confirmation-popup';
+    confirmationPopup.textContent = message;
+
+    document.body.appendChild(confirmationPopup);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.addEventListener('transitionend', () => {
+            confirmationPopup.remove();
+        }, { once: true });
+    }, 800);
+}
+
+function showErrorMessage(message) {
+    const errorPopup = document.createElement('div');
+    errorPopup.className = 'error-popup';
+    errorPopup.textContent = message;
+
+    document.body.appendChild(errorPopup);
+
+    setTimeout(() => {
+        errorPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        errorPopup.classList.add('fade-out');
+        errorPopup.addEventListener('transitionend', () => {
+            errorPopup.remove();
+        }, { once: true });
+    }, 800);
 }

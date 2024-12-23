@@ -694,7 +694,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             navigator.clipboard.writeText(mapCodeText)
                 .then(() => {
-                    console.log("Texte copié:", mapCodeText);
+                    //console.log("Texte copié:", mapCodeText);
                     showConfirmationMessage(t('newsfeed.copy_clipboard'));
                 })
                 .catch(err => {

@@ -794,7 +794,7 @@ function updateActiveFilters() {
         }
     }
 
-    console.log("Filtres actifs mis à jour :", activeFilters);
+    //console.log("Filtres actifs mis à jour :", activeFilters);
     setTimeout(updateToolbarButtonStates, 0);
 }
 
@@ -805,7 +805,7 @@ function updateToolbarButtonStates() {
         const filterId = button.id.replace("FilterButton", "").toLowerCase();
         const isActive = !!activeFilters[filterId];
 
-        console.log(`Etat bouton : ${filterId}, Actif: ${isActive}`);
+        //console.log(`Etat bouton : ${filterId}, Actif: ${isActive}`);
 
         if (isActive) {
             button.classList.add("active-filter");
@@ -1005,7 +1005,7 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
     }
 
     debounceTimeout = setTimeout(() => {
-        console.log(`Fetching from ${apiEndpoint} with value:`, filterValue);
+        //console.log(`Fetching from ${apiEndpoint} with value:`, filterValue);
 
         fetch(`api/autocomplete/${apiEndpoint}?value=${encodeURIComponent(filterValue)}`)
             .then(response => {
@@ -1015,7 +1015,7 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
                 return response.json();
             })
             .then(data => {
-                console.log("Fetched data:", data);
+                //console.log("Fetched data:", data);
                 suggestionsContainer.innerHTML = "";
 
                 if (!Array.isArray(data) || data.length === 0) {
@@ -1669,7 +1669,7 @@ async function fetchMapCompletionStatistics(mapCode) {
             avg: data[0]?.avg || null,
         };
 
-        console.log("Fetched Stats:", stats);
+        //console.log("Fetched Stats:", stats);
 
         return stats;
     } catch (error) {
