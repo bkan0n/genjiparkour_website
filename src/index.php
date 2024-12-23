@@ -112,9 +112,8 @@ include BASE_PATH . "discord/header.php";
         </div>
     </div>
     <div id="rankCardModal" class="modal-overlay" style="display: none;"></div>
-    <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
-        <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;">
-        </div>
+    <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.7); z-index: 9999;">
+        <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;"></div>
     </div>
     <section class="hero" id="hero1">
         <div class="scroll-indicator">
