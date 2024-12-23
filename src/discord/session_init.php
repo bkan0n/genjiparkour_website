@@ -3,11 +3,16 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', __DIR__ . '/../');
 }
 
-if (!defined('SESSION_TIMEOUT')) {
-    define('SESSION_TIMEOUT', 600);
-}
-
 if (session_status() === PHP_SESSION_NONE) {
+    $cookieParams = session_get_cookie_params();
+    session_set_cookie_params([
+        'lifetime' => 31536000,
+        'path' => $cookieParams['path'],
+        'domain' => $cookieParams['domain'],
+        'secure' => $cookieParams['secure'],
+        'httponly' => $cookieParams['httponly'],
+    ]);
+
     session_start();
 }
 
@@ -21,13 +26,7 @@ if (!defined('REDIRECT_URL')) {
     }
 }
 
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > SESSION_TIMEOUT)) {
-    $_SESSION['session_expired'] = true;
-    //session_write_close();
-    //error_log("Session expired set to true");
-} else {
+if (!isset($_SESSION['LAST_ACTIVITY'])) {
     $_SESSION['LAST_ACTIVITY'] = time();
-    $_SESSION['session_expired'] = false;
-    //session_write_close();
-    //error_log("Session expired set to false");
+    //error_log("[SESSION_INIT] Session initialized. LAST_ACTIVITY: " . $_SESSION['LAST_ACTIVITY']);
 }
