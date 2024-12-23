@@ -234,6 +234,19 @@
     margin-right: auto;
 }
 
+.rewards-info {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
 /* Effets rareté*/
 @keyframes common-glow {
     0% {
@@ -487,5 +500,45 @@
     .front-text { 
         top: 30px;
         font-size: 0.5em;
+    }
+
+    .rewards-info {
+        font-size: 0.4em;
+        padding: 3px;
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+    }
+}
+
+.card.dashed-line .card-back {
+    position: relative;
+    overflow: hidden;
+}
+
+.card.dashed-line .card-back::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 15px,
+        black 15px,
+        black 20px
+    );
+    z-index: 2;
+    animation: diagonal-dash-move 2s linear infinite;
+}
+
+@keyframes diagonal-dash-move {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50px);
     }
 }

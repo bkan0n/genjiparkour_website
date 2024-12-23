@@ -1,5 +1,3 @@
-let selectedUserId = null;
-
 async function initRankCard() {
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
@@ -1467,50 +1465,6 @@ function preloadAvatarPreviews() {
         .catch(error => {
             console.error("Erreur lors du préchargement de l'avatarPosePreview :", error);
         });
-}
-
-//Pop up 
-function showConfirmationMessage(message) {
-    const existingPopup = document.querySelector('.confirmation-popup');
-    if (existingPopup) {
-        existingPopup.remove();
-    }
-
-    const confirmationPopup = document.createElement('div');
-    confirmationPopup.className = 'confirmation-popup';
-    confirmationPopup.textContent = message;
-
-    document.body.appendChild(confirmationPopup);
-
-    setTimeout(() => {
-        confirmationPopup.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        confirmationPopup.classList.add('fade-out');
-        confirmationPopup.addEventListener('transitionend', () => {
-            confirmationPopup.remove();
-        }, { once: true });
-    }, 800);
-}
-
-function showErrorMessage(message) {
-    const errorPopup = document.createElement('div');
-    errorPopup.className = 'error-popup';
-    errorPopup.textContent = message;
-
-    document.body.appendChild(errorPopup);
-
-    setTimeout(() => {
-        errorPopup.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        errorPopup.classList.add('fade-out');
-        errorPopup.addEventListener('transitionend', () => {
-            errorPopup.remove();
-        }, { once: true });
-    }, 800);
 }
 
 //Trad
