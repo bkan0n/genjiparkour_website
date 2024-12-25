@@ -1,3 +1,7 @@
+if (typeof availableAvatars === "undefined") {
+    let selectedUserId = null;
+}
+
 async function initRankCard() {
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
