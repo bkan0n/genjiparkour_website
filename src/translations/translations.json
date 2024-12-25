@@ -219,7 +219,9 @@
             "archived_description": "This map will not appear in the map search unless searched by map code. You cannot submit records for archived maps",
             "creator": "Creator",
             "map_code": "Map code",
-            "difficulty": "Difficulty"
+            "difficulty": "Difficulty",
+            "bulk_archived": "Multiple maps have been archived",
+            "bulk_unarchived": "Multiple maps have been unarchived"
         },
         "common": {
             "na": "N/A",

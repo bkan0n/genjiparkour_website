@@ -396,7 +396,15 @@ body {
 }
 
 .news-card.archive {
-    border-left: 4px solid #1cd88a;
+    border-left: 4px solid #e4d618;
+}
+
+.news-card.bulk_archive {
+    border-left: 4px solid #e4d618;
+}
+
+.news-card.bulk_unarchive {
+    border-left: 4px solid #1c1fd8;
 }
 
 /* Nouveau guide */

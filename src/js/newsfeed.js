@@ -317,10 +317,6 @@ async function createNewsCard(item) {
 
     let content;
 
-    if (type === "role" || type === "record" || type === "map_edit") {
-        content += `<img class="role-banner" src="assets/img/card-banner.png" alt="Role Banner">`;
-    }
-
     if (type === "announcement") {
         let messageContent = data.message.content;
 
@@ -356,6 +352,19 @@ async function createNewsCard(item) {
                 <span class="genjibot-app">APP</span>
             </div>
         </div>`;
+        
+    if (type === "role" || type === "record" || type === "map_edit") {
+        content += `<img class="role-banner" src="assets/img/card-banner.png" alt="Role Banner">`;
+    }
+
+    if (type === "bulk_archive" || type === "bulk_unarchive") {
+        const actionText = type === "bulk_archive" ? t('newsfeed.bulk_archived') : t('newsfeed.bulk_unarchived');
+        content += `
+        <div class="news-header">
+            <h3>${actionText}</h3>
+            <p>${data.total_results}</p>
+        </div>`;
+    }
 
     if (type === "new_map") {
         const bannerPath = `assets/banners/${formatMapName(data.map.map_name)}.png`;
