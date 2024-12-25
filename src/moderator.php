@@ -114,7 +114,7 @@ include BASE_PATH . "discord/header.php";
         </div>
     </div>
     <div class="container">
-        <h2 class="wip-title">This page is WIP, only front-end works</h2>
+        <h2 class="wip-title">This page is WIP, only submit map, multiple archive and unarchive works</h2>
         <div class="tab-buttons">
             <button class="tab-button edit-user" id="edit-user-btn">Edit User</button>
             <button class="tab-button edit-map" id="edit-map-btn">Edit Map</button>

@@ -207,6 +207,7 @@ async function fetchMapResults(filters = {}) {
                         <li data-value="Legacy completions">Legacy completions</li>
                         <li data-value="Convert legacy">Convert legacy</li>
                         <li data-value="Archive">Archive</li>
+                        <li data-value="Unarchive">Unarchive</li>
                     </ul>
                 </div>
                 <button class="confirm-button">Confirm changes</button>
@@ -1186,6 +1187,13 @@ function showUsersSuggestions(event) {
                         setInputValue(input, creator.name);
                         setInputValidationClass(input, true);
                     }
+
+                    const creatorIdField = parentCard? parentCard.querySelector('[data-field="creator_id"]'): document.querySelector('[data-field="creator_id"]');
+
+                    if (creatorIdField) {
+                        creatorIdField.textContent = creator.user_id;
+                    }
+
                     suggestionsContainer.style.display = "none";
                 };
 
@@ -1643,6 +1651,7 @@ function submitMap() {
                 <p><span class="text"><strong>Type:</strong><span class="editable" data-field="map_type" contenteditable="true" placeholder="Enter map type"></span></span></p>
                 <p><span class="text"><strong>Code:</strong><span class="editable" data-field="map_code" contenteditable="true" placeholder="Enter map code"></span></span></p>
                 <p><span class="text"><strong>Creators:</strong><span class="editable" data-field="creator" contenteditable="true" placeholder="Enter creators"></span></span></p>
+                <p style="display: none;"><span class="text"><strong>Creators ID:</strong><span class="editable" data-field="creator_id" contenteditable="true"></span></span></p>
                 <p><span class="text"><strong>Difficulty:</strong><span class="editable" data-field="difficulty" contenteditable="true" placeholder="Enter difficulty"></span></span></p>
                 <p><span class="text"><strong>Checkpoints:</strong><span class="editable" data-field="checkpoints" contenteditable="true" placeholder="Enter checkpoints"></span></span></p>
                 <p><span class="text"><strong>Quality:</strong><span class="editable" data-field="quality" contenteditable="true" placeholder="Enter quality"></span></span></p>
@@ -1821,7 +1830,6 @@ document.addEventListener("click", (event) => {
         });
 
         if (!hasError) {
-            showConfirmationMessage("Map has been submitted");
             mapSubmitContainer.style.display = "none";
             console.log("Le formulaire est valide, submit accepté");
         } else {
@@ -2125,6 +2133,7 @@ function setupMultipleCardOptions() {
     multipleOptionsCard.innerHTML = `
         <div class="option-buttons-group">
             <button id="archive-multiple" class="map-option-btn">Archive</button>
+            <button id="unarchive-multiple" class="map-option-btn">Unarchive</button>
             <button id="convert-legacy-multiple" class="map-option-btn">Convert Legacy</button>
         </div>
         <div class="map-code-container"></div>
@@ -2150,6 +2159,13 @@ function setupMultipleCardOptions() {
     document.getElementById("archive-multiple").addEventListener("click", () => {
         deselectButtons();
         document.getElementById("archive-multiple").classList.add("selected");
+        displayMapCodeFields();
+        showActionButtons();
+    });
+
+    document.getElementById("unarchive-multiple").addEventListener("click", () => {
+        deselectButtons();
+        document.getElementById("unarchive-multiple").classList.add("selected");
         displayMapCodeFields();
         showActionButtons();
     });
@@ -2184,11 +2200,13 @@ function addMapCodeField() {
     mapCodeField.className = "map-code-field";
 
     mapCodeField.innerHTML = `
-        <input type="text" class="multiple-input-code" id="multipleInputCode" placeholder="Enter map code">
+        <input type="text" class="multiple-input-code" placeholder="Enter map code">
         <div class="map-code-suggestions-container" style="display: none;"></div>
     `;
 
     mapCodeContainer.appendChild(mapCodeField);
+
+    //console.log("Field added:", mapCodeContainer.innerHTML);
 
     const input = mapCodeField.querySelector(".multiple-input-code");
     const suggestionsContainer = mapCodeField.querySelector(".map-code-suggestions-container");
@@ -2197,6 +2215,7 @@ function addMapCodeField() {
         showMapCodeSuggestions(event, suggestionsContainer);
     });
 }
+
 
 function confirmMapCodes() {
     const inputs = Array.from(document.querySelectorAll(".multiple-input-code"));
@@ -2215,7 +2234,7 @@ function confirmMapCodes() {
         const code = input.value.trim();
 
         if (input.classList.contains("invalid") || code === "") {
-            console.error(`Invalid or empty map code: ${code}`);
+            //console.error(`Invalid or empty map code: ${code}`);
             input.classList.add("invalid");
             hasErrors = true;
         } else if (input.classList.contains("valid")) {
@@ -2246,5 +2265,193 @@ function confirmMapCodes() {
     }
 
     showConfirmationMessage(`Action confirmed for map codes: ${Array.from(confirmedCodes).join(", ")}`);
-    mapCodeContainer.innerHTML = "";
+}
+
+//Submit map ep
+document.addEventListener("click", (event) => {
+    if (event.target && event.target.id === "submit-map-button-confirm") {
+        handleSubmitMap();
+    }
+});
+
+function handleSubmitMap() {
+    const editableFields = document.querySelectorAll(".editable");
+
+    const mapData = {};
+    editableFields.forEach((field) => {
+        let fieldName = field.getAttribute("data-field");
+        let fieldValue = field.textContent.trim();
+
+        if (fieldName === "creator") {
+            fieldName = "nickname";
+        }
+
+        if (["checkpoints", "gold", "silver", "bronze"].includes(fieldName)) {
+            fieldValue = fieldValue.trim() === "" ? null : parseFloat(fieldValue);
+        }
+
+        if (["mechanics", "restrictions"].includes(fieldName)) {
+            fieldValue = fieldValue ? fieldValue.split(",").map((item) => item.trim()) : [];
+        }
+
+        mapData[fieldName] = fieldValue || null;
+    });
+
+    fetch("api/moderator/setSubmitMap.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mapData),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((error) => {
+                    console.error("Erreur API :", error);
+                    throw new Error("Erreur lors de l'envoi de la carte");
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            showConfirmationMessage("Map has been submitted");
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la soumission de la carte :", error);
+        });
+}
+
+//Archive ep
+document.addEventListener("click", (event) => {
+    if (event.target && event.target.id === "confirm-map-codes") {
+        const archiveButton = document.getElementById("archive-multiple");
+        const unarchiveButton = document.getElementById("unarchive-multiple");
+
+        if (archiveButton && archiveButton.classList.contains("selected")) {
+            handleArchive();
+        } else if (unarchiveButton && unarchiveButton.classList.contains("selected")) {
+            handleUnarchive();
+        }
+    }
+});
+
+function handleArchive() {
+    const mapCodeInputs = document.querySelectorAll(".multiple-input-code");
+
+    if (mapCodeInputs.length === 0) {
+        showErrorMessage("No map codes available to archive");
+        return;
+    }
+
+    const mapCodes = [];
+
+    mapCodeInputs.forEach((input, index) => {
+        const mapCode = input.value.trim();
+
+        if (mapCode) {
+            mapCodes.push({ map_code: mapCode });
+            input.classList.remove("invalid");
+        } else {
+            input.classList.add("invalid");
+        }
+    });
+
+    if (mapCodes.length === 0) {
+        return;
+    }
+
+    fetch("api/moderator/setArchive.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mapCodes),
+    })
+        .then((response) => {
+            if (response.status === 201) {
+                return { success: true, data: {} };
+            } else if (response.ok) {
+                return response.json().then((data) => ({ success: data.success || true, data }));
+            } else {
+                return response.json().then((error) => {
+                    console.error("API Error:", error);
+                    throw new Error(error.message || "Failed to archive maps.");
+                });
+            }
+        })
+        .then(({ success, data }) => {
+            //console.log("API Response Success:", success, "Data:", data);
+
+            if (success) {
+                mapCodeInputs.forEach((input) => {
+                    input.value = "";
+                    input.classList.remove("invalid");
+                });
+            } else {
+                showErrorMessage(data.message || "An error occurred while archiving maps.");
+            }
+        })
+        .catch((error) => {
+            showErrorMessage("Failed to archive maps. Please try again");
+        });
+}
+
+//Unarchive ep 
+function handleUnarchive() {
+    const mapCodeInputs = document.querySelectorAll(".multiple-input-code");
+
+    if (mapCodeInputs.length === 0) {
+        return;
+    }
+
+    const mapCodes = [];
+
+    mapCodeInputs.forEach((input, index) => {
+        const mapCode = input.value.trim();
+
+        if (mapCode) {
+            mapCodes.push({ map_code: mapCode });
+            input.classList.remove("invalid");
+        } else {
+            input.classList.add("invalid");
+        }
+    });
+
+    if (mapCodes.length === 0) {
+        return;
+    }
+
+    fetch("api/moderator/setUnarchive.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mapCodes),
+    })
+        .then((response) => {
+            if (response.status === 201) {
+                return { success: true, data: {} };
+            } else if (response.ok) {
+                return response.json().then((data) => ({ success: data.success || true, data }));
+            } else {
+                return response.json().then((error) => {
+                    console.error("API Error:", error);
+                    throw new Error(error.message || "Failed to archive maps.");
+                });
+            }
+        })
+        .then(({ success, data }) => {
+
+            if (success) {
+                mapCodeInputs.forEach((input) => {
+                    input.value = "";
+                    input.classList.remove("invalid");
+                });
+            } else {
+                showErrorMessage(data.message || "An error occurred while archiving maps.");
+            }
+        })
+        .catch((error) => {
+            showErrorMessage("Failed to archive maps. Please try again.");
+        });
 }
