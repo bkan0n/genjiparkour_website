@@ -1,6 +1,6 @@
 services:
   web:
-    container_name: genjiparkour_website
+    container_name: genjiparkour_website-prod
     build: .
     networks:
       - contabo_network
