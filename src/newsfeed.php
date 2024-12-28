@@ -111,6 +111,7 @@ include BASE_PATH . "discord/header.php";
         </div>
     </div>
     <div id="rankCardModal" class="modal-overlay" style="display: none;"></div>
+    <div id="creditsModal" class="modal-overlay" style="display: none;"></div>
     <div id="detailsModalOverlay" class="modal-overlay-custom" style="display:none;">
         <div id="detailsModalBox" class="modal-box-custom">
             <span id="detailsModalClose" class="modal-close-button" onclick="closeDetailsModal()">&times;</span>
@@ -139,6 +140,7 @@ include BASE_PATH . "discord/header.php";
     </div>
     <footer>
         <div class="footer-left">Genji Parkour © 2024</div>
+        <a id="creditsBtn" class="footer-button"><?= htmlspecialchars($translations['footer']['credits']) ?></a>
         <div class="footer-right">Joe is cool</div>
     </footer>
 </body>

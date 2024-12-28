@@ -343,3 +343,52 @@ function showErrorMessage(message) {
         }, { once: true });
     }, 800);
 }
+
+//Credits
+document.addEventListener("DOMContentLoaded", function () {
+    const creditsBtn = document.getElementById("creditsBtn");
+    const creditsModal = document.getElementById("creditsModal");
+
+    if (!creditsBtn || !creditsModal) {
+        console.warn("Bouton ou modal des crédits manquant");
+        return;
+    }
+
+    creditsBtn.addEventListener("click", async () => {
+        try {
+            loadCSS("styles/credits.css");
+            const response = await fetch('modal/credits.php');
+            const html = await response.text();
+
+            creditsModal.innerHTML = html;
+            creditsModal.style.display = "flex";
+            document.body.classList.add("modal-active");
+
+            await loadScript("js/credits.js");
+
+            if (typeof initCreditsModal === "function") {
+                initCreditsModal();
+            } else {
+                console.warn("Aucune fonction initCreditsModal trouvée");
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement du modal des crédits :", error);
+        }
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === creditsModal) {
+            creditsModal.style.display = "none";
+            document.body.classList.remove("modal-active");
+        }
+    });
+});
+
+function loadCSS(href) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = href;
+    document.head.appendChild(link);
+    //console.log(`CSS chargé : ${href}`);
+}
