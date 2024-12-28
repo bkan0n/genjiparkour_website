@@ -140,7 +140,7 @@ $('.generate').click(function() {
                     console.log("Pas assez de clés, loot box non ouverte");
                 }
             } else {
-                alert("Aucune clé disponible");
+                showErrorMessage(t('lootbox.no_keys_available'));
                 console.log("Aucune clé disponible");
             }
         },
@@ -312,39 +312,27 @@ function displayRewards(rewards) {
     let rewardGranted = false;
 
     rewards.forEach((reward, index) => {
-        let rewardClass = `reward-${reward.name}`;
         const card = $('<li/>').addClass(`card shadow animated bounceInDown crate-${index}`);
         const cardInner = $('<div/>').addClass('card-inner');
         const cardFront = $('<div/>').addClass('card-front');
         const frontText = $('<span/>').addClass('front-text').text(t('lootbox.pick_a_card'));
         cardFront.append(frontText);
 
-        const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
+        const cardBack = $('<div/>').addClass('card-back');
+
+        card.data('rarity', reward.rarity);
+        card.data('reward-name', reward.name);
+        card.data('reward-type', reward.type);
+        card.data('reward-image', reward.url);
+        card.data('reward-name-translated', reward.name);
+        card.data('reward-type-translated', t(`lootbox.rewards_types.${reward.type.toLowerCase().replace(/ /g, '_')}`));
 
         const rewardImageContainer = $('<div/>').addClass('reward-image-container');
-        const rewardImage = $('<img/>').addClass('reward-image').attr('src', reward.url);
+        const rewardImage = $('<img/>').addClass('reward-image');
         rewardImageContainer.append(rewardImage);
 
-        const toTitleCase = (str) =>str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
-        const translatedRewardName =
-        currentLang === "cn" && reward.type.toLowerCase() === "background"
-            ? (() => {
-                const translation = t(`map_name.${reward.name.toLowerCase().replace(/ /g, '_').replace(/[()]/g, '')}`);
-                return translation && !translation.startsWith('map_name.') ? translation : toTitleCase(reward.name);
-            })()
-            : toTitleCase(reward.name);
-    
-        const rewardTypeText =
-            currentLang === "cn"
-                ? (() => {
-                    const translation = t(`lootbox.rewards_types.${reward.type.toLowerCase().replace(/ /g, '_')}`);
-                    return translation && !translation.startsWith('lootbox.rewards_types.') ? translation : toTitleCase(reward.type);
-                })()
-                : toTitleCase(reward.type);
-        
-        const rewardName = $('<div/>').addClass('reward-name').text(`${translatedRewardName}`);
-        const rewardType = $('<div/>').addClass('reward-type').text(rewardTypeText);
+        const rewardName = $('<div/>').addClass('reward-name');
+        const rewardType = $('<div/>').addClass('reward-type');
         const rewardsInfo = $('<div/>').addClass('rewards-info').append(rewardName, rewardType);
 
         cardBack.append(rewardImageContainer, rewardsInfo);
@@ -373,20 +361,36 @@ function displayRewards(rewards) {
     });
 
     function revealCard(card, reward, grantRewardFlag = true) {
+        const rewardImageContainer = card.find('.reward-image-container');
+        const rewardImage = rewardImageContainer.find('.reward-image');
+        rewardImage.attr('src', card.data('reward-image'));
+
+        const rewardName = card.find('.reward-name');
+        const rewardType = card.find('.reward-type');
+        rewardName.text(card.data('reward-name-translated'));
+        rewardType.text(card.data('reward-type-translated'));
+        const cardBack = card.find('.card-back');
+        cardBack.removeClass('common rare epic legendary');
+        cardBack.addClass(reward.rarity);
+
         if (reward.rarity === 'epic') {
             card.find('.card-inner').addClass('swing-animation').one('animationend', function () {
                 $(this).removeClass('swing-animation');
-                flipCard(card, reward, grantRewardFlag);
+                setTimeout(function () {
+                    flipCard(card, reward, grantRewardFlag);
+                }, 500);
             });
         } else if (reward.rarity === 'legendary') {
-            card.find('.card-inner').addClass('random-shake').one('animationend', function () {
+            card.find('.card-inner').addClass('random-shake');
+            setTimeout(function () {
                 card.find('.card-inner').removeClass('random-shake');
                 flipCard(card, reward, grantRewardFlag);
-            });
+            }, 1500);
         } else {
             flipCard(card, reward, grantRewardFlag);
         }
     }
+
 
     function flipCard(card, reward, grantRewardFlag) {
         card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
@@ -467,49 +471,6 @@ function playSound(quality) {
     }
 
     sound.play().catch(error => console.log("Erreur lors de la lecture du son:", error));
-}
-
-function showConfirmationMessage(message) {
-    const existingPopup = document.querySelector('.confirmation-popup');
-    if (existingPopup) {
-        existingPopup.remove();
-    }
-
-    const confirmationPopup = document.createElement('div');
-    confirmationPopup.className = 'confirmation-popup';
-    confirmationPopup.textContent = message;
-
-    document.body.appendChild(confirmationPopup);
-
-    setTimeout(() => {
-        confirmationPopup.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        confirmationPopup.classList.add('fade-out');
-        confirmationPopup.addEventListener('transitionend', () => {
-            confirmationPopup.remove();
-        }, { once: true });
-    }, 800);
-}
-
-function showErrorMessage(message) {
-    const errorPopup = document.createElement('div');
-    errorPopup.className = 'error-popup';
-    errorPopup.textContent = message;
-
-    document.body.appendChild(errorPopup);
-
-    setTimeout(() => {
-        errorPopup.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        confirmationPopup.classList.add('fade-out');
-        confirmationPopup.addEventListener('transitionend', () => {
-            confirmationPopup.remove();
-        }, { once: true });
-    }, 800);
 }
 
 // Temporary 
