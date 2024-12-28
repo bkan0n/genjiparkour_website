@@ -1,1 +1,8 @@
+docker-compose.dev.yaml
+docker-compose.prod.yaml
+Dockerfile
+.env
+.gitignore
+.idea
+.venv
 .github

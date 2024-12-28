@@ -1,6 +1,6 @@
 services:
   web:
-    container_name: genjiparkour_website
+    container_name: genjiparkour_website-prod
     build: .
     networks:
       - contabo_network
@@ -11,6 +11,17 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PWD=${DB_PWD}
+      - DB_NAME=${DB_NAME}
+      - X_API_ROOT=${X_API_ROOT}
+      - X_API_KEY=${X_API_KEY}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - TRANSLATION_API_KEY=${TRANSLATION_API_KEY}
+      - TRANSLATION_API_ROOT=${TRANSLATION_API_ROOT}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - TENOR_API_KEY=${TENOR_API_KEY}
+    volumes:
+      - /home/nebula/genjipk_assets/main/genjiparkour_website/src/assets:/var/www/html/assets
 
 networks:
   contabo_network:

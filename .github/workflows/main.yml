@@ -1,12 +1,12 @@
-name: Dev Deployment
+name: Main Deployment
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
 
 jobs:
 
-  deploy-dev-site:
+  deploy-prod-site:
 
     runs-on: ubuntu-latest
     steps:
@@ -38,8 +38,8 @@ jobs:
         ssh_host: ${{ secrets.GENJI_PK_HOST }}
         ssh_private_key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         ssh_user: ${{ secrets.GENJI_PK_SSH_USER }}
-        docker_compose_prefix: genji_pk-test
-        docker_compose_filename: docker-compose.dev.yaml
+        docker_compose_prefix: genji_pk-prod
+        docker_compose_filename: docker-compose.prod.yaml
 
     - name: Update Assets Volume via Git Pull
       uses: appleboy/ssh-action@master
@@ -49,6 +49,5 @@ jobs:
         key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          cd ~/genjipk_assets/dev/genjiparkour_website
-          ${{ secrets.GENJI_ASSETS_DEV}}
-
+          cd ~/genjipk_assets/main/genjiparkour_website
+          ${{ secrets.GENJI_ASSETS_MAIN}}
