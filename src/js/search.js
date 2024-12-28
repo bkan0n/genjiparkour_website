@@ -46,6 +46,7 @@ let totalPages = 1;
 let hideTimeout;
 const applyFiltersButton = document.getElementById("applyFiltersBtn");
 const resultsContainer = document.getElementById("resultsContainer");
+const currentLang = document.documentElement.lang || "en";
 
 const difficultyColors = {
     "Beginner": "#00ff1a",
@@ -107,13 +108,12 @@ async function loadTranslations() {
     try {
         const response = await fetch("translations/translations.json");
         const data = await response.json();
-        const currentLang = document.documentElement.lang || "en";
         
         const currentLangData = data[currentLang] || {};
         
-        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {}, chart = {}, mechanics = {}, restrictions = {} } = currentLangData;
+        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {}, chart = {}, mechanics = {}, restrictions = {}, map_name = {}, map_type = {} } = currentLangData;
         
-        translations = { thead, pagination, popup, filters_toolbar, chart, mechanics, restrictions };
+        translations = { thead, pagination, popup, filters_toolbar, chart, mechanics, restrictions, map_name, map_type };
 
         //console.log("Traductions chargées :", translations);
     } catch (error) {
@@ -144,26 +144,34 @@ function t(path, params = {}) {
 //Mechanics et restrictions autocomplete
 async function loadDynamicOptions() {
     try {
-        // Vérifiez la langue
-        const currentLang = document.documentElement.lang || "en";
-
-        // Récupérez les options des mécaniques
         const mechanicsResponse = await fetch('./api/autocomplete/getMapMechanicsAutoComplete.php');
         if (!mechanicsResponse.ok) throw new Error('Failed to fetch mechanics');
         let mechanicsOptions = (await mechanicsResponse.json()).map(item => item.name);
 
-        // Récupérez les options des restrictions
         const restrictionsResponse = await fetch('./api/autocomplete/getMapRestrictionsAutoComplete.php');
         if (!restrictionsResponse.ok) throw new Error('Failed to fetch restrictions');
         let restrictionsOptions = (await restrictionsResponse.json()).map(item => item.name);
 
-        // Traduisez les options si la langue est "cn"
         if (currentLang === "cn") {
-            mechanicsOptions = mechanicsOptions.map(option => t(`mechanics.${option.toLowerCase().replace(/ /g, '_')}`) || option);
-            restrictionsOptions = restrictionsOptions.map(option => t(`restrictions.${option.toLowerCase().replace(/ /g, '_')}`) || option);            
+            mechanicsOptions = mechanicsOptions.map(option => ({
+                translated: t(`mechanics.${option.toLowerCase().replace(/ /g, '_')}`) || option,
+                raw: option
+            }));
+            restrictionsOptions = restrictionsOptions.map(option => ({
+                translated: t(`restrictions.${option.toLowerCase().replace(/ /g, '_')}`) || option,
+                raw: option
+            }));
+        } else {
+            mechanicsOptions = mechanicsOptions.map(option => ({
+                translated: option,
+                raw: option
+            }));
+            restrictionsOptions = restrictionsOptions.map(option => ({
+                translated: option,
+                raw: option
+            }));
         }
 
-        // Stockez les options globalement
         window.mechanicsOptions = mechanicsOptions;
         window.restrictionsOptions = restrictionsOptions;
 
@@ -237,68 +245,8 @@ async function initializeApp() {
 
 document.addEventListener("DOMContentLoaded", initializeApp);
 
-window.addEventListener("resize", () => {
-    repositionDropdowns();
-    repositionInputs();
-});
-
 function clearToolbarButtons() {
     document.querySelectorAll(".toolbar-button").forEach((btn) => btn.remove());
-}
-
-function repositionDropdowns() {
-    const visibleOptions = document.querySelectorAll(".custom-options.show");
-
-    visibleOptions.forEach((optionsContainer) => {
-        const buttonId = optionsContainer.dataset.buttonId || optionsContainer.id.replace("Options", "FilterButton");
-        const button = document.getElementById(buttonId);
-
-        //console.log(`Repositionnement de ${optionsContainer.id} avec le bouton ${buttonId}`, button);
-
-        if (!button) {
-            //console.warn(`Bouton introuvable pour ${buttonId}`);
-            return;
-        }
-
-        const buttonRect = button.getBoundingClientRect();
-        const optionsWidth = optionsContainer.scrollWidth || 160;
-        const centerOffset = (buttonRect.width - optionsWidth) / 2;
-
-        optionsContainer.style.position = "absolute";
-        optionsContainer.style.top = `${buttonRect.bottom + window.scrollY + 10}px`;
-        optionsContainer.style.left = `${buttonRect.left + centerOffset}px`;
-
-        const dropdownRect = optionsContainer.getBoundingClientRect();
-        const screenWidth = window.innerWidth;
-
-        if (dropdownRect.right > screenWidth) {
-            optionsContainer.style.left = `${screenWidth - dropdownRect.width - 10}px`;
-        } else if (dropdownRect.left < 0) {
-            optionsContainer.style.left = `10px`;
-        }
-    });
-}
-
-
-function repositionInputs() {
-    const visibleInputs = document.querySelectorAll(".filter-input");
-
-    visibleInputs.forEach((input) => {
-        if (input.style.display !== "block") return;
-
-        const parentButtonId = input.getAttribute("data-parent");
-        const button = document.getElementById(parentButtonId);
-
-        if (button) {
-            const buttonRect = button.getBoundingClientRect();
-            const inputWidth = input.offsetWidth || 150;
-            const centerOffset = (buttonRect.width - inputWidth) / 2;
-
-            input.style.position = "absolute";
-            input.style.top = `${buttonRect.bottom + window.scrollY + 10}px`;
-            input.style.left = `${buttonRect.left + centerOffset}px`;
-        }
-    });
 }
 
 function hideOnClickOutside() {
@@ -377,12 +325,25 @@ function attachButtonListeners() {
     }
 
     buttons.forEach(button => {
-        button.addEventListener("click", () => {
-            document.querySelectorAll(".toolbar-button").forEach(btn => btn.classList.remove("selected"));
-            button.classList.add("selected");
-            moveSelectionCircle(button);
+        button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            let optionsContainer = button.querySelector(".custom-options");
+            if (event.target === button) {
+                if (optionsContainer) {
+                    optionsContainer.style.display = "block";
+                    optionsContainer.classList.add("show");
+                }
+            }
+
+            optionsContainer?.querySelectorAll('.custom-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll(".toolbar-button").forEach(btn => btn.classList.remove("selected"));
+                    button.classList.add("selected");
+                    moveSelectionCircle(button);
+                });
+            });
         });
-    });
+    });    
 }
 
 const observer = new MutationObserver(attachButtonListeners);
@@ -432,27 +393,27 @@ function initializeToolbarButtons() {
 
             switch (icon.id) {
                 case "map_code":
-                    input = getOrCreateInput("mapCodeInput", t("filters_toolbar.enter_map_code"), buttonId);
+                    input = getOrCreateInput("mapCodeInput", t("filters_toolbar.enter_map_code"), button);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getMapCodesAutoComplete.php", "mapCodeSuggestionsContainer", "map_code")
                     );
                     break;
 
                 case "creator":
-                    input = getOrCreateInput("mapCreatorInput", t("filters_toolbar.enter_creator"), buttonId);
+                    input = getOrCreateInput("mapCreatorInput", t("filters_toolbar.enter_creator"), button);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getUsersAutoComplete.php", "creatorSuggestionsContainer", "name")
                     );
                     break;
 
                 case "map_name":
-                    input = getOrCreateInput("mapNameInput", t("filters_toolbar.enter_map_name"), buttonId);
+                    input = getOrCreateInput("mapNameInput", t("filters_toolbar.enter_map_name"), button);
                     input.addEventListener("input", (event) =>
-                        showSuggestions(event, "getMapNamesAutoComplete.php", "mapNameSuggestionsContainer", "name")
+                        showSuggestions(event, "getMapNamesAutoComplete.php", "mapNameSuggestionsContainer", "map_name")
                     );
                     break;
                 case "user":
-                    input = getOrCreateInput("userNicknameInput", t("filters_toolbar.enter_nickname"), buttonId);
+                    input = getOrCreateInput("userNicknameInput", t("filters_toolbar.enter_nickname"), button);
                     input.addEventListener("input", (event) =>
                         showSuggestions(event, "getUsersAutoComplete.php", "nicknameSuggestionsContainer", "name")
                     );
@@ -462,22 +423,29 @@ function initializeToolbarButtons() {
                     optionsContainer = showOptionsContainer(
                         "difficultyOptions",
                         [
-                            t("filters_toolbar.beginner"),
-                            t("filters_toolbar.easy"),
-                            t("filters_toolbar.medium"),
-                            t("filters_toolbar.hard"),
-                            t("filters_toolbar.very_hard"),
-                            t("filters_toolbar.extreme"),
-                            t("filters_toolbar.hell")],
-                        buttonRect
+                            { text: t("filters_toolbar.beginner"), value: "Beginner", raw: "Beginner" },
+                            { text: t("filters_toolbar.easy"), value: "Easy", raw: "Easy" },
+                            { text: t("filters_toolbar.medium"), value: "Medium", raw: "Medium" },
+                            { text: t("filters_toolbar.hard"), value: "Hard", raw: "Hard" },
+                            { text: t("filters_toolbar.very_hard"), value: "Very Hard", raw: "Very Hard" },
+                            { text: t("filters_toolbar.extreme"), value: "Extreme", raw: "Extreme" },
+                            { text: t("filters_toolbar.hell"), value: "Hell", raw: "Hell" }
+                        ],
+                        button,
+                        false
                     );
                     break;
 
                 case "map_type":
                     optionsContainer = showOptionsContainer(
                         "mapTypeOptions",
-                        [t("filters_toolbar.classic"), t("filters_toolbar.increasing_difficulty"), t("filters_toolbar.tournament")],
-                        buttonRect
+                        [
+                            { text: t("filters_toolbar.classic"), value: "Classic", raw: "Classic" },
+                            { text: t("filters_toolbar.increasing_difficulty"), value: "Increasing Difficulty", raw: "Increasing Difficulty" },
+                            { text: t("filters_toolbar.tournament"), value: "Tournament", raw: "Tournament" }
+                        ],
+                        button,
+                        false
                     );
                     break;
 
@@ -485,7 +453,7 @@ function initializeToolbarButtons() {
                     optionsContainer = showOptionsContainer(
                         "mechanicsOptions",
                         window.mechanicsOptions || [],
-                        buttonRect,
+                        button,
                         true
                     );
                     break;
@@ -494,7 +462,7 @@ function initializeToolbarButtons() {
                     optionsContainer = showOptionsContainer(
                         "restrictionsOptions",
                         window.restrictionsOptions || [],
-                        buttonRect,
+                        button,
                         true
                     );
                     break;
@@ -502,24 +470,36 @@ function initializeToolbarButtons() {
                 case "ignore_completions":
                     optionsContainer = showOptionsContainer(
                         "ignoreCompletionsOptions",
-                        [t("filters_toolbar.only_true"), t("filters_toolbar.only_false")],
-                        buttonRect
+                        [
+                            { text: t("filters_toolbar.only_true"), value: "true", raw: "true" },
+                            { text: t("filters_toolbar.only_false"), value: "false", raw: "false" }
+                        ],
+                        button,
+                        false
                     );
                     break;
 
                 case "only_playtest":
                     optionsContainer = showOptionsContainer(
                         "onlyPlaytestOptions",
-                        [t("filters_toolbar.only_true"), t("filters_toolbar.only_false")],
-                        buttonRect
+                        [
+                            { text: t("filters_toolbar.only_true"), value: "true", raw: "true" },
+                            { text: t("filters_toolbar.only_false"), value: "false", raw: "false" }
+                        ],
+                        button,
+                        false
                     );
                     break;
 
                 case "only_maps_with_medals":
                     optionsContainer = showOptionsContainer(
                         "onlyMedalsOptions",
-                        [t("filters_toolbar.only_true"), t("filters_toolbar.only_false")],
-                        buttonRect
+                        [
+                            { text: t("filters_toolbar.only_true"), value: "true", raw: "true" },
+                            { text: t("filters_toolbar.only_false"), value: "false", raw: "false" }
+                        ],
+                        button,
+                        false
                     );
                     break;
 
@@ -539,8 +519,10 @@ function initializeToolbarButtons() {
 
 function hideAllFilters() {
     document.querySelectorAll(".filter-input, .custom-options").forEach((el) => {
-        el.style.display = "none";
-        el.classList.remove("show");
+        if (!el.contains(event.target) && !el.closest(".custom-option")) {
+            el.style.display = "none";
+            el.classList.remove("show");
+        }
     });
 
     document.querySelectorAll(".toolbar-button").forEach((btn) => {
@@ -555,7 +537,7 @@ function hideAllActiveSuggestions() {
     });
 }
 
-function getOrCreateInput(id, placeholder, parentButtonId) {
+function getOrCreateInput(id, placeholder, parentButton) {
     let input = document.getElementById(id);
 
     if (!input) {
@@ -564,34 +546,31 @@ function getOrCreateInput(id, placeholder, parentButtonId) {
         input.placeholder = t(placeholder) || placeholder;
         input.id = id;
         input.classList.add("filter-input");
-        input.setAttribute("data-parent", parentButtonId);
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("autocorrect", "off");
+        input.setAttribute("autocapitalize", "off");
+        input.setAttribute("spellcheck", "false");
+        input.setAttribute("data-parent", parentButton.id);
 
-        document.body.appendChild(input);
+        parentButton.appendChild(input);
     }
 
     return input;
 }
 
-function positionInputOrDropdown(input, optionsContainer, buttonRect) {
-    const inputWidth = 150;
-    const centerOffset = (buttonRect.width - inputWidth) / 2;
-
+function positionInputOrDropdown(input, optionsContainer) {
     if (input) {
         input.style.position = "absolute";
-        input.style.top = `${buttonRect.bottom + window.scrollY + 10}px`;
-        input.style.left = `${buttonRect.left + centerOffset}px`;
+        input.style.top = `50px`;
+        input.style.left = `-60px`;
         input.style.display = "block";
     }
 
     if (optionsContainer) {
-        const optionsWidth = optionsContainer.offsetWidth || 160;
-        const dropdownCenterOffset = (buttonRect.width - optionsWidth) / 2;
-
         optionsContainer.style.position = "absolute";
-        optionsContainer.style.top = `${buttonRect.bottom + window.scrollY + 10}px`;
-        optionsContainer.style.left = `${buttonRect.left + dropdownCenterOffset}px`;
+        optionsContainer.style.top = `50px`;
+        optionsContainer.style.left = `-60px`;
         optionsContainer.style.display = "block";
-        optionsContainer.classList.add("show");
     }
 }
 
@@ -609,104 +588,99 @@ function createButton(icon) {
     return button;
 }
 
-function showOptionsContainer(id, options, buttonRect, useWrapper = false) {
-    let optionsContainer = document.getElementById(id);
+function showOptionsContainer(id, options, button, useWrapper = false) {
+    let optionsContainer = button.querySelector(".custom-options");
 
     if (!optionsContainer) {
-        optionsContainer = createOptionsContainer(id, options, useWrapper);
-        document.body.appendChild(optionsContainer);
-    }
+        optionsContainer = document.createElement("div");
+        optionsContainer.id = id;
+        optionsContainer.className = "custom-options";
 
-    const optionsWidth = optionsContainer.offsetWidth || 160;
-    const centerOffset = (buttonRect.width - optionsWidth) / 2;
+        options.forEach((option) => {
+            let optionWrapper, optionElement, checkbox;
 
-    optionsContainer.style.position = "absolute";
-    optionsContainer.style.top = `${buttonRect.bottom + window.scrollY + 10}px`;
-    optionsContainer.style.left = `${buttonRect.left + centerOffset}px`;
-    optionsContainer.style.display = "block";
-    optionsContainer.classList.add("show");
+            const displayText = option.translated || option.text || "";
+            const rawValue = option.raw || "default";
 
-    optionsContainer.querySelectorAll(".custom-option").forEach(option => {
-        option.addEventListener("click", () => {
-            let labelId = "";
-            switch (id.replace("Options", "")) {
-                case "mapType":
-                    labelId = "map type";
-                    break;
-                case "difficulty":
-                    labelId = "difficulty";
-                    break;
-                case "mechanics":
-                    labelId = "mechanics";
-                    break;
-                case "restrictions":
-                    labelId = "restrictions";
-                    break;
-                case "onlyPlaytest":
-                    labelId = "only playtest";
-                    break;
-                case "ignoreCompletions":
-                    labelId = "ignore completions";
-                    break;
-                case "onlyMedals":
-                    labelId = "only medals";
-                    break;
-                default:
-                    labelId = id.replace("Options", "");
+            if (useWrapper) {
+                optionWrapper = document.createElement("div");
+                optionWrapper.className = "custom-option-wrapper";
+
+                checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "custom-checkbox";
+                checkbox.id = `${id}_${rawValue.replace(/\s+/g, "_")}`;
+
+                optionElement = document.createElement("label");
+                optionElement.className = "custom-option";
+                optionElement.textContent = displayText;
+                optionElement.setAttribute("for", checkbox.id);
+                optionElement.setAttribute("data-raw-value", rawValue);
+
+                optionWrapper.appendChild(checkbox);
+                optionWrapper.appendChild(optionElement);
+                optionsContainer.appendChild(optionWrapper);
+            } else {
+                optionElement = document.createElement("div");
+                optionElement.className = "custom-option";
+                optionElement.textContent = displayText;
+                optionElement.setAttribute("data-raw-value", rawValue);
+
+                optionsContainer.appendChild(optionElement);
             }
-            const translatedMessage = t("popup.filter_applied", {
-                filterId: labelId,
-                value: option.textContent.trim()
+
+            optionElement.addEventListener("click", (event) => {
+                event.stopPropagation();
+
+                let labelId = "";
+                switch (id.replace("Options", "")) {
+                    case "mapType":
+                        labelId = "map type";
+                        break;
+                    case "difficulty":
+                        labelId = "difficulty";
+                        break;
+                    case "mechanics":
+                        labelId = "mechanics";
+                        break;
+                    case "restrictions":
+                        labelId = "restrictions";
+                        break;
+                    case "onlyPlaytest":
+                        labelId = "only playtest";
+                        break;
+                    case "ignoreCompletions":
+                        labelId = "ignore completions";
+                        break;
+                    case "onlyMedals":
+                        labelId = "only medals";
+                        break;
+                    default:
+                        labelId = id.replace("Options", "");
+                }
+                
+                if (!useWrapper) {
+                    optionsContainer.querySelectorAll(".custom-option").forEach((opt) => opt.classList.remove("selected"));
+                    optionElement.classList.add("selected");
+                }
+
+                if (id !== 'mechanicsOptions' && id !== 'restrictionsOptions') {
+                    optionsContainer.style.display = "none";
+                    optionsContainer.classList.remove("show");
+                }
+
+                const translatedMessage = t("popup.filter_applied", {
+                    filterId: labelId,
+                    value: displayText
+                });
+
+                showConfirmationMessage(translatedMessage);
+                updateActiveFilters();
             });
-            showConfirmationMessage(translatedMessage);
-            updateActiveFilters();
         });
-    });
 
-    return optionsContainer;
-}
-
-function createOptionsContainer(id, options, useWrapper = false) {
-    const optionsContainer = document.createElement("div");
-    optionsContainer.id = id;
-    optionsContainer.className = "custom-options";
-
-    options.forEach((optionText) => {
-        let optionWrapper, option, checkbox;
-
-        if (useWrapper) {
-            optionWrapper = document.createElement("div");
-            optionWrapper.className = "custom-option-wrapper";
-
-            checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "custom-checkbox";
-            checkbox.id = `${id}_${optionText.replace(/\s+/g, "_")}`;
-
-            option = document.createElement("label");
-            option.className = "custom-option";
-            option.textContent = optionText;
-            option.setAttribute("for", checkbox.id);
-
-            optionWrapper.appendChild(checkbox);
-            optionWrapper.appendChild(option);
-            optionsContainer.appendChild(optionWrapper);
-        } else {
-            option = document.createElement("div");
-            option.className = "custom-option";
-            option.textContent = optionText;
-
-            option.addEventListener("click", () => {
-                optionsContainer.querySelectorAll(".custom-option").forEach((opt) =>
-                    opt.classList.remove("selected")
-                );
-                option.classList.add("selected");
-                optionsContainer.style.display = "none";
-            });
-
-            optionsContainer.appendChild(option);
-        }
-    });
+        button.appendChild(optionsContainer);
+    }
 
     return optionsContainer;
 }
@@ -727,6 +701,7 @@ function createInput(id, placeholder, parentButtonId) {
     document.body.appendChild(input);
     return input;
 }
+
 
 //Maj filtres
 function updateActiveFilters() {
@@ -762,19 +737,23 @@ function updateActiveFilters() {
         if (filterId === "mechanics" || filterId === "restrictions") {
             setTimeout(() => {
                 const checkboxes = optionsContainer.querySelectorAll('.custom-checkbox:checked');
+                
                 if (checkboxes.length > 0) {
-                    activeFilters[mappedFilterId] = Array.from(checkboxes).map(cb => cb.nextElementSibling.textContent.trim());
+                    activeFilters[mappedFilterId] = Array.from(checkboxes).map(cb => {
+                        const rawValue = cb.id.replace(/^.*?_/, "").replace(/_/g, ' ');
+                        return rawValue.trim();
+                    });
                 } else {
                     delete activeFilters[mappedFilterId];
                 }
             }, 0);
             return;
-        }
+        }            
 
         const selectedOption = optionsContainer.querySelector('.custom-option.selected');
         if (selectedOption) {
-            activeFilters[mappedFilterId] = encodeURIComponent(selectedOption.textContent.trim());
-            return;
+            const rawValue = selectedOption.getAttribute("data-raw-value") || selectedOption.textContent.trim();
+            activeFilters[mappedFilterId] = encodeURI(rawValue);
         }
     });
 
@@ -787,10 +766,15 @@ function updateActiveFilters() {
 
     for (const [inputId, filterKey] of Object.entries(textInputs)) {
         const input = document.getElementById(inputId);
-        if (input && input.value.trim()) {
-            activeFilters[filterKey] = encodeURIComponent(input.value.trim());
-        } else {
-            delete activeFilters[filterKey];
+        if (input) {
+            const rawValueSelected = input.getAttribute("data-selected-raw-value");
+            if (rawValueSelected) {
+                activeFilters[filterKey] = encodeURIComponent(rawValueSelected);
+            } else if (input.value.trim()) {
+                activeFilters[filterKey] = encodeURIComponent(input.value.trim());
+            } else {
+                delete activeFilters[filterKey];
+            }
         }
     }
 
@@ -834,6 +818,7 @@ function clearFilters() {
     filters = {};
 
     document.getElementById("filtersContainer").innerHTML = "";
+    
     const resultsContainer = document.querySelector(".results-container");
     if (resultsContainer) {
         //resultsContainer.innerHTML = "";
@@ -852,14 +837,21 @@ function clearFilters() {
     if (creatorInput) creatorInput.value = "";
     if (nicknameInput) nicknameInput.value = "";
 
+    const inputs = document.querySelectorAll('input[type="text"], input[type="search"], input[type="url"], input[type="email"], textarea');
+
+    inputs.forEach(input => {
+        input.value = "";
+        input.removeAttribute("data-selected-raw-value");
+    });
+
     document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
         checkbox.checked = false;
-    })
+    });
 
     document.querySelectorAll('.custom-option.selected').forEach(option => {
         option.classList.remove('selected');
     });
-    
+
     document.querySelectorAll(".toolbar-button").forEach(button => {
         button.classList.remove("active-filter");
     });
@@ -876,8 +868,10 @@ function clearFilters() {
 //Appliquer filtres
 async function applyFilters(filters) {
     cachedPages = {};
+    currentPage = 1;
 
     activeFilters = { ...persistentFilters, ...filters };
+    //console.log("Filtres actifs", activeFilters)
 
     if (user_id) {
         activeFilters.user_id = user_id;
@@ -948,21 +942,45 @@ async function applyFilters(filters) {
 }
 
 function displayResults(data) {
-    switch (currentSection) {
-        case 'mapSearch':
-            displayMapSearchResults(data);
-            break;
-        case 'completions':
-            displayCompletionsResults(data);
-            break;
-        case 'guide':
-            displayGuideResults(data);
-            break;
-        case 'personalRecords':
-            displayPersonalRecordsResults(data);
-            break;
-        default:
-            console.error("Section non prise en charge:", currentSection);
+    if (data && typeof data === "object") {
+        const mapData = Object.values(data).filter(item => Array.isArray(item) || typeof item === "object");
+
+        mapData.forEach(item => {
+            if (item.map_name) {
+                item.original_map_name = item.map_name;
+
+                const translatedName = t(`map_name.${item.map_name.toLowerCase().replace(/ /g, '_').replace(/[()']/g, '')}`);
+                if (!translatedName.includes('map_name.')) {
+                    item.map_name = translatedName;
+                }
+            }
+
+            if (item.map_type && Array.isArray(item.map_type)) {
+                item.map_type = item.map_type.map(type => {
+                    const translatedType = t(`map_type.${type.toLowerCase().replace(/ /g, '_')}`);
+                    return translatedType.includes('map_type.') ? type : translatedType;
+                });
+            }
+        });
+
+        switch (currentSection) {
+            case 'mapSearch':
+                displayMapSearchResults(mapData);
+                break;
+            case 'completions':
+                displayCompletionsResults(data);
+                break;
+            case 'guide':
+                displayGuideResults(data);
+                break;
+            case 'personalRecords':
+                displayPersonalRecordsResults(data);
+                break;
+            default:
+                console.error("Section non prise en charge:", currentSection);
+        }
+    } else {
+        showErrorMessage("popup.no_results_found");
     }
 }
 
@@ -1005,9 +1023,9 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
     }
 
     debounceTimeout = setTimeout(() => {
-        //console.log(`Fetching from ${apiEndpoint} with value:`, filterValue);
-
-        fetch(`api/autocomplete/${apiEndpoint}?value=${encodeURIComponent(filterValue)}`)
+        const locale = currentLang === 'cn' ? 'cn' : currentLang === 'jp' ? 'jp' : 'en';
+        
+        fetch(`api/autocomplete/${apiEndpoint}?value=${encodeURIComponent(filterValue)}&locale=${locale}&page_size=10`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`API Error: ${response.status}`);
@@ -1015,7 +1033,7 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
                 return response.json();
             })
             .then(data => {
-                //console.log("Fetched data:", data);
+                //console.log("Données récupérées:", data);
                 suggestionsContainer.innerHTML = "";
 
                 if (!Array.isArray(data) || data.length === 0) {
@@ -1025,12 +1043,19 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
 
                 data.forEach(item => {
                     if (item[propertyName]) {
+                        const rawValue = item[propertyName];
+                        const translatedValue = item.translated_map_name || rawValue;
+
                         const suggestion = document.createElement("div");
-                        suggestion.textContent = item[propertyName];
+                        suggestion.textContent = translatedValue;
                         suggestion.classList.add("suggestion-item");
 
+                        suggestion.setAttribute("data-raw-value", rawValue);
+
                         suggestion.addEventListener("click", () => {
-                            input.value = item[propertyName];
+                            event.stopPropagation();
+                            input.setAttribute("data-selected-raw-value", rawValue);
+                            input.value = translatedValue;
 
                             let labelId = "";
                             switch (propertyName) {
@@ -1049,11 +1074,12 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
 
                             const translatedMessage = t("popup.filter_applied", {
                                 filterId: labelId,
-                                value: item[propertyName]
+                                value: translatedValue
                             });
 
                             showConfirmationMessage(translatedMessage);
                             suggestionsContainer.style.display = "none";
+
                             updateActiveFilters();
                         });
 
@@ -1065,6 +1091,7 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
             })
             .catch(error => {
                 console.error(`Error fetching ${apiEndpoint} suggestions:`, error);
+                suggestionsContainer.style.display = "none";
             });
     }, 200);
 }
@@ -1210,14 +1237,16 @@ function displayMapSearchResults(data) {
         </table>
     `;
 
-    document.body.insertAdjacentHTML('beforeend', `
-        <div id="detailsModalOverlay" class="modal-overlay-custom" style="display:none;">
-            <div id="detailsModalBox" class="modal-box-custom">
-                <span id="detailsModalClose" class="modal-close-button" onclick="closeDetailsModal()">&times;</span>
-                <div id="modalDetailsContainer"></div>
+    if (!document.getElementById("detailsModalOverlay")) {
+        document.body.insertAdjacentHTML('beforeend', `
+            <div id="detailsModalOverlay" class="modal-overlay-custom" style="display:none;">
+                <div id="detailsModalBox" class="modal-box-custom">
+                    <span id="detailsModalClose" class="modal-close-button" onclick="closeDetailsModal()">&times;</span>
+                    <div id="modalDetailsContainer"></div>
+                </div>
             </div>
-        </div>
-    `);
+        `);
+    }    
 
     window.showDetailsModal = async function(index) {
         const result = filteredResults[index];
@@ -1225,19 +1254,28 @@ function displayMapSearchResults(data) {
         let mechanicsOptions = result.mechanics || [];
         let restrictionsOptions = result.restrictions || [];
     
-        const currentLang = document.documentElement.lang || "en";
-    
         if (currentLang === "cn") {
-            mechanicsOptions = mechanicsOptions.map(option => t(`mechanics.${option.toLowerCase().replace(/ /g, '_')}`) || option);
-            restrictionsOptions = restrictionsOptions.map(option => t(`restrictions.${option.toLowerCase().replace(/ /g, '_')}`) || option);            
-        }
+            mechanicsOptions = mechanicsOptions
+                .filter(option => option !== null && option !== undefined)
+                .map(option => {
+                    const optionValue = option ? option.toLowerCase().replace(/ /g, '_') : '';
+                    return t(`mechanics.${optionValue}`) || option;
+                });
+        
+            restrictionsOptions = restrictionsOptions
+                .filter(option => option !== null && option !== undefined)
+                .map(option => {
+                    const optionValue = option ? option.toLowerCase().replace(/ /g, '_') : '';
+                    return t(`restrictions.${optionValue}`) || option;
+                });
+        }        
     
         const mechanics = mechanicsOptions.length ? mechanicsOptions.join(", ") : "N/A";
         const restrictions = restrictionsOptions.length ? restrictionsOptions.join(", ") : "N/A";
         const description = result.desc || "No description available";
     
-        const mapName = result.map_name ? result.map_name.toLowerCase().replace(/[()\s]/g, "") : "default";
-        const bannerPath = `assets/banners/${mapName}.png`;
+        const mapName = result.original_map_name ? result.original_map_name.toLowerCase().replace(/[()\s]/g, "") : "default";
+        const bannerPath = `assets/banners/${mapName}.png`;      
     
         const medals = [];
         if (result.gold && result.gold !== "N/A") {

@@ -8,6 +8,7 @@ if (!$apiKey || !$apiRoot) {
     exit;
 }
 
+$locale = $_GET['locale'] ?? 'en';
 $value = $_GET['value'] ?? '';
 $pageSize = $_GET['page_size'] ?? 10;
 
@@ -16,13 +17,10 @@ if (empty($value)) {
     exit;
 }
 
-$url = $apiRoot . "/v1/autocomplete/map-names?" . http_build_query([
-    'value' => $value,
-    'page_size' => $pageSize
-]);
+$apiUrl = $apiRoot . "/v1/autocomplete/map-names/{$locale}?value=" . urlencode($value) . "&page_size=" . $pageSize;
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_URL, $apiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
@@ -47,5 +45,13 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     exit;
 }
 
-echo json_encode($data);
+$results = [];
+foreach ($data as $item) {
+    $results[] = [
+        'map_name' => $item['map_name'],
+        'translated_map_name' => $item['translated_map_name'] ?? $item['map_name']
+    ];
+}
+
+echo json_encode($results);
 ?>
