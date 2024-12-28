@@ -1917,12 +1917,12 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.confirmation-popup.show {
+.confirmation-popup.show-popup {
   opacity: 1;
   transform: translate(-50%, -50%);
 }
 
-.confirmation-popup.fade-out {
+.confirmation-popup.fade-out-popup {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.9);
 }
@@ -1943,12 +1943,12 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.error-popup.show {
+.error-popup.show-popup {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(-10px);
 }
 
-.error-popup.fade-out {
+.error-popup.fade-out-popup {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.9);
 }

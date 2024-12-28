@@ -314,11 +314,11 @@ function showConfirmationMessage(message) {
     document.body.appendChild(confirmationPopup);
 
     setTimeout(() => {
-        confirmationPopup.classList.add('show');
+        confirmationPopup.classList.add('show-popup');
     }, 10);
 
     setTimeout(() => {
-        confirmationPopup.classList.add('fade-out');
+        confirmationPopup.classList.add('fade-out-popup');
         confirmationPopup.addEventListener('transitionend', () => {
             confirmationPopup.remove();
         }, { once: true });
@@ -333,11 +333,11 @@ function showErrorMessage(message) {
     document.body.appendChild(errorPopup);
 
     setTimeout(() => {
-        errorPopup.classList.add('show');
+        errorPopup.classList.add('show-popup');
     }, 10);
 
     setTimeout(() => {
-        errorPopup.classList.add('fade-out');
+        errorPopup.classList.add('fade-out-popup');
         errorPopup.addEventListener('transitionend', () => {
             errorPopup.remove();
         }, { once: true });
