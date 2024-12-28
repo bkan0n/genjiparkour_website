@@ -16,7 +16,6 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 800px;
     margin: auto;
 }
 
@@ -229,6 +228,8 @@ body {
     margin-bottom: 10px;
 }
 
+
+/* Txt formatting*/
 .code-highlight {
     background-color: #2d2d2d;
     color: #f8f8f2;
@@ -244,6 +245,79 @@ body {
     border-radius: 4px;
     font-size: 1em;
 }
+
+.mention {
+    background-color: #5865f2;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.code-inline {
+    background-color: #2f3136;
+    color: #dcdcaa;
+    border-radius: 4px;
+    font-family: monospace;
+    padding: 2px 4px;
+}
+
+.code-block {
+    background-color: #2f3136;
+    color: #dcdcaa;
+    border-radius: 6px;
+    font-family: monospace;
+    padding: 10px;
+    margin: 8px 0;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bold-italic {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+}
+
+blockquote {
+    border-left: 4px solid #5865f2;
+    margin: 10px 0;
+    padding-left: 10px;
+    color: #dcddde;
+    font-style: italic;
+}
+
+br {
+    display: block;
+    content: "";
+    margin: 4px 0;
+}
+
+.discord-heading {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+    padding-bottom: 5px;
+}
+
 
 .grey-highlight {
     background-color: rgba(255, 255, 255, 0.1);
@@ -271,7 +345,6 @@ body {
     object-fit: cover;
 }
 
-/* Mise en page générale */
 .news-card .announcement-content img.embedded-gif {
     max-width: 100%;
     height: auto;
@@ -280,7 +353,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Effet de survol */
 .embedded-gif:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease-in-out;

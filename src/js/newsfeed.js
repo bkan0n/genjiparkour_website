@@ -496,7 +496,14 @@ async function formatMessageContent(messageContent) {
         .replace(/<@&1073292414271356938>/g, '<span class="grey-highlight">@General Announcements</span>')
         .replace(/<#1316560101360013443>/g, '<span class="grey-highlight">#change-requests</span>')
         .replace(/`([^`]+)`/g, '<span class="code-highlight">$1</span>')
-        .replace(/\*\*\*([^*]+)\*\*\*/g, '<span class="strong">$1</span>')
+        .replace(/```([^`]+)```/gs, '<pre class="code-block">$1</pre>')
+        .replace(/\*\*\*([^*]+)\*\*\*/g, '<span class="bold-italic">$1</span>')
+        .replace(/\*\*([^*]+)\*\*/g, '<span class="bold">$1</span>')
+        .replace(/\*([^*]+)\*/g, '<span class="italic">$1</span>')
+        .replace(/__([^_]+)__/g, '<span class="underline">$1</span>')
+        .replace(/~~([^~]+)~~/g, '<span class="strikethrough">$1</span>')
+        .replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/###\s*([^\n]+)/g, '<h3 class="discord-heading">$1</h3>')
         .replace(/\n/g, "<br>");
 }
 
@@ -788,6 +795,12 @@ document.addEventListener("DOMContentLoaded", () => {
             customOptions.forEach(opt => opt.classList.remove("selected"));
             e.target.classList.add("selected");
             customSelect.classList.remove("open");
+
+            currentPage = 1;
+            const url = new URL(window.location);
+            url.searchParams.set("type", selectedType);
+            history.pushState(null, '', url);
+
             loadNewsfeed();
         });
     });
@@ -796,6 +809,12 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedType = null;
         selectTrigger.textContent = t("newsfeed.search_by_filter");
         customOptions.forEach(opt => opt.classList.remove("selected"));
+
+        currentPage = 1;
+        const url = new URL(window.location);
+        url.searchParams.delete("type");
+        history.pushState(null, '', url);
+
         loadNewsfeed();
     });
 
