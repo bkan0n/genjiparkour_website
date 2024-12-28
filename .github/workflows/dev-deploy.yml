@@ -46,7 +46,7 @@ jobs:
       with:
         host: ${{ secrets.GENJI_PK_HOST }}
         username: ${{ secrets.GENJI_PK_SSH_USER }}
-        password: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
+        key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
         port: 22
         script: |
           cd ~/genjipk_assets/dev/genjiparkour_website
