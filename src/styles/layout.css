@@ -122,6 +122,7 @@ footer {
     font-size: 18px;
     background: #222;
     padding: 20px 20px;
+    max-height: 59px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -134,6 +135,28 @@ footer {
 .footer-left, .footer-right {
     color: #ffffff;
     font-size: 14px;
+}
+
+#creditsBtn.footer-button {
+  display: inline-block;
+  border: 2px solid #fff;
+  padding: 5px 15px;
+  color: #fff;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+#creditsBtn.footer-button:hover {
+  background-color: #fff;
+  color: #000;
+  transform: scale(1.05);
 }
 
 .scroll-indicator {

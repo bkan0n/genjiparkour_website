@@ -1,3 +1,4 @@
+const currentLang = document.documentElement.lang || "en";
 var isRunning = false;
 var openSound = new Audio('assets/sounds/open-box.ogg');
 var volume = 0.25;
@@ -40,13 +41,12 @@ async function loadTranslations() {
     try {
         const response = await fetch("translations/translations.json");
         const data = await response.json();
-        const currentLang = document.documentElement.lang || "en";
         
         const currentLangData = data[currentLang] || {};
         
-        const { lootbox = {}, popup = {} } = currentLangData;
+        const { lootbox = {}, popup = {}, map_name = {} } = currentLangData;
         
-        translations = { lootbox, popup };
+        translations = { lootbox, popup, map_name };
 
         //console.log("Traductions chargées :", translations);
     } catch (error) {
@@ -320,14 +320,34 @@ function displayRewards(rewards) {
         cardFront.append(frontText);
 
         const cardBack = $('<div/>').addClass(`card-back ${reward.rarity} ${rewardClass}`);
+
+        const rewardImageContainer = $('<div/>').addClass('reward-image-container');
         const rewardImage = $('<img/>').addClass('reward-image').attr('src', reward.url);
+        rewardImageContainer.append(rewardImage);
 
         const toTitleCase = (str) =>str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        const rewardName = $('<div/>').addClass('reward-name').text(`${toTitleCase(reward.name)}`);
-        const rewardType = $('<div/>').addClass('reward-type').text(`${toTitleCase(reward.type)}`);
-        const rewardsInfo = $('<div/>').addClass('rewards-info').append(rewardName, rewardType);
+
+        const translatedRewardName =
+        currentLang === "cn" && reward.type.toLowerCase() === "background"
+            ? (() => {
+                const translation = t(`map_name.${reward.name.toLowerCase().replace(/ /g, '_').replace(/[()]/g, '')}`);
+                return translation && !translation.startsWith('map_name.') ? translation : toTitleCase(reward.name);
+            })()
+            : toTitleCase(reward.name);
+    
+        const rewardTypeText =
+            currentLang === "cn"
+                ? (() => {
+                    const translation = t(`lootbox.rewards_types.${reward.type.toLowerCase().replace(/ /g, '_')}`);
+                    return translation && !translation.startsWith('lootbox.rewards_types.') ? translation : toTitleCase(reward.type);
+                })()
+                : toTitleCase(reward.type);
         
-        cardBack.append(rewardImage, rewardsInfo);
+        const rewardName = $('<div/>').addClass('reward-name').text(`${translatedRewardName}`);
+        const rewardType = $('<div/>').addClass('reward-type').text(rewardTypeText);
+        const rewardsInfo = $('<div/>').addClass('rewards-info').append(rewardName, rewardType);
+
+        cardBack.append(rewardImageContainer, rewardsInfo);
         cardInner.append(cardFront).append(cardBack);
         card.append(cardInner);
         $('#crate').append(card);
@@ -383,7 +403,6 @@ function displayRewards(rewards) {
         }
     }
 }
-
 
 function grantReward(userId, rewardType, rewardName) {
     $.ajax({

@@ -1085,10 +1085,10 @@ function showMapNameSuggestions(event) {
 
             data.forEach((map) => {
                 const suggestion = document.createElement("div");
-                suggestion.textContent = map.name;
+                suggestion.textContent = map.map_name;
                 suggestion.classList.add("suggestion-item");
                 suggestion.onclick = () => {
-                    input.textContent = map.name;
+                    input.textContent = map.map_name;
                     suggestionsContainer.style.display = "none";
                 };
 

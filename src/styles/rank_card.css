@@ -1019,7 +1019,7 @@
     text-align: center;
     font-size: 0.9em;
     color: #fff;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: transparent;
     border-radius: 5px;
     padding: 5px;
     display: none;

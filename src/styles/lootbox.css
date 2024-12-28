@@ -189,49 +189,21 @@
     animation: legendary-glow 2s infinite alternate;
 }
 
-/* Img rewards*/
-.reward-shuriken_badge.card-back {
-    background-image: url('images/shuriken_badge.png');
-}
-
-.reward-basic_parkour_credits.card-back {
-    background-image: url('images/credits_common.png');
-}
-
-.reward-spirit_blade_badge.card-back {
-    background-image: url('images/spirit_blade_badge.png');
-}
-
-.reward-advanced_parkour_credits.card-back {
-    background-image: url('images/credits_rare.png');
-}
-
-.reward-wall_climb_master_badge.card-back {
-    background-image: url('images/wall_climb_master_badge.png');
-}
-
-.reward-expert_parkour_credits.card-back {
-    background-image: url('images/expert_parkour_credits.png');
-}
-
-.reward-dragon_master_title.card-back {
-    background-image: url('images/dragon_master_title.png');
-}
-
-.reward-ultimate_parkour_credits.card-back {
-    background-image: url('images/ultimate_parkour_credits.png');
+.reward-image-container {
+    width: 100%;
+    max-height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .reward-image {
-    width: auto;
-    height: auto;
     max-width: 100%;
-    max-height: 50%;
+    max-height: 100%;
+    object-fit: contain;
     border-radius: 10px;
-    margin-bottom: 10px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .rewards-info {
@@ -512,7 +484,6 @@
 }
 
 .card.dashed-line .card-back {
-    position: relative;
     overflow: hidden;
 }
 
