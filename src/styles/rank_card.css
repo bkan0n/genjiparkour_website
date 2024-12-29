@@ -729,6 +729,7 @@
 }
 
 .suggestion-item {
+    color: #ffffff;
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -1440,7 +1441,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
     .rank-card-container {
         padding: 10px;
     }
@@ -1521,7 +1522,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
     .rank-section {
         padding: 8px;
         gap: 0px;
@@ -1611,7 +1612,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
     .stats-section {
         flex-direction: row;
         align-items: center;
@@ -1692,7 +1693,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
     #buttonContainer {
         justify-content: center;
         gap: 5px;

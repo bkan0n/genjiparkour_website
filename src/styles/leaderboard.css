@@ -814,7 +814,7 @@ th, td {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
   h1 {
       font-size: 1rem;
       padding: 0.3rem;
@@ -854,6 +854,10 @@ th, td {
     font-size: 0.6rem;
   }
 
+  td.col-rank, td.col-xp, td.col-wr, td.col-maps, td.col-playtests {
+    font-size: 0.8em;
+  }
+
   .thead-wrapper th, .thead-wrapper td {
     font-size: 0.45rem;
     padding: 0.4rem;
@@ -867,7 +871,6 @@ th, td {
   .vertical-bar {
     display: none;
   }
-
 
   td {
       font-size: 0.5rem;

@@ -983,7 +983,7 @@ function initBackgroundChanges() {
 
     saveBackgroundChangesButton.addEventListener("click", () => {
         if (!selectedBackground) {
-            selectedBackground = { name: "placeholder", url: "assets/rank_card/background/placeholder.png" };
+            selectedBackground = { name: "placeholder", url: "assets/rank_card/background/placeholder.webp" };
         }
     
         //console.log("Envoi du background : ", selectedBackground);
@@ -1223,7 +1223,7 @@ function initAvatarChanges() {
         selectedPose = "heroic";
 
         const formattedSkin = selectedSkin.toLowerCase().replace(/ /g, "_");
-        const skinPoseUrl = `assets/rank_card/avatar/${formattedSkin}/${selectedPose}.png`;
+        const skinPoseUrl = `assets/rank_card/avatar/${formattedSkin}/${selectedPose}.webp`;
 
         avatarSkinPreview.style.backgroundImage = `url(${skinPoseUrl})`;
         avatarSkinPreview.textContent = "";
@@ -1365,7 +1365,7 @@ function initAvatarChanges() {
 
                 updatePlayerAvatar({
                     name: selectedSkin || currentSkin,
-                    url: `assets/rank_card/avatar/${formattedSkin}/${formattedPose}.png`
+                    url: `assets/rank_card/avatar/${formattedSkin}/${formattedPose}.webp`
                 });
                 //console.log("Réponses API :", data);
 
