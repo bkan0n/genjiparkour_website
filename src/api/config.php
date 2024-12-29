@@ -53,6 +53,10 @@ function shutdownHandler() {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && strpos($_SERVER['REQUEST_URI'], '/sendJsError.php') === 0) {
+    handleJsError();
+}
+
 set_error_handler("errorHandler");
 set_exception_handler("exceptionHandler");
 register_shutdown_function("shutdownHandler");
