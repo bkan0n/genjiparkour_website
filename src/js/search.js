@@ -567,9 +567,18 @@ function positionInputOrDropdown(input, optionsContainer) {
     }
 
     if (optionsContainer) {
-        optionsContainer.style.position = "absolute";
-        optionsContainer.style.top = `50px`;
-        optionsContainer.style.left = `-60px`;
+        const isWithWrapper = optionsContainer.classList.contains("with-wrapper");
+
+        if (isWithWrapper) {
+            optionsContainer.style.position = "absolute";
+            optionsContainer.style.top = `50px`;
+            optionsContainer.style.left = `-70px`;
+        } else {
+            optionsContainer.style.position = "absolute";
+            optionsContainer.style.top = `50px`;
+            optionsContainer.style.left = `-60px`;
+        }
+
         optionsContainer.style.display = "block";
     }
 }
@@ -595,6 +604,8 @@ function showOptionsContainer(id, options, button, useWrapper = false) {
         optionsContainer = document.createElement("div");
         optionsContainer.id = id;
         optionsContainer.className = "custom-options";
+
+        optionsContainer.classList.add(useWrapper ? "with-wrapper" : "without-wrapper");
 
         options.forEach((option) => {
             let optionWrapper, optionElement, checkbox;
