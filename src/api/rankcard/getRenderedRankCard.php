@@ -49,6 +49,8 @@ curl_close($ch);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="imgkit-format" content="png"/>
+    <meta name="imgkit-orientation" content="Landscape"/>
     <title>Rank Card</title>
     <link rel="stylesheet" href="../../styles/rank_card.css">
 </head>
