@@ -73,8 +73,14 @@ curl_close($ch);
                             <?php foreach ($data['difficulties'] as $level => $stats): ?>
                                 <div class="rank-row">
                                     <span class="rank-title"><?= htmlspecialchars(strtoupper($level)) ?></span>
-                                    <div class="progress-bar">
-                                    <div class="progress <?= htmlspecialchars(strtolower(str_replace(' ', '-', $level))) ?>" style="width: <?= ($stats['completed'] / $stats['total']) * 100 ?>%;"></div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar">
+                                            <div class="progress <?= htmlspecialchars(strtolower(str_replace(' ', '-', $level))) ?>" 
+                                                style="width: <?= ($stats['completed'] / $stats['total']) * 100 ?>%;"></div>
+                                        </div>
+                                        <div class="progress-text">
+                                            <?= htmlspecialchars($stats['completed']) ?> / <?= htmlspecialchars($stats['total']) ?>
+                                        </div>
                                     </div>
                                     <div class="medals-values">
                                         <span><?= htmlspecialchars($stats['gold']) ?></span>
@@ -88,7 +94,7 @@ curl_close($ch);
                             <div class="badges-container">
                                 <?php foreach ($data['badges'] as $badge): ?>
                                     <?php if (!empty($badge['url'])): ?>
-                                        <img src="<?= htmlspecialchars($badge['url']) ?>" alt="<?= htmlspecialchars($badge['name'] ?? 'Badge') ?>" class="badge">
+                                        <img src="<?= htmlspecialchars('../../' . $badge['url']) ?>" alt="<?= htmlspecialchars($badge['name'] ?? 'Badge') ?>" class="badge">
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </div>
@@ -123,6 +129,47 @@ curl_close($ch);
 body {
     background: #ffffff;
     color: #ffffff;
+}
+
+.rank-section {
+    gap: 28px;
+}
+
+.rank-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 10px;
+    width: calc(100% - 50px);
+    max-width: 600px;
+}
+
+.progress-bar {
+    flex-grow: 1;
+    height: 20px;
+    left: -60px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-text {
+    position: absolute;
+    right: -15px;
+    font-size: 14px;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.player-info {
+    height: auto;
 }
 
 </style>
