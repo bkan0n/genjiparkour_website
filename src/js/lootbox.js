@@ -116,6 +116,8 @@ $('.generate').click(function() {
         return;
     }
 
+    pauseCrate();
+
     $.ajax({
         url: 'api/lootbox/viewUsersKeys.php',
         type: 'GET',
@@ -234,7 +236,6 @@ function proceedWithLootBoxOpening() {
             setTimeout(() => {
                 deleteCards();
                 displayRewards(generatedRewards);
-
                 $('.card').each(function () {
                     $(this).addClass('animated bounceInDown');
                 });
@@ -242,7 +243,6 @@ function proceedWithLootBoxOpening() {
         }
 
         setTimeout(() => {
-            restoreCrate();
             isRunning = false;
             packOpened = true;
         }, delays.separation + delays.bounceOutUp + delays.bounceInDown);
@@ -324,7 +324,14 @@ function displayRewards(rewards) {
         card.data('reward-name', reward.name);
         card.data('reward-type', reward.type);
         card.data('reward-image', reward.url);
-        card.data('reward-name-translated', reward.name);
+
+        let translatedRewardName = reward.name;
+        if (currentLang === "cn" && reward.type.toLowerCase() === "background") {
+            const translation = t(`map_name.${reward.name.toLowerCase().replace(/ /g, '_').replace(/[()]/g, '')}`);
+            translatedRewardName = translation && !translation.startsWith('map_name.') ? translation : reward.name;
+        }
+
+        card.data('reward-name-translated', translatedRewardName);
         card.data('reward-type-translated', t(`lootbox.rewards_types.${reward.type.toLowerCase().replace(/ /g, '_')}`));
 
         const rewardImageContainer = $('<div/>').addClass('reward-image-container');
@@ -389,6 +396,7 @@ function displayRewards(rewards) {
         } else {
             flipCard(card, reward, grantRewardFlag);
         }
+        restoreCrate();
     }
 
 

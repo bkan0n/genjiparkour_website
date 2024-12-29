@@ -18,6 +18,11 @@ if ($nonce !== $_SESSION['reward_nonce']) {
     exit;
 }
 
+$userId = rtrim(ltrim($userId, '/'), '/');
+$keyType = rtrim(ltrim($keyType, '/'), '/');
+$rewardType = rtrim(ltrim($rewardType, '/'), '/');
+$rewardName = rtrim(ltrim($rewardName, '/'), '/');
+
 $url = "{$apiRoot}/v1/lootbox/users/{$userId}/{$keyType}/{$rewardType}/{$rewardName}";
 $data = json_encode([
     'nonce' => $nonce
