@@ -6,9 +6,18 @@ header('Content-Type: text/html; charset=UTF-8');
 session_start();
 $user_id = $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
 
+$headers = getallheaders();
+if (!isset($headers['X-API-KEY'])) {
+    http_response_code(400);
+    echo "Error : API Key required";
+    exit;
+}
+
+$apiKey = $headers['X-API-KEY'];
+
 if (!$user_id) {
     http_response_code(400);
-    echo "Erreur : user_id est requis.";
+    echo "Error : user_id required";
     exit;
 }
 

@@ -18,13 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mkdir($directory, 0755, true);
     }
 
-    $timestamp = time();
-    $fileName = "rank_card_{$userId}_{$timestamp}.png";
+    $fileName = "rank_card_{$userId}.png";
     $filePath = $directory . '/' . $fileName;
 
     if (file_put_contents($filePath, $imageData)) {
-        //$baseUrl = 'http://localhost/leaderboard_project/api/rankcard/rankcardRequests';
-        $baseUrl = 'https://test.genji.pk/api/rankcard/rankcardRequests';
+        $baseUrl = 'http://localhost/leaderboard_project/api/rankcard/rankcardRequests';
+        //$baseUrl = 'https://test.genji.pk/api/rankcard/rankcardRequests';
         $imageUrl = $baseUrl . '/' . $fileName;
 
         echo json_encode(['status' => 'success', 'url' => $imageUrl]);
