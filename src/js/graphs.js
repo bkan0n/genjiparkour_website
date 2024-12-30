@@ -487,9 +487,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         ticks: {
                             color: '#333',
                             font: {
+                                family: 'Roboto',
+                                weight: 'bold',
                                 size: 12
                             }
-                        }
+                        },
                     },
                     y: {
                         title: {
@@ -719,78 +721,224 @@ function animateSelect() {
     }, 300);
 }
 
-//XP Chart
+//Total map counts chart
 document.addEventListener("DOMContentLoaded", () => {
-    const ranks = ["Rank 1", "Rank 2", "Rank 3", "Rank 4", "Rank 5", "Rank 6", "Rank 7"];
-    const xpRequired = ranks.map((_, i) => Math.log(i + 2) * 1000);
+    async function fetchMapCounts() {
+        try {
+            const response = await fetch('api/graphs/getMapsCounts.php');
+            const data = await response.json();
 
-    const ctx = document.getElementById("xpRankChart").getContext("2d");
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ranks,
-            datasets: [{
-                label: 'XP Required for Each Rank',
-                data: xpRequired,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                fill: true
-            }]
-        },
-        options: {
-            animation: {
-                duration: 4000
-            },
-            scales: {
-                y: {
-                    type: 'logarithmic',
-                    title: {
-                        display: true,
-                        text: 'XP Required (Log Scale)',
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Rank',
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            family: 'Roboto',
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true
-                }
+            if (data.error) {
+                console.error('Erreur API:', data.error);
+                return;
             }
+
+            const mapNames = data.map(item => item.map_name).slice(0, 25);
+            const mapCounts = data.map(item => item.amount).slice(0, 25);
+
+            const ctx = document.getElementById('mapsCountChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: mapNames,
+                    datasets: [{
+                        label: t('amountOfMaps'),
+                        data: mapCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        barThickness: 4,
+                        borderRadius: 20,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'category',
+                            title: {
+                                display: true,
+                                text: t('map'),
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 16,
+                                    lineHeight: 1.5
+                                }
+                            },
+                            ticks: {
+                                display: false,
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: t('amount'),
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 16,
+                                    lineHeight: 1.5
+                                }
+                            },
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 12
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 5000
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const mapName = context.chart.data.labels[context.dataIndex];
+                                    const mapCount = context.raw;
+                                    return `${mapName}: ${mapCount}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données:', error);
         }
-    });
+    }
+
+    fetchMapCounts();
 });
+
+//Timeplayed per rank 
+document.addEventListener("DOMContentLoaded", () => {
+    async function fetchDifficultyData() {
+        try {
+            const response = await fetch('api/graphs/getTimePlayedPerRank.php');
+            const data = await response.json();
+
+            if (data.error) {
+                console.error('Erreur API:', data.error);
+                return;
+            }
+
+            const difficulties = data.map(item => item.difficulty);
+            const totalSeconds = data.map(item => parseFloat(item.total_seconds));
+
+            const totalHours = totalSeconds.map(seconds => seconds / 3600);
+
+            const difficultyColors = {
+                "Easy": "rgba(10, 209, 0, 0.6)",
+                "Medium": "rgba(255, 229, 0, 0.6)",
+                "Hard": "rgba(255, 164, 0, 0.6)",
+                "Very Hard": "rgba(255, 89, 0, 0.6)",
+                "Extreme": "rgba(255, 0, 0, 0.6)",
+                "Hell": "rgba(210, 0, 0, 0.6)"
+            };
+
+            const pointColors = difficulties.map(difficulty => difficultyColors[difficulty] || "rgba(0, 0, 0, 0.6)");
+
+            const ctx = document.getElementById('timePlayedChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: difficulties,
+                    datasets: [{
+                        label: t('time_played_per_difficulty'),
+                        data: totalHours,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: pointColors,
+                        borderWidth: 1,
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: t('difficultyLevel'),
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 16
+                                }
+                            },
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 12
+                                }
+                            },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: t('total_amount_time'),
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 16
+                                }
+                            },
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    family: 'Roboto',
+                                    weight: 'bold',
+                                    size: 12
+                                },
+                                beginAtZero: true,
+                                callback: function(value) {
+                                    return value.toFixed(0) + ' h';
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 4000
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const difficulty = context.chart.data.labels[context.dataIndex];
+                                    const hours = context.raw;
+                                    return `${difficulty}: ${hours.toFixed(2)} h`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données:', error);
+        }
+    }
+
+    fetchDifficultyData();
+});
+

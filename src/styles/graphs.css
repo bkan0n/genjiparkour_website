@@ -32,7 +32,7 @@ canvas {
     margin: 0 auto;
 }
 
-.chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+.chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .maps-count-container, .time-played-container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -174,7 +174,7 @@ path.segment:hover {
         gap: 1.5rem;
     }
 
-    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .maps-count-container {
         max-width: 700px;
         aspect-ratio: 4 / 3;
         padding: 0.75rem;
@@ -196,7 +196,7 @@ path.segment:hover {
         gap: 1rem;
     }
 
-    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .maps-count-container {
         max-width: 90%;
         aspect-ratio: 1 / 1;
         padding: 0.5rem;
@@ -226,7 +226,7 @@ path.segment:hover {
         gap: 0.5rem;
     }
 
-    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .XP-container {
+    .chart-container, .pie-chart-container, .quality-container, .populars-maps-container, .maps-count-container {
         max-width: 100%;
         padding: 0.25rem;
     }

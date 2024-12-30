@@ -161,6 +161,12 @@ include BASE_PATH . "discord/header.php";
                         </select>
                     </div>
                 </div>
+                <div class="maps-count-container">
+                    <canvas id="mapsCountChart" width="400" height="200"></canvas>
+                </div>
+                <div class="time-played-container">
+                    <canvas id="timePlayedChart" width="400" height="200"></canvas>
+                </div>
             </div>
         </div>
     </main>

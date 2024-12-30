@@ -137,7 +137,7 @@
             "completions": "Completions",
             "rank": "Rank",
             "playersIn": "Players in {tier}",
-            "map": "Map",
+            "map": "Maps",
             "quality": "Quality",
             "completionsTooltip": "{map}: {completions} Completions, Quality: {quality}",
             "playersInTier": "{amount} players in {tier}",
@@ -155,7 +155,11 @@
             "user_record_progression": "Your progression",
             "average_time": "Average time",
             "min_time": "Minimum time",
-            "max_time": "Maximum time"
+            "max_time": "Maximum time",
+            "amount": "Amount",
+            "quantity": "Quantity",
+            "total_amount_time": "Total in hours",
+            "time_played_per_difficulty": "Time played per difficulty"
         },
         "lootbox": {
             "give_key": "Give key",
@@ -574,7 +578,11 @@
             "user_record_progression": "Votre progression",
             "average_time": "Temps moyen",
             "min_time": "Temps minimum",
-            "max_time": "Temps maximum"
+            "max_time": "Temps maximum",
+            "amount": "Montant",
+            "quantity": "Quantité",
+            "total_amount_time": "Total en heures",
+            "time_played_per_difficulty": "Temps joué par difficulté"
         },
         "lootbox": {
             "give_key": "Donner une clé",
@@ -898,7 +906,11 @@
             "user_record_progression": "Твой прогресс",
             "average_time": "Среднее время",
             "min_time": "Минимальное время",
-            "max_time": "Максимальное время"
+            "max_time": "Максимальное время",
+            "amount": "Сумма",
+            "quantity": "Количество",
+            "total_amount_time": "Всего в часах",
+            "time_played_per_difficulty": "Время, проведенное по сложности"
         },
         "lootbox": {
             "give_key": "Дать ключ",
@@ -1223,7 +1235,11 @@
             "user_record_progression": "你的当前进度",
             "average_time": "平均时间",
             "min_time": "最速传说",
-            "max_time": "最久时间"
+            "max_time": "最久时间",
+            "amount": "金额",
+            "quantity": "数量",
+            "total_amount_time": "总计小时数",
+            "time_played_per_difficulty": "按难度划分的游戏时间"
         },
         "lootbox": {
             "give_key": "获取钥匙",
@@ -1648,7 +1664,11 @@
             "user_record_progression": "Deine Fortschritte",
             "average_time": "Durchschnittliche Zeit",
             "min_time": "Minimale Zeit",
-            "max_time": "Maximale Zeit"
+            "max_time": "Maximale Zeit",
+            "amount": "Betrag",
+            "quantity": "Menge",
+            "total_amount_time": "Gesamtzeit in Stunden",
+            "time_played_per_difficulty": "Gespielte Zeit pro Schwierigkeit"
         },
         "lootbox": {
             "give_key": "Schlüssel geben",
