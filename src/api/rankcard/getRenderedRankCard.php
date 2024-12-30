@@ -53,37 +53,40 @@ curl_close($ch);
     <link rel="stylesheet" href="../../styles/rank_card.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-window.onload = function () {
-    const rankCard = document.getElementById('rankCardContent');
-    const userId = "<?= htmlspecialchars($user_id) ?>";
+    window.onload = function () {
+        const rankCard = document.getElementById('rankCardContent');
+        const userId = "<?= htmlspecialchars($user_id) ?>";
 
-    rankCard.style.width = '1200px';
-    rankCard.style.height = '600px';
+        rankCard.style.width = '1200px';
+        rankCard.style.height = '600px';
 
-    html2canvas(rankCard, {
-        useCORS: true,
-        scale: 3,
-        backgroundColor: null
-    }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
+        html2canvas(rankCard, {
+            useCORS: true,
+            scale: 3,
+            backgroundColor: null
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
 
-        fetch('saveImage.php', {
-            method: 'POST',
-            body: JSON.stringify({ image: imgData, user_id: userId }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.blob())
-          .then(blob => {
-              const imgURL = URL.createObjectURL(blob);
-              document.body.innerHTML = `<img src="${imgData}" alt="Rank Card" style="width: 1200px; height: auto;">`;
-          }).catch(err => {
-              console.error('Erreur lors de l\'envoi de l\'image au serveur :', err);
-          });
-    }).catch(err => {
-        console.error('Erreur lors de la capture de l\'image :', err);
-    });
-};
+            fetch('saveImage.php', {
+                method: 'POST',
+                body: JSON.stringify({ image: imgData, user_id: userId }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = data.url;
+                } else {
+                    console.error('Erreur lors de la sauvegarde de l\'image :', data.message);
+                }
+            }).catch(err => {
+                console.error('Erreur lors de l\'envoi de l\'image au serveur :', err);
+            });
+        }).catch(err => {
+            console.error('Erreur lors de la capture de l\'image :', err);
+        });
+    };
     </script>
 </head>
 <body>

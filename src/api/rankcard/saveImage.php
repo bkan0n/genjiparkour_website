@@ -6,23 +6,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$imageData || !$userId) {
         http_response_code(400);
-        echo "Erreur : Données d'image ou user_id manquantes.";
+        echo json_encode(['status' => 'error', 'message' => 'Données d\'image ou user_id manquantes.']);
         exit;
     }
 
     $imageData = str_replace('data:image/png;base64,', '', $imageData);
     $imageData = base64_decode($imageData);
 
-    $filePath = __DIR__ . "/rankcardRequests/rank_card_{$userId}.png";
+    $directory = __DIR__ . "/rankcardRequests";
+    if (!is_dir($directory)) {
+        mkdir($directory, 0755, true);
+    }
+
+    $timestamp = time();
+    $fileName = "rank_card_{$userId}_{$timestamp}.png";
+    $filePath = $directory . '/' . $fileName;
 
     if (file_put_contents($filePath, $imageData)) {
-        header('Content-Type: image/png');
-        readfile($filePath);
+        //$baseUrl = 'http://localhost/leaderboard_project/api/rankcard/rankcardRequests';
+        $baseUrl = 'https://test.genji.pk/api/rankcard/rankcardRequests';
+        $imageUrl = $baseUrl . '/' . $fileName;
+
+        echo json_encode(['status' => 'success', 'url' => $imageUrl]);
+        exit;
     } else {
         http_response_code(500);
-        echo "Erreur : Impossible de sauvegarder l'image.";
+        echo json_encode(['status' => 'error', 'message' => 'Impossible de sauvegarder l\'image.']);
+        exit;
     }
 } else {
     http_response_code(405);
-    echo "Erreur : Méthode non autorisée.";
+    echo json_encode(['status' => 'error', 'message' => 'Méthode non autorisée.']);
+    exit;
 }
