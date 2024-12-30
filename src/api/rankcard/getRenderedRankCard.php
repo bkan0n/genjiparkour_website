@@ -49,10 +49,42 @@ curl_close($ch);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="imgkit-format" content="png"/>
-    <meta name="imgkit-orientation" content="Landscape"/>
     <title>Rank Card</title>
     <link rel="stylesheet" href="../../styles/rank_card.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+window.onload = function () {
+    const rankCard = document.getElementById('rankCardContent');
+    const userId = "<?= htmlspecialchars($user_id) ?>";
+
+    rankCard.style.width = '1200px';
+    rankCard.style.height = '600px';
+
+    html2canvas(rankCard, {
+        useCORS: true,
+        scale: 3,
+        backgroundColor: null
+    }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+
+        fetch('saveImage.php', {
+            method: 'POST',
+            body: JSON.stringify({ image: imgData, user_id: userId }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.blob())
+          .then(blob => {
+              const imgURL = URL.createObjectURL(blob);
+              document.body.innerHTML = `<img src="${imgData}" alt="Rank Card" style="width: 1200px; height: auto;">`;
+          }).catch(err => {
+              console.error('Erreur lors de l\'envoi de l\'image au serveur :', err);
+          });
+    }).catch(err => {
+        console.error('Erreur lors de la capture de l\'image :', err);
+    });
+};
+    </script>
 </head>
 <body>
 <div id="rankCardContent">
@@ -131,8 +163,21 @@ curl_close($ch);
 <style> 
 
 body {
-    background: #ffffff;
+    background: transparent;
+    margin: 0;
+    padding: 0;
     color: #ffffff;
+}
+
+#rankCardContent {
+    display: block;
+    width: 1200px;
+    height: 600px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
 }
 
 .rank-section {
@@ -174,6 +219,15 @@ body {
 
 .player-info {
     height: auto;
+}
+
+.badges-container img {
+    width: auto;
+    height: auto;
+    max-height: clamp(65px, 3vw, 65px);
+    max-width: none;
+    object-fit: contain;
+    transition: all 0.3s ease;
 }
 
 </style>
