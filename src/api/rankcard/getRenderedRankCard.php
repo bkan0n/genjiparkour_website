@@ -2,6 +2,8 @@
 require_once '../config.php';
 
 header('Content-Type: text/html; charset=UTF-8');
+header("Access-Control-Allow-Origin: https://test.genji.pk");
+header("Access-Control-Allow-Headers: X-API-KEY, Content-Type");
 
 session_start();
 $user_id = $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
