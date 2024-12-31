@@ -1543,7 +1543,6 @@ z-index: 50;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    z-index: 1;
 }
 
 .filter-input {
@@ -1595,19 +1594,6 @@ z-index: 50;
     opacity: 1;
 }
 
-.selection-circle {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    top: 16.5%;
-    left: 0;
-    background-color: #ffffff;
-    border-radius: 50%;
-    transition: left 0.2s ease, width 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-    z-index: 0;
-    opacity: 0;
-}
-
 /*
 .toolbar-button::before {
     content: '';
@@ -1636,11 +1622,12 @@ z-index: 50;
     inset: 0;
     background-color: #ffffff;
     border-radius: 50%;
-    transition: left 0.2s ease, width 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
     z-index: 0;
     opacity: 0;
-    top: 15%;
+    left: 0;
+    top: 0;
     pointer-events: none;
+    z-index: -1;
 }
 
 .toolbar-button.selected .selection-circle {
@@ -2046,7 +2033,7 @@ z-index: 50;
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
     .tab-buttons button {
         font-size: 0.625rem;
         padding: 0.3125rem 0.625rem;

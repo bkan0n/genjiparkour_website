@@ -59,7 +59,7 @@ body {
     font-size: 1rem;
     font-weight: bold;
     color: #ffffff;
-    max-width: 30rem;
+    max-width: calc(100% - 55px);
     word-wrap: break-word;
 }
 
@@ -911,22 +911,4 @@ button.reset-filters-btn:hover {
 .modal-stars .star-empty {
     font-size: 16px;
     color: lightgray;
-}
-
-/* Responsive design */
-@media screen and (max-width: 1024px) {
-    .news-header h3 {
-        max-width: 28rem;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .news-header h3 {
-        max-width: 25rem;
-    }
-}
-@media screen and (max-width: 480px) {
-    .news-header h3 {
-        max-width: 20rem;
-    }
 }
