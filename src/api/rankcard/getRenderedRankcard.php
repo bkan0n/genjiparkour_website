@@ -2,24 +2,27 @@
 require_once '../config.php';
 
 header('Content-Type: text/html; charset=UTF-8');
-header("Access-Control-Allow-Origin: https://test.genji.pk");
-header("Access-Control-Allow-Headers: X-API-KEY, Content-Type");
 
 session_start();
 $user_id = $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
 
-$headers = getallheaders();
-if (!isset($headers['X-API-KEY'])) {
-    http_response_code(400);
-    echo "Error : API Key required";
-    exit;
-}
-
-$apiKey = $headers['X-API-KEY'];
-
 if (!$user_id) {
     http_response_code(400);
     echo "Error : user_id required";
+    exit;
+}
+
+$ReceivedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
+
+if (!$ReceivedApiKey) {
+    http_response_code(400);
+    echo json_encode(['error' => 'API Key required']);
+    exit;
+}
+
+if ($ReceivedApiKey !== $apiKey) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid API Key']);
     exit;
 }
 

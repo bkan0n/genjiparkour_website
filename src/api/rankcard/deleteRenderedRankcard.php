@@ -7,14 +7,19 @@ session_start();
 
 $user_id = $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
 
-$headers = getallheaders();
-if (!isset($headers['X-API-KEY'])) {
+$ReceivedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
+
+if (!$ReceivedApiKey) {
     http_response_code(400);
     echo json_encode(['error' => 'API Key required']);
     exit;
 }
 
-$apiKey = $headers['X-API-KEY'];
+if ($ReceivedApiKey !== $apiKey) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid API Key']);
+    exit;
+}
 
 if (!$user_id) {
     http_response_code(400);
