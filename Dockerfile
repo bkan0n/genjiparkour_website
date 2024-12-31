@@ -6,6 +6,6 @@ FROM asimlqt/php-apache:8.3-dev
 
 COPY ./src /var/www/html
 
-RUN mkdir /var/www/html/api/rankcard/rankcardRequests
+RUN mkdir -p /var/www/html/api/rankcard/rankcardRequests
 
 RUN chown www-data /var/www/html/api/rankcard/rankcardRequests
