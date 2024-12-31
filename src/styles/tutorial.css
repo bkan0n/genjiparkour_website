@@ -132,7 +132,7 @@ html {
     transition: transform 0.2s ease;
 }
 
-.scroll-indicator2 {
+.scroll-indicator2.scroll-indicator3 {
     position: absolute;
     bottom: 2.5rem;
     left: 50%;
@@ -140,7 +140,7 @@ html {
     z-index: 10;
 }
 
-.scroll-btn2 {
+.scroll-btn2, .scroll-btn3 {
     border: 2px solid #fff;
     padding: 0.625rem 1.25rem;
     border-radius: 1.875rem;
@@ -152,33 +152,33 @@ html {
     transition: all 0.3s ease-in-out;
 }
 
-.scroll-btn2 i {
+.scroll-btn2 i, .scroll-btn3 i {
     font-size: 1.25rem;
     transition: transform 0.3s ease;
 }
 
-.scroll-indicator2 {
+.scroll-indicator2, .scroll-indicator3 {
     position: absolute;
     bottom: 20px;
 }
 
-.scroll-indicator2 a {
+.scroll-indicator2 a, .scroll-indicator3 a {
     color: #ffffff;
     font-size: 24px;
     text-decoration: none;
     animation: bounce 2s infinite;
 }
 
-.scroll-btn2:hover {
+.scroll-btn2:hover, .scroll-btn3:hover {
     background-color: #fff;
     color: #000;
 }
 
-.scroll-btn2:hover i {
+.scroll-btn2:hover i, .scroll-btn3:hover i {
     transform: translateY(0.3125rem);
 }
 
-.scroll-btn2:active {
+.scroll-btn2:active, .scroll-btn3:active {
     transform: scale(0.9);
     transition: transform 0.2s ease;
 }

@@ -139,14 +139,25 @@ include BASE_PATH . "discord/header.php";
                 <a href="#hero3" class="scroll-btn2"><i class="fas fa-chevron-down"></i></a>
             </div>
         </section>
-
         <section class="hero-section" id="hero3">
+            <div class="hero-content">
+                <h1><?= htmlspecialchars($translations['tutorial']['mapCreation']) ?></h1>
+                <p><?= htmlspecialchars($translations['tutorial']['mapCreationDescription']) ?></p>
+            </div>
+            <div class="hero-video">
+                <iframe src="https://www.youtube.com/embed/fBhq3qhlQOM" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="scroll-indicator3">
+                <a href="#hero4" class="scroll-btn3"><i class="fas fa-chevron-down"></i></a>
+            </div>
+        </section>
+        <section class="hero-section" id="hero4">
+            <div class="hero-video">
+                <iframe src="https://www.youtube.com/embed/GOrlrqjSJlQ?si=O8WsfQVV8kCjAkpE" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
             <div class="hero-content">
                 <h1><?= htmlspecialchars($translations['tutorial']['speedrunnerTitle']) ?></h1>
                 <p><?= htmlspecialchars($translations['tutorial']['speedrunnerDescription']) ?></p>
-            </div>
-            <div class="hero-video">
-                <iframe src="https://www.youtube.com/embed/GOrlrqjSJlQ?si=O8WsfQVV8kCjAkpE" frameborder="0" allowfullscreen loading="lazy"></iframe>
             </div>
         </section>
     </main>

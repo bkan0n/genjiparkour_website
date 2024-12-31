@@ -123,7 +123,9 @@
             "codeLabel": "Code",
             "codeValue": "HBARG",
             "speedrunnerTitle": "Jackherer the Speedrunner",
-            "speedrunnerDescription": "Check out the most famous speedrunner in the West, aka Jack"
+            "speedrunnerDescription": "Check out the most famous speedrunner in the West, aka Jack",
+            "mapCreation": "Map creation tutorial",
+            "mapCreationDescription": "Learn how to create your own map!"
         },
         "chart": {
             "mapDifficultyDistribution": "Map difficulty Distribution",
@@ -546,7 +548,9 @@
             "codeLabel": "Code",
             "codeValue": "HBARG",
             "speedrunnerTitle": "Jackherer le Speedrunner",
-            "speedrunnerDescription": "Découvrez le speedrunner le plus célèbre de l'Ouest, alias Jack"
+            "speedrunnerDescription": "Découvrez le speedrunner le plus célèbre de l'Ouest, alias Jack",
+            "mapCreation": "Tutoriel de création de carte",
+            "mapCreationDescription": "Apprenez à créer votre propre carte !"
         },
         "chart": {
             "mapDifficultyDistribution": "Répartition des difficultés des cartes",
@@ -874,7 +878,9 @@
             "codeLabel": "Код",
             "codeValue": "HBARG",
             "speedrunnerTitle": "Jackherer the Speedrunner",
-            "speedrunnerDescription": "Познакомьтесь с самым известным спидраннером на Западе, аля Jack"
+            "speedrunnerDescription": "Познакомьтесь с самым известным спидраннером на Западе, аля Jack",
+            "mapCreation": "Учебник по созданию карт",
+            "mapCreationDescription": "Узнайте, как создать свою собственную карту!"
         },
         "chart": {
             "mapDifficultyDistribution": "Распределение сложности карты",
@@ -1203,7 +1209,9 @@
             "codeLabel": "代码",
             "codeValue": "HBARG",
             "speedrunnerTitle": "速通糕手Jackherer",
-            "speedrunnerDescription": "查看西方最知名的速通玩家, 比如 Jack"
+            "speedrunnerDescription": "查看西方最知名的速通玩家, 比如 Jack",
+            "mapCreation": "地图创建教程",
+            "mapCreationDescription": "学习如何创建你自己的地图！"
         },
         "chart": {
             "mapDifficultyDistribution": "地图难度分布",
@@ -1632,7 +1640,9 @@
             "codeLabel": "Code",
             "codeValue": "HBARG",
             "speedrunnerTitle": "Jackherer der Speedrunner",
-            "speedrunnerDescription": "Schau dir den beliebtesten Spieler des Westens an"
+            "speedrunnerDescription": "Schau dir den beliebtesten Spieler des Westens an",
+            "mapCreation": "Karten-Erstellung Tutorial",
+            "mapCreationDescription": "Lerne, wie du deine eigene Karte erstellen kannst!"
         },
         "chart": {
             "mapDifficultyDistribution": "Map Schwierigkeiten Verteilung",
