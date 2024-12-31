@@ -269,51 +269,15 @@ function hideOnClickOutside() {
                 el.style.display = "none";
             });
 
-            const selectionCircle = document.querySelector(".selection-circle");
-            if (selectionCircle) {
-                selectionCircle.style.opacity = "0";
-            }
+            document.querySelectorAll(".selection-circle").forEach((circle) => {
+                circle.style.opacity = "0";
+            });
 
             document.querySelectorAll(".toolbar-button").forEach((btn) =>
                 btn.classList.remove("selected")
             );
         }
     });
-}
-
-//Fix selection circle
-function moveSelectionCircle(targetButton) {
-    const selectionCircle = document.querySelector(".selection-circle");
-
-    if (!selectionCircle || !targetButton) return;
-
-    const specialButtons = [
-        "ignore_completionsFilterButton",
-        "only_medalsFilterButton",
-        "apply_filtersFilterButton",
-        "clear_filtersFilterButton"
-    ];
-
-    const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches;
-    const isVerySmallScreen = window.matchMedia("(max-width: 480px)").matches;
-
-    let offsetY = "16.5%";
-
-    if (currentSection === "mapSearch") {
-        if (isVerySmallScreen && targetButton.id === "only_playtestFilterButton") {
-            offsetY = "48px";
-        } else if (isSmallScreen && specialButtons.includes(targetButton.id)) {
-            offsetY = "48px";
-        } else if (isSmallScreen) {
-            offsetY = "8.5%";
-        }
-    } else if (isSmallScreen || isVerySmallScreen) {
-        offsetY = "16.5%";
-    }
-
-    selectionCircle.style.left = `0px`;
-    selectionCircle.style.top = offsetY;
-    selectionCircle.style.opacity = "1";
 }
 
 function attachButtonListeners() {
@@ -339,7 +303,6 @@ function attachButtonListeners() {
                 option.addEventListener('click', () => {
                     document.querySelectorAll(".toolbar-button").forEach(btn => btn.classList.remove("selected"));
                     button.classList.add("selected");
-                    moveSelectionCircle(button);
                 });
             });
         });
@@ -374,21 +337,33 @@ function initializeToolbarButtons() {
         const button = createButton(icon);
         toolbar.appendChild(button);
 
+        let selectionCircle = document.createElement("div");
+        selectionCircle.classList.add("selection-circle");
+        button.appendChild(selectionCircle);
+
         button.addEventListener("click", () => {
             hideAllFilters();
             hideAllActiveSuggestions();
 
             button.classList.add("selected");
-
             const buttonRect = button.getBoundingClientRect();
-            const buttonId = button.id;
             const toolbarRect = toolbar.getBoundingClientRect();
             const offsetLeft = buttonRect.left - toolbarRect.left;
+            const buttonWidth = buttonRect.width;
 
-            circle.style.opacity = 1;
-            circle.style.transform = `translateX(${offsetLeft}px)`;
+            document.querySelectorAll(".selection-circle").forEach((circle) => {
+                circle.style.opacity = "0";
+            });
+
+            if (selectionCircle) {
+
+                selectionCircle.style.transition = "all 0.4s ease-in-out";
+                selectionCircle.style.opacity = "1";
+                selectionCircle.style.left = `${(buttonWidth - selectionCircle.offsetWidth) / 2}px`;
+                selectionCircle.style.top = "0px";
+            }
+
             iconName.textContent = icon.name;
-
             let input, optionsContainer;
 
             switch (icon.id) {
