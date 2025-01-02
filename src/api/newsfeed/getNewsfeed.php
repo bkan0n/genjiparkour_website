@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once '../config.php';
 
 $page_number = isset($_GET['page_number']) ? (int)$_GET['page_number'] : 1;
 $page_size = isset($_GET['page_size']) ? (int)$_GET['page_size'] : 10;
