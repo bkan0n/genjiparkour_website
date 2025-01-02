@@ -500,6 +500,7 @@ body {
     justify-content: space-around;
     width: 60px;
     font-size: 1.2em;
+    font-weight: normal;
 }
 
 .medals-values {
