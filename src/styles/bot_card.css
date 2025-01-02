@@ -530,7 +530,7 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 15px;
+    padding: 30px;
     border-radius: 10px;
     box-sizing: border-box;
     max-width: 35%;
@@ -618,7 +618,7 @@ body {
 
 .player-avatar {
     width: 120px;
-    height: calc(100% - 180px);
+    height: 50%;
     object-fit: contain;
 }
 
@@ -707,8 +707,8 @@ body {
 
 #rankCardContent {
     display: block;
-    width: 1200px;
-    height: 600px;
+    width: 1400px;
+    height: 700px;
     margin: 0 auto;
     padding: 0;
     box-sizing: border-box;
@@ -730,7 +730,7 @@ body {
     position: relative;
     gap: 10px;
     width: calc(100% - 50px);
-    max-width: 600px;
+    max-width: 800px;
 }
 
 .progress-bar {
@@ -756,7 +756,7 @@ body {
 .badges-container img {
     width: auto;
     height: auto;
-    max-height: clamp(65px, 3vw, 65px);
+    max-height: clamp(90px, 3vw, 65px);
     max-width: none;
     object-fit: contain;
     transition: all 0.3s ease;

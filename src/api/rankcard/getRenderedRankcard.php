@@ -71,8 +71,8 @@ curl_close($ch);
         const rankCard = document.getElementById('rankCardContent');
         const userId = "<?= htmlspecialchars($user_id) ?>";
 
-        rankCard.style.width = '1600px';
-        rankCard.style.height = '800px';
+        rankCard.style.width = '1400px';
+        rankCard.style.height = '700px';
 
         html2canvas(rankCard, {
             useCORS: true,
