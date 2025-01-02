@@ -207,6 +207,8 @@ async function fetchLeaderboard(params = {}) {
 }
 
 async function updateLeaderboard(params = {}) {
+    showLoadingBar();
+
     const defaults = {
         sort_column: 'xp_amount',
         sort_direction: 'desc',
@@ -221,13 +223,16 @@ async function updateLeaderboard(params = {}) {
     if (!Array.isArray(data) || data.length === 0) {
         document.querySelector("#leaderboard tbody").innerHTML = `
             <tr><td colspan="8">No data available</td></tr>`;
+            hideLoadingBar();
         return;
     }
 
     if (combinedParams.sort_column === 'skill_rank') {
         renderLeaderboard(sortBySkillRank(data, combinedParams.sort_direction));
+        hideLoadingBar();
     } else {
         renderLeaderboard(data);
+        hideLoadingBar();
     }
 
     renderPagination(data[0]?.total_results || 0, combinedParams.page_number, combinedParams.page_size);
@@ -310,6 +315,7 @@ async function renderPagination(totalResults, currentPage, resultsPerPage) {
 }
 
 async function changePage(pageNumber) {
+
     currentPage = pageNumber;
     const params = { ...activeFilters, page_number: currentPage };
     await updateLeaderboard(params);
