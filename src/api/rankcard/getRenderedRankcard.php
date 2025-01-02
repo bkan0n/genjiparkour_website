@@ -12,20 +12,6 @@ if (!$user_id) {
     exit;
 }
 
-$ReceivedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
-
-if (!$ReceivedApiKey) {
-    http_response_code(400);
-    echo json_encode(['error' => 'API Key required']);
-    exit;
-}
-
-if ($ReceivedApiKey !== $apiKey) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Invalid API Key']);
-    exit;
-}
-
 $apiUrl = "{$apiRoot}/v1/rank_card/test/{$user_id}";
 
 $ch = curl_init($apiUrl);
@@ -71,8 +57,8 @@ curl_close($ch);
         const rankCard = document.getElementById('rankCardContent');
         const userId = "<?= htmlspecialchars($user_id) ?>";
 
-        rankCard.style.width = '1200px';
-        rankCard.style.height = '600px';
+        rankCard.style.width = '1600px';
+        rankCard.style.height = '800px';
 
         html2canvas(rankCard, {
             useCORS: true,
@@ -90,7 +76,6 @@ curl_close($ch);
             }).then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    window.location.href = data.url;
                 } else {
                     console.error('Erreur lors de la sauvegarde de l\'image :', data.message);
                 }
