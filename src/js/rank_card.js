@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 async function initRankCard() {
-    let selectedUserId = null;
+    let selectedUserId;
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
     const btnRankCard = document.getElementById("btnRankCard");
@@ -69,7 +69,7 @@ async function initRankCard() {
             inputField.value = "";
         }
 
-        selectedUserId = null;
+        selectedUserId;
         loadRankCardContent();
         loadUserMasteryContent();
         buttonContainer.classList.add("active");
@@ -728,13 +728,14 @@ function initBadgesChanges() {
             showErrorMessage(t("rank_card.no_badges_found"));
             return;
         }
+        circle.appendChild(rewardsContainer);
 
         const circleRect = circle.getBoundingClientRect();
-        const parentRect = rankCardContainer.getBoundingClientRect();
-
-        rewardsContainer.style.left = `${circleRect.left - parentRect.left - 50}px`;
-        rewardsContainer.style.top = `${circleRect.top - parentRect.top + circleRect.height + 10}px`;
-        rewardsContainer.style.width = "auto";
+        const parentRect = circle.offsetParent.getBoundingClientRect();
+    
+        rewardsContainer.style.left = `${circleRect.left - parentRect.left - 95}px`;
+        rewardsContainer.style.top = `${circleRect.bottom - parentRect.bottom + 303}px`;
+        rewardsContainer.style.width = `240px`; 
         rewardsContainer.style.display = "block";
 
         rewardsContainer.innerHTML = "";
@@ -939,7 +940,7 @@ function initBackgroundChanges() {
     backgroundPreview.style.display = "flex";
     backgroundPreview.style.justifyContent = "center";
     backgroundPreview.style.alignItems = "center";
-    backgroundPreview.style.fontSize = "24px";
+    backgroundPreview.style.fontSize = "16px";
     backgroundPreview.style.color = "#999";
     backgroundPreview.style.fontWeight = "bold";
     backgroundContainer.appendChild(backgroundPreview);
@@ -974,6 +975,8 @@ function initBackgroundChanges() {
         optionsContainer.style.width = `${backgroundPreview.offsetWidth}px`;
         optionsContainer.style.maxHeight = "150px";
         optionsContainer.style.overflowY = "auto";
+
+        backgroundPreview.appendChild(optionsContainer);
 
         preloadedBackgrounds.forEach(background => {
             const backgroundOption = document.createElement("div");
@@ -1190,7 +1193,7 @@ function initAvatarChanges() {
     const avatarSkinPreview = document.createElement("div");
     avatarSkinPreview.id = "avatarSkinPreview";
     avatarSkinPreview.textContent = "+";
-    avatarSkinPreview.style.fontSize = "24px";
+    avatarSkinPreview.style.fontSize = "16px";
     avatarSkinPreview.style.color = "#999";
     avatarSkinPreview.style.fontWeight = "bold";
     avatarSkinPreview.style.display = "none";
@@ -1199,7 +1202,7 @@ function initAvatarChanges() {
     const avatarPosePreview = document.createElement("div");
     avatarPosePreview.id = "avatarPosePreview";
     avatarPosePreview.textContent = "+";
-    avatarPosePreview.style.fontSize = "24px";
+    avatarPosePreview.style.fontSize = "16px";
     avatarPosePreview.style.color = "#999";
     avatarPosePreview.style.fontWeight = "bold";
     avatarPosePreview.style.display = "none";
@@ -1296,6 +1299,12 @@ function initAvatarChanges() {
             return;
         }
 
+        if (type === "skin") {
+            avatarSkinPreview.appendChild(optionsContainer);
+        } else if (type === "pose") {
+            avatarPosePreview.appendChild(optionsContainer);
+        }
+
         optionsContainer.innerHTML = "";
 
         avatars.forEach(avatar => {
@@ -1303,7 +1312,9 @@ function initAvatarChanges() {
             avatarOption.className = "avatar-option";
             avatarOption.textContent = `${avatar.name} (${avatar.rarity})`;
 
-            avatarOption.addEventListener("click", () => {
+            avatarOption.addEventListener("click", (event) => {
+                event.stopPropagation();
+
                 if (type === "skin") {
                     selectedSkin = avatar.name;
                     avatarSkinPreview.style.backgroundImage = `url(${avatar.url})`;

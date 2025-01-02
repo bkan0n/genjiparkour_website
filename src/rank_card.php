@@ -5,6 +5,12 @@ if (!defined('BASE_PATH')) {
 
 require BASE_PATH . "discord/session_init.php";
 require BASE_PATH . "translations/load_translations.php";
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit;
+}
+
 include BASE_PATH . "discord/header.php";
 
 ?>
