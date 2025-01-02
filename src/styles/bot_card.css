@@ -1,0 +1,747 @@
+img {
+    filter:none;
+}
+
+body {
+    background: #0c0c0c;
+}
+
+.rank-card-container {
+    background: transparent;
+    width: 100%;
+    height: 85vh;
+    border-radius: 20px;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 5rem;
+    top: 0;
+    left: 0;
+}
+
+/* Rank card */
+#rankCardContent {
+    width: 100%;
+    height: 100%;
+    max-height: 80vh;
+    min-height: 45vh;
+    max-width: 150vh;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+/* Badges */
+#badgeMasteryContent {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 64vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    border: 1px solid #cacaca;
+}
+
+.badge-item {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge-icon {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.badge-icon:hover {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+    transform: scale(1.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.badge-name {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.badge-level, .badge-amount {
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* Edit */
+#buttonContainer {
+    display: none;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+#buttonContainer.active {
+    display: flex;
+    position: relative;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.change-button-settings {
+    border: 2px solid #fff;
+    padding: 5px 30px;
+    background: transparent;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 200px;
+    max-width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.change-button-settings:hover {
+    background-color: #fff;
+    color: #2b2b2b;
+}
+
+/* Change badge container*/
+#rewardsContainer {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    border-radius: 5px;
+    overflow-y: auto;
+    padding: 10px;
+    z-index: 1000;
+    width: 100%;
+}
+
+.badge-items {
+    padding: 8px;
+    cursor: pointer;
+    color: #2b2b2b;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.badge-items:hover {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.no-badges {
+    color: black;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Add or remove background container*/
+#backgroundContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    background-color: #0c0c0c;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+#backgroundPreview {
+    width: 100%;
+    height: 200px;
+    border: 1px dashed #ccc;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#backgroundPreview:hover {
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Rank card*/
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Bold-Oblique.otf') format('opentype');
+    font-weight: bold;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Medium-Oblique.otf') format('opentype');
+    font-weight: 500;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Light-Oblique.otf') format('opentype');
+    font-weight: 300;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Regular-Oblique.otf') format('opentype');
+    font-weight: normal;
+    font-style: oblique;
+}
+
+@font-face {
+    font-family: 'BankSans';
+    src: url('fonts/Bank-Sans-EF-CY-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Calibri';
+    src: url('fonts/Calibri.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.rank-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6);
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.content-rankcard {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.rank-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    height: 100%;
+    gap: 20px;
+}
+
+.rank-section-container, .player-info {
+    flex: 1;
+    height: 100%;
+}
+
+.rank-section-container {
+    flex: 2;
+    display: flex;
+    font-family: 'Calibri';
+    font-weight: normal;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: hidden;
+}
+
+.combined-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.rank-section {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.rank-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.rank-row:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.rank-row .info-overlay {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+    color: #fff;
+    background-color: transparent;
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+}
+
+.rank-row:hover .info-overlay {
+    display: block;
+}
+
+.rank-title {
+    width: 100px;
+    text-align: left;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.progress-bar {
+    flex: 3;
+    height: 15px;
+    background-color: #333;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 5px;
+    width: 0;
+    transition: width 1s ease-in-out;
+}
+
+.progress.easy {
+    background-color: #90ee90;
+}
+
+.progress.medium {
+    background-color: #ffd700;
+}
+
+.progress.hard {
+    background-color: #ff8c00;
+}
+
+.progress.very-hard {
+    background-color: #ff4500;
+}
+
+.progress.extreme {
+    background-color: #dc143c;
+}
+
+.progress.hell {
+    background-color: #800000;
+}
+
+.medals-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.7em;
+    text-align: right;
+}
+
+.medals-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.medals-row {
+    display: flex;
+    gap: 10px;
+    font-size: 1.5em;
+    justify-content: center;
+}
+
+.medals-icons {
+    display: flex;
+    justify-content: space-around;
+    width: 60px;
+    font-size: 1.2em;
+}
+
+.medals-values {
+    display: flex;
+    justify-content: space-around;
+    width: 60px;
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+.medals-icons span {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+}
+
+.medals-values span {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+}
+
+
+.stats-section {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    max-width: 35%;
+    height: auto;
+    overflow: hidden;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.stat-value {
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.rewards-container {
+    position: absolute;
+    bottom: 70px;
+    left: 20px;
+    width: 80%;
+    height: 200px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    z-index: 2;
+}
+
+/* badges */
+.badges-container {
+    flex: 2;
+    display: flex;
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 1px 15px 1px 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 65%;
+    gap: 30px;
+}
+
+.badges-container img {
+    width: auto;
+    height: auto;
+    max-height: clamp(20px, 3.5vw, 60px);
+    max-width: clamp(20px, 3.5vw, 60px);
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+/* players info */
+.player-info {
+    flex: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.player-rank-name {
+    font-family: 'BankSans', sans-serif;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    align-self: center;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.player-avatar {
+    width: 120px;
+    height: calc(100% - 180px);
+    object-fit: contain;
+}
+
+.player-rank-badge {
+    width: 100px;
+    height: auto;
+    align-self: center;
+}
+
+.player-name {
+    font-family: 'BankSans', sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+}
+
+
+/* Inspection badges */
+.badge-viewer-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.badge-viewer-container {
+    position: relative;
+    background: transparent;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.badge-viewer-container img {
+    width: 300px;
+    height: auto;
+    cursor: grab;
+    transition: transform 0.3s ease;
+}
+
+.badge-viewer-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.badge-viewer-close:hover {
+    color: red;
+}
+
+.badge-viewer-rotatable {
+    transform-origin: center;
+    transition: transform 0.2s ease-out;
+    cursor: grab;
+}
+
+.badge-viewer-rotatable:active {
+    cursor: grabbing;
+}
+
+/* Extra */
+
+body {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+}
+
+#rankCardContent {
+    display: block;
+    width: 1200px;
+    height: 600px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.rank-section {
+    gap: 28px;
+}
+
+.rank-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 10px;
+    width: calc(100% - 50px);
+    max-width: 600px;
+}
+
+.progress-bar {
+    flex-grow: 1;
+    height: 20px;
+    left: -60px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-text {
+    position: absolute;
+    right: -15px;
+    font-size: 14px;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.player-info {
+    height: auto;
+}
+
+.badges-container img {
+    width: auto;
+    height: auto;
+    max-height: clamp(65px, 3vw, 65px);
+    max-width: none;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}

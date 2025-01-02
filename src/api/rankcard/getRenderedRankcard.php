@@ -12,20 +12,6 @@ if (!$user_id) {
     exit;
 }
 
-$ReceivedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
-
-if (!$ReceivedApiKey) {
-    http_response_code(400);
-    echo json_encode(['error' => 'API Key required']);
-    exit;
-}
-
-if ($ReceivedApiKey !== $apiKey) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Invalid API Key']);
-    exit;
-}
-
 $apiUrl = "{$apiRoot}/v1/rank_card/test/{$user_id}";
 
 $ch = curl_init($apiUrl);
@@ -64,7 +50,7 @@ curl_close($ch);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rank Card</title>
-    <link rel="stylesheet" href="../../styles/rank_card.css">
+    <link rel="stylesheet" href="../../styles/bot_card.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
     window.onload = function () {
@@ -177,76 +163,5 @@ curl_close($ch);
         </div>
     </div>
 </div>
-<style> 
-
-body {
-    background: transparent;
-    margin: 0;
-    padding: 0;
-    color: #ffffff;
-}
-
-#rankCardContent {
-    display: block;
-    width: 1200px;
-    height: 600px;
-    margin: 0 auto;
-    padding: 0;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-}
-
-.rank-section {
-    gap: 28px;
-}
-
-.rank-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.progress-container {
-    display: flex;
-    align-items: center;
-    position: relative;
-    gap: 10px;
-    width: calc(100% - 50px);
-    max-width: 600px;
-}
-
-.progress-bar {
-    flex-grow: 1;
-    height: 20px;
-    left: -60px;
-    overflow: hidden;
-    position: relative;
-}
-
-.progress-text {
-    position: absolute;
-    right: -15px;
-    font-size: 14px;
-    color: #fff;
-    white-space: nowrap;
-}
-
-.player-info {
-    height: auto;
-}
-
-.badges-container img {
-    width: auto;
-    height: auto;
-    max-height: clamp(65px, 3vw, 65px);
-    max-width: none;
-    object-fit: contain;
-    transition: all 0.3s ease;
-}
-
-</style>
 </body>
 </html>
