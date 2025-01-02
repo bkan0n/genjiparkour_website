@@ -336,6 +336,23 @@ br {
     cursor: pointer;
 }
 
+.blue-highlight {
+    background-color: rgb(74 97 179 / 29%);
+    color: #5865f2;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.blue-highlight:hover {
+    background-color: rgba(114, 137, 218, 0.8);
+    color: #ffffff;
+    cursor: pointer;
+}
+
 .embedded-gif {
     max-width: 100%;
     max-height: 300px;

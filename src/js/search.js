@@ -970,31 +970,6 @@ function displayResults(data) {
     }
 }
 
-function showLoadingBar() {
-    const loadingContainer = document.getElementById("loadingContainer");
-    if (loadingContainer) {
-        loadingContainer.style.display = "flex";
-        loadingContainer.style.opacity = "0";
-        loadingContainer.style.transition = "opacity 0.2s ease-in";
-        
-        requestAnimationFrame(() => {
-            loadingContainer.style.opacity = "1";
-        });
-    }
-}
-
-function hideLoadingBar() {
-    const loadingContainer = document.getElementById("loadingContainer");
-    if (loadingContainer) {
-        loadingContainer.style.transition = "opacity 0.2s ease-out";
-        loadingContainer.style.opacity = "0";
-
-        setTimeout(() => {
-            loadingContainer.style.display = "none";
-        }, 200);
-    }
-}
-
 // Suggestions
 function showSuggestions(event, apiEndpoint, containerId, propertyName) {
     const input = event.target;

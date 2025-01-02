@@ -101,7 +101,7 @@ function updateTimestamps() {
 
 async function fetchEmoji(emojiName, emojiId) {
     try {
-        const response = await fetch('api/getEmoji.php', {
+        const response = await fetch('api/newsfeed/getEmoji.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -258,7 +258,7 @@ async function loadNewsfeed() {
     await loadTranslations();
 
     try {
-        let url = `api/getNewsfeed.php?page_number=${currentPage}&page_size=${pageSize}`;
+        let url = `api/newsfeed/getNewsfeed.php?page_number=${currentPage}&page_size=${pageSize}`;
         if (selectedType) {
             url += `&type=${encodeURIComponent(selectedType)}`;
         }
@@ -296,7 +296,6 @@ async function loadNewsfeed() {
         console.error("Erreur lors du chargement du fil d'actualité :", error);
     }
 }
-
 
 async function createNewsCard(item) {
     const { type, data, timestamp } = item;
@@ -478,7 +477,10 @@ async function createNewsCard(item) {
 //Replace
 async function formatMessageContent(messageContent) {
     const emojiRegex = /<:(\w+):(\d+)>/g;
+    const userIdRegex = /<@(\d+)>/g;
+
     const emojiPromises = [];
+    const userPromises = [];
 
     let match;
     while ((match = emojiRegex.exec(messageContent)) !== null) {
@@ -490,7 +492,29 @@ async function formatMessageContent(messageContent) {
         );
     }
 
-    await Promise.all(emojiPromises);
+    while ((match = userIdRegex.exec(messageContent)) !== null) {
+        const userId = match[1];
+        userPromises.push(
+            fetch(`api/getGlobalName.php?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.name) {
+                        const userName = data.name;
+                        messageContent = messageContent.replace(
+                            `<@${userId}>`, 
+                            `<span class="blue-highlight">@${userName}</span>`
+                        );
+                    } else {
+                        messageContent = messageContent.replace(
+                            `<@${userId}>`, 
+                            `<span class="blue-highlight">@${userId}</span>`
+                        );
+                    }
+                })
+        );
+    }
+
+    await Promise.all([...emojiPromises, ...userPromises]);
 
     return messageContent
         .replace(/<@&1073292414271356938>/g, '<span class="grey-highlight">@General Announcements</span>')
@@ -504,7 +528,8 @@ async function formatMessageContent(messageContent) {
         .replace(/~~([^~]+)~~/g, '<span class="strikethrough">$1</span>')
         .replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>')
         .replace(/###\s*([^\n]+)/g, '<h3 class="discord-heading">$1</h3>')
-        .replace(/\n/g, "<br>");
+        .replace(/\n/g, "<br>")
+        .replace(/##/g, " ");
 }
 
 async function convertTenorLinks(messageContent) {
@@ -518,7 +543,7 @@ async function convertTenorLinks(messageContent) {
         const tenorUrl = match[0];
         const gifId = match[1];
 
-        const fetchGifUrl = fetch(`api/getGif.php?gifId=${gifId}`)
+        const fetchGifUrl = fetch(`api/newsfeed/getGif.php?gifId=${gifId}`)
             .then(response => response.json())
             .then(result => {
                 if (result.results && result.results.length > 0) {
