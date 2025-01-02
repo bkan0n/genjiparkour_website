@@ -1111,6 +1111,7 @@ body {
 }
 
 
+/* stats section */
 .stats-section {
     flex: 1;
     display: flex;
@@ -1121,18 +1122,25 @@ body {
     padding: 15px;
     border-radius: 10px;
     box-sizing: border-box;
-    max-width: 35%;
+    max-width: 100%;
+    gap: 15px;
     height: auto;
     overflow: hidden;
 }
 
+/* stat item */
 .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 5px;
+    width: calc(100% / 3 - 15px);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: calc(5px + 0.75vw);
 }
+
 
 .stat-label {
     font-size: 0.9em;
@@ -1159,29 +1167,29 @@ body {
 }
 
 /* badges */
+/* badges */
 .badges-container {
     flex: 2;
     display: flex;
     position: relative;
-    flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 1px 15px 1px 15px;
+    padding: 10px;
     border-radius: 10px;
     overflow: hidden;
-    max-width: 65%;
-    gap: 30px;
+    max-width: 100%;
+    gap: 10px;
 }
 
 .badges-container img {
-    width: auto;
+    width: calc(100% / 6 - 10px);
     height: auto;
-    max-height: clamp(20px, 3.5vw, 60px);
-    max-width: clamp(20px, 3.5vw, 60px);
+    max-height: 60px;
     object-fit: contain;
     transition: all 0.3s ease;
 }
+
 
 /* players info */
 .player-info {
@@ -1535,7 +1543,7 @@ body {
 /* Responsive design stats section*/
 @media (max-width: 1024px) {
     .stats-section {
-        padding: 8px;
+        padding: 20px;
         border-radius: 8px;
         max-width: 40%;
     }
@@ -1566,7 +1574,7 @@ body {
 
 @media (max-width: 768px) {
     .stats-section {
-        padding: 6px;
+        padding: 20px;
         border-radius: 6px;
         max-width: 50%;
     }
@@ -1576,11 +1584,11 @@ body {
     }
 
     .stat-label {
-        font-size: 0.8em;
+        font-size: 1em;
     }
 
     .stat-value {
-        font-size: 0.95em;
+        font-size: 1em;
     }
 
     .combined-container {
@@ -1606,8 +1614,8 @@ body {
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        padding: 5px;
-        gap: 7px;
+        padding: 15px;
+        gap: 17px;
         border-radius: 5px;
         max-width: 100%;
         height: 72px;
@@ -1618,11 +1626,11 @@ body {
     }
 
     .stat-label {
-        font-size: 0.2em;
+        font-size: 0.8em;
     }
 
     .stat-value {
-        font-size: 0.2em;
+        font-size: 1em;
     }
 
     .combined-container {
@@ -1645,7 +1653,6 @@ body {
         max-width: 75%;
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
         gap: 2px;
     }
     
@@ -1753,7 +1760,7 @@ body {
     }
 
     .stats-section {
-        padding: 6px;
+        padding: 15px;
         border-radius: 6px;
         max-width: 50%;
     }

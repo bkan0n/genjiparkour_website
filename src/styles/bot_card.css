@@ -429,7 +429,7 @@ body {
 .rank-title {
     width: 100px;
     text-align: left;
-    font-size: 1em;
+    font-size: 1.3em;
     font-weight: bold;
 }
 
@@ -506,7 +506,7 @@ body {
     display: flex;
     justify-content: space-around;
     width: 60px;
-    font-size: 0.9em;
+    font-size: 1.2em;
     color: #ddd;
 }
 
@@ -547,12 +547,12 @@ body {
 }
 
 .stat-label {
-    font-size: 0.9em;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
 .stat-value {
-    font-size: 1.1em;
+    font-size: 1.4em;
     color: #fff;
     font-weight: bold;
     margin-top: 3px;
@@ -744,7 +744,7 @@ body {
 .progress-text {
     position: absolute;
     right: -15px;
-    font-size: 14px;
+    font-size: 1.2em;
     color: #fff;
     white-space: nowrap;
 }
