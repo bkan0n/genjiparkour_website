@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $filePath = $directory . '/' . $fileName;
 
     if (file_put_contents($filePath, $imageData)) {
-        //$baseUrl = 'http://localhost/leaderboard_project/api/rankcard/rankcardRequests';
         $baseUrl = 'https://test.genji.pk/api/rankcard/rankcardRequests';
         $imageUrl = $baseUrl . '/' . $fileName;
 

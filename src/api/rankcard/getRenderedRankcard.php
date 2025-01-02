@@ -12,6 +12,20 @@ if (!$user_id) {
     exit;
 }
 
+$ReceivedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
+
+if (!$ReceivedApiKey) {
+    http_response_code(400);
+    echo json_encode(['error' => 'API Key required']);
+    exit;
+}
+
+if ($ReceivedApiKey !== $apiKey) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid API Key']);
+    exit;
+}
+
 $apiUrl = "{$apiRoot}/v1/rank_card/test/{$user_id}";
 
 $ch = curl_init($apiUrl);

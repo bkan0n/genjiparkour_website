@@ -557,15 +557,6 @@ body {
     gap: 30px;
 }
 
-.badges-container img {
-    width: auto;
-    height: auto;
-    max-height: clamp(20px, 3.5vw, 60px);
-    max-width: clamp(20px, 3.5vw, 60px);
-    object-fit: contain;
-    transition: all 0.3s ease;
-}
-
 /* players info */
 .player-info {
     flex: 0;
@@ -694,10 +685,6 @@ body {
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
-}
-
-.rank-section {
-    gap: 28px;
 }
 
 .rank-row {
