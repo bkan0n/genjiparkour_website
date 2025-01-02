@@ -227,51 +227,6 @@ window.addEventListener('offline', () => {
     checkConnectivity();
 });
 
-//Rankcard
-function loadScript(url) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = url;
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    const rankCardBtn = document.getElementById("user-rankcard");
-    const rankCardModal = document.getElementById("rankCardModal");
-
-    if (!rankCardBtn || !rankCardModal) {
-        console.warn("Bouton ou modal manquant.");
-        return;
-    }
-
-    rankCardBtn.addEventListener("click", async () => {
-        try {
-            await loadTranslationsRankcard();
-    
-            const response = await fetch('modal/rank_card.php');
-            const html = await response.text();
-    
-            rankCardModal.innerHTML = html;
-            rankCardModal.style.display = "flex";
-            document.body.classList.add("modal-active");
-    
-            await loadScript("js/rank_card.js");
-    
-            if (typeof initRankCard === "function") {
-                initRankCard();
-            } else {
-                throw new Error("Fonction initRankCard non définie");
-            }
-        } catch (error) {
-            console.error("Erreur chargement modal :", error);
-        }
-    });
-});
-
 //Trad
 async function loadTranslationsRankcard() {
     try {
@@ -463,3 +418,29 @@ function loadCSS(href) {
     }
 
 })();
+
+//Loading bar
+function showLoadingBar() {
+    const loadingContainer = document.getElementById("loadingContainer");
+    if (loadingContainer) {
+        loadingContainer.style.display = "flex";
+        loadingContainer.style.opacity = "0";
+        loadingContainer.style.transition = "opacity 0.2s ease-in";
+        
+        requestAnimationFrame(() => {
+            loadingContainer.style.opacity = "1";
+        });
+    }
+}
+
+function hideLoadingBar() {
+    const loadingContainer = document.getElementById("loadingContainer");
+    if (loadingContainer) {
+        loadingContainer.style.transition = "opacity 0.2s ease-out";
+        loadingContainer.style.opacity = "0";
+
+        setTimeout(() => {
+            loadingContainer.style.display = "none";
+        }, 200);
+    }
+}

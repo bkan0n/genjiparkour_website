@@ -18,7 +18,8 @@
             "lootbox": "Lootbox",
             "profile": "Profile",
             "language": "Language",
-            "rank_card": "Rank Card"
+            "rank_card": "Rank Card",
+            "dashboard": "Dashboard"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -443,7 +444,8 @@
             "lootbox": "Coffres",
             "profile": "Profil",
             "language": "Langue",
-            "rank_card": "Carte de rang"
+            "rank_card": "Carte de rang",
+            "dashboard": "Tableau de bord"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -773,7 +775,8 @@
             "logout": "Выход из системы",
             "lootbox": "Лутбокс",
             "profile": "Профиль",
-            "rank_card": "Личная карта"
+            "rank_card": "Личная карта",
+            "dashboard": "Панель управления"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -1104,7 +1107,8 @@
             "lootbox": "战利品箱",
             "profile": "账号信息",
             "language": "语言",
-            "rank_card": "称号图标"
+            "rank_card": "称号图标",
+            "dashboard": "仪表板"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1535,7 +1539,8 @@
             "lootbox": "Lootbox",
             "profile": "Profil",
             "language": "Sprache",
-            "rank_card": "Rang Karte"
+            "rank_card": "Rang Karte",
+            "dashboard": "Armaturenbrett"
         },
         "hero": {
             "packOpening": "Pack öffnen",

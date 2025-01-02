@@ -1,14 +1,37 @@
-if (typeof availableAvatars === "undefined") {
-    let selectedUserId = null;
-}
+document.addEventListener("DOMContentLoaded", async function() {
+    await initRankCard();
+});
 
 async function initRankCard() {
+    let selectedUserId = null;
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
     const btnRankCard = document.getElementById("btnRankCard");
     const btnBadges = document.getElementById("btnBadges");
     const buttonContainer = document.getElementById("buttonContainer");
     const searchButton = document.getElementById("searchButton");
+
+    function disableButtons() {
+        btnRankCard.disabled = true;
+        btnBadges.disabled = true;
+        searchButton.disabled = true;
+        resetFilter.disabled = true;
+        btnRankCard.style.cursor = 'not-allowed';
+        btnBadges.style.cursor = 'not-allowed';
+        searchButton.style.cursor = 'not-allowed';
+        resetFilter.style.cursor = 'not-allowed';
+    }
+
+    function enableButtons() {
+        btnRankCard.disabled = false;
+        btnBadges.disabled = false;
+        searchButton.disabled = false;
+        resetFilter.disabled = false;
+        btnRankCard.style.cursor = 'pointer';
+        btnBadges.style.cursor = 'pointer';
+        searchButton.style.cursor = 'pointer';
+        resetFilter.style.cursor = 'pointer';
+    }
 
     const updateButtonContainerClass = () => {
         const currentUserId = getCurrentUserId();
@@ -23,6 +46,8 @@ async function initRankCard() {
             buttonContainer.classList.remove("active");
         }
     };
+
+    disableButtons();
 
     btnRankCard.addEventListener("click", () => {
         toggleTabs(rankCardContent, badgeMasteryContent, btnRankCard, btnBadges);
@@ -67,6 +92,7 @@ async function initRankCard() {
     createSearchSuggestions();
 
     loadRankCardContent().then(() => {
+        enableButtons();
         buttonContainer.classList.add("active");
     });
 }
@@ -246,16 +272,22 @@ function loadUserMasteryContent() {
 }
 
 //Inspection badge
+let isMouseDown = false;
+let initialX = 0;
+let currentRotation = 0;
+
 function showBadgeViewer(iconUrl, mapName) {
     const badgeViewer = document.getElementById('badgeViewer');
     const badgeViewerImage = document.getElementById('badgeViewerImage');
+
+    badgeViewerImage.style.transform = 'rotateY(0deg)';
+    badgeViewerImage.setAttribute('data-current-rotation', '0');
 
     badgeViewerImage.src = iconUrl;
     badgeViewerImage.alt = mapName;
     badgeViewer.style.display = 'flex';
 
-    badgeViewerImage.style.transition = 'transform 0.2s ease-out';
-    badgeViewerImage.setAttribute('data-current-rotation', '0');
+    badgeViewerImage.style.transition = 'none';
 
     badgeViewerImage.addEventListener('mousedown', startBadgeRotation);
 }
@@ -265,35 +297,37 @@ function closeBadgeViewer() {
     const badgeViewerImage = document.getElementById('badgeViewerImage');
 
     badgeViewer.style.display = 'none';
-
     badgeViewerImage.style.transform = 'rotateY(0deg)';
     badgeViewerImage.setAttribute('data-current-rotation', '0');
 
     badgeViewerImage.removeEventListener('mousedown', startBadgeRotation);
+
+    isMouseDown = false;
+    initialX = 0;
+    currentRotation = 0;
 }
 
 function startBadgeRotation(event) {
     event.preventDefault();
 
+    isMouseDown = true;
+    initialX = event.clientX;
     const badge = event.target;
-    let initialX = event.clientX;
-    let currentRotation = parseFloat(badge.getAttribute('data-current-rotation')) || 0;
 
     badge.style.transition = 'none';
 
     const rotate = (e) => {
-        const deltaX = e.clientX - initialX;
-        const newRotation = currentRotation + deltaX * 0.5;
-        badge.style.transform = `rotateY(${newRotation}deg)`;
+        if (isMouseDown) {
+            const deltaX = e.clientX - initialX;
+            currentRotation += deltaX * 0.001;
+            badge.style.transform = `rotateY(${currentRotation}deg)`;
+        }
     };
 
-    const stopRotation = (e) => {
-        const deltaX = e.clientX - initialX;
-        currentRotation += deltaX * 0.5;
+    const stopRotation = () => {
+        isMouseDown = false;
         badge.setAttribute('data-current-rotation', currentRotation);
-
         badge.style.transition = 'transform 0.2s ease-out';
-
         window.removeEventListener('mousemove', rotate);
         window.removeEventListener('mouseup', stopRotation);
     };
@@ -552,20 +586,6 @@ function hideLoadingBar() {
 
 //Event listener suggestion/rankcard modal/edit modal
 document.addEventListener("click", (event) => {
-    const rankCardModal = document.getElementById("rankCardModal");
-    const modalContent = document.querySelector(".rank-card-container");
-    const closeButton = document.querySelector(".close-modal");
-
-    if (rankCardModal && (
-        (event.target === rankCardModal && !modalContent.contains(event.target)) ||
-        event.target === closeButton ||
-        closeButton.contains(event.target)
-    )) {
-        rankCardModal.style.display = "none";
-        document.body.classList.remove("modal-active");
-        return;
-    }
-
     const suggestionsContainer = document.getElementById("suggestionsContainer");
     const searchInput = document.getElementById("searchUserName");
 
@@ -1464,6 +1484,7 @@ function preloadAvatarPreviews() {
             });
     }
 }
+
 function preloadAvatarOptions() {
     return fetch(`api/lootbox/viewUserRewards.php`)
         .then(response => {

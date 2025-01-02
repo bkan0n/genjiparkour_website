@@ -1,33 +1,24 @@
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 3rem;
-    z-index: 1000;
+body {
+    background: #0c0c0c;
 }
 
 .rank-card-container {
-    background: #2b2b2b;
+    background: transparent;
     width: 100%;
-    max-width: 95rem;
-    height: 90vh;
+    height: 85vh;
     border-radius: 20px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-    padding: 40px;
     color: #fff;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    position: relative;
-    border: 1px solid #838383;
     overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 5rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* Header */
@@ -40,6 +31,7 @@
     height: auto;
     flex-wrap: wrap;
     gap: 1rem;
+    padding: 0 10px 0 10px;
     animation: fadeInUp 0.3s ease-in-out;
 }
 
@@ -50,7 +42,7 @@
     gap: 1rem;
 }
 
-.header-avatar img {
+.header-avatar2 img {
     width: 4vw;
     height: 4vw;
     border-radius: 50%;
@@ -138,6 +130,7 @@
     max-width: 1200px;
     height: 100%;
     max-height: 80vh;
+    min-height: 45vh;
     margin: 10px auto;
     display: flex;
     justify-content: center;
@@ -145,6 +138,7 @@
     border-radius: 20px;
     position: relative;
     overflow: hidden;
+    border: 1px solid white;
     box-sizing: border-box;
     padding: 20px;
 }
@@ -772,7 +766,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 530px) {
     .header-container {
         flex-direction: column;
         align-items: center;
@@ -923,25 +917,6 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-.rank-card-container {
-    background: #0c0c0c;
-    width: 100%;
-    max-width: 90rem;
-    height: 85vh;
-    border-radius: 20px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-    padding: 40px;
-    color: #fff;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    position: relative;
-    border: 1px solid #838383;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -1193,8 +1168,8 @@
 .badges-container img {
     width: auto;
     height: auto;
-    max-height: clamp(20px, 3vw, 60px);
-    max-width: clamp(20px, 3vw, 60px);
+    max-height: clamp(20px, 3.5vw, 60px);
+    max-width: clamp(20px, 3.5vw, 60px);
     object-fit: contain;
     transition: all 0.3s ease;
 }
@@ -1444,6 +1419,11 @@
 @media (max-width: 530px) {
     .rank-card-container {
         padding: 10px;
+        height: 100vh;
+    }
+
+    .content-rankcard {
+        padding: 5px;
     }
 
     #rankCardContent {
@@ -1621,7 +1601,7 @@
         gap: 7px;
         border-radius: 5px;
         max-width: 100%;
-        height: 45px;
+        height: 72px;
     }
 
     .stat-item {
@@ -1647,7 +1627,7 @@
         padding: 6px;
         border-radius: 5px;
         max-width: 60%;
-        height: 45px;
+        height: 72px;
     }
 
     .badges-container {
@@ -1657,7 +1637,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 4px;
+        gap: 2px;
     }
     
     .badges-container img {
@@ -1741,7 +1721,7 @@
     }
 
     .player-rank-name {
-        font-size: 0.85em;
+        font-size: 0.75em;
     }
 
     .rank-section {
@@ -1793,11 +1773,6 @@
         max-width: 60%;
     }
 
-    .badges-container img {
-        max-height: 25px;
-        max-width: 25px;
-    }
-
     #buttonContainer {
         justify-content: center;
     }
@@ -1815,7 +1790,7 @@
     }
 }
 
-@media (max-width: 480px) and (max-height: 768px) {
+@media (max-width: 530px) and (max-height: 768px) {
     .rank-section {
         gap: 1px;
     }
@@ -1831,11 +1806,11 @@
 
 @media (max-width: 1024px) and (max-height: 768px) {
     .player-rank-name {
-        font-size: 0.85em;
+        font-size: 0.75em;
     }
 }
 
-@media (max-width: 480px) and (max-height: 768px) {
+@media (max-width: 530px) and (max-height: 768px) {
     .player-rank-name {
         font-size: 0.45em;
     }
