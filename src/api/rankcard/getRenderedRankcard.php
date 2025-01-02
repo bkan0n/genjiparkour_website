@@ -12,6 +12,8 @@ if (!$user_id) {
     exit;
 }
 
+$apiUrl = "{$apiRoot}/v1/rank_card/test/{$user_id}";
+
 $ReceivedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
 
 if (!$ReceivedApiKey) {
@@ -25,8 +27,6 @@ if ($ReceivedApiKey !== $apiKey) {
     echo json_encode(['error' => 'Invalid API Key']);
     exit;
 }
-
-$apiUrl = "{$apiRoot}/v1/rank_card/test/{$user_id}";
 
 $ch = curl_init($apiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -118,9 +118,9 @@ curl_close($ch);
                                 <div class="medals-header">
                                     <span></span>
                                     <div class="medals-icons">
-                                        <span>🥇</span>
-                                        <span>🥈</span>
-                                        <span>🥉</span>
+                                    <span><img src="../../assets/medals/gold.png" alt="Gold Medal" class="medals-icons"></span>
+                                    <span><img src="../../assets/medals/silver.png" alt="Silver Medal" class="medals-icons"></span>
+                                    <span><img src="../../assets/medals/bronze.png" alt="Bronze Medal" class="medals-icons"></span>
                                     </div>
                                 </div>
                                 <?php foreach ($data['difficulties'] as $level => $stats): ?>
