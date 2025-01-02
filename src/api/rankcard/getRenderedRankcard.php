@@ -104,78 +104,80 @@ curl_close($ch);
     </script>
 </head>
 <body>
-<div id="rankCardContent">
-    <div class="rank-card">
-        <div class="background">
-        <img src="<?= htmlspecialchars('../../' . ($data['background_url'] ?? 'default-background.webp')) ?>" alt="Background">
-        </div>
-        <div class="content-rankcard ">
-            <div class="player-name"><?= htmlspecialchars($data['nickname']) ?></div>
-            <div class="main-container">
-                <div class="rank-details-container">
-                    <div class="rank-section-container">
-                        <div class="rank-section">
-                            <div class="medals-header">
-                                <span></span>
-                                <div class="medals-icons">
-                                    <span>🥇</span>
-                                    <span>🥈</span>
-                                    <span>🥉</span>
-                                </div>
-                            </div>
-                            <?php foreach ($data['difficulties'] as $level => $stats): ?>
-                                <div class="rank-row">
-                                    <span class="rank-title"><?= htmlspecialchars(strtoupper($level)) ?></span>
-                                    <div class="progress-container">
-                                        <div class="progress-bar">
-                                            <div class="progress <?= htmlspecialchars(strtolower(str_replace(' ', '-', $level))) ?>" 
-                                                style="width: <?= ($stats['completed'] / $stats['total']) * 100 ?>%;"></div>
-                                        </div>
-                                        <div class="progress-text">
-                                            <?= htmlspecialchars($stats['completed']) ?> / <?= htmlspecialchars($stats['total']) ?>
-                                        </div>
-                                    </div>
-                                    <div class="medals-values">
-                                        <span><?= htmlspecialchars($stats['gold']) ?></span>
-                                        <span><?= htmlspecialchars($stats['silver']) ?></span>
-                                        <span><?= htmlspecialchars($stats['bronze']) ?></span>
+<main role="main" class="main">
+    <div id="rankCardContent">
+        <div class="rank-card">
+            <div class="background">
+            <img src="<?= htmlspecialchars('../../' . ($data['background_url'] ?? 'default-background.webp')) ?>" alt="Background">
+            </div>
+            <div class="content-rankcard ">
+                <div class="player-name"><?= htmlspecialchars($data['nickname']) ?></div>
+                <div class="main-container">
+                    <div class="rank-details-container">
+                        <div class="rank-section-container">
+                            <div class="rank-section">
+                                <div class="medals-header">
+                                    <span></span>
+                                    <div class="medals-icons">
+                                        <span>🥇</span>
+                                        <span>🥈</span>
+                                        <span>🥉</span>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="combined-container">
-                            <div class="badges-container">
-                                <?php foreach ($data['badges'] as $badge): ?>
-                                    <?php if (!empty($badge['url'])): ?>
-                                        <img src="<?= htmlspecialchars('../../' . $badge['url']) ?>" alt="<?= htmlspecialchars($badge['name'] ?? 'Badge') ?>" class="badge">
-                                    <?php endif; ?>
+                                <?php foreach ($data['difficulties'] as $level => $stats): ?>
+                                    <div class="rank-row">
+                                        <span class="rank-title"><?= htmlspecialchars(strtoupper($level)) ?></span>
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress <?= htmlspecialchars(strtolower(str_replace(' ', '-', $level))) ?>" 
+                                                    style="width: <?= ($stats['completed'] / $stats['total']) * 100 ?>%;"></div>
+                                            </div>
+                                            <div class="progress-text">
+                                                <?= htmlspecialchars($stats['completed']) ?> / <?= htmlspecialchars($stats['total']) ?>
+                                            </div>
+                                        </div>
+                                        <div class="medals-values">
+                                            <span><?= htmlspecialchars($stats['gold']) ?></span>
+                                            <span><?= htmlspecialchars($stats['silver']) ?></span>
+                                            <span><?= htmlspecialchars($stats['bronze']) ?></span>
+                                        </div>
+                                    </div>
                                 <?php endforeach; ?>
                             </div>
-                            <div class="stats-section">
-                                <div class="stat-item">
-                                    <span class="stat-label">Maps</span>
-                                    <span class="stat-value"><?= htmlspecialchars($data['total_maps_created']) ?></span>
+                            <div class="combined-container">
+                                <div class="badges-container">
+                                    <?php foreach ($data['badges'] as $badge): ?>
+                                        <?php if (!empty($badge['url'])): ?>
+                                            <img src="<?= htmlspecialchars('../../' . $badge['url']) ?>" alt="<?= htmlspecialchars($badge['name'] ?? 'Badge') ?>" class="badge">
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Playtests</span>
-                                    <span class="stat-value"><?= htmlspecialchars($data['total_playtests']) ?></span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">World Records</span>
-                                    <span class="stat-value"><?= htmlspecialchars($data['world_records']) ?></span>
+                                <div class="stats-section">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Maps</span>
+                                        <span class="stat-value"><?= htmlspecialchars($data['total_maps_created']) ?></span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Playtests</span>
+                                        <span class="stat-value"><?= htmlspecialchars($data['total_playtests']) ?></span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">World Records</span>
+                                        <span class="stat-value"><?= htmlspecialchars($data['world_records']) ?></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="player-info">
-                        <span class="player-rank-name"><?= htmlspecialchars($data['rank_name']) ?></span>
-                        <img src="<?= htmlspecialchars('../../' . ($data['avatar_url'] ?? 'assets/default_avatar.png')) ?>" alt="Player Avatar" class="player-avatar">
-                        <img src="<?= htmlspecialchars('../../' . ($data['rank_url'] ?? 'assets/default_rank.png')) ?>" alt="Player Rank Badge" class="player-rank-badge">
+                        <div class="player-info">
+                            <span class="player-rank-name"><?= htmlspecialchars($data['rank_name']) ?></span>
+                            <img src="<?= htmlspecialchars('../../' . ($data['avatar_url'] ?? 'assets/default_avatar.png')) ?>" alt="Player Avatar" class="player-avatar">
+                            <img src="<?= htmlspecialchars('../../' . ($data['rank_url'] ?? 'assets/default_rank.png')) ?>" alt="Player Rank Badge" class="player-rank-badge">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 </body>
 </html>
