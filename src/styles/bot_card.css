@@ -738,6 +738,7 @@ body {
     font-size: 1.2em;
     color: #fff;
     white-space: nowrap;
+    right: -30px;
 }
 
 .player-info {
