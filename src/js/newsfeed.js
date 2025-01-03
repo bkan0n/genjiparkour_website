@@ -584,7 +584,7 @@ document.addEventListener('click', async (event) => {
         if (!originalTextElement || !translatedTextElement || !loadingIndicator) return;
 
         const originalText = originalTextElement.innerHTML.replace(/<br>/g, "\n");
-        const targetLang = document.documentElement.lang || 'en';
+        let targetLang = document.documentElement.lang || 'en';
 
         const emojiRegex = /https:\/\/cdn\.discordapp\.com\/emojis\/(\d+)\.png/g;
         const emojiMap = new Map();
@@ -595,6 +595,10 @@ document.addEventListener('click', async (event) => {
 
         loadingIndicator.style.display = 'flex';
         event.target.disabled = true;
+
+        if (targetLang === "jp") {
+            targetLang = "ja";
+        }
 
         try {
             const response = await fetch('api/getTranslations.php', {

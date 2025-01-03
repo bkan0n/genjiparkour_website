@@ -91,7 +91,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     if (currentLang === 'fr' && leaderboardContainer) {
-        leaderboardContainer.style.width = `calc(80% + 120px)`;
+        leaderboardContainer.style.maxWidth = `86vw`;
+    }
+
+    if (currentLang === 'jp' && leaderboardContainer) {
+        leaderboardContainer.style.maxWidth = `74vw`;
     }
 
     leaderboardContainer.innerHTML = `

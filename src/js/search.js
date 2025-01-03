@@ -984,7 +984,7 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
     }
 
     debounceTimeout = setTimeout(() => {
-        const locale = currentLang === 'cn' ? 'cn' : currentLang === 'jp' ? 'jp' : 'en';
+        const locale = currentLang === 'cn' ? 'cn' : currentLang === 'jp' ? 'en' : 'en';
         
         fetch(`api/autocomplete/${apiEndpoint}?value=${encodeURIComponent(filterValue)}&locale=${locale}&page_size=10`)
             .then(response => {

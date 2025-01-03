@@ -132,11 +132,11 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
     const currentLang = document.documentElement.lang || "en";
     
-    if (currentLang === "cn") {
+    if (currentLang === "cn" || currentLang === "jp") {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             const parentLi = menu.closest('li');
             if (!parentLi || !parentLi.classList.contains('lang-dropdown-nav')) {
-                menu.style.width = "150px";
+                menu.style.width = "170px";
             }
         });
     }
