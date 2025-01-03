@@ -65,42 +65,6 @@ curl_close($ch);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rank Card</title>
     <link rel="stylesheet" href="../../styles/bot_card.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-    window.onload = function () {
-        const rankCard = document.getElementById('rankCardContent');
-        const userId = "<?= htmlspecialchars($user_id) ?>";
-
-        rankCard.style.width = '1400px';
-        rankCard.style.height = '700px';
-
-        html2canvas(rankCard, {
-            useCORS: true,
-            scale: 3,
-            backgroundColor: null
-        }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-
-            fetch('saveImage.php', {
-                method: 'POST',
-                body: JSON.stringify({ image: imgData, user_id: userId }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                } else {
-                    console.error('Erreur lors de la sauvegarde de l\'image :', data.message);
-                }
-            }).catch(err => {
-                console.error('Erreur lors de l\'envoi de l\'image au serveur :', err);
-            });
-        }).catch(err => {
-            console.error('Erreur lors de la capture de l\'image :', err);
-        });
-    };
-    </script>
 </head>
 <body>
 <main role="main" class="main">
