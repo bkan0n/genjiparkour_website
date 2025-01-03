@@ -721,7 +721,7 @@ body {
     position: relative;
     gap: 10px;
     width: calc(100% - 50px);
-    max-width: 800px;
+    max-width: 750px;
 }
 
 .progress-bar {
