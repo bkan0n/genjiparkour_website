@@ -4,7 +4,7 @@ body, html {
 }
 
 body {
-  background: radial-gradient(circle, rgba(82,82,82,1) 0%, rgba(43,43,43,1) 100%);
+  background: var(--background-color);
 }
 
 h1 {
@@ -52,7 +52,7 @@ h1 {
   justify-content: center;
   align-items: center;
   padding: 5px 15px;
-  background-color: #2b2b2b; 
+  background-color: var(--dark-buttons-bg);
   border-radius: 5px;
   cursor: pointer;
 }
@@ -62,8 +62,8 @@ input[type="text"] {
   font-size: 1rem;
   border: 1px solid #fff;
   border-radius: 0.5rem;
-  background-color: #2b2b2b;
-  color: #fff;
+  background-color: var(--dark-input-text-bg);
+  color: var(--dark-input-text-color);
   width: 300px;
   transition: width 0.3s ease, background-color 0.3s ease;
   max-width: 20rem;
@@ -71,12 +71,13 @@ input[type="text"] {
 }
 
 input[type="text"]:hover {
-  background-color: rgb(63, 61, 61);
+  background-color: #272727;
+  color:#2b2b2b;
 }
 
 input[type="text"]:focus {
-  background-color: #2b2b2b;
-  color: #fff;
+  background-color: var(--dark-input-text-bg);
+  color: var(--dark-input-text-color);
   width: 320px;
 }
 
@@ -208,17 +209,17 @@ input[type="text"]:focus {
 button.reset-filters-btn {
   font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
   padding: 12px 30px;
-  background-color: #fff;
+  background-color: var(--white-buttons-bg);
   border: none;
   border-radius: 5px;
-  color: #333;
+  color: var(--white-buttons-color);;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 button.reset-filters-btn:hover {
-  background-color: #dbd9d9;
+  background-color: var(--white-buttons-hover);
 }
 
 /* Tableau */
@@ -226,7 +227,7 @@ table {
   border-collapse: separate;
   border-spacing: 0 0px !important;
   border-radius: 1rem;
-  background-color: #2b2b2b;
+  background-color: var(--table-bg);
   margin: 0 auto;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
   border: 3px solid rgba(255, 255, 255, 0.5);
@@ -302,9 +303,9 @@ thead th {
 }
 
 .thead-wrapper th {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--th-bg);
   padding: 15px 2px;
-  color: #fff;
+  color: var(--th-color);
   text-align: center;
   border: none;
 }
@@ -325,11 +326,11 @@ thead th {
 }
 
 #checkboxes-container {
-  color: #fff;
+  color: var(--dark-buttons-input);;
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 15px;
   padding: 10px 15px;
-  background-color: #2b2b2b;
+  background-color: var(--dark-buttons-bg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
@@ -401,23 +402,23 @@ th {
   margin: 0 5px;
   border: none;
   border-radius: 5px;
-  background-color: #555;
-  color: white;
+  background-color: var(--pagination-bg);
+  color: var(--pagination-color);
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .pagination-container button:disabled {
-  background-color: #555;
+  background-color: var(--pagination-bg);
   cursor: not-allowed;
 }
 
 .pagination-container button:hover {
-  background-color: #777;
+  background-color: var(--pagination-hover);
 }
 
 .pagination-container span {
-  color: #fff;
+  color: var(--pagination-color);
   padding: 5px 10px;
 }
 
@@ -444,8 +445,8 @@ th {
 .custom-select-large {
   position: relative;
   width: 160px;
-  background-color: #2b2b2b;
-  color: #fff;
+  background-color: var(--dark-buttons-bg);
+  color: var(--dark-buttons-input);
   border-radius: 5px;
   cursor: pointer;
   padding: 12px 15px;
@@ -486,7 +487,7 @@ th {
 }
 
 .custom-select-large:hover {
-  background-color: #555;
+  background-color: var(--dark-buttons-hover);
 }
 
 .custom-select-large .custom-option {
@@ -499,8 +500,8 @@ th {
 }
 
 .custom-select-large .custom-option:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--suggestions-hover-bg);
+  color: var(--suggestions-hover-color);
 }
 
 .custom-select-large .custom-option.selected {
@@ -535,7 +536,7 @@ th {
 .custom-select .select-trigger {
   padding: 12px;
   background-color: transparent;
-  color: #fff;
+  color: var(--dark-buttons-input);
   border-radius: 5px;
   font-size: 16px;
 }
@@ -545,7 +546,7 @@ th {
   top: 100%;
   left: 0;
   right: 0;
-  background-color: #fff;
+  background-color: var(-suggestions-bg);
   border-radius: 5px;
   z-index: 100;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -567,7 +568,7 @@ th {
 }
 
 .custom-select:hover {
-  background-color: #555;
+  background-color: var(--dark-buttons-hover);
 }
 
 .custom-option {
@@ -580,8 +581,8 @@ th {
 }
 
 .custom-option:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--suggestions-hover-bg);
+  color: var(--suggestions-hover-color);
 }
 
 .custom-option.selected {
@@ -755,7 +756,7 @@ th, td {
   padding: 0.8rem;
   text-align: center;
   font-size: 1rem;
-  color: #fff;
+  color: var(--table-color);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   white-space: normal;
   word-wrap: break-word;

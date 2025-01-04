@@ -1,4 +1,59 @@
-/* toute la hauteur de la fenêtre */
+:root {
+  --navbar-bg: #1e1e1e;
+  --navbar-color: #ffffff;
+  /* Buttons & inputs*/
+  --tab-buttons-bg: transparent;
+  --tab-buttons-color: #ffffff;
+  --tab-buttons-border: #ffffff;
+  --tab-buttons-hover-bg: #fff;
+  --tab-buttons-hover-color: #1e1e1e;
+  --dark-buttons-bg: #1e1e1e;
+  --dark-buttons-color: #ffffff;
+  --dark-buttons-hover: #555;
+  --white-buttons-bg: #ffffff;
+  --white-buttons-color: #1e1e1e;
+  --white-buttons-hover: #dbd9d9;
+  --dark-input-text-bg: #1e1e1e;
+  --dark-input-text-color: #ffffff;
+  --dark-input-text-hover-bg: #3d3d3d;
+  --dark-input-text-hover-color: #ffffff;
+  /* Tables */
+  --th-bg: #353535;
+  --th-color: #ffffff;
+  --table-bg: #1e1e1e;
+  --table-color: #ffffff;
+  /* Pagination */
+  --pagination-bg: #1e1e1e;
+  --pagination-color: #ffffff;
+  --pagination-hover: #777;
+  /* Suggestions containers */
+  --suggestions-bg: #ffffff;
+  --suggestions-color: #1e1e1e;
+  --suggestions-hover-bg: #333;
+  --suggestions-hover-color: #ffffff;
+  /* Search */
+  --toolbar-bg: #1e1e1e;
+  --toolbar-color: #ffffff;
+  --white: #ffffff;
+  /* Graphs */
+  --graphs-bg: #ffffff;
+  --graphs-buttons-bg: #f1f1f1;
+  --graphs-buttons-color: #414141;
+  --graphs-buttons-border: #414141;
+  --graphs-buttons-hover-bg: #e1e1e1;
+  /* Badges */
+  --badges-bg: rgba(255, 255, 255, 0.05);
+  --badges-card: #1e1e1e;
+  --badges-color: #ffffff;
+  --badges-color-fade: #ccc;
+  /* Popup */
+  --green: #28a745;
+  --red: #dc3545;
+  /* Backgrounds */
+  --background-color: radial-gradient(circle, rgba(82, 82, 82, 1) 0%, rgba(43, 43, 43, 1) 100%);
+  --background-color-index: radial-gradient(circle, rgba(60, 77, 87, 1) 0%, rgba(27, 33, 34, 0.9934348739495799) 100%);
+  --background-color-rankcard: #0c0c0c;
+}
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -67,7 +122,7 @@ html, body {
 body {
     font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
     color: #fff;
-    background: radial-gradient(circle, rgba(212,212,212,1) 0%, rgba(43,43,43,1) 100%);
+    background: var(--background-color);
     padding-top: 10px;
     overflow-x: hidden;
     min-height: 100vh;
@@ -120,7 +175,7 @@ footer {
     font-family: 'Mona Sans', Helvetica, Arial, sans-serif;
     font-weight: 400;
     font-size: 18px;
-    background: #222;
+    background-color: var(--navbar-bg);
     padding: 20px 20px;
     max-height: 59px;
     display: flex;
@@ -133,7 +188,7 @@ footer {
 }
 
 .footer-left, .footer-right {
-    color: #ffffff;
+    color: var(--navbar-color);;
     font-size: 14px;
 }
 
@@ -151,6 +206,8 @@ footer {
   position: relative;
   transform: scale(1);
   transition: transform 0.3s ease;
+  margin-right: auto;
+  margin-left: 20px;
 }
 
 #creditsBtn.footer-button:hover {
@@ -177,7 +234,7 @@ footer {
     60% { transform: translateY(5px); }
 }
 
-/* Boutons modernes */
+/* Boutons profile card */
 .btn {
     display: inline-block;
     margin-top: 20px;
@@ -257,8 +314,8 @@ footer {
 .user-card {
   margin: 20px auto;
   padding: 20px;
-  background: #2b2b2b !important;
-  color: #fff;
+  background: var(--navbar-bg) !important;
+  color: var(--navbar-color);
   border-radius: 10px;
   max-width: 200px;
   text-align: center;
@@ -348,7 +405,7 @@ footer {
 
 .dropdown-nav .dropdown-menu a {
   padding: 8px 0px;
-  color: #ffffff;
+  color: var(--navbar-color);
   display: inline-block;
   text-align: center;
 }
@@ -362,7 +419,7 @@ footer {
 
 .discord-logo i {
   font-size: 24px;
-  color: #ffffff;
+  color: var(--navbar-color);
 }
 
 .discord-logo i:hover {
@@ -478,13 +535,12 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1e1e1e;
+  background-color: var(--navbar-bg);
   border-radius: 12px;
   padding: 10px 20px;
   width: 100vw;
   max-width: 1200px;
   z-index: 1000;
-
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
@@ -509,7 +565,7 @@ footer {
 .logo-text {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--navbar-color);
 }
 
 /* Section menu */
@@ -547,7 +603,7 @@ footer {
   top: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2b2b2b;
+  background-color: var(--navbar-bg);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: none;
@@ -602,7 +658,7 @@ footer {
 .lang-dropdown-nav .dropdown-toggle-nav,
 .user-avatar-dropdown .dropdown-menu a {
   position: relative;
-  color: #fff;
+  color: var(--navbar-color);
   text-decoration: none;
   padding: 8px 0;
   transition: color 0.3s ease;
@@ -663,7 +719,7 @@ footer {
   left: 50%;
   transform: translateX(-50%);
   right: 0;
-  background-color: #2b2b2b;
+  background-color: var(--navbar-bg);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: none;
@@ -688,7 +744,7 @@ footer {
 
 .user-avatar-dropdown .dropdown-menu a {
   padding: 8px 0px;
-  color: #ffffff;
+  color: var(--navbar-color);
   text-decoration: none;
   display: block;
   font-size: 0.9rem;
@@ -714,7 +770,7 @@ footer {
   align-items: center;
   background: none;
   border: none;
-  color: #fff;
+  color: var(--navbar-color);
   cursor: pointer;
   font-size: 1rem;
   padding: 8px 0px;
@@ -743,7 +799,7 @@ footer {
   top: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2b2b2b;
+  background-color: var(--navbar-bg);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: none;
@@ -783,7 +839,7 @@ footer {
 
 .lang-dropdown-nav .dropdown-menu a {
   padding: 8px 0px;
-  color: #ffffff;
+  color: var(--navbar-color);
   text-decoration: none;
   font-size: 0.9rem;
   display: flex;
@@ -1906,7 +1962,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #28a745;
+  background-color: var(--green);
   color: #fff;
   padding: 10px 20px;
   border-radius: 8px;
@@ -1932,7 +1988,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #dc3545;
+  background-color: var(--red);
   color: #fff;
   padding: 10px 20px;
   border-radius: 8px;

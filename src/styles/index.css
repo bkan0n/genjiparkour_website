@@ -12,7 +12,7 @@ html, body {
 }
 
 body {
-    background: radial-gradient(circle, rgba(60,77,87,1) 0%, rgba(27,33,34,0.9934348739495799) 100%);
+    background: var(--background-color-index);
     overflow-x: hidden;
 }
 

@@ -10,7 +10,7 @@
 }
 
 body {
-    background: radial-gradient(circle, rgba(241, 241, 241, 1) 0%, rgba(176, 176, 176, 0.993) 100%);
+    background: radial-gradient(circle, rgba(82, 82, 82, 1) 0%, rgba(43, 43, 43, 1) 100%);
 }
 
 canvas {
@@ -39,7 +39,7 @@ canvas {
     width: 100%;
     max-width: 800px;
     aspect-ratio: 4 / 3;
-    background-color: white;
+    background-color: var(--graphs-bg);
     padding: 1rem;
     border-radius: 0.9375rem;
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
@@ -146,10 +146,10 @@ path.segment:hover {
     bottom: 1rem;
     right: 1rem;
     padding: 0.5rem 0.75rem;
-    border: 0.125rem solid #414141;
+    border: 0.125rem solid var(--graphs-buttons-border);
     border-radius: 0.5rem;
-    background-color: #f1f1f1;
-    color: #414141;
+    background-color: var(--graphs-buttons-bg);;
+    color: var(--graphs-buttons-color);;
     font-size: 0.875rem;
     font-weight: bold;
     cursor: pointer;
@@ -159,7 +159,7 @@ path.segment:hover {
 }
 
 .fixed-button:hover {
-    background-color: #e1e1e1;
+    background-color: var(--graphs-buttons-hover-bg);;
 }
 
 .fixed-button:focus {

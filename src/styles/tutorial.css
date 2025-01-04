@@ -6,7 +6,7 @@
 }
 
 body {
-    background: radial-gradient(circle, rgb(131, 130, 130) 0%, rgba(43,43,43,1) 100%);
+    background: var(--background-color);
     font-family: 'Mona Sans', Arial, Helvetica, sans-serif;
 }
 
