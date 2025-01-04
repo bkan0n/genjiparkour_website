@@ -1,8 +1,11 @@
 <?php
-// Ensure this file is not accessed directly
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', __DIR__ . '/../');
 }
+
+require BASE_PATH . "discord/session_init.php";
+require BASE_PATH . "translations/load_translations.php";
+include BASE_PATH . "discord/header.php";
 ?>
 <div class="modal-box">
     <button class="close-modal" aria-label="Close Modal">
@@ -10,7 +13,7 @@ if (!defined('BASE_PATH')) {
     </button>
     <h2></h2>
     <div class="credits-container">
-        <h3>Translation Contributors</h3>
+        <h3><?= htmlspecialchars($translations['navbar']['contributors']) ?></h3>
         <div id="translatorsList" class="contributors-list"></div>
     </div>
 </div>

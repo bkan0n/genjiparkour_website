@@ -19,7 +19,8 @@
             "profile": "Profile",
             "language": "Language",
             "rank_card": "Rank Card",
-            "dashboard": "Dashboard"
+            "dashboard": "Dashboard",
+            "contributors": "Translation contributors"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -451,7 +452,8 @@
             "profile": "Profil",
             "language": "Langue",
             "rank_card": "Carte de rang",
-            "dashboard": "Tableau de bord"
+            "dashboard": "Tableau de bord",
+            "contributors": "Contributeurs aux traductions"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -782,7 +784,8 @@
             "lootbox": "Лутбокс",
             "profile": "Профиль",
             "rank_card": "Личная карта",
-            "dashboard": "Панель управления"
+            "dashboard": "Панель управления",
+            "contributors": "Участники перевода"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -1114,7 +1117,8 @@
             "profile": "账号信息",
             "language": "语言",
             "rank_card": "称号图标",
-            "dashboard": "仪表板"
+            "dashboard": "仪表板",
+            "contributors": "翻译贡献者"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1546,7 +1550,8 @@
             "profile": "プロフィール",
             "language": "言語",
             "rank_card": "ランクカード",
-            "dashboard": "ダッシュボード"
+            "dashboard": "ダッシュボード",
+            "contributors": "翻訳協力者"
         },
         "hero": {
             "packOpening": "パックを開封する",
@@ -1978,7 +1983,8 @@
             "profile": "Profil",
             "language": "Sprache",
             "rank_card": "Rang Karte",
-            "dashboard": "Armaturenbrett"
+            "dashboard": "Armaturenbrett",
+            "contributors": "Übersetzungsbeitragende"
         },
         "hero": {
             "packOpening": "Pack öffnen",
