@@ -13,6 +13,8 @@ include BASE_PATH . "discord/header.php";
     </button>
     <h2></h2>
     <div class="credits-container">
+        <h3><?= htmlspecialchars($translations['navbar']['website_creators']) ?></h3>
+        <div id="websiteCreatorsList" class="contributors-list"></div>
         <h3><?= htmlspecialchars($translations['navbar']['contributors']) ?></h3>
         <div id="translatorsList" class="contributors-list"></div>
     </div>

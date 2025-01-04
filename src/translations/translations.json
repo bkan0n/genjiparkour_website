@@ -20,7 +20,8 @@
             "language": "Language",
             "rank_card": "Rank Card",
             "dashboard": "Dashboard",
-            "contributors": "Translation contributors"
+            "contributors": "Translation contributors",
+            "website_creators": "Website creators"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -453,7 +454,8 @@
             "language": "Langue",
             "rank_card": "Carte de rang",
             "dashboard": "Tableau de bord",
-            "contributors": "Contributeurs aux traductions"
+            "contributors": "Contributeurs aux traductions",
+            "website_creators": "Créateurs du site"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -785,7 +787,8 @@
             "profile": "Профиль",
             "rank_card": "Личная карта",
             "dashboard": "Панель управления",
-            "contributors": "Участники перевода"
+            "contributors": "Участники перевода",
+            "website_creators": "Создатели сайта"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -1118,7 +1121,8 @@
             "language": "语言",
             "rank_card": "称号图标",
             "dashboard": "仪表板",
-            "contributors": "翻译贡献者"
+            "contributors": "翻译贡献者",
+            "website_creators": "网站创建者"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1551,7 +1555,8 @@
             "language": "言語",
             "rank_card": "ランクカード",
             "dashboard": "ダッシュボード",
-            "contributors": "翻訳協力者"
+            "contributors": "翻訳協力者",
+            "website_creators": "ウェブサイトの作成者"
         },
         "hero": {
             "packOpening": "パックを開封する",
@@ -1984,7 +1989,8 @@
             "language": "Sprache",
             "rank_card": "Rang Karte",
             "dashboard": "Armaturenbrett",
-            "contributors": "Übersetzungsbeitragende"
+            "contributors": "Übersetzungsbeitragende",
+            "website_creators": "Webseiten-Ersteller"
         },
         "hero": {
             "packOpening": "Pack öffnen",
