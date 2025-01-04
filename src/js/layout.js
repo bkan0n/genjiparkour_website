@@ -300,6 +300,17 @@ function showErrorMessage(message) {
 }
 
 //Credits
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Erreur lors du chargement du script : ${src}`));
+        document.head.appendChild(script);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const creditsBtn = document.getElementById("creditsBtn");
     const creditsModal = document.getElementById("creditsModal");
