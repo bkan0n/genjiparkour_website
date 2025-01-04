@@ -27,9 +27,6 @@ include BASE_PATH . "discord/header.php";
     <div id="smoke-background"></div>
     <?php include 'navbar.php'; ?>
     <section class="hero" id="hero1">
-        <div class="scroll-indicator">
-            <a href="#next-section" class="scroll-btn"><i class="fas fa-chevron-down"></i></a>
-        </div>
         <div class="hero-content">
             <div class="side-section left">
                 <p class="recent-stats"><?= htmlspecialchars($translations['hero']['packOpening']) ?></p>
@@ -38,23 +35,6 @@ include BASE_PATH . "discord/header.php";
             <div class="side-section right">
                 <p class="recent-stats"><?= htmlspecialchars($translations['hero']['comingSoon']) ?></p>
                 <a href="#" class="cta-btn"><?= htmlspecialchars($translations['hero']['comingSoon']) ?></a>
-            </div>
-        </div>
-    </section>
-    <section id="next-section" class="achievements">
-        <h2><?= htmlspecialchars($translations['achievements']['latestEvents']) ?></h2>
-        <div class="event-grid">
-            <div class="event-item">
-                <h3><?= htmlspecialchars($translations['achievements']['event1']) ?></h3>
-                <p><?= htmlspecialchars($translations['achievements']['event1Desc']) ?></p>
-            </div>
-            <div class="event-item">
-                <h3><?= htmlspecialchars($translations['achievements']['event2']) ?></h3>
-                <p><?= htmlspecialchars($translations['achievements']['event2Desc']) ?></p>
-            </div>
-            <div class="event-item">
-                <h3><?= htmlspecialchars($translations['achievements']['event3']) ?></h3>
-                <p><?= htmlspecialchars($translations['achievements']['event3Desc']) ?></p>
             </div>
         </div>
     </section>
