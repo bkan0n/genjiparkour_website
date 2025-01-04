@@ -17,6 +17,10 @@ const sounds = {
     legendary: new Audio('assets/sounds/legendary-sound.ogg')
 };
 
+Object.values(sounds).forEach(sound => {
+    sound.preload = 'auto';
+});
+
 var value;
 $.fn.extend({
     animateCss: function(animationName) {
@@ -402,12 +406,12 @@ function displayRewards(rewards) {
 
     function flipCard(card, reward, grantRewardFlag) {
         card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
-        playSound(reward.rarity);
 
         if (card.hasClass('flip')) {
             card.find('.front-text').text('Oops');
 
             if (grantRewardFlag && !rewardGranted) {
+                playSound(reward.rarity);
                 grantReward(userId, reward.type, reward.name);
                 card.addClass('rewarded');
                 rewardGranted = true;
@@ -423,8 +427,8 @@ function grantReward(userId, rewardType, rewardName) {
         data: { 
             user_id: userId,
             key_type: rewardKeyType,
-            reward_type: rewardType,
-            reward_name: rewardName,
+            reward_type: encodeURIComponent(rewardType),
+            reward_name: encodeURIComponent(rewardName),
             nonce: rewardNonce
         },
         dataType: 'json',
@@ -478,8 +482,23 @@ function playSound(quality) {
         default: sound = new Audio('path/to/default-sound.mp3'); break;
     }
 
-    sound.play().catch(error => console.log("Erreur lors de la lecture du son:", error));
+    if (sound.readyState >= 2) {
+        sound.play().catch(error => console.log("Erreur lors de la lecture du son:", error));
+    } else {
+        console.warn("Le fichier audio n'est pas prêt :", sound.src);
+    }
 }
+
+document.addEventListener('click', () => {
+    Object.values(sounds).forEach(sound => {
+        sound.play().catch(() => {
+            console.log("Audio préparé après interaction utilisateur");
+        });
+        sound.pause();
+        sound.currentTime = 0;
+    });
+}, { once: true });
+
 
 // Temporary 
 $('#giveKeyButton').click(function () {
