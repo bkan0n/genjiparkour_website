@@ -45,9 +45,6 @@ include BASE_PATH . "discord/header.php";
           </div>
         </div>
         <div class="centered-container">
-        <button id="giveKeyButton" style="background-color: #2b2b2b; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px;">
-        <?= htmlspecialchars($translations['lootbox']['give_key']) ?>
-        </button>
           <div id="key-count" class="key-display"></div>
           <div class="button-container">
             <button class="generate btn shadow yellow" 

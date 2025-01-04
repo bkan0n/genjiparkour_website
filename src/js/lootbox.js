@@ -498,35 +498,3 @@ document.addEventListener('click', () => {
         sound.currentTime = 0;
     });
 }, { once: true });
-
-
-// Temporary 
-$('#giveKeyButton').click(function () {
-    if (!userId) {
-        showErrorMessage("Please login first");
-        return;
-    }
-
-    $.ajax({
-        url: 'api/lootbox/grantKeyToUser.php',
-        type: 'POST',
-        data: { user_id: userId, key_type: 'Classic' },
-        dataType: 'json',
-        success: function(response) {
-            if (response && response.success) {
-                alert("Key type 'Classic' added");
-                fetchKeys(userId);
-            } else if (response && response.error) {
-                alert("Erreur lors de l'ajout de la clé : " + response.error);
-                console.error("Erreur de l'API :", response.error);
-            } else {
-                alert("Erreur inattendue lors de l'ajout de la clé.");
-                console.warn("Réponse inattendue de l'API :", response);
-            }
-        },
-        error: function(xhr, status, error) {
-            alert("Erreur lors de la connexion à l'API pour ajouter la clé.");
-            console.error("Erreur AJAX :", error);
-        }
-    });
-});

@@ -35,6 +35,11 @@ function populateCredits() {
         { name: "干しガキ", avatar: "assets/profile/weds.webp" }
     ];
 
+    const websiteCreators = [
+        { name: "Joe", avatar: "assets/profile/joe.jpg" },
+        { name: "Arrow", avatar: "assets/profile/arrow.png" }
+    ];
+
     const translatorsList = document.getElementById("translatorsList");
 
     translators.forEach((translator) => {
@@ -42,6 +47,16 @@ function populateCredits() {
             <div class="contributor">
                 <img src="${translator.avatar}" alt="${translator.name}">
                 <p>${translator.name}</p>
+            </div>`;
+    });
+
+    const websiteCreatorsList = document.getElementById("websiteCreatorsList");
+
+    websiteCreators.forEach((creator) => {
+        websiteCreatorsList.innerHTML += `
+            <div class="contributor">
+                <img src="${creator.avatar}" alt="${creator.name}">
+                <p>${creator.name}</p>
             </div>`;
     });
 }
