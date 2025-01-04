@@ -197,9 +197,10 @@ function drawGenji() {
             genjiJumpFrameIndex = (genjiJumpFrameIndex + 1) % jumpFrames.length;
         }
     } else if (shouldAnimate) {
+        const defaultFrame = genjiNeutral;
         const frames = genjiDirection === 'right' ? sprintFrames : sprintFramesLeft;
-        const frame = frames[genjiFrameIndex];
-        if (frame.complete && frame.naturalWidth > 0) {
+        const frame = frames.length > 0 ? frames[genjiFrameIndex] : defaultFrame;
+        if (frame && frame.complete && frame.naturalWidth > 0) {
             ctx.drawImage(
                 frame,
                 genji.x,
