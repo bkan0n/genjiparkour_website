@@ -408,7 +408,7 @@ function displayRewards(rewards) {
         card.toggleClass('flip').toggleClass(`flip-${reward.rarity}`);
 
         if (card.hasClass('flip')) {
-            card.find('.front-text').text('Oops');
+            //card.find('.front-text').text('Oops');
 
             if (grantRewardFlag && !rewardGranted) {
                 playSound(reward.rarity);

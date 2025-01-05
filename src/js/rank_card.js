@@ -984,7 +984,9 @@ function initBackgroundChanges() {
             backgroundOption.textContent = `${background.name} (${background.rarity})`;
             optionsContainer.appendChild(backgroundOption);
 
-            backgroundOption.addEventListener("click", () => {
+            backgroundOption.addEventListener("click", (event) => {
+                event.stopPropagation();
+
                 selectedBackground = {
                     name: background.name,
                     url: background.url,
