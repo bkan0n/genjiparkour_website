@@ -51,10 +51,6 @@ function startSessionCheck() {
     checkSessionInterval = setInterval(checkSession, 15000);
 }
 
-if (isLoggedIn) {
-    startSessionCheck();
-}
-
 function redirectToLogin() {
     window.location.href = REDIRECT_URL + 'discord/login.php';
 }
