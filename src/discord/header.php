@@ -15,7 +15,3 @@ header("Pragma: no-cache");
     const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
     const REDIRECT_URL = '<?php echo rtrim(REDIRECT_URL, '/') . '/'; ?>';
 </script>
-
-<?php if ($isLoggedIn): ?>
-    <script src="js/check_session.js" defer></script>
-<?php endif; ?>
