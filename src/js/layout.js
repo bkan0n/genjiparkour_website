@@ -1,14 +1,3 @@
-//Session
-document.addEventListener("DOMContentLoaded", function() {
-    fetch("discord/check_session.php")
-        .then(response => response.json())
-        .then(data => {
-            if (data.session_expired) {
-                document.getElementById("sessionModal").style.display = "flex";
-            }
-        });
-});
-
 //Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
