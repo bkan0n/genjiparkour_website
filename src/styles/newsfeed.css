@@ -520,6 +520,15 @@ br {
     color: red;
     font-weight: bold;
 }
+/* Bulk */
+.bulk-list {
+    margin-left: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    column-gap: 5px;
+    row-gap: 5px;
+    align-items: start;
+}
 
 /* Timestamps */
 .timestamp {

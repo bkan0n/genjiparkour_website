@@ -1453,7 +1453,6 @@ function displayGuideResults(results) {
         <table class="results-table4">
             <thead>
                 <tr>
-                    <th class="mapCode">${t("thead.mapCode")}</th>
                     <th class="guideVideo">${t("thead.mapVideo")}</th>
                 </tr>
             </thead>
@@ -1464,7 +1463,6 @@ function displayGuideResults(results) {
 
                         return `
                             <tr>
-                                <td>${result.map_code || "N/A"}</td>
                                 <td>
                                     ${
                                         embedUrl

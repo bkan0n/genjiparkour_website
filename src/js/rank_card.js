@@ -10,38 +10,30 @@ async function initRankCard() {
     const btnBadges = document.getElementById("btnBadges");
     const buttonContainer = document.getElementById("buttonContainer");
     const searchButton = document.getElementById("searchButton");
+    const resetFilter = document.getElementById("resetFilter");
 
     function disableButtons() {
-        btnRankCard.disabled = true;
-        btnBadges.disabled = true;
-        searchButton.disabled = true;
-        resetFilter.disabled = true;
-        btnRankCard.style.cursor = 'not-allowed';
-        btnBadges.style.cursor = 'not-allowed';
-        searchButton.style.cursor = 'not-allowed';
-        resetFilter.style.cursor = 'not-allowed';
+        [btnRankCard, btnBadges, searchButton, resetFilter].forEach(button => {
+            button.disabled = true;
+            button.style.cursor = 'not-allowed';
+        });
     }
 
     function enableButtons() {
-        btnRankCard.disabled = false;
-        btnBadges.disabled = false;
-        searchButton.disabled = false;
-        resetFilter.disabled = false;
-        btnRankCard.style.cursor = 'pointer';
-        btnBadges.style.cursor = 'pointer';
-        searchButton.style.cursor = 'pointer';
-        resetFilter.style.cursor = 'pointer';
+        [btnRankCard, btnBadges, searchButton, resetFilter].forEach(button => {
+            button.disabled = false;
+            button.style.cursor = 'pointer';
+        });
     }
 
     const updateButtonContainerClass = () => {
         const currentUserId = getCurrentUserId();
 
-        if (selectedUserId === currentUserId || selectedUserId === null) {
-            if (btnRankCard.classList.contains("active")) {
-                buttonContainer.classList.add("active");
-            } else {
-                buttonContainer.classList.remove("active");
-            }
+        const isUserMatching = selectedUserId === null || selectedUserId === currentUserId;
+        const isRankCardActive = btnRankCard.classList.contains("active");
+
+        if (isUserMatching && isRankCardActive) {
+            buttonContainer.classList.add("active");
         } else {
             buttonContainer.classList.remove("active");
         }
@@ -49,14 +41,25 @@ async function initRankCard() {
 
     disableButtons();
 
+    function toggleTabs(showContent, hideContent, activeBtn, inactiveBtn) {
+        activeBtn.classList.add("active");
+        inactiveBtn.classList.remove("active");
+    
+        showContent.classList.add("active");
+        showContent.classList.remove("hidden");
+    
+        hideContent.classList.add("hidden");
+        hideContent.classList.remove("active");
+    
+        updateButtonContainerClass();
+    }
+
     btnRankCard.addEventListener("click", () => {
         toggleTabs(rankCardContent, badgeMasteryContent, btnRankCard, btnBadges);
-        updateButtonContainerClass();
     });
 
     btnBadges.addEventListener("click", () => {
         toggleTabs(badgeMasteryContent, rankCardContent, btnBadges, btnRankCard);
-        updateButtonContainerClass();
     });
 
     searchButton.addEventListener("click", () => {
@@ -68,13 +71,12 @@ async function initRankCard() {
         if (inputField) {
             inputField.value = "";
         }
-
-        selectedUserId;
+        selectedUserId = null;
         loadRankCardContent();
         loadUserMasteryContent();
         buttonContainer.classList.add("active");
     });
-    
+
     showLoadingBar();
     await Promise.all([
         loadTranslations(),
@@ -334,17 +336,6 @@ function startBadgeRotation(event) {
 
     window.addEventListener('mousemove', rotate);
     window.addEventListener('mouseup', stopRotation);
-}
-
-function toggleTabs(showContent, hideContent, activeBtn, inactiveBtn) {
-    activeBtn.classList.add("active");
-    inactiveBtn.classList.remove("active");
-
-    showContent.classList.add("active");
-    showContent.classList.remove("hidden");
-
-    hideContent.classList.add("hidden");
-    hideContent.classList.remove("active");
 }
 
 //Recherche
@@ -1358,13 +1349,14 @@ function initAvatarChanges() {
         if (selectedSkin && selectedSkin !== currentSkin) {
             const skinUrl = `api/rankcard/setAvatarSkin.php`;
             //console.log("Envoi de skin :", selectedSkin);
+            const encodedSkin = encodeURIComponent(selectedSkin);
             promises.push(
                 fetch(`${skinUrl}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ avatarSkin: selectedSkin }),
+                    body: JSON.stringify({ avatarSkin: encodedSkin }),
                 })
             );
         }
@@ -1372,13 +1364,14 @@ function initAvatarChanges() {
         if (selectedPose && selectedPose !== currentPose) {
             const poseUrl = `api/rankcard/setAvatarPose.php`;
             //console.log("Envoi de pose :", selectedPose);
+            const encodedPose = encodeURIComponent(selectedPose);
             promises.push(
                 fetch(`${poseUrl}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ avatarPose: selectedPose }),
+                    body: JSON.stringify({ avatarPose: encodedPose }),
                 })
             );
         }
@@ -1394,7 +1387,7 @@ function initAvatarChanges() {
                 avatarContainer.style.display = "none";
 
                 const formattedSkin = (selectedSkin || currentSkin).toLowerCase().replace(/ /g, "_");
-                const formattedPose = (selectedPose || currentPose).toLowerCase();
+                const formattedPose = (selectedPose || currentPose).toLowerCase().replace(/ /g, "_");
 
                 updatePlayerAvatar({
                     name: selectedSkin || currentSkin,
