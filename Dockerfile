@@ -5,7 +5,3 @@ FROM asimlqt/php-apache:8.3
 # COPY ./php.ini /usr/local/etc/php/
 
 COPY ./src /var/www/html
-
-RUN mkdir -p /var/www/html/api/rankcard/rankcardRequests
-
-RUN chown -R www-data /var/www/html/assets
