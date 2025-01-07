@@ -5,8 +5,7 @@ services:
     networks:
       - contabo_network
       - genji-network
-    restart:
-      - unless-stopped
+    restart: unless-stopped
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
