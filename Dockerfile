@@ -8,4 +8,4 @@ COPY ./src /var/www/html
 
 RUN mkdir -p /var/www/html/api/rankcard/rankcardRequests
 
-RUN chown www-data /var/www/html/api/rankcard/rankcardRequests
+RUN chown -R www-data /var/www/html/assets
