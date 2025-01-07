@@ -391,7 +391,7 @@ tbody tr:last-child td:last-child {
 .results-table4 {
     position: relative;
     width: 100%;
-    max-width: 1300px !important;
+    max-width: 800px !important;
     margin: 0 auto;
     border-collapse: separate;
     border-spacing: 0;
