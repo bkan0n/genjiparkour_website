@@ -358,10 +358,17 @@ async function createNewsCard(item) {
 
     if (type === "bulk_archive" || type === "bulk_unarchive") {
         const actionText = type === "bulk_archive" ? t('newsfeed.bulk_archived') : t('newsfeed.bulk_unarchived');
+    
+        const bulkList = Array.isArray(data.bulk) && data.bulk.length > 0
+            ? data.bulk.map(item => `<li>${item.map_code}</li>`).join("")
+            : "";
+    
         content += `
         <div class="news-header">
             <h3>${actionText}</h3>
-            <p>${data.total_results}</p>
+            <ul class="bulk-list">
+                ${bulkList}
+            </ul>
         </div>`;
     }
 
