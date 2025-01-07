@@ -1,5 +1,11 @@
-FROM php:8.3.6-apache
+FROM asimlqt/php-apache:8.3
 
-RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pgsql
+# COPY ./000-default.conf /etc/apache2/sites-available/
 
-COPY . /var/www/html
+# COPY ./php.ini /usr/local/etc/php/
+
+COPY ./src /var/www/html
+
+RUN mkdir -p /var/www/html/api/rankcard/rankcardRequests
+
+RUN chown www-data /var/www/html/api/rankcard/rankcardRequests

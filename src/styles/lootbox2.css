@@ -1,0 +1,1277 @@
+/*============================================================================ Variables
+==============================================================================*/
+/*============================================================================ Includes
+==============================================================================*/
+/*!
+ * animate.css -http://daneden.me/animate
+ * Version - 3.5.2
+ * Licensed under the MIT license - http://opensource.org/licenses/MIT
+ *
+ * Copyright (c) 2017 Daniel Eden
+ */
+ .animated { animation-duration: 1s; animation-fill-mode: both; }
+
+ .animated.infinite { animation-iteration-count: infinite; }
+ 
+ .animated.hinge { animation-duration: 2s; }
+ 
+ .animated.flipOutX, .animated.flipOutY, .animated.bounceIn, .animated.bounceOut { animation-duration: .75s; }
+ 
+ @keyframes bounce { from, 20%, 53%, 80%, to { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); transform: translate3d(0, 0, 0); }
+   40%, 43% { animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06); transform: translate3d(0, -30px, 0); }
+   70% { animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06); transform: translate3d(0, -15px, 0); }
+   90% { transform: translate3d(0, -4px, 0); } }
+ .bounce { animation-name: bounce; transform-origin: center bottom; }
+ 
+ @keyframes flash { from, 50%, to { opacity: 1; }
+   25%, 75% { opacity: 0; } }
+ .flash { animation-name: flash; }
+ 
+ /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+ @keyframes pulse { from { transform: scale3d(1, 1, 1); }
+   50% { transform: scale3d(1.05, 1.05, 1.05); }
+   to { transform: scale3d(1, 1, 1); } }
+ .pulse { animation-name: pulse; }
+ 
+ @keyframes rubberBand { from { transform: scale3d(1, 1, 1); }
+   30% { transform: scale3d(1.25, 0.75, 1); }
+   40% { transform: scale3d(0.75, 1.25, 1); }
+   50% { transform: scale3d(1.15, 0.85, 1); }
+   65% { transform: scale3d(0.95, 1.05, 1); }
+   75% { transform: scale3d(1.05, 0.95, 1); }
+   to { transform: scale3d(1, 1, 1); } }
+ .rubberBand { animation-name: rubberBand; }
+ 
+ @keyframes shake { from, to { transform: translate3d(0, 0, 0); }
+   10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+   20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); } }
+ .shake { animation-name: shake; }
+ 
+ @keyframes headShake { 0% { transform: translateX(0); }
+   6.5% { transform: translateX(-6px) rotateY(-9deg); }
+   18.5% { transform: translateX(5px) rotateY(7deg); }
+   31.5% { transform: translateX(-3px) rotateY(-5deg); }
+   43.5% { transform: translateX(2px) rotateY(3deg); }
+   50% { transform: translateX(0); } }
+ .headShake { animation-timing-function: ease-in-out; animation-name: headShake; }
+ 
+ @keyframes swing { 20% { transform: rotate3d(0, 0, 1, 15deg); }
+   40% { transform: rotate3d(0, 0, 1, -10deg); }
+   60% { transform: rotate3d(0, 0, 1, 5deg); }
+   80% { transform: rotate3d(0, 0, 1, -5deg); }
+   to { transform: rotate3d(0, 0, 1, 0deg); } }
+ .swing { transform-origin: top center; animation-name: swing; }
+ 
+ @keyframes tada { from { transform: scale3d(1, 1, 1); }
+   10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
+   30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
+   40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
+   to { transform: scale3d(1, 1, 1); } }
+ .tada { animation-name: tada; }
+ 
+ /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+ @keyframes wobble { from { transform: none; }
+   15% { transform: translate3d(-25%, 0, 0) rotate3d(0, 0, 1, -5deg); }
+   30% { transform: translate3d(20%, 0, 0) rotate3d(0, 0, 1, 3deg); }
+   45% { transform: translate3d(-15%, 0, 0) rotate3d(0, 0, 1, -3deg); }
+   60% { transform: translate3d(10%, 0, 0) rotate3d(0, 0, 1, 2deg); }
+   75% { transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -1deg); }
+   to { transform: none; } }
+ .wobble { animation-name: wobble; }
+ 
+ @keyframes jello { from, 11.1%, to { transform: none; }
+   22.2% { transform: skewX(-12.5deg) skewY(-12.5deg); }
+   33.3% { transform: skewX(6.25deg) skewY(6.25deg); }
+   44.4% { transform: skewX(-3.125deg) skewY(-3.125deg); }
+   55.5% { transform: skewX(1.5625deg) skewY(1.5625deg); }
+   66.6% { transform: skewX(-0.78125deg) skewY(-0.78125deg); }
+   77.7% { transform: skewX(0.390625deg) skewY(0.390625deg); }
+   88.8% { transform: skewX(-0.1953125deg) skewY(-0.1953125deg); } }
+ .jello { animation-name: jello; transform-origin: center; }
+ 
+ @keyframes bounceIn { from, 20%, 40%, 60%, 80%, to { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+   0% { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }
+   20% { transform: scale3d(1.1, 1.1, 1.1); }
+   40% { transform: scale3d(0.9, 0.9, 0.9); }
+   60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); }
+   80% { transform: scale3d(0.97, 0.97, 0.97); }
+   to { opacity: 1; transform: scale3d(1, 1, 1); } }
+ .bounceIn { animation-name: bounceIn; }
+ 
+ @keyframes bounceInDown { from, 60%, 75%, 90%, to { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+   0% { opacity: 0; transform: translate3d(0, -3000px, 0); }
+   60% { opacity: 1; transform: translate3d(0, 25px, 0); }
+   75% { transform: translate3d(0, -10px, 0); }
+   90% { transform: translate3d(0, 5px, 0); }
+   to { transform: none; } }
+ .bounceInDown { animation-name: bounceInDown; }
+ 
+ @keyframes bounceInLeft { from, 60%, 75%, 90%, to { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+   0% { opacity: 0; transform: translate3d(-3000px, 0, 0); }
+   60% { opacity: 1; transform: translate3d(25px, 0, 0); }
+   75% { transform: translate3d(-10px, 0, 0); }
+   90% { transform: translate3d(5px, 0, 0); }
+   to { transform: none; } }
+ .bounceInLeft { animation-name: bounceInLeft; }
+ 
+ @keyframes bounceInRight { from, 60%, 75%, 90%, to { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+   from { opacity: 0; transform: translate3d(3000px, 0, 0); }
+   60% { opacity: 1; transform: translate3d(-25px, 0, 0); }
+   75% { transform: translate3d(10px, 0, 0); }
+   90% { transform: translate3d(-5px, 0, 0); }
+   to { transform: none; } }
+ .bounceInRight { animation-name: bounceInRight; }
+ 
+ @keyframes bounceInUp { from, 60%, 75%, 90%, to { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+   from { opacity: 0; transform: translate3d(0, 3000px, 0); }
+   60% { opacity: 1; transform: translate3d(0, -20px, 0); }
+   75% { transform: translate3d(0, 10px, 0); }
+   90% { transform: translate3d(0, -5px, 0); }
+   to { transform: translate3d(0, 0, 0); } }
+ .bounceInUp { animation-name: bounceInUp; }
+ 
+ @keyframes bounceOut { 20% { transform: scale3d(0.9, 0.9, 0.9); }
+   50%, 55% { opacity: 1; transform: scale3d(1.1, 1.1, 1.1); }
+   to { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); } }
+ .bounceOut { animation-name: bounceOut; }
+ 
+ @keyframes bounceOutDown { 20% { transform: translate3d(0, 10px, 0); }
+   40%, 45% { opacity: 1; transform: translate3d(0, -20px, 0); }
+   to { opacity: 0; transform: translate3d(0, 2000px, 0); } }
+ .bounceOutDown { animation-name: bounceOutDown; }
+ 
+ @keyframes bounceOutLeft { 20% { opacity: 1; transform: translate3d(20px, 0, 0); }
+   to { opacity: 0; transform: translate3d(-2000px, 0, 0); } }
+ .bounceOutLeft { animation-name: bounceOutLeft; }
+ 
+ @keyframes bounceOutRight { 20% { opacity: 1; transform: translate3d(-20px, 0, 0); }
+   to { opacity: 0; transform: translate3d(2000px, 0, 0); } }
+ .bounceOutRight { animation-name: bounceOutRight; }
+ 
+ @keyframes bounceOutUp { 20% { transform: translate3d(0, -10px, 0); }
+   40%, 45% { opacity: 1; transform: translate3d(0, 20px, 0); }
+   to { opacity: 0; transform: translate3d(0, -2000px, 0); } }
+ .bounceOutUp { animation-name: bounceOutUp; }
+ 
+ @keyframes fadeIn { from { opacity: 0; }
+   to { opacity: 1; } }
+ .fadeIn { animation-name: fadeIn; }
+ 
+ @keyframes fadeInDown { from { opacity: 0; transform: translate3d(0, -100%, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInDown { animation-name: fadeInDown; }
+ 
+ @keyframes fadeInDownBig { from { opacity: 0; transform: translate3d(0, -2000px, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInDownBig { animation-name: fadeInDownBig; }
+ 
+ @keyframes fadeInLeft { from { opacity: 0; transform: translate3d(-100%, 0, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInLeft { animation-name: fadeInLeft; }
+ 
+ @keyframes fadeInLeftBig { from { opacity: 0; transform: translate3d(-2000px, 0, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInLeftBig { animation-name: fadeInLeftBig; }
+ 
+ @keyframes fadeInRight { from { opacity: 0; transform: translate3d(100%, 0, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInRight { animation-name: fadeInRight; }
+ 
+ @keyframes fadeInRightBig { from { opacity: 0; transform: translate3d(2000px, 0, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInRightBig { animation-name: fadeInRightBig; }
+ 
+ @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 100%, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInUp { animation-name: fadeInUp; }
+ 
+ @keyframes fadeInUpBig { from { opacity: 0; transform: translate3d(0, 2000px, 0); }
+   to { opacity: 1; transform: none; } }
+ .fadeInUpBig { animation-name: fadeInUpBig; }
+ 
+ @keyframes fadeOut { from { opacity: 1; }
+   to { opacity: 0; } }
+ .fadeOut { animation-name: fadeOut; }
+ 
+ @keyframes fadeOutDown { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(0, 100%, 0); } }
+ .fadeOutDown { animation-name: fadeOutDown; }
+ 
+ @keyframes fadeOutDownBig { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(0, 2000px, 0); } }
+ .fadeOutDownBig { animation-name: fadeOutDownBig; }
+ 
+ @keyframes fadeOutLeft { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(-100%, 0, 0); } }
+ .fadeOutLeft { animation-name: fadeOutLeft; }
+ 
+ @keyframes fadeOutLeftBig { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(-2000px, 0, 0); } }
+ .fadeOutLeftBig { animation-name: fadeOutLeftBig; }
+ 
+ @keyframes fadeOutRight { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(100%, 0, 0); } }
+ .fadeOutRight { animation-name: fadeOutRight; }
+ 
+ @keyframes fadeOutRightBig { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(2000px, 0, 0); } }
+ .fadeOutRightBig { animation-name: fadeOutRightBig; }
+ 
+ @keyframes fadeOutUp { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(0, -100%, 0); } }
+ .fadeOutUp { animation-name: fadeOutUp; }
+ 
+ @keyframes fadeOutUpBig { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(0, -2000px, 0); } }
+ .fadeOutUpBig { animation-name: fadeOutUpBig; }
+ 
+ @keyframes flip { from { transform: perspective(400px) rotate3d(0, 1, 0, -360deg); animation-timing-function: ease-out; }
+   40% { transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg); animation-timing-function: ease-out; }
+   50% { transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg); animation-timing-function: ease-in; }
+   80% { transform: perspective(400px) scale3d(0.95, 0.95, 0.95); animation-timing-function: ease-in; }
+   to { transform: perspective(400px); animation-timing-function: ease-in; } }
+ .animated.flip { -webkit-backface-visibility: visible; backface-visibility: visible; animation-name: flip; }
+ 
+ @keyframes flipInX { from { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0; }
+   40% { transform: perspective(400px) rotate3d(1, 0, 0, -20deg); animation-timing-function: ease-in; }
+   60% { transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1; }
+   80% { transform: perspective(400px) rotate3d(1, 0, 0, -5deg); }
+   to { transform: perspective(400px); } }
+ .flipInX { -webkit-backface-visibility: visible !important; backface-visibility: visible !important; animation-name: flipInX; }
+ 
+ @keyframes flipInY { from { transform: perspective(400px) rotate3d(0, 1, 0, 90deg); animation-timing-function: ease-in; opacity: 0; }
+   40% { transform: perspective(400px) rotate3d(0, 1, 0, -20deg); animation-timing-function: ease-in; }
+   60% { transform: perspective(400px) rotate3d(0, 1, 0, 10deg); opacity: 1; }
+   80% { transform: perspective(400px) rotate3d(0, 1, 0, -5deg); }
+   to { transform: perspective(400px); } }
+ .flipInY { -webkit-backface-visibility: visible !important; backface-visibility: visible !important; animation-name: flipInY; }
+ 
+ @keyframes flipOutX { from { transform: perspective(400px); }
+   30% { transform: perspective(400px) rotate3d(1, 0, 0, -20deg); opacity: 1; }
+   to { transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0; } }
+ .flipOutX { animation-name: flipOutX; -webkit-backface-visibility: visible !important; backface-visibility: visible !important; }
+ 
+ @keyframes flipOutY { from { transform: perspective(400px); }
+   30% { transform: perspective(400px) rotate3d(0, 1, 0, -15deg); opacity: 1; }
+   to { transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0; } }
+ .flipOutY { -webkit-backface-visibility: visible !important; backface-visibility: visible !important; animation-name: flipOutY; }
+ 
+ @keyframes lightSpeedIn { from { transform: translate3d(100%, 0, 0) skewX(-30deg); opacity: 0; }
+   60% { transform: skewX(20deg); opacity: 1; }
+   80% { transform: skewX(-5deg); opacity: 1; }
+   to { transform: none; opacity: 1; } }
+ .lightSpeedIn { animation-name: lightSpeedIn; animation-timing-function: ease-out; }
+ 
+ @keyframes lightSpeedOut { from { opacity: 1; }
+   to { transform: translate3d(100%, 0, 0) skewX(30deg); opacity: 0; } }
+ .lightSpeedOut { animation-name: lightSpeedOut; animation-timing-function: ease-in; }
+ 
+ @keyframes rotateIn { from { transform-origin: center; transform: rotate3d(0, 0, 1, -200deg); opacity: 0; }
+   to { transform-origin: center; transform: none; opacity: 1; } }
+ .rotateIn { animation-name: rotateIn; }
+ 
+ @keyframes rotateInDownLeft { from { transform-origin: left bottom; transform: rotate3d(0, 0, 1, -45deg); opacity: 0; }
+   to { transform-origin: left bottom; transform: none; opacity: 1; } }
+ .rotateInDownLeft { animation-name: rotateInDownLeft; }
+ 
+ @keyframes rotateInDownRight { from { transform-origin: right bottom; transform: rotate3d(0, 0, 1, 45deg); opacity: 0; }
+   to { transform-origin: right bottom; transform: none; opacity: 1; } }
+ .rotateInDownRight { animation-name: rotateInDownRight; }
+ 
+ @keyframes rotateInUpLeft { from { transform-origin: left bottom; transform: rotate3d(0, 0, 1, 45deg); opacity: 0; }
+   to { transform-origin: left bottom; transform: none; opacity: 1; } }
+ .rotateInUpLeft { animation-name: rotateInUpLeft; }
+ 
+ @keyframes rotateInUpRight { from { transform-origin: right bottom; transform: rotate3d(0, 0, 1, -90deg); opacity: 0; }
+   to { transform-origin: right bottom; transform: none; opacity: 1; } }
+ .rotateInUpRight { animation-name: rotateInUpRight; }
+ 
+ @keyframes rotateOut { from { transform-origin: center; opacity: 1; }
+   to { transform-origin: center; transform: rotate3d(0, 0, 1, 200deg); opacity: 0; } }
+ .rotateOut { animation-name: rotateOut; }
+ 
+ @keyframes rotateOutDownLeft { from { transform-origin: left bottom; opacity: 1; }
+   to { transform-origin: left bottom; transform: rotate3d(0, 0, 1, 45deg); opacity: 0; } }
+ .rotateOutDownLeft { animation-name: rotateOutDownLeft; }
+ 
+ @keyframes rotateOutDownRight { from { transform-origin: right bottom; opacity: 1; }
+   to { transform-origin: right bottom; transform: rotate3d(0, 0, 1, -45deg); opacity: 0; } }
+ .rotateOutDownRight { animation-name: rotateOutDownRight; }
+ 
+ @keyframes rotateOutUpLeft { from { transform-origin: left bottom; opacity: 1; }
+   to { transform-origin: left bottom; transform: rotate3d(0, 0, 1, -45deg); opacity: 0; } }
+ .rotateOutUpLeft { animation-name: rotateOutUpLeft; }
+ 
+ @keyframes rotateOutUpRight { from { transform-origin: right bottom; opacity: 1; }
+   to { transform-origin: right bottom; transform: rotate3d(0, 0, 1, 90deg); opacity: 0; } }
+ .rotateOutUpRight { animation-name: rotateOutUpRight; }
+ 
+ @keyframes hinge { 0% { transform-origin: top left; animation-timing-function: ease-in-out; }
+   20%, 60% { transform: rotate3d(0, 0, 1, 80deg); transform-origin: top left; animation-timing-function: ease-in-out; }
+   40%, 80% { transform: rotate3d(0, 0, 1, 60deg); transform-origin: top left; animation-timing-function: ease-in-out; opacity: 1; }
+   to { transform: translate3d(0, 700px, 0); opacity: 0; } }
+ .hinge { animation-name: hinge; }
+ 
+ @keyframes jackInTheBox { from { opacity: 0; transform: scale(0.1) rotate(30deg); transform-origin: center bottom; }
+   50% { transform: rotate(-10deg); }
+   70% { transform: rotate(3deg); }
+   to { opacity: 1; transform: scale(1); } }
+ .jackInTheBox { animation-name: jackInTheBox; }
+ 
+ /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+ @keyframes rollIn { from { opacity: 0; transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg); }
+   to { opacity: 1; transform: none; } }
+ .rollIn { animation-name: rollIn; }
+ 
+ /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
+ @keyframes rollOut { from { opacity: 1; }
+   to { opacity: 0; transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg); } }
+ .rollOut { animation-name: rollOut; }
+ 
+ @keyframes zoomIn { from { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }
+   50% { opacity: 1; } }
+ .zoomIn { animation-name: zoomIn; }
+ 
+ @keyframes zoomInDown { from { opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+   60% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1); } }
+ .zoomInDown { animation-name: zoomInDown; }
+ 
+ @keyframes zoomInLeft { from { opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(-1000px, 0, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+   60% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(10px, 0, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1); } }
+ .zoomInLeft { animation-name: zoomInLeft; }
+ 
+ @keyframes zoomInRight { from { opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(1000px, 0, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+   60% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(-10px, 0, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1); } }
+ .zoomInRight { animation-name: zoomInRight; }
+ 
+ @keyframes zoomInUp { from { opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, 1000px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+   60% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, -60px, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1); } }
+ .zoomInUp { animation-name: zoomInUp; }
+ 
+ @keyframes zoomOut { from { opacity: 1; }
+   50% { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }
+   to { opacity: 0; } }
+ .zoomOut { animation-name: zoomOut; }
+ 
+ @keyframes zoomOutDown { 40% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, -60px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+   to { opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, 2000px, 0); transform-origin: center bottom; animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1); } }
+ .zoomOutDown { animation-name: zoomOutDown; }
+ 
+ @keyframes zoomOutLeft { 40% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(42px, 0, 0); }
+   to { opacity: 0; transform: scale(0.1) translate3d(-2000px, 0, 0); transform-origin: left center; } }
+ .zoomOutLeft { animation-name: zoomOutLeft; }
+ 
+ @keyframes zoomOutRight { 40% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(-42px, 0, 0); }
+   to { opacity: 0; transform: scale(0.1) translate3d(2000px, 0, 0); transform-origin: right center; } }
+ .zoomOutRight { animation-name: zoomOutRight; }
+ 
+ @keyframes zoomOutUp { 40% { opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+   to { opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -2000px, 0); transform-origin: center bottom; animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1); } }
+ .zoomOutUp { animation-name: zoomOutUp; }
+ 
+ @keyframes slideInDown { from { transform: translate3d(0, -100%, 0); visibility: visible; }
+   to { transform: translate3d(0, 0, 0); } }
+ .slideInDown { animation-name: slideInDown; }
+ 
+ @keyframes slideInLeft { from { transform: translate3d(-100%, 0, 0); visibility: visible; }
+   to { transform: translate3d(0, 0, 0); } }
+ .slideInLeft { animation-name: slideInLeft; }
+ 
+ @keyframes slideInRight { from { transform: translate3d(100%, 0, 0); visibility: visible; }
+   to { transform: translate3d(0, 0, 0); } }
+ .slideInRight { animation-name: slideInRight; }
+ 
+ @keyframes slideInUp { from { transform: translate3d(0, 100%, 0); visibility: visible; }
+   to { transform: translate3d(0, 0, 0); } }
+ .slideInUp { animation-name: slideInUp; }
+ 
+ @keyframes slideOutDown { from { transform: translate3d(0, 0, 0); }
+   to { visibility: hidden; transform: translate3d(0, 100%, 0); } }
+ .slideOutDown { animation-name: slideOutDown; }
+ 
+ @keyframes slideOutLeft { from { transform: translate3d(0, 0, 0); }
+   to { visibility: hidden; transform: translate3d(-100%, 0, 0); } }
+ .slideOutLeft { animation-name: slideOutLeft; }
+ 
+ @keyframes slideOutRight { from { transform: translate3d(0, 0, 0); }
+   to { visibility: hidden; transform: translate3d(100%, 0, 0); } }
+ .slideOutRight { animation-name: slideOutRight; }
+ 
+ @keyframes slideOutUp { from { transform: translate3d(0, 0, 0); }
+   to { visibility: hidden; transform: translate3d(0, -100%, 0); } }
+ .slideOutUp { animation-name: slideOutUp; }
+ 
+ /*============================================================================ #Breakpoint and Grid Variables
+ ==============================================================================*/
+ /*================ The following are dependencies of csswizardry grid ================*/
+ /*============================================================================ Layer promotion mixin for creating smoother animations with higher FPS.
+ ==============================================================================*/
+ /*============================================================================ Dependency-free breakpoint mixin - Based on http://blog.grayghostvisuals.com/sass/sass-media-query-mixin/ - Usage docs: http://shopify.github.io/Timber/#sass-mixins
+ ==============================================================================*/
+ /*============================================================================ #Grid Setup - Based on csswizardry grid, but with floated columns, a fixed gutter size, and BEM classes - Breakpoints defined above, under #Breakpoint and Grid Variables - Note the inclusion of .grid-uniform to take care of clearfixes on evenly sized grid items
+ ==============================================================================*/
+ /* Manual grid__item clearfix */
+ .grid__item.clear { clear: both; }
+ 
+ /*============================================================================ Drop relative positioning into silent classes which can't take advantage of the `[class*="push--"]` and `[class*="pull--"]` selectors.
+ ==============================================================================*/
+ /*============================================================================ Grid Setup 1. Allow the grid system to be used on lists. 2. Remove any margins and paddings that might affect the grid system. 3. Apply a negative `margin-left` to negate the columns' gutters.
+ ==============================================================================*/
+ .grid, .grid--rev, .grid--full, .grid-uniform { list-style: none; margin: 0; padding: 0; margin-left: -30px; }
+ 
+ .grid__item { box-sizing: border-box; float: left; min-height: 1px; padding-left: 30px; vertical-align: top; width: 100%; }
+ 
+ /*============================================================================ Reversed grids allow you to structure your source in the opposite order to how your rendered layout will appear.
+ ==============================================================================*/
+ .grid--rev { direction: rtl; text-align: left; }
+ .grid--rev > .grid__item { direction: ltr; text-align: left; float: right; }
+ 
+ /* Gutterless grids have all the properties of regular grids, minus any spacing. */
+ .grid--full { margin-left: 0; }
+ .grid--full > .grid__item { padding-left: 0; }
+ 
+ /*============================================================================ WIDTHS - Create width classes, prefixed by the specified namespace.
+ ==============================================================================*/
+ /*================ Clearfix helper on uniform grids ================*/
+ /*================ Helper show/hide classes around our breakpoints ================*/
+ /*================ Our regular, non-responsive width and helper classes ================*/
+ /** Whole */
+ .one-whole { width: 100%; }
+ 
+ /* Halves */
+ .one-half { width: 50%; }
+ 
+ /* Thirds */
+ .one-third { width: 33.333%; }
+ 
+ .two-thirds { width: 66.666%; }
+ 
+ /* Quarters */
+ .one-quarter { width: 25%; }
+ 
+ .two-quarters { width: 50%; }
+ 
+ .three-quarters { width: 75%; }
+ 
+ /* Fifths */
+ .one-fifth { width: 20%; }
+ 
+ .two-fifths { width: 40%; }
+ 
+ .three-fifths { width: 60%; }
+ 
+ .four-fifths { width: 80%; }
+ 
+ /* Sixths */
+ .one-sixth { width: 16.666%; }
+ 
+ .two-sixths { width: 33.333%; }
+ 
+ .three-sixths { width: 50%; }
+ 
+ .four-sixths { width: 66.666%; }
+ 
+ .five-sixths { width: 83.333%; }
+ 
+ /* Eighths */
+ .one-eighth { width: 12.5%; }
+ 
+ .two-eighths { width: 25%; }
+ 
+ .three-eighths { width: 37.5%; }
+ 
+ .four-eighths { width: 50%; }
+ 
+ .five-eighths { width: 62.5%; }
+ 
+ .six-eighths { width: 75%; }
+ 
+ .seven-eighths { width: 87.5%; }
+ 
+ /* Tenths */
+ .one-tenth { width: 10%; }
+ 
+ .two-tenths { width: 20%; }
+ 
+ .three-tenths { width: 30%; }
+ 
+ .four-tenths { width: 40%; }
+ 
+ .five-tenths { width: 50%; }
+ 
+ .six-tenths { width: 60%; }
+ 
+ .seven-tenths { width: 70%; }
+ 
+ .eight-tenths { width: 80%; }
+ 
+ .nine-tenths { width: 90%; }
+ 
+ /* Twelfths */
+ .one-twelfth { width: 8.333%; }
+ 
+ .two-twelfths { width: 16.666%; }
+ 
+ .three-twelfths { width: 25%; }
+ 
+ .four-twelfths { width: 33.333%; }
+ 
+ .five-twelfths { width: 41.666%; }
+ 
+ .six-twelfths { width: 50%; }
+ 
+ .seven-twelfths { width: 58.333%; }
+ 
+ .eight-twelfths { width: 66.666%; }
+ 
+ .nine-twelfths { width: 75%; }
+ 
+ .ten-twelfths { width: 83.333%; }
+ 
+ .eleven-twelfths { width: 91.666%; }
+ 
+ .show { display: block !important; }
+ 
+ .hide { display: none !important; }
+ 
+ .text-left { text-align: left !important; }
+ 
+ .text-right { text-align: right !important; }
+ 
+ .text-center { text-align: center !important; }
+ 
+ .left { float: left !important; }
+ 
+ .right { float: right !important; }
+ 
+ /*================ Our responsive classes, if we have enabled them ================*/
+ @media only screen and (max-width: 480px) { /** Whole */
+   .small--one-whole { width: 100%; }
+   /* Halves */
+   .small--one-half { width: 50%; }
+   /* Thirds */
+   .small--one-third { width: 33.333%; }
+   .small--two-thirds { width: 66.666%; }
+   /* Quarters */
+   .small--one-quarter { width: 25%; }
+   .small--two-quarters { width: 50%; }
+   .small--three-quarters { width: 75%; }
+   /* Fifths */
+   .small--one-fifth { width: 20%; }
+   .small--two-fifths { width: 40%; }
+   .small--three-fifths { width: 60%; }
+   .small--four-fifths { width: 80%; }
+   /* Sixths */
+   .small--one-sixth { width: 16.666%; }
+   .small--two-sixths { width: 33.333%; }
+   .small--three-sixths { width: 50%; }
+   .small--four-sixths { width: 66.666%; }
+   .small--five-sixths { width: 83.333%; }
+   /* Eighths */
+   .small--one-eighth { width: 12.5%; }
+   .small--two-eighths { width: 25%; }
+   .small--three-eighths { width: 37.5%; }
+   .small--four-eighths { width: 50%; }
+   .small--five-eighths { width: 62.5%; }
+   .small--six-eighths { width: 75%; }
+   .small--seven-eighths { width: 87.5%; }
+   /* Tenths */
+   .small--one-tenth { width: 10%; }
+   .small--two-tenths { width: 20%; }
+   .small--three-tenths { width: 30%; }
+   .small--four-tenths { width: 40%; }
+   .small--five-tenths { width: 50%; }
+   .small--six-tenths { width: 60%; }
+   .small--seven-tenths { width: 70%; }
+   .small--eight-tenths { width: 80%; }
+   .small--nine-tenths { width: 90%; }
+   /* Twelfths */
+   .small--one-twelfth { width: 8.333%; }
+   .small--two-twelfths { width: 16.666%; }
+   .small--three-twelfths { width: 25%; }
+   .small--four-twelfths { width: 33.333%; }
+   .small--five-twelfths { width: 41.666%; }
+   .small--six-twelfths { width: 50%; }
+   .small--seven-twelfths { width: 58.333%; }
+   .small--eight-twelfths { width: 66.666%; }
+   .small--nine-twelfths { width: 75%; }
+   .small--ten-twelfths { width: 83.333%; }
+   .small--eleven-twelfths { width: 91.666%; }
+   .small--show { display: block !important; }
+   .small--hide { display: none !important; }
+   .small--text-left { text-align: left !important; }
+   .small--text-right { text-align: right !important; }
+   .small--text-center { text-align: center !important; }
+   .small--left { float: left !important; }
+   .small--right { float: right !important; }
+   .grid-uniform .small--one-half:nth-child(2n+1), .grid-uniform .small--one-third:nth-child(3n+1), .grid-uniform .small--one-quarter:nth-child(4n+1), .grid-uniform .small--one-fifth:nth-child(5n+1), .grid-uniform .small--one-sixth:nth-child(6n+1), .grid-uniform .small--two-sixths:nth-child(3n+1), .grid-uniform .small--three-sixths:nth-child(2n+1), .grid-uniform .small--two-eighths:nth-child(4n+1), .grid-uniform .small--four-eighths:nth-child(2n+1), .grid-uniform .small--five-tenths:nth-child(2n+1), .grid-uniform .small--one-twelfth:nth-child(12n+1), .grid-uniform .small--two-twelfths:nth-child(6n+1), .grid-uniform .small--three-twelfths:nth-child(4n+1), .grid-uniform .small--four-twelfths:nth-child(3n+1), .grid-uniform .small--six-twelfths:nth-child(2n+1) { clear: both; } }
+ @media only screen and (min-width: 481px) and (max-width: 768px) { /** Whole */
+   .medium--one-whole { width: 100%; }
+   /* Halves */
+   .medium--one-half { width: 50%; }
+   /* Thirds */
+   .medium--one-third { width: 33.333%; }
+   .medium--two-thirds { width: 66.666%; }
+   /* Quarters */
+   .medium--one-quarter { width: 25%; }
+   .medium--two-quarters { width: 50%; }
+   .medium--three-quarters { width: 75%; }
+   /* Fifths */
+   .medium--one-fifth { width: 20%; }
+   .medium--two-fifths { width: 40%; }
+   .medium--three-fifths { width: 60%; }
+   .medium--four-fifths { width: 80%; }
+   /* Sixths */
+   .medium--one-sixth { width: 16.666%; }
+   .medium--two-sixths { width: 33.333%; }
+   .medium--three-sixths { width: 50%; }
+   .medium--four-sixths { width: 66.666%; }
+   .medium--five-sixths { width: 83.333%; }
+   /* Eighths */
+   .medium--one-eighth { width: 12.5%; }
+   .medium--two-eighths { width: 25%; }
+   .medium--three-eighths { width: 37.5%; }
+   .medium--four-eighths { width: 50%; }
+   .medium--five-eighths { width: 62.5%; }
+   .medium--six-eighths { width: 75%; }
+   .medium--seven-eighths { width: 87.5%; }
+   /* Tenths */
+   .medium--one-tenth { width: 10%; }
+   .medium--two-tenths { width: 20%; }
+   .medium--three-tenths { width: 30%; }
+   .medium--four-tenths { width: 40%; }
+   .medium--five-tenths { width: 50%; }
+   .medium--six-tenths { width: 60%; }
+   .medium--seven-tenths { width: 70%; }
+   .medium--eight-tenths { width: 80%; }
+   .medium--nine-tenths { width: 90%; }
+   /* Twelfths */
+   .medium--one-twelfth { width: 8.333%; }
+   .medium--two-twelfths { width: 16.666%; }
+   .medium--three-twelfths { width: 25%; }
+   .medium--four-twelfths { width: 33.333%; }
+   .medium--five-twelfths { width: 41.666%; }
+   .medium--six-twelfths { width: 50%; }
+   .medium--seven-twelfths { width: 58.333%; }
+   .medium--eight-twelfths { width: 66.666%; }
+   .medium--nine-twelfths { width: 75%; }
+   .medium--ten-twelfths { width: 83.333%; }
+   .medium--eleven-twelfths { width: 91.666%; }
+   .medium--show { display: block !important; }
+   .medium--hide { display: none !important; }
+   .medium--text-left { text-align: left !important; }
+   .medium--text-right { text-align: right !important; }
+   .medium--text-center { text-align: center !important; }
+   .medium--left { float: left !important; }
+   .medium--right { float: right !important; }
+   .grid-uniform .medium--one-half:nth-child(2n+1), .grid-uniform .medium--one-third:nth-child(3n+1), .grid-uniform .medium--one-quarter:nth-child(4n+1), .grid-uniform .medium--one-fifth:nth-child(5n+1), .grid-uniform .medium--one-sixth:nth-child(6n+1), .grid-uniform .medium--two-sixths:nth-child(3n+1), .grid-uniform .medium--three-sixths:nth-child(2n+1), .grid-uniform .medium--two-eighths:nth-child(4n+1), .grid-uniform .medium--four-eighths:nth-child(2n+1), .grid-uniform .medium--five-tenths:nth-child(2n+1), .grid-uniform .medium--one-twelfth:nth-child(12n+1), .grid-uniform .medium--two-twelfths:nth-child(6n+1), .grid-uniform .medium--three-twelfths:nth-child(4n+1), .grid-uniform .medium--four-twelfths:nth-child(3n+1), .grid-uniform .medium--six-twelfths:nth-child(2n+1) { clear: both; } }
+ @media only screen and (max-width: 768px) { /** Whole */
+   .medium-down--one-whole { width: 100%; }
+   /* Halves */
+   .medium-down--one-half { width: 50%; }
+   /* Thirds */
+   .medium-down--one-third { width: 33.333%; }
+   .medium-down--two-thirds { width: 66.666%; }
+   /* Quarters */
+   .medium-down--one-quarter { width: 25%; }
+   .medium-down--two-quarters { width: 50%; }
+   .medium-down--three-quarters { width: 75%; }
+   /* Fifths */
+   .medium-down--one-fifth { width: 20%; }
+   .medium-down--two-fifths { width: 40%; }
+   .medium-down--three-fifths { width: 60%; }
+   .medium-down--four-fifths { width: 80%; }
+   /* Sixths */
+   .medium-down--one-sixth { width: 16.666%; }
+   .medium-down--two-sixths { width: 33.333%; }
+   .medium-down--three-sixths { width: 50%; }
+   .medium-down--four-sixths { width: 66.666%; }
+   .medium-down--five-sixths { width: 83.333%; }
+   /* Eighths */
+   .medium-down--one-eighth { width: 12.5%; }
+   .medium-down--two-eighths { width: 25%; }
+   .medium-down--three-eighths { width: 37.5%; }
+   .medium-down--four-eighths { width: 50%; }
+   .medium-down--five-eighths { width: 62.5%; }
+   .medium-down--six-eighths { width: 75%; }
+   .medium-down--seven-eighths { width: 87.5%; }
+   /* Tenths */
+   .medium-down--one-tenth { width: 10%; }
+   .medium-down--two-tenths { width: 20%; }
+   .medium-down--three-tenths { width: 30%; }
+   .medium-down--four-tenths { width: 40%; }
+   .medium-down--five-tenths { width: 50%; }
+   .medium-down--six-tenths { width: 60%; }
+   .medium-down--seven-tenths { width: 70%; }
+   .medium-down--eight-tenths { width: 80%; }
+   .medium-down--nine-tenths { width: 90%; }
+   /* Twelfths */
+   .medium-down--one-twelfth { width: 8.333%; }
+   .medium-down--two-twelfths { width: 16.666%; }
+   .medium-down--three-twelfths { width: 25%; }
+   .medium-down--four-twelfths { width: 33.333%; }
+   .medium-down--five-twelfths { width: 41.666%; }
+   .medium-down--six-twelfths { width: 50%; }
+   .medium-down--seven-twelfths { width: 58.333%; }
+   .medium-down--eight-twelfths { width: 66.666%; }
+   .medium-down--nine-twelfths { width: 75%; }
+   .medium-down--ten-twelfths { width: 83.333%; }
+   .medium-down--eleven-twelfths { width: 91.666%; }
+   .medium-down--show { display: block !important; }
+   .medium-down--hide { display: none !important; }
+   .medium-down--text-left { text-align: left !important; }
+   .medium-down--text-right { text-align: right !important; }
+   .medium-down--text-center { text-align: center !important; }
+   .medium-down--left { float: left !important; }
+   .medium-down--right { float: right !important; }
+   .grid-uniform .medium-down--one-half:nth-child(2n+1), .grid-uniform .medium-down--one-third:nth-child(3n+1), .grid-uniform .medium-down--one-quarter:nth-child(4n+1), .grid-uniform .medium-down--one-fifth:nth-child(5n+1), .grid-uniform .medium-down--one-sixth:nth-child(6n+1), .grid-uniform .medium-down--two-sixths:nth-child(3n+1), .grid-uniform .medium-down--three-sixths:nth-child(2n+1), .grid-uniform .medium-down--two-eighths:nth-child(4n+1), .grid-uniform .medium-down--four-eighths:nth-child(2n+1), .grid-uniform .medium-down--five-tenths:nth-child(2n+1), .grid-uniform .medium-down--one-twelfth:nth-child(12n+1), .grid-uniform .medium-down--two-twelfths:nth-child(6n+1), .grid-uniform .medium-down--three-twelfths:nth-child(4n+1), .grid-uniform .medium-down--four-twelfths:nth-child(3n+1), .grid-uniform .medium-down--six-twelfths:nth-child(2n+1) { clear: both; } }
+ @media only screen and (min-width: 769px) { /** Whole */
+   .large--one-whole { width: 100%; }
+   /* Halves */
+   .large--one-half { width: 50%; }
+   /* Thirds */
+   .large--one-third { width: 33.333%; }
+   .large--two-thirds { width: 66.666%; }
+   /* Quarters */
+   .large--one-quarter { width: 25%; }
+   .large--two-quarters { width: 50%; }
+   .large--three-quarters { width: 75%; }
+   /* Fifths */
+   .large--one-fifth { width: 20%; }
+   .large--two-fifths { width: 40%; }
+   .large--three-fifths { width: 60%; }
+   .large--four-fifths { width: 80%; }
+   /* Sixths */
+   .large--one-sixth { width: 16.666%; }
+   .large--two-sixths { width: 33.333%; }
+   .large--three-sixths { width: 50%; }
+   .large--four-sixths { width: 66.666%; }
+   .large--five-sixths { width: 83.333%; }
+   /* Eighths */
+   .large--one-eighth { width: 12.5%; }
+   .large--two-eighths { width: 25%; }
+   .large--three-eighths { width: 37.5%; }
+   .large--four-eighths { width: 50%; }
+   .large--five-eighths { width: 62.5%; }
+   .large--six-eighths { width: 75%; }
+   .large--seven-eighths { width: 87.5%; }
+   /* Tenths */
+   .large--one-tenth { width: 10%; }
+   .large--two-tenths { width: 20%; }
+   .large--three-tenths { width: 30%; }
+   .large--four-tenths { width: 40%; }
+   .large--five-tenths { width: 50%; }
+   .large--six-tenths { width: 60%; }
+   .large--seven-tenths { width: 70%; }
+   .large--eight-tenths { width: 80%; }
+   .large--nine-tenths { width: 90%; }
+   /* Twelfths */
+   .large--one-twelfth { width: 8.333%; }
+   .large--two-twelfths { width: 16.666%; }
+   .large--three-twelfths { width: 25%; }
+   .large--four-twelfths { width: 33.333%; }
+   .large--five-twelfths { width: 41.666%; }
+   .large--six-twelfths { width: 50%; }
+   .large--seven-twelfths { width: 58.333%; }
+   .large--eight-twelfths { width: 66.666%; }
+   .large--nine-twelfths { width: 75%; }
+   .large--ten-twelfths { width: 83.333%; }
+   .large--eleven-twelfths { width: 91.666%; }
+   .large--show { display: block !important; }
+   .large--hide { display: none !important; }
+   .large--text-left { text-align: left !important; }
+   .large--text-right { text-align: right !important; }
+   .large--text-center { text-align: center !important; }
+   .large--left { float: left !important; }
+   .large--right { float: right !important; }
+   .grid-uniform .large--one-half:nth-child(2n+1), .grid-uniform .large--one-third:nth-child(3n+1), .grid-uniform .large--one-quarter:nth-child(4n+1), .grid-uniform .large--one-fifth:nth-child(5n+1), .grid-uniform .large--one-sixth:nth-child(6n+1), .grid-uniform .large--two-sixths:nth-child(3n+1), .grid-uniform .large--three-sixths:nth-child(2n+1), .grid-uniform .large--two-eighths:nth-child(4n+1), .grid-uniform .large--four-eighths:nth-child(2n+1), .grid-uniform .large--five-tenths:nth-child(2n+1), .grid-uniform .large--one-twelfth:nth-child(12n+1), .grid-uniform .large--two-twelfths:nth-child(6n+1), .grid-uniform .large--three-twelfths:nth-child(4n+1), .grid-uniform .large--four-twelfths:nth-child(3n+1), .grid-uniform .large--six-twelfths:nth-child(2n+1) { clear: both; } }
+ /*============================================================================ PUSH - Push classes, to move grid items over to the right by certain amounts
+ ==============================================================================*/
+ [class*="push--"] { position: relative; }
+ 
+ /* Whole */
+ .push--one-whole { left: 100%; }
+ 
+ /* Halves */
+ .push--one-half { left: 50%; }
+ 
+ /* Thirds */
+ .push--one-third { left: 33.333%; }
+ 
+ .push--two-thirds { left: 66.666%; }
+ 
+ /* Quarters */
+ .push--one-quarter { left: 25%; }
+ 
+ .push--two-quarters { left: 50%; }
+ 
+ .push--three-quarters { left: 75%; }
+ 
+ /* Fifths */
+ .push--one-fifth { left: 20%; }
+ 
+ .push--two-fifths { left: 40%; }
+ 
+ .push--three-fifths { left: 60%; }
+ 
+ .push--four-fifths { left: 80%; }
+ 
+ /* Sixths */
+ .push--one-sixth { left: 16.666%; }
+ 
+ .push--two-sixths { left: 33.333%; }
+ 
+ .push--three-sixths { left: 50%; }
+ 
+ .push--four-sixths { left: 66.666%; }
+ 
+ .push--five-sixths { left: 83.333%; }
+ 
+ /* Eighths */
+ .push--one-eighth { left: 12.5%; }
+ 
+ .push--two-eighths { left: 25%; }
+ 
+ .push--three-eighths { left: 37.5%; }
+ 
+ .push--four-eighths { left: 50%; }
+ 
+ .push--five-eighths { left: 62.5%; }
+ 
+ .push--six-eighths { left: 75%; }
+ 
+ .push--seven-eighths { left: 87.5%; }
+ 
+ /* Tenths */
+ .push--one-tenth { left: 10%; }
+ 
+ .push--two-tenths { left: 20%; }
+ 
+ .push--three-tenths { left: 30%; }
+ 
+ .push--four-tenths { left: 40%; }
+ 
+ .push--five-tenths { left: 50%; }
+ 
+ .push--six-tenths { left: 60%; }
+ 
+ .push--seven-tenths { left: 70%; }
+ 
+ .push--eight-tenths { left: 80%; }
+ 
+ .push--nine-tenths { left: 90%; }
+ 
+ /* Twelfths */
+ .push--one-twelfth { left: 8.333%; }
+ 
+ .push--two-twelfths { left: 16.666%; }
+ 
+ .push--three-twelfths { left: 25%; }
+ 
+ .push--four-twelfths { left: 33.333%; }
+ 
+ .push--five-twelfths { left: 41.666%; }
+ 
+ .push--six-twelfths { left: 50%; }
+ 
+ .push--seven-twelfths { left: 58.333%; }
+ 
+ .push--eight-twelfths { left: 66.666%; }
+ 
+ .push--nine-twelfths { left: 75%; }
+ 
+ .push--ten-twelfths { left: 83.333%; }
+ 
+ .push--eleven-twelfths { left: 91.666%; }
+ 
+ @media only screen and (min-width: 481px) and (max-width: 768px) { /* Whole */
+   .push--medium--one-whole { left: 100%; }
+   /* Halves */
+   .push--medium--one-half { left: 50%; }
+   /* Thirds */
+   .push--medium--one-third { left: 33.333%; }
+   .push--medium--two-thirds { left: 66.666%; }
+   /* Quarters */
+   .push--medium--one-quarter { left: 25%; }
+   .push--medium--two-quarters { left: 50%; }
+   .push--medium--three-quarters { left: 75%; }
+   /* Fifths */
+   .push--medium--one-fifth { left: 20%; }
+   .push--medium--two-fifths { left: 40%; }
+   .push--medium--three-fifths { left: 60%; }
+   .push--medium--four-fifths { left: 80%; }
+   /* Sixths */
+   .push--medium--one-sixth { left: 16.666%; }
+   .push--medium--two-sixths { left: 33.333%; }
+   .push--medium--three-sixths { left: 50%; }
+   .push--medium--four-sixths { left: 66.666%; }
+   .push--medium--five-sixths { left: 83.333%; }
+   /* Eighths */
+   .push--medium--one-eighth { left: 12.5%; }
+   .push--medium--two-eighths { left: 25%; }
+   .push--medium--three-eighths { left: 37.5%; }
+   .push--medium--four-eighths { left: 50%; }
+   .push--medium--five-eighths { left: 62.5%; }
+   .push--medium--six-eighths { left: 75%; }
+   .push--medium--seven-eighths { left: 87.5%; }
+   /* Tenths */
+   .push--medium--one-tenth { left: 10%; }
+   .push--medium--two-tenths { left: 20%; }
+   .push--medium--three-tenths { left: 30%; }
+   .push--medium--four-tenths { left: 40%; }
+   .push--medium--five-tenths { left: 50%; }
+   .push--medium--six-tenths { left: 60%; }
+   .push--medium--seven-tenths { left: 70%; }
+   .push--medium--eight-tenths { left: 80%; }
+   .push--medium--nine-tenths { left: 90%; }
+   /* Twelfths */
+   .push--medium--one-twelfth { left: 8.333%; }
+   .push--medium--two-twelfths { left: 16.666%; }
+   .push--medium--three-twelfths { left: 25%; }
+   .push--medium--four-twelfths { left: 33.333%; }
+   .push--medium--five-twelfths { left: 41.666%; }
+   .push--medium--six-twelfths { left: 50%; }
+   .push--medium--seven-twelfths { left: 58.333%; }
+   .push--medium--eight-twelfths { left: 66.666%; }
+   .push--medium--nine-twelfths { left: 75%; }
+   .push--medium--ten-twelfths { left: 83.333%; }
+   .push--medium--eleven-twelfths { left: 91.666%; } }
+ @media only screen and (max-width: 768px) { /* Whole */
+   .push--medium-down--one-whole { left: 100%; }
+   /* Halves */
+   .push--medium-down--one-half { left: 50%; }
+   /* Thirds */
+   .push--medium-down--one-third { left: 33.333%; }
+   .push--medium-down--two-thirds { left: 66.666%; }
+   /* Quarters */
+   .push--medium-down--one-quarter { left: 25%; }
+   .push--medium-down--two-quarters { left: 50%; }
+   .push--medium-down--three-quarters { left: 75%; }
+   /* Fifths */
+   .push--medium-down--one-fifth { left: 20%; }
+   .push--medium-down--two-fifths { left: 40%; }
+   .push--medium-down--three-fifths { left: 60%; }
+   .push--medium-down--four-fifths { left: 80%; }
+   /* Sixths */
+   .push--medium-down--one-sixth { left: 16.666%; }
+   .push--medium-down--two-sixths { left: 33.333%; }
+   .push--medium-down--three-sixths { left: 50%; }
+   .push--medium-down--four-sixths { left: 66.666%; }
+   .push--medium-down--five-sixths { left: 83.333%; }
+   /* Eighths */
+   .push--medium-down--one-eighth { left: 12.5%; }
+   .push--medium-down--two-eighths { left: 25%; }
+   .push--medium-down--three-eighths { left: 37.5%; }
+   .push--medium-down--four-eighths { left: 50%; }
+   .push--medium-down--five-eighths { left: 62.5%; }
+   .push--medium-down--six-eighths { left: 75%; }
+   .push--medium-down--seven-eighths { left: 87.5%; }
+   /* Tenths */
+   .push--medium-down--one-tenth { left: 10%; }
+   .push--medium-down--two-tenths { left: 20%; }
+   .push--medium-down--three-tenths { left: 30%; }
+   .push--medium-down--four-tenths { left: 40%; }
+   .push--medium-down--five-tenths { left: 50%; }
+   .push--medium-down--six-tenths { left: 60%; }
+   .push--medium-down--seven-tenths { left: 70%; }
+   .push--medium-down--eight-tenths { left: 80%; }
+   .push--medium-down--nine-tenths { left: 90%; }
+   /* Twelfths */
+   .push--medium-down--one-twelfth { left: 8.333%; }
+   .push--medium-down--two-twelfths { left: 16.666%; }
+   .push--medium-down--three-twelfths { left: 25%; }
+   .push--medium-down--four-twelfths { left: 33.333%; }
+   .push--medium-down--five-twelfths { left: 41.666%; }
+   .push--medium-down--six-twelfths { left: 50%; }
+   .push--medium-down--seven-twelfths { left: 58.333%; }
+   .push--medium-down--eight-twelfths { left: 66.666%; }
+   .push--medium-down--nine-twelfths { left: 75%; }
+   .push--medium-down--ten-twelfths { left: 83.333%; }
+   .push--medium-down--eleven-twelfths { left: 91.666%; } }
+ @media only screen and (min-width: 769px) { /* Whole */
+   .push--large--one-whole { left: 100%; }
+   /* Halves */
+   .push--large--one-half { left: 50%; }
+   /* Thirds */
+   .push--large--one-third { left: 33.333%; }
+   .push--large--two-thirds { left: 66.666%; }
+   /* Quarters */
+   .push--large--one-quarter { left: 25%; }
+   .push--large--two-quarters { left: 50%; }
+   .push--large--three-quarters { left: 75%; }
+   /* Fifths */
+   .push--large--one-fifth { left: 20%; }
+   .push--large--two-fifths { left: 40%; }
+   .push--large--three-fifths { left: 60%; }
+   .push--large--four-fifths { left: 80%; }
+   /* Sixths */
+   .push--large--one-sixth { left: 16.666%; }
+   .push--large--two-sixths { left: 33.333%; }
+   .push--large--three-sixths { left: 50%; }
+   .push--large--four-sixths { left: 66.666%; }
+   .push--large--five-sixths { left: 83.333%; }
+   /* Eighths */
+   .push--large--one-eighth { left: 12.5%; }
+   .push--large--two-eighths { left: 25%; }
+   .push--large--three-eighths { left: 37.5%; }
+   .push--large--four-eighths { left: 50%; }
+   .push--large--five-eighths { left: 62.5%; }
+   .push--large--six-eighths { left: 75%; }
+   .push--large--seven-eighths { left: 87.5%; }
+   /* Tenths */
+   .push--large--one-tenth { left: 10%; }
+   .push--large--two-tenths { left: 20%; }
+   .push--large--three-tenths { left: 30%; }
+   .push--large--four-tenths { left: 40%; }
+   .push--large--five-tenths { left: 50%; }
+   .push--large--six-tenths { left: 60%; }
+   .push--large--seven-tenths { left: 70%; }
+   .push--large--eight-tenths { left: 80%; }
+   .push--large--nine-tenths { left: 90%; }
+   /* Twelfths */
+   .push--large--one-twelfth { left: 8.333%; }
+   .push--large--two-twelfths { left: 16.666%; }
+   .push--large--three-twelfths { left: 25%; }
+   .push--large--four-twelfths { left: 33.333%; }
+   .push--large--five-twelfths { left: 41.666%; }
+   .push--large--six-twelfths { left: 50%; }
+   .push--large--seven-twelfths { left: 58.333%; }
+   .push--large--eight-twelfths { left: 66.666%; }
+   .push--large--nine-twelfths { left: 75%; }
+   .push--large--ten-twelfths { left: 83.333%; }
+   .push--large--eleven-twelfths { left: 91.666%; } }
+ 
+ /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+ /** 1. Set default font family to sans-serif. 2. Prevent iOS and IE text size adjust after device orientation change, without disabling user zoom. */
+ html { font-family: sans-serif; /* 1 */ -ms-text-size-adjust: 100%; /* 2 */ -webkit-text-size-adjust: 100%; /* 2 */ }
+ 
+ /** Remove default margin. */
+ body { margin: 0; }
+ 
+ /* HTML5 display definitions ========================================================================== */
+ /** Correct `block` display not defined for any HTML5 element in IE 8/9. Correct `block` display not defined for `details` or `summary` in IE 10/11 and Firefox. Correct `block` display not defined for `main` in IE 11. */
+ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary { display: block; }
+ 
+ /** 1. Correct `inline-block` display not defined in IE 8/9. 2. Normalize vertical alignment of `progress` in Chrome, Firefox, and Opera. */
+ audio, canvas, progress, video { display: inline-block; /* 1 */ vertical-align: baseline; /* 2 */ }
+ 
+ /** Prevent modern browsers from displaying `audio` without controls. Remove excess height in iOS 5 devices. */
+ audio:not([controls]) { display: none; height: 0; }
+ 
+ /** Address `[hidden]` styling not present in IE 8/9/10. Hide the `template` element in IE 8/9/10/11, Safari, and Firefox < 22. */
+ [hidden], template { display: none; }
+ 
+ /* Links ========================================================================== */
+ /** Remove the gray background color from active links in IE 10. */
+ a { background-color: transparent; }
+ 
+ /** Improve readability of focused elements when they are also in an active/hover state. */
+ a:active, a:hover { outline: 0; }
+ 
+ /* Text-level semantics ========================================================================== */
+ /** Address styling not present in IE 8/9/10/11, Safari, and Chrome. */
+ abbr[title] { border-bottom: 1px dotted; }
+ 
+ /** Address style set to `bolder` in Firefox 4+, Safari, and Chrome. */
+ b, strong { font-weight: bold; }
+ 
+ /** Address styling not present in Safari and Chrome. */
+ dfn { font-style: italic; }
+ 
+ /** Address variable `h1` font-size and margin within `section` and `article` contexts in Firefox 4+, Safari, and Chrome. */
+ h1 { font-size: 2em; margin: 0.67em 0; }
+ 
+ /** Address styling not present in IE 8/9. */
+ mark { background: #ff0; color: #000; }
+ 
+ /** Address inconsistent and variable font size in all browsers. */
+ small { font-size: 80%; }
+ 
+ /** Prevent `sub` and `sup` affecting `line-height` in all browsers. */
+ sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+ 
+ sup { top: -0.5em; }
+ 
+ sub { bottom: -0.25em; }
+ 
+ /* Embedded content ========================================================================== */
+ /** Remove border when inside `a` element in IE 8/9/10. */
+ img { border: 0; }
+ 
+ /** Correct overflow not hidden in IE 9/10/11. */
+ svg:not(:root) { overflow: hidden; }
+ 
+ /* Grouping content ========================================================================== */
+ /** Address margin not present in IE 8/9 and Safari. */
+ figure { margin: 1em 40px; }
+ 
+ /** Address differences between Firefox and other browsers. */
+ hr { box-sizing: content-box; height: 0; }
+ 
+ /** Contain overflow in all browsers. */
+ pre { overflow: auto; }
+ 
+ /** Address odd `em`-unit font size rendering in all browsers. */
+ code, kbd, pre, samp { font-family: monospace, monospace; font-size: 1em; }
+ 
+ /* Forms ========================================================================== */
+ /** Known limitation: by default, Chrome and Safari on OS X allow very limited styling of `select`, unless a `border` property is set. */
+ /** 1. Correct color not being inherited. Known issue: affects color of disabled elements. 2. Correct font properties not being inherited. 3. Address margins set differently in Firefox 4+, Safari, and Chrome. */
+ button, input, optgroup, select, textarea { color: inherit; /* 1 */ font: inherit; /* 2 */ margin: 0; /* 3 */ }
+ 
+ /** Address `overflow` set to `hidden` in IE 8/9/10/11. */
+ button { overflow: visible; }
+ 
+ /** Address inconsistent `text-transform` inheritance for `button` and `select`. All other form control elements do not inherit `text-transform` values. Correct `button` style inheritance in Firefox, IE 8/9/10/11, and Opera. Correct `select` style inheritance in Firefox. */
+ button, select { text-transform: none; }
+ 
+ /** 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio` and `video` controls. 2. Correct inability to style clickable `input` types in iOS. 3. Improve usability and consistency of cursor style between image-type `input` and others. */
+ button, html input[type='button'], input[type='reset'], input[type='submit'] { -webkit-appearance: button; /* 2 */ cursor: pointer; /* 3 */ }
+ 
+ /** Re-set default cursor for disabled elements. */
+ button[disabled], html input[disabled] { cursor: default; }
+ 
+ /** Remove inner padding and border in Firefox 4+. */
+ button::-moz-focus-inner, input::-moz-focus-inner { border: 0; padding: 0; }
+ 
+ /** Address Firefox 4+ setting `line-height` on `input` using `!important` in the UA stylesheet. */
+ input { line-height: normal; }
+ 
+ /** It's recommended that you don't attempt to style these elements. Firefox's implementation doesn't respect box-sizing, padding, or width.  1. Address box sizing set to `content-box` in IE 8/9/10. 2. Remove excess padding in IE 8/9/10. */
+ input[type='checkbox'], input[type='radio'] { box-sizing: border-box; /* 1 */ padding: 0; /* 2 */ }
+ 
+ /** Fix the cursor style for Chrome's increment/decrement buttons. For certain `font-size` values of the `input`, it causes the cursor style of the decrement button to change from `default` to `text`. */
+ input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button { height: auto; }
+ 
+ /** 1. Address `appearance` set to `searchfield` in Safari and Chrome. 2. Address `box-sizing` set to `border-box` in Safari and Chrome. */
+ input[type='search'] { -webkit-appearance: textfield; /* 1 */ box-sizing: content-box; /* 2 */ }
+ 
+ /** Remove inner padding and search cancel button in Safari and Chrome on OS X. Safari (but not Chrome) clips the cancel button when the search input has padding (and `textfield` appearance). */
+ input[type='search']::-webkit-search-cancel-button, input[type='search']::-webkit-search-decoration { -webkit-appearance: none; }
+ 
+ /** Define consistent border, margin, and padding. */
+ fieldset { border: 1px solid #c0c0c0; margin: 0 2px; padding: 0.35em 0.625em 0.75em; }
+ 
+ /** 1. Correct `color` not being inherited in IE 8/9/10/11. 2. Remove padding so people aren't caught out if they zero out fieldsets. */
+ legend { border: 0; /* 1 */ padding: 0; /* 2 */ }
+ 
+ /** Remove default vertical scrollbar in IE 8/9/10/11. */
+ textarea { overflow: auto; }
+ 
+ /** Don't inherit the `font-weight` (applied by a rule above). NOTE: the default cannot safely be changed in Chrome and Safari on OS X. */
+ optgroup { font-weight: bold; }
+ 
+ /* Tables ========================================================================== */
+ /** Remove most spacing between table cells. */
+ table { border-collapse: collapse; border-spacing: 0; }
+ 
+ td, th { padding: 0; }
+ 
+ /*============================================================================ Overwatch
+ ==============================================================================*/
+ .crateScore { text-align: center; padding-top: 30px; }
+ .crateScore p { background: rgba(0, 0, 0, 0.2); border-radius: 5px; padding: 10px 20px; color: #fff; display: inline-block; margin: 10px 0; }
+ .crateScore p #value { color: #fff; font-weight: bold; }
+ .crateScore p #value.value--rare { color: #0070ff; }
+ .crateScore p #value.value--epic { color: #B048F8; }
+ .crateScore p #value.value--legendary { color: #ff8000; }
+ @media screen and (min-width: 769px) { .card-section { min-height: 420px; } }
+ .card-section #crate li { max-height: 420px; display: table; table-layout: fixed; border-radius: 7px; }
+ 
+ .box-type { position: relative; }
+ .box-type ul { text-align: center; position: relative; list-style: none; padding-left: 0; }
+ .box-type ul a.active img { opacity: 0.3; }
+ .box-type ul a img { border-radius: 5px; max-height: 24px; cursor: pointer; }
+ .box-type ul a img:hover { opacity: 0.5; }
+ .box-type .horizontal-menu li { padding: 0; margin: 10px 0; width: 25%; display: inline-block; }
+ @media screen and (min-width: 769px) { .box-type .horizontal-menu li { width: initial; padding: 10px 20px; } }
+ 
+ /*--------------------- Loot box ---------------------*/
+ #box { display: block; margin-left: auto; margin-right: auto; width: 100%; max-width: 500px; padding-top: 40px; }
+ @media only screen and (min-width: 769px) { #box { padding-top: 55px; } }
+ @media only screen and (min-width: 1400px) { #box { padding-top: 90px; } }
+ 
+/*--------------------- Item cards ---------------------*/
+#crate {
+  list-style: none;
+  padding: 0px;
+  margin: 0px 5px;
+}
+
+@media screen and (min-width: 768px) {
+  #crate {
+      margin: 0px;
+  }
+}
+
+#crate li {
+  float: left;
+  width: 100%;
+  margin: 3px 0px;
+  color: white;
+  box-shadow: 0 1px 1px rgba(27, 31, 35, 0.1);
+}
+
+#crate li.common {
+  color: #222;
+}
+
+#crate li span p {
+  padding: 5px 15px;
+}
+
+@media screen and (min-width: 769px) {
+  #crate li {
+      height: 400px;
+      width: 23%;
+      margin: 0px 1% 0px 70px;
+      text-align: center;
+  }
+
+  #crate li span p {
+      padding: 15px 5px;
+  }
+}
+
+ 
+ .crate-0 { -webkit-animation-delay: 0.1s; animation-delay: 0.1s; }
+ 
+ .crate-1 { -webkit-animation-delay: 0.2s; animation-delay: 0.2s; }
+ 
+ .crate-2 { -webkit-animation-delay: 0.4s; animation-delay: 0.4s; }
+ 
+ .crate-3 { -webkit-animation-delay: 0.6s; animation-delay: 0.6s; }
+ 
+ .common { background-color: white; box-sizing: border-box; }
+ @media screen and (min-width: 769px) { .common span { background-color: rgba(255, 255, 255, 0.15); }
+   .common span p { background-color: #fff; } }
+ 
+ .rare { background-color: #0070ff; box-sizing: border-box; }
+ @media screen and (min-width: 769px) { .rare span { background-color: rgba(0, 112, 255, 0.15); }
+   .rare span p { background-color: #0070ff; } }
+ 
+ .epic { background-color: #B048F8; box-sizing: border-box; }
+ @media screen and (min-width: 769px) { .epic span { background-color: rgba(176, 72, 248, 0.15); }
+   .epic span p { background-color: #B048F8; } }
+ 
+ .legendary { background-color: #ff8000; box-sizing: border-box; }
+ @media screen and (min-width: 769px) { .legendary span { background-color: rgba(255, 128, 0, 0.15); }
+   .legendary span p { background-color: #ff8000; } }
+ 
+ /*============================================================================ Basics
+ ==============================================================================*/
+ .text-align--left { text-align: left; }
+ 
+ .text-align--center { text-align: center; }
+ 
+ .text-align--right { text-align: right; }
+ 
+ a { -webkit-text-decoration-skip: ink; text-decoration-skip: ink; }
+ 
+ body { font-family: "Roboto", sans-serif; font-size: 16px; font-weight: 400; background-color: #242a2f; -webkit-font-smoothing: antialiased; color: #fff; }
+ 
+ .container { width: 100%; max-width: 1000px; margin: 0px auto; }
+ .container.main { margin-top: 30px; }
+
+ 
+ 

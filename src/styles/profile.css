@@ -1,0 +1,18 @@
+.header-banner img { width: 100%; border-radius: 10px; }
+.header-avatar img { border-radius: 50%; width: 100px; height: 100px; }
+.header-username { font-size: 24px; font-weight: bold; }
+.header-badges img { margin: 5px; }
+
+.modal-profile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5rem;
+    z-index: 1000;
+}
