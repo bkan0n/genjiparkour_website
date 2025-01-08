@@ -17,7 +17,6 @@ include BASE_PATH . "discord/header.php";
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/tutorial.css">
-    <script src="js/discord.js" defer></script>
     <script src="js/layout.js" defer></script>
 </head>
 <body>

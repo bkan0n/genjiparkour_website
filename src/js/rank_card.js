@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 async function initRankCard() {
-    let selectedUserId;
+    let selectedUserId = null;
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
     const btnRankCard = document.getElementById("btnRankCard");
@@ -26,16 +26,17 @@ async function initRankCard() {
         });
     }
 
-    const updateButtonContainerClass = () => {
+    const updateButtonContainerVisibility = () => {
         const currentUserId = getCurrentUserId();
-
         const isUserMatching = selectedUserId === null || selectedUserId === currentUserId;
         const isRankCardActive = btnRankCard.classList.contains("active");
 
         if (isUserMatching && isRankCardActive) {
             buttonContainer.classList.add("active");
+            buttonContainer.style.display = "flex";
         } else {
             buttonContainer.classList.remove("active");
+            buttonContainer.style.display = "none";
         }
     };
 
@@ -51,7 +52,7 @@ async function initRankCard() {
         hideContent.classList.add("hidden");
         hideContent.classList.remove("active");
     
-        updateButtonContainerClass();
+        updateButtonContainerVisibility();
     }
 
     btnRankCard.addEventListener("click", () => {
@@ -63,7 +64,11 @@ async function initRankCard() {
     });
 
     searchButton.addEventListener("click", () => {
-        updateButtonContainerClass();
+        const inputField = document.getElementById("searchUserName");
+        if (inputField) {
+            selectedUserId = inputField.value.trim();
+        }
+        updateButtonContainerVisibility();
     });
 
     resetFilter.addEventListener("click", () => {
@@ -74,7 +79,7 @@ async function initRankCard() {
         selectedUserId = null;
         loadRankCardContent();
         loadUserMasteryContent();
-        buttonContainer.classList.add("active");
+        updateButtonContainerVisibility();
     });
 
     showLoadingBar();
@@ -95,7 +100,7 @@ async function initRankCard() {
 
     loadRankCardContent().then(() => {
         enableButtons();
-        buttonContainer.classList.add("active");
+        updateButtonContainerVisibility();
     });
 }
 
