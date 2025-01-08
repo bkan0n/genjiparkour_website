@@ -49,6 +49,7 @@ curl_setopt_array($curl, [
         "X-API-KEY: $apiKey"
     ]
 ]);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
 $response = curl_exec($curl);
 $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);

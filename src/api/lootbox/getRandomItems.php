@@ -14,6 +14,7 @@ if (isset($_GET['user_id']) && isset($_GET['key_type'])) {
         'Content-Type: application/json',
         'X-API-KEY: ' . $apiKey
     ]);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
     $response = curl_exec($ch);
 

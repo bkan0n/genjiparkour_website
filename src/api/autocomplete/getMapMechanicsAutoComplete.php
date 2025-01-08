@@ -21,6 +21,8 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, [
     'X-API-KEY: ' . $apiKey
 ]);
 
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
 $response = curl_exec($curl);
 
 if (curl_errno($curl)) {
