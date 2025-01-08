@@ -1,12 +1,9 @@
 RewriteEngine On
 
-RewriteRule ^404$ 404.php [L]
-RewriteRule ^graphs$ graphs.php [L]
-RewriteRule ^index$ index.php [L]
-RewriteRule ^leaderboard$ leaderboard.php [L]
-RewriteRule ^lootbox$ lootbox.php [L]
-RewriteRule ^moderator$ moderator.php [L]
-RewriteRule ^newsfeed$ newsfeed.php [L]
-RewriteRule ^rank_card$ rank_card.php [L]
-RewriteRule ^search$ search.php [L]
-RewriteRule ^tutorial$ tutorial.php [L]
+RewriteCond %{HTTP:X-Forwarded-For} !^$
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [L]
+
+RewriteCond %{HTTP:X-Forwarded-For} !^$
+RewriteCond %{THE_REQUEST} /([^.]+)\.php [NC]
+RewriteRule ^ /%1 [L,R=301]
