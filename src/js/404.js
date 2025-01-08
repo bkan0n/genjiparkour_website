@@ -234,7 +234,7 @@ function drawMercy() {
     const frames = isFreeMode ? mercyStandFrames : mercyFrames;
     const frame = frames[mercyFrameIndex];
 
-    if (frame.complete && frame.naturalWidth > 0) {
+    if (frame && frame.complete && frame.naturalWidth > 0) {
         ctx.drawImage(frame, mercyX, mercyY, mercyWidth, mercyHeight);
     }
 
