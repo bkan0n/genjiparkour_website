@@ -10,7 +10,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "X-API-KEY: $apiKey",
     "Content-Type: application/json"
 ]);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

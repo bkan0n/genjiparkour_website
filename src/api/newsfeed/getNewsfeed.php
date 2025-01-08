@@ -20,7 +20,6 @@ function fetchNewsfeed($apiKey, $apiRoot, $page_number, $page_size, $type) {
         'X-API-KEY: ' . $apiKey
     ]);
 
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
     $response = curl_exec($ch);
 

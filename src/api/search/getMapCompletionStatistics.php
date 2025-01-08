@@ -43,7 +43,6 @@ function getJsonResponse($url) {
         'Content-Type: application/json',
         'X-API-KEY: ' . $apiKey
     ]);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
     $response = curl_exec($ch);
     if ($response === false) {
