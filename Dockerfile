@@ -4,8 +4,6 @@ FROM asimlqt/php-apache:8.3
 
 # COPY ./php.ini /usr/local/etc/php/
 
+RUN a2enmod rewrite && systemctl restart apache2
+
 COPY ./src /var/www/html
-
-RUN mkdir -p /var/www/html/api/rankcard/rankcardRequests
-
-RUN chown www-data /var/www/html/api/rankcard/rankcardRequests
