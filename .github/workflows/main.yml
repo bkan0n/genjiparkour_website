@@ -51,3 +51,9 @@ jobs:
         script: |
           cd ~/genjipk_assets/main/genjiparkour_website
           ${{ secrets.GENJI_ASSETS_MAIN}}
+
+    - name: Purge Cloudflare Cache
+      uses: jakejarvis/cloudflare-purge-action@master
+      env:
+        CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+        CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
