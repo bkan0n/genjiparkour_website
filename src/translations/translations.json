@@ -943,10 +943,10 @@
             "legendary": "Легендарный",
             "no_keys_available": "Нет ключей",
             "rewards_types": {
-                "spray": "Spray",
-                "skin": "Skin",
-                "pose": "Pose",
-                "background": "Background"
+                "spray": "Спрей",
+                "skin": "Скин",
+                "pose": "Поз",
+                "background": "Фон"
             }
         },
         "game": {
