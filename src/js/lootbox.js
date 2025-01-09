@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`Key Type Selected: ${keyType}`);
                 rewardKeyType = keyType;
 
-                keyTypeButton.textContent = keyType;
+                keyTypeButton.innerHTML = `${keyType} <span class="arrow"></span>`;
                 fetchKeys(userId, keyType);
 
                 keyDropdown.style.display = 'none';
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     populateDropdown();
 
-    keyTypeButton.textContent = rewardKeyType;
+    keyTypeButton.innerHTML = `${rewardKeyType} <span class="arrow"></span>`;
     fetchKeys(userId, rewardKeyType);
 });
 

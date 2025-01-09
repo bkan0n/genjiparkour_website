@@ -396,6 +396,20 @@
     position: relative;
 }
 
+.key-selection-container .arrow {
+    transform: rotate(135deg) translate(-1px, -4px);
+}
+
+.key-selection-container .arrow {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translate(5px, 2px);
+    transition: transform 0.3s ease;
+}
+
 #key-dropdown {
     display: none;
     position: absolute;
