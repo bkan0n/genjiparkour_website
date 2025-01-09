@@ -246,6 +246,10 @@ async function updateLeaderboard(params = {}) {
 
 function renderLeaderboard(data) {
     const leaderboardBody = document.querySelector('#leaderboard tbody');
+    if (!leaderboardBody) {
+        return;
+    }
+
     leaderboardBody.innerHTML = '';
 
     data.forEach(player => {

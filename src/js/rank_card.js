@@ -373,12 +373,12 @@ function createSearchSuggestions() {
         }
     });
 
-    searchButton.addEventListener("click", () => fetchUserRankCard());
-    searchButton.addEventListener("click", () => fetchUserMastery());
+    searchButton.addEventListener("click", () => fetchUserRankCard(selectedUserId));
+    searchButton.addEventListener("click", () => fetchUserMastery(selectedUserId));
 }
 
 // Recherche rankcard user_id
-async function fetchUserRankCard() {
+async function fetchUserRankCard(selectedUserId) {
     const rankCardContent = document.getElementById("rankCardContent");
 
     if (!selectedUserId) {
@@ -491,7 +491,7 @@ async function fetchUserRankCard() {
 }
 
 //Recherche badges user_id
-async function fetchUserMastery() {
+async function fetchUserMastery(selectedUserId) {
     if (!selectedUserId) {
         return;
     }

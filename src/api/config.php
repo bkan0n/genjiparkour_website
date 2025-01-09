@@ -12,6 +12,11 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
 
 function sendErrorToDiscord($message) {
     global $webhookUrl;
+
+    if (strpos($message, 'moz-extension://') !== false || strpos($message, 'chrome-extension://') !== false) {
+        return;
+    }
+
     $data = json_encode(["content" => $message]);
 
     $options = [
