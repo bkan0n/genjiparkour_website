@@ -1,7 +1,9 @@
 services:
   web:
     container_name: genjiparkour_website-test
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
     networks:
       - contabo_network
       - genji-network

@@ -1,0 +1,8 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+RewriteCond %{THE_REQUEST} \s/(404|graphs|index|leaderboard|lootbox|moderator|newsfeed|rank_card|search|tutorial)\.php [NC]
+RewriteRule ^(404|graphs|index|leaderboard|lootbox|moderator|newsfeed|rank_card|search|tutorial)\.php$ /$1 [L,R=301]
