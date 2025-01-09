@@ -382,12 +382,42 @@
     font-weight: bold;
     color: var(--white-buttons-color);
     margin-right: 10px;
+    margin-left: 10px;
 }
 
 .key-icon {
     margin-right: 5px;
     font-size: 20px;
     color: #333;
+}
+
+.key-selection-container {
+    display: inline-block;
+    position: relative;
+}
+
+#key-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 100%;
+}
+  
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+  
+.dropdown-item:hover {
+    background-color: #f1f1f1;
 }
 
 .swing-animation {

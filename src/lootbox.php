@@ -45,6 +45,10 @@ include BASE_PATH . "discord/header.php";
           </div>
         </div>
         <div class="centered-container">
+          <div class="key-selection-container">
+            <button id="key-type-button" class="btn shadow yellow">Select Key Type</button>
+            <div id="key-dropdown" class="dropdown-key"></div>
+          </div>
           <div id="key-count" class="key-display"></div>
           <div class="button-container">
             <button class="generate btn shadow yellow" 

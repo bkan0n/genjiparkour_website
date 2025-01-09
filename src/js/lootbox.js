@@ -5,7 +5,7 @@ var volume = 0.25;
 var filterType;
 var crate = [];
 let generatedRewards = [];
-let rewardKeyType = "";
+let rewardKeyType = "Classic";
 let rewardNonce = "";
 let keys = 0;
 let packOpened = false;
@@ -114,9 +114,13 @@ function getRandomRewards(userId, keyType) {
     });
 }
 
-$('.generate').click(function() {
+$('.generate').click(function () {
     if (!userId) {
         showErrorMessage(t('popup.login_required_msg'));
+        return;
+    }
+
+    if (!rewardKeyType) {
         return;
     }
 
@@ -127,30 +131,31 @@ $('.generate').click(function() {
         type: 'GET',
         data: { user_id: userId },
         dataType: 'json',
-        success: function(response) {
+        success: function (response) {
             if (response.error) {
                 alert("Erreur lors de la récupération des clés.");
                 console.error("Erreur de récupération des clés:", response.error);
                 return;
             }
 
-            if (response.length > 0) {
-                const keyData = response[0];
-                const keyType = keyData.key_type;
+            const filteredKeys = response.filter(key => key.key_type === rewardKeyType);
+
+            if (filteredKeys.length > 0) {
+                const keyData = filteredKeys[0];
                 keys = keyData.amount;
 
                 if (keys > 0) {
-                    getRandomRewards(userId, keyType);
+                    getRandomRewards(userId, rewardKeyType);
                 } else {
-                    alert("Pas assez de clés");
-                    console.log("Pas assez de clés, loot box non ouverte");
+                    showErrorMessage(t('lootbox.no_keys_available'));
+                    console.log("Aucune clé disponible");
                 }
             } else {
                 showErrorMessage(t('lootbox.no_keys_available'));
                 console.log("Aucune clé disponible");
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error("Erreur AJAX :", error);
             alert("Erreur de connexion à l'API");
         }
@@ -266,26 +271,25 @@ function deleteCards() {
     $('#box').remove();
 }
 
-function fetchKeys(userId) {
+function fetchKeys(userId, selectedKeyType = 'Classic') {
     $.ajax({
         url: 'api/lootbox/viewUsersKeys.php',
         type: 'GET',
         data: { user_id: userId },
         dataType: 'json',
-        success: function(response) {
+        success: function (response) {
             if (response.error) {
                 console.error("Erreur de récupération des clés :", response.error);
                 $('#key-count').html("<i class='fas fa-key key-icon'></i> Error fetching keys");
-            } else if (response.length > 0) {
-                keys = response.reduce((sum, key) => sum + key.amount, 0);
-                rewardKeyType = response[0].key_type;
+            } else if (Array.isArray(response)) {
+                const filteredKeys = response.filter(key => key.key_type === selectedKeyType);
+                keys = filteredKeys.reduce((sum, key) => sum + key.amount, 0);
                 updateKeyDisplay();
-                //console.log("User Keys:", response);
             } else {
                 $('#key-count').html(`<i class='fas fa-key key-icon'></i> ${t('lootbox.no_keys_available')}`);
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error("Erreur AJAX :", error);
             $('#key-count').html("<i class='fas fa-key key-icon'></i> Error fetching keys");
         }
@@ -301,6 +305,58 @@ async function updateKeyDisplay() {
     }
     //console.log(`Clés restantes : ${keys}`);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const keyTypeButton = document.getElementById('key-type-button');
+    const keyDropdown = document.getElementById('key-dropdown');
+
+    if (!keyTypeButton || !keyDropdown) {
+        console.error('Éléments nécessaires introuvables');
+        return;
+    }
+
+    function populateDropdown() {
+        const keyTypes = ['Classic', 'Winter'];
+        keyDropdown.innerHTML = '';
+
+        keyTypes.forEach(keyType => {
+            const item = document.createElement('div');
+            item.classList.add('dropdown-item');
+            item.textContent = keyType;
+
+            item.addEventListener('click', () => {
+                console.log(`Key Type Selected: ${keyType}`);
+                rewardKeyType = keyType;
+
+                keyTypeButton.textContent = keyType;
+                fetchKeys(userId, keyType);
+
+                keyDropdown.style.display = 'none';
+            });
+
+            keyDropdown.appendChild(item);
+        });
+    }
+
+    keyTypeButton.addEventListener('click', () => {
+        if (keyDropdown.style.display === 'none' || keyDropdown.style.display === '') {
+            keyDropdown.style.display = 'block';
+        } else {
+            keyDropdown.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!keyTypeButton.contains(event.target) && !keyDropdown.contains(event.target)) {
+            keyDropdown.style.display = 'none';
+        }
+    });
+
+    populateDropdown();
+
+    keyTypeButton.textContent = rewardKeyType;
+    fetchKeys(userId, rewardKeyType);
+});
 
 $(document).ready(function() {
     if (userId) {

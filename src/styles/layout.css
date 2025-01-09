@@ -239,15 +239,15 @@ footer {
     display: inline-block;
     margin-top: 20px;
     padding: 12px 24px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--dark-buttons-bg);
+    color: var(--dark-buttons-color);
     text-decoration: none;
     border-radius: 4px;
     font-weight: 500;
 }
 
 .btn:hover {
-    background-color: #555;
+    background-color: var(--dark-buttons-hover);
 }
 
 /* Scroll enhance */
