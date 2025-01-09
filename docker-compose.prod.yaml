@@ -1,7 +1,9 @@
 services:
   web:
     container_name: genjiparkour_website-prod
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     networks:
       - contabo_network
       - genji-network
