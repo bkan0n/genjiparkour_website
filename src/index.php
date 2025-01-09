@@ -16,7 +16,6 @@ include BASE_PATH . "discord/header.php";
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script defer src="https://analytics.bkan0n.com/script.js" data-website-id="11bec59b-212a-430a-a5ea-bb0e81450ac0"></script>
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/index.css">
     <script src="js/layout.js" defer></script>
