@@ -148,10 +148,12 @@ $('.generate').click(function () {
                     getRandomRewards(userId, rewardKeyType);
                 } else {
                     showErrorMessage(t('lootbox.no_keys_available'));
+                    restoreCrate();
                     console.log("Aucune clé disponible");
                 }
             } else {
                 showErrorMessage(t('lootbox.no_keys_available'));
+                restoreCrate();
                 console.log("Aucune clé disponible");
             }
         },
