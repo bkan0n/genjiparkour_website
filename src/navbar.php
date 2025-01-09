@@ -1,6 +1,3 @@
-<head>
-<script defer src="https://analytics.bkan0n.com/script.js" data-website-id="11bec59b-212a-430a-a5ea-bb0e81450ac0"></script>
-</head>
 <nav class="navbar">
     <div class="navbar-left">
         <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
