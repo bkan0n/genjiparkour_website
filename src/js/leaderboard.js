@@ -28,9 +28,9 @@ async function loadTranslations() {
         
         const currentLangData = data[currentLang] || {};
         
-        const { thead = {}, pagination = {} } = currentLangData;
+        const { thead = {}, pagination = {}, popup = {} } = currentLangData;
         
-        translations = { thead, pagination };
+        translations = { thead, pagination, popup };
 
         //console.log("Traductions chargées :", translations);
     } catch (error) {
@@ -278,14 +278,20 @@ function attachNicknameClickEvents() {
     nicknameCells.forEach(cell => {
         cell.addEventListener('click', () => {
             const userId = cell.getAttribute('data-user-id');
-            if (userId) {
-                window.location.href = `rank_card.php?user_id=${encodeURIComponent(userId)}`;
+            
+            if (typeof session_user_id !== 'undefined' && session_user_id !== null) {
+                if (userId) {
+                    window.location.href = `rank_card.php?user_id=${encodeURIComponent(userId)}`;
+                } else {
+                    console.error('User ID not found for this nickname.');
+                }
             } else {
-                console.error('User ID introuvable pour ce nickname.');
+                showErrorMessage(t('popup.login_required_msg'));
             }
         });
     });
 }
+
 
 function getSkillRankClass(skillRank) {
     switch (skillRank?.toLowerCase()) {

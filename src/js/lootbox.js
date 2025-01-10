@@ -274,6 +274,10 @@ function deleteCards() {
 }
 
 function fetchKeys(userId, selectedKeyType = 'Classic') {
+    if (!userId) {
+        return;
+    }
+
     $.ajax({
         url: 'api/lootbox/viewUsersKeys.php',
         type: 'GET',
