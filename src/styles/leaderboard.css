@@ -266,6 +266,27 @@ th.col-nickname, th.col-discord-tag {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.col-nickname {
+  position: relative;
+  cursor: pointer;
+}
+
+.col-nickname {
+  position: relative;
+  cursor: pointer;
+}
+
+.col-nickname .nickname {
+  position: relative;
+  z-index: 1;
+}
+
+.col-nickname:hover {
+  background-color: rgba(78, 78, 78, 0.3);
+  transition: background-color 0.3s ease;
+  padding: 5px;
+}
+
 /* Style spécifique pour les colonnes de tags Discord */
 td.col-tag {
   font-weight: 300;

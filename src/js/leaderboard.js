@@ -255,9 +255,10 @@ function renderLeaderboard(data) {
     data.forEach(player => {
         const tr = document.createElement('tr');
         const skillRankClass = getSkillRankClass(player.skill_rank);
+        const userIdString = player.user_id + '';
         const discordTag = player.discord_tag === "Unknown Username" ? 'N/A' : (player.discord_tag || 'N/A');
         tr.innerHTML = `
-            <td class="col-nickname">${player.nickname || 'N/A'}</td>
+            <td class="col-nickname" data-user-id="${userIdString}">${player.nickname || 'N/A'}</td>
             <td class="col-xp">${player.xp_amount || 0}</td>
             <td class="col-tier">${player.tier_name || 'N/A'}</td>
             <td class="col-skill-rank ${skillRankClass}">${player.skill_rank || 'N/A'}</td>
@@ -267,6 +268,22 @@ function renderLeaderboard(data) {
             <td class="col-discord-tag">${discordTag}</td>
         `;
         leaderboardBody.appendChild(tr);
+    });
+    attachNicknameClickEvents();
+}
+
+function attachNicknameClickEvents() {
+    const nicknameCells = document.querySelectorAll('.col-nickname');
+
+    nicknameCells.forEach(cell => {
+        cell.addEventListener('click', () => {
+            const userId = cell.getAttribute('data-user-id');
+            if (userId) {
+                window.location.href = `rank_card.php?user_id=${encodeURIComponent(userId)}`;
+            } else {
+                console.error('User ID introuvable pour ce nickname.');
+            }
+        });
     });
 }
 
