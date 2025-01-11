@@ -17,4 +17,4 @@ COPY ./apache2.conf.dev /etc/apache2/apache2.conf
 
 COPY ./src .
 
-CMD bash -c "composer install"
+CMD bash -c "composer install && apache2-foreground"
