@@ -5,7 +5,7 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', __DIR__ . '/');
 }
 $webhookUrl = getenv("GLITCHTIP_DSN");
-Sentry\init(['dsn' => $webhookUrl ]);
+\Sentry\init(['dsn' => $webhookUrl ]);
 
 require BASE_PATH . "discord/session_init.php";
 require BASE_PATH . "translations/load_translations.php";
