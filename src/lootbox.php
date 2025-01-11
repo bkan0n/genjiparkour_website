@@ -67,11 +67,11 @@ include BASE_PATH . "discord/header.php";
                         <div><span class="rarity-epic"><?= htmlspecialchars($translations['lootbox']['epic']) ?></span>: 3%</div>
                         <div><span class="rarity-legendary"><?= htmlspecialchars($translations['lootbox']['legendary']) ?></span>: 1%</div>
                     </div>
-                    <p>You are granted a key when you rank up to a new sub tier. So for example, from Newcomer I -> Newcomer II.</p>
+                    <p><?= htmlspecialchars($translations['lootbox']['lootbox_infos']) ?></p>
                     <div id="reward-buttons">
-                        <button class="filter-button" data-type="background">Backgrounds</button>
-                        <button class="filter-button" data-type="spray">Sprays</button>
-                        <button class="filter-button" data-type="skin-pose">Skins & Poses</button>
+                        <button class="filter-button" data-type="background"><?= htmlspecialchars($translations['lootbox']['rewards_types']['background']) ?></button>
+                        <button class="filter-button" data-type="spray"><?= htmlspecialchars($translations['lootbox']['rewards_types']['spray']) ?></button>
+                        <button class="filter-button" data-type="skin-pose"><?= htmlspecialchars($translations['lootbox']['rewards_types']['skin']) ?> & <?= htmlspecialchars($translations['lootbox']['rewards_types']['pose']) ?></button>
                     </div>
                     <div id="rewards-container"></div>
                 </div>

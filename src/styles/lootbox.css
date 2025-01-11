@@ -372,7 +372,7 @@
 }
 
 .key-selection-container {
-    display: inline-block;
+    display: flex;
     position: relative;
 }
 

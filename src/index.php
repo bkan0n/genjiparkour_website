@@ -13,10 +13,10 @@ include BASE_PATH . "discord/header.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="Genji Parkour">
-    <meta property="og:description" content="The Official Genji Parkour Website">
+    <meta property="og:description" content="The Official Genji Parkour Website. Find Genji Parkour maps, open lootboxes, and more!">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://test.genji.pk/">
-    <meta property="og:image" content="https://test.genji.pk/assets/img/favicon-high.png">
+    <meta property="og:url" content="https://genji.pk/">
+    <meta property="og:image" content="https://genji.pk/assets/img/favicon-high.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">

@@ -175,6 +175,7 @@
             "epic": "Epic",
             "legendary": "Legendary",
             "no_keys_available": "No keys available",
+            "lootbox_infos": "You are granted a key when you rank up to a new sub tier. So for example, from Newcomer I -> Newcomer II.",
             "rewards_types": {
                 "spray": "Spray",
                 "skin": "Skin",
@@ -609,6 +610,7 @@
             "epic": "Épique",
             "legendary": "Légendaire",
             "no_keys_available": "Vous n'avez pas de clés",
+            "lootbox_infos": "Vous recevez une clé lorsque vous passez à un nouveau sous-palier. Par exemple, de Newcomer I -> Newcomer II.",
             "rewards_types": {
                 "spray": "Spray",
                 "skin": "Skin",
@@ -942,6 +944,7 @@
             "epic": "Эпический",
             "legendary": "Легендарный",
             "no_keys_available": "Нет ключей",
+            "lootbox_infos": "Вам предоставляется ключ, когда вы повышаете ранг до нового подуровня. Например, с Newcomer I -> Newcomer II.",
             "rewards_types": {
                 "spray": "Спрей",
                 "skin": "Скин",
@@ -1276,6 +1279,7 @@
             "epic": "史诗",
             "legendary": "传奇",
             "no_keys_available": "没有可用的钥匙",
+            "lootbox_infos": "当你晋升到一个新的子级别时，你会获得一把钥匙。例如，从 Newcomer I -> Newcomer II。",
             "rewards_types": {
                 "spray": "喷雾",
                 "skin": "皮肤",
@@ -1710,6 +1714,7 @@
             "epic": "Epic",
             "legendary": "Legendary",
             "no_keys_available": "鍵が不足しています",
+            "lootbox_infos": "新しいサブティアにランクアップすると、キーが付与されます。例えば、Newcomer I -> Newcomer II のように。",
             "rewards_types": {
                 "spray": "スプレー",
                 "skin": "スキン",
@@ -2144,6 +2149,7 @@
             "epic": "Episch",
             "legendary": "Legendär",
             "no_keys_available": "Keine Schlüssel verfügbar",
+            "lootbox_infos": "Du erhältst einen Schlüssel, wenn du in eine neue Unterstufe aufsteigst. Zum Beispiel von Newcomer I -> Newcomer II.",
             "rewards_types": {
                 "spray": "Spray",
                 "skin": "Skin",
