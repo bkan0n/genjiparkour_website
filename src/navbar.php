@@ -1,10 +1,4 @@
 <script defer src="https://analytics.bkan0n.com/script.js" data-website-id="43f4faaa-b793-4f68-9bc9-2deccff8fc15"></script>
-<script src="https://browser.sentry-cdn.com/7.60.0/bundle.min.js" crossorigin="anonymous"></script>
-<script>
-Sentry.init({
-  dsn: process.env.GLITCHTIP_DSN,
-  tracesSampleRate: 0.01,
-});
 </script>
 <nav class="navbar">
     <div class="navbar-left">
