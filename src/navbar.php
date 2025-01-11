@@ -2,7 +2,7 @@
 <script src="https://browser.sentry-cdn.com/7.60.0/bundle.min.js" crossorigin="anonymous"></script>
 <script>
 Sentry.init({
-  dsn: "process.env.GLITCHTIP_DSN",
+  dsn: process.env.GLITCHTIP_DSN,
   tracesSampleRate: 0.01,
 });
 </script>
