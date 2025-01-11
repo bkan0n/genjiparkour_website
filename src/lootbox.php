@@ -55,14 +55,27 @@ include BASE_PATH . "discord/header.php";
                   onclick="/*ga('send', 'event', 'Generate box', 'Click', 'Open loot box');*/">
                   <?= htmlspecialchars($translations['lootbox']['open_pack']) ?>
             </button>
-            <button class="info-button">?
-              <div class="info-tooltip">
-                <div><span class="rarity-common"><?= htmlspecialchars($translations['lootbox']['common']) ?></span>: 80%</div>
-                <div><span class="rarity-rare"><?= htmlspecialchars($translations['lootbox']['rare']) ?></span>: 16%</div>
-                <div><span class="rarity-epic"><?= htmlspecialchars($translations['lootbox']['epic']) ?></span>: 3%</div>
-                <div><span class="rarity-legendary"><?= htmlspecialchars($translations['lootbox']['legendary']) ?></span>: 1%</div>
-              </div>
-            </button>
+            <button class="info-button">?</button>
+            <div id="infoModal" class="modal-lootbox">
+                <div class="modal-infos">
+                  <button class="close-button" aria-label="Close Modal">
+                      <i class="fa-solid fa-xmark"></i>
+                  </button>
+                    <div class="info-tooltip">
+                        <div><span class="rarity-common"><?= htmlspecialchars($translations['lootbox']['common']) ?></span>: 80%</div>
+                        <div><span class="rarity-rare"><?= htmlspecialchars($translations['lootbox']['rare']) ?></span>: 16%</div>
+                        <div><span class="rarity-epic"><?= htmlspecialchars($translations['lootbox']['epic']) ?></span>: 3%</div>
+                        <div><span class="rarity-legendary"><?= htmlspecialchars($translations['lootbox']['legendary']) ?></span>: 1%</div>
+                    </div>
+                    <p>You are granted a key when you rank up to a new sub tier. So for example, from Newcomer I -> Newcomer II.</p>
+                    <div id="reward-buttons">
+                        <button class="filter-button" data-type="background">Backgrounds</button>
+                        <button class="filter-button" data-type="spray">Sprays</button>
+                        <button class="filter-button" data-type="skin-pose">Skins & Poses</button>
+                    </div>
+                    <div id="rewards-container"></div>
+                </div>
+            </div>
           </div>
         </div>
     </main>
