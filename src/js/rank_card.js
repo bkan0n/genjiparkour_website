@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 async function initRankCard() {
     let selectedUserId = null;
+    let userIdFromUrl = getQueryParam("user_id");
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");
     const btnRankCard = document.getElementById("btnRankCard");
@@ -28,7 +29,7 @@ async function initRankCard() {
 
     const updateButtonContainerVisibility = () => {
         const currentUserId = getCurrentUserId();
-        const isUserMatching = selectedUserId === null || selectedUserId === currentUserId;
+        const isUserMatching = (selectedUserId === null || selectedUserId === currentUserId) && (!userIdFromUrl || userIdFromUrl === currentUserId);
         const isRankCardActive = btnRankCard.classList.contains("active");
 
         if (isUserMatching && isRankCardActive) {
@@ -76,6 +77,12 @@ async function initRankCard() {
         if (inputField) {
             inputField.value = "";
         }
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete("user_id");
+        history.pushState({}, '', url);
+
+        userIdFromUrl = null;
         selectedUserId = null;
         loadRankCardContent();
         loadUserMasteryContent();
@@ -95,13 +102,25 @@ async function initRankCard() {
     initBackgroundChanges();
     initAvatarChanges();
 
-    loadUserMasteryContent();
     createSearchSuggestions();
 
-    loadRankCardContent().then(() => {
-        enableButtons();
+    if (userIdFromUrl) {
+        fetchUserRankCard(userIdFromUrl);
+        fetchUserMastery(userIdFromUrl);
         updateButtonContainerVisibility();
-    });
+    } else {
+        loadRankCardContent().then(() => {
+            updateButtonContainerVisibility();
+        });
+        loadUserMasteryContent();
+    }
+
+    enableButtons();
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
 }
 
 function getCurrentUserId() {

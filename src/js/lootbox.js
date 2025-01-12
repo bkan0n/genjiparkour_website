@@ -148,10 +148,12 @@ $('.generate').click(function () {
                     getRandomRewards(userId, rewardKeyType);
                 } else {
                     showErrorMessage(t('lootbox.no_keys_available'));
+                    restoreCrate();
                     console.log("Aucune clé disponible");
                 }
             } else {
                 showErrorMessage(t('lootbox.no_keys_available'));
+                restoreCrate();
                 console.log("Aucune clé disponible");
             }
         },
@@ -272,6 +274,10 @@ function deleteCards() {
 }
 
 function fetchKeys(userId, selectedKeyType = 'Classic') {
+    if (!userId) {
+        return;
+    }
+
     $.ajax({
         url: 'api/lootbox/viewUsersKeys.php',
         type: 'GET',
@@ -554,3 +560,75 @@ document.addEventListener('click', () => {
         sound.currentTime = 0;
     });
 }, { once: true });
+
+//Info modal
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('infoModal');
+    const infoButton = document.querySelector('.info-button');
+    const closeButton = document.querySelector('.close-button');
+    const rewardsContainer = document.getElementById('rewards-container');
+
+    infoButton.addEventListener('click', () => {
+        modal.style.display = 'flex';
+    });
+
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+        rewardsContainer.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            rewardsContainer.style.display = 'none';
+        }
+    });
+
+    async function loadRewards(filterType) {
+        try {
+            const response = await fetch('api/lootbox/viewAllRewards.php');
+            const text = await response.text();
+            console.log('Raw response:', text);
+            const rewards = JSON.parse(text);
+
+            let filteredRewards = rewards;
+            if (filterType) {
+                if (filterType === 'skin-pose') {
+                    filteredRewards = rewards.filter(reward =>
+                        reward.type === 'skin' || reward.type === 'pose'
+                    );
+                } else {
+                    filteredRewards = rewards.filter(reward => reward.type === filterType);
+                }
+            }
+
+            const rarityOrder = ['legendary', 'epic', 'rare', 'common'];
+            filteredRewards.sort((a, b) => rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity));
+
+            rewardsContainer.innerHTML = '';
+            filteredRewards.forEach(reward => {
+                const rewardCard = document.createElement('div');
+                rewardCard.className = 'reward-card';
+                rewardCard.innerHTML = `
+                    <img src="${reward.url}" alt="${reward.name}">
+                    <div class="name">${reward.name}</div>
+                    <div class="rarity rarity-${reward.rarity}">${reward.rarity}</div>
+                `;
+                rewardsContainer.appendChild(rewardCard);
+            });
+
+            rewardsContainer.style.display = 'flex';
+        } catch (error) {
+            console.error('Error fetching rewards:', error);
+            rewardsContainer.innerHTML = '<p>Error loading rewards.</p>';
+            rewardsContainer.style.display = 'block';
+        }
+    }
+
+    document.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const filterType = button.getAttribute('data-type');
+            loadRewards(filterType);
+        });
+    });
+});

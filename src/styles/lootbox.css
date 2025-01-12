@@ -23,26 +23,6 @@
     border-radius: 4px;
     font-size: 14px;
 }
-.info-tooltip {
-    visibility: hidden;
-    width: 200px;
-    background-color: #333;
-    color: #fff;
-    text-align: left;
-    padding: 8px;
-    border-radius: 4px;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    }
-.info-button:hover .info-tooltip {
-    visibility: visible;
-    opacity: 1;
-}
 
 .card-container {
     display: flex;
@@ -392,7 +372,7 @@
 }
 
 .key-selection-container {
-    display: inline-block;
+    display: flex;
     position: relative;
 }
 
@@ -556,4 +536,173 @@
     100% {
         transform: translateX(-50px);
     }
+}
+
+/* Info modal*/
+.modal-lootbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-infos {
+    background: var(--navbar-bg);
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: center;
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #b3b1b1;
+    border-radius: 10px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.3s ease;
+    z-index: 1001;
+}
+
+.close-button:hover {
+    color: #d31c1c;
+    transform: scale(1.05);
+}
+
+.close-button i {
+    font-size: inherit;
+}
+
+
+.info-tooltip {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.info-tooltip div {
+    margin: 5px 0;
+}
+
+.rarity-common {
+    color: #a8a8a8;
+}
+
+.rarity-rare {
+    color: #1e90ff;
+}
+
+.rarity-epic {
+    color: #9932cc;
+}
+
+.rarity-legendary {
+    color: #ffd700;
+}
+
+#reward-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.filter-button {
+    padding: 10px 15px;
+    background-color: var(--white-buttons-bg);
+    color: var(--white-buttons-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.filter-button:hover {
+    background-color: #d0d0d0;
+}
+
+#rewards-container {
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.reward-card {
+    width: 16vh;
+    height: 24vh;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #2b2b2b;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reward-card .name {
+    font-size: 1rem;
+}
+
+.reward-card .rarity {
+    font-size: 1rem;
+}
+
+.reward-card img {
+    width: 100%;
+    height: 14vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.reward-card .rarity {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.rarity-common {
+    color: gray;
+}
+
+.rarity-rare {
+    color: blue;
+}
+
+.rarity-epic {
+    color: purple;
+}
+
+.rarity-legendary {
+    color: gold;
 }
