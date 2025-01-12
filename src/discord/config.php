@@ -1,9 +1,4 @@
 <?php
-
-require_once __DIR__ . '/vendor/autoload.php';
-$webhookUrl = getenv("GLITCHTIP_DSN");
-\Sentry\init(['dsn' => $webhookUrl ]);
-
 $webhookUrl = getenv("DISCORD_WEBHOOK_URL");
 
 if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
