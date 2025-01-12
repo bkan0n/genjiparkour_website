@@ -136,6 +136,9 @@ include BASE_PATH . "discord/header.php";
         </div>
         <div class="pagination-container" id="paginationContainer"></div>
     </div>
+    <script>
+    let session_user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
+    </script>
     <?php include 'footer.php'; ?>
 </div>
 </body>
