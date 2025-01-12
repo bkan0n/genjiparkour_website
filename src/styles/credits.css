@@ -126,6 +126,7 @@
     font-size: inherit;
 }
 
+
 /* Animation pour l'apparition du modal */
 @keyframes fadeIn {
     from {
