@@ -1,4 +1,5 @@
 <script defer src="https://analytics.bkan0n.com/script.js" data-website-id="43f4faaa-b793-4f68-9bc9-2deccff8fc15"></script>
+<script src="js/bundle_min.js" crossorigin="anonymous"></script>
 <nav class="navbar">
     <div class="navbar-left">
         <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">
