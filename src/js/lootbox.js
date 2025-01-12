@@ -4,6 +4,7 @@ var openSound = new Audio('assets/sounds/open-box.ogg');
 var volume = 0.25;
 var filterType;
 var crate = [];
+let soundPlaybackAllowed = false;
 let generatedRewards = [];
 let rewardKeyType = "Classic";
 let rewardNonce = "";
@@ -535,6 +536,10 @@ function addGifParticles(cardBack, rarity) {
 }
 
 function playSound(quality) {
+    if (!soundPlaybackAllowed) {
+        return;
+    }
+
     let sound;
     switch (quality) {
         case 'common': sound = sounds.common; break;
@@ -553,11 +558,13 @@ function playSound(quality) {
 
 document.addEventListener('click', () => {
     Object.values(sounds).forEach(sound => {
-        sound.play().catch(() => {
-            console.log("Audio préparé après interaction utilisateur");
+        sound.play().then(() => {
+            sound.pause();
+            sound.currentTime = 0;
+            soundPlaybackAllowed = true;
+        }).catch(() => {
+            console.log("Audio bloqué par le navigateur. Besoin d'une interaction utilisateur");
         });
-        sound.pause();
-        sound.currentTime = 0;
     });
 }, { once: true });
 
