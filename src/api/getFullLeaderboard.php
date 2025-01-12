@@ -44,15 +44,7 @@ curl_close($ch);
 
 if ($httpCode === 200) {
     header('Content-Type: application/json');
-    $decodedResponse = json_decode($response, true);
-    if (is_array($decodedResponse)) {
-        foreach ($decodedResponse as &$item) {
-            if (isset($item['user_id'])) {
-                $item['user_id'] = (string) $item['user_id'];
-            }
-        }
-    }
-    echo json_encode($decodedResponse);
+    echo $response;
 } else {
     http_response_code($httpCode);
     echo json_encode(['error' => 'Failed to fetch leaderboard data.']);
