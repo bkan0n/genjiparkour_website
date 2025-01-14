@@ -353,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function () {
             await loadScript("js/credits.js");
 
             if (typeof initCreditsModal === "function") {
-                initCreditsModal();
+                initCredisModal();
             } else {
                 console.warn("Aucune fonction initCreditsModal trouvée");
             }
@@ -475,3 +475,21 @@ function hideLoadingBar() {
         }, 200);
     }
 }
+
+//Sentry
+const apiBaseUrl = window.location.origin;
+
+Sentry.init({
+    dsn: '',
+    transport: Sentry.makeFetchTransport({
+        fetch: (url, options) => {
+            return fetch(`${apiBaseUrl}/api/sentryProxy.php`, {
+                method: 'POST',
+                body: options.body,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        },
+    }),
+});
