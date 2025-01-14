@@ -24,6 +24,7 @@ include BASE_PATH . "discord/header.php";
     <title>Genji Parkour - Home</title>
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://browser.sentry-cdn.com/7.34.0/bundle.tracing.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/index.css">
