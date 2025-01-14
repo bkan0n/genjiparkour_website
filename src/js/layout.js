@@ -353,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function () {
             await loadScript("js/credits.js");
 
             if (typeof initCreditsModal === "function") {
-                initCredisModal();
+                initCreditsModal();
             } else {
                 console.warn("Aucune fonction initCreditsModal trouvée");
             }
@@ -367,8 +367,11 @@ document.addEventListener("DOMContentLoaded", function () {
             creditsModal.style.display = "none";
             document.body.classList.remove("modal-active");
         }
+        testSentry();
     });
 });
+
+hello();
 
 function loadCSS(href) {
     const link = document.createElement("link");
@@ -378,77 +381,6 @@ function loadCSS(href) {
     document.head.appendChild(link);
     //console.log(`CSS chargé : ${href}`);
 }
-
-//Traceback js 
-(function() {
-    function sendErrorToServer(errorDetails) {
-        fetch('api/sendJsError.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(errorDetails)
-        })
-        .then(response => response.json())
-        .then(data => console.log('Error sent to webhook:', data))
-        .catch(err => console.error('Error while sending error to server:', err));
-    }
-
-    window.onerror = function(message, source, lineno, colno, error) {
-        const errorDetails = {
-            message: message,
-            source: source,
-            lineno: lineno,
-            colno: colno,
-            error: error ? error.stack : null
-        };
-
-        sendErrorToServer(errorDetails);
-        return true;
-    };
-
-    window.addEventListener('unhandledrejection', function(event) {
-        const errorDetails = {
-            message: event.reason.message,
-            source: 'Unhandled Promise Rejection',
-            lineno: 'N/A',
-            colno: 'N/A',
-            error: event.reason.stack
-        };
-
-        sendErrorToServer(errorDetails);
-    });
-
-    const originalAddEventListener = EventTarget.prototype.addEventListener;
-    EventTarget.prototype.addEventListener = function(type, listener, options) {
-        const wrappedListener = function(event) {
-            try {
-                listener.apply(this, arguments);
-            } catch (error) {
-                captureError(error, event);
-            }
-        };
-        originalAddEventListener.call(this, type, wrappedListener, options);
-    };
-
-    function captureError(error, event) {
-        const errorDetails = {
-            message: error.message,
-            source: 'Event Listener Error',
-            lineno: error.lineNumber || 'N/A',
-            colno: error.columnNumber || 'N/A',
-            error: error.stack
-        };
-
-        if (event) {
-            errorDetails.eventType = event.type;
-            errorDetails.eventTarget = event.target ? event.target.tagName : 'unknown';
-        }
-
-        sendErrorToServer(errorDetails);
-    }
-
-})();
 
 //Loading bar
 function showLoadingBar() {
@@ -477,13 +409,11 @@ function hideLoadingBar() {
 }
 
 //Sentry
-const apiBaseUrl = window.location.origin;
-
 Sentry.init({
     dsn: '',
     transport: Sentry.makeFetchTransport({
         fetch: (url, options) => {
-            return fetch(`${apiBaseUrl}/api/sentryProxy.php`, {
+            return fetch(`api/sentryProxy.php`, {
                 method: 'POST',
                 body: options.body,
                 headers: {
