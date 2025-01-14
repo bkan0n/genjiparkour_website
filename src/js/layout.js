@@ -413,7 +413,7 @@ Sentry.init({
     dsn: '',
     transport: Sentry.makeFetchTransport({
         fetch: (url, options) => {
-            return fetch(`api/sentryProxy.php`, {
+            return fetch(`/api/sentryProxy.php`, {
                 method: 'POST',
                 body: options.body,
                 headers: {

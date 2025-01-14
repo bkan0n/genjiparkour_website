@@ -1,9 +1,15 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-\Sentry\init([
-    'dsn' => getenv('GLITCHTIP_DSN'),
-]);
+$dsn = getenv('GLITCHTIP_DSN');
+
+if ($dsn) {
+    \Sentry\init([
+        'dsn' => $dsn,
+    ]);
+} else {
+    error_log('Sentry DSN is not configured');
+}
 
 $allowed_origins = ["https://genji.pk", "https://test.genji.pk"];
 
