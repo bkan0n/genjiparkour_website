@@ -371,8 +371,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-hello();
-
 function loadCSS(href) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -409,17 +407,3 @@ function hideLoadingBar() {
 }
 
 //Sentry
-Sentry.init({
-    dsn: '',
-    transport: Sentry.makeFetchTransport({
-        fetch: (url, options) => {
-            return fetch(`/api/sentryProxy.php`, {
-                method: 'POST',
-                body: options.body,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-        },
-    }),
-});
