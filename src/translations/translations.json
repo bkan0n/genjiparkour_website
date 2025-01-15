@@ -771,7 +771,7 @@
     },
     "ru": {
         "navbar": {
-            "home": "Дом",
+            "home": "Главная",
             "leaderboard": "Таблица лидеров",
             "search": "Поиск",
             "maps": "Карты",
@@ -918,12 +918,12 @@
             "tooltipLabel": "{creator} - Карты : {mapCount}, Качество : {quality}",
             "tierRank": "Ранг уровня",
             "skillRank": "Ранг навыков",
-            "easy": "Легкая",
-            "medium": "Средняя",
-            "hard": "Сложная",
-            "very hard": "Очень сложная",
-            "extreme": "Экстрим",
-            "hell": "Ад",
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "very hard": "Very Hard",
+            "extreme": "Extreme",
+            "hell": "Hell",
             "mapsTooltip": "{count} карт",
             "record_progression_time": "Запись прогресса с течением времени",
             "user_record_progression": "Твой прогресс",
@@ -937,7 +937,7 @@
         },
         "lootbox": {
             "give_key": "Дать ключ",
-            "open_pack": "Открыть пакет",
+            "open_pack": "Открыть комплект",
             "pick_a_card": "Выбери карту",
             "common": "Обычный",
             "rare": "Редкий",
@@ -1045,12 +1045,12 @@
             "enter_map_code": "Введите код карты",
             "difficulty": "Сложность",
             "beginner": "начинающий",
-            "easy": "Легкая",
-            "medium": "Средняя",
-            "hard": "Сложная",
-            "very_hard": "Очень сложная",
-            "extreme": "Экстрим",
-            "hell": "Ад",
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard",
+            "very_hard": "Very Hard",
+            "extreme": "Extreme",
+            "hell": "Hell",
             "map_type": "Тип карты",
             "classic": "Классика",
             "increasing_difficulty": "Возрастающая сложность",
@@ -1100,7 +1100,7 @@
             }
         },
         "footer": {
-            "credits": "Кредиты"
+            "credits": "Авторы"
         }
     },
     "cn": {
