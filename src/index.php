@@ -2,7 +2,7 @@
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', __DIR__ . '/');
 }
-$glitchtipDsn = getenv('GLITCHTIP_DSN');
+
 require BASE_PATH . "discord/session_init.php";
 require BASE_PATH . "translations/load_translations.php";
 include BASE_PATH . "discord/header.php";
@@ -24,7 +24,6 @@ include BASE_PATH . "discord/header.php";
     <title>Genji Parkour - Home</title>
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="js/sentry_min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/index.css">
@@ -69,41 +68,6 @@ include BASE_PATH . "discord/header.php";
         "retina_detect": true
     });
 
-    </script>
-    <script>
-(function () {
-    function fetchDsn() {
-        return fetch('api/getDsn.php')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch DSN');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (!data.dsn) {
-                    throw new Error('DSN is missing from the response');
-                }
-                return data.dsn;
-            });
-    }
-
-    function initializeSentry(dsn) {
-        Sentry.init({
-            dsn: dsn,
-            tracesSampleRate: 0.01,
-        });
-        console.log('Sentry initialized successfully');
-    }
-
-    window.addEventListener('load', () => {
-        fetchDsn()
-            .then((dsn) => initializeSentry(dsn))
-            .catch((error) => {
-                console.error('Error initializing Sentry:', error);
-            });
-    });
-})();
     </script>
 </body>
 </html>

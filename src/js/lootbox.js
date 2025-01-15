@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.textContent = keyType;
 
             item.addEventListener('click', () => {
-                console.log(`Key Type Selected: ${keyType}`);
+                //console.log(`Key Type Selected: ${keyType}`);
                 rewardKeyType = keyType;
 
                 keyTypeButton.innerHTML = `${keyType} <span class="arrow"></span>`;
@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('api/lootbox/viewAllRewards.php');
             const text = await response.text();
-            console.log('Raw response:', text);
+            //console.log('Raw response:', text);
             const rewards = JSON.parse(text);
 
             let filteredRewards = rewards;
