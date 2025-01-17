@@ -3,6 +3,7 @@ name: Dev Deployment
 on:
   push:
     branches: [ dev ]
+  workflow_dispatch:
 
 jobs:
 
@@ -28,6 +29,7 @@ jobs:
         envkey_TRANSLATION_API_ROOT: ${{ secrets.TRANSLATION_API_ROOT }}
         envkey_TENOR_API_KEY: ${{ secrets.TENOR_API_KEY }}
         envkey_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        envkey_GLITCHTIP_DSN: ${{ secrets.GLITCHTIP_DSN }}
         file_name: .env
         fail_on_empty: false
         sort_keys: false

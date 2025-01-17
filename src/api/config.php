@@ -10,6 +10,7 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
     header('Content-Type: application/json');
 }
 
+
 function sendErrorToDiscord($message) {
     global $webhookUrl;
 

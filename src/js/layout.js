@@ -379,6 +379,32 @@ function loadCSS(href) {
     //console.log(`CSS chargé : ${href}`);
 }
 
+//Loading bar
+function showLoadingBar() {
+    const loadingContainer = document.getElementById("loadingContainer");
+    if (loadingContainer) {
+        loadingContainer.style.display = "flex";
+        loadingContainer.style.opacity = "0";
+        loadingContainer.style.transition = "opacity 0.2s ease-in";
+        
+        requestAnimationFrame(() => {
+            loadingContainer.style.opacity = "1";
+        });
+    }
+}
+
+function hideLoadingBar() {
+    const loadingContainer = document.getElementById("loadingContainer");
+    if (loadingContainer) {
+        loadingContainer.style.transition = "opacity 0.2s ease-out";
+        loadingContainer.style.opacity = "0";
+
+        setTimeout(() => {
+            loadingContainer.style.display = "none";
+        }, 200);
+    }
+}
+
 //Traceback js 
 (function() {
     function sendErrorToServer(errorDetails) {
@@ -449,29 +475,3 @@ function loadCSS(href) {
     }
 
 })();
-
-//Loading bar
-function showLoadingBar() {
-    const loadingContainer = document.getElementById("loadingContainer");
-    if (loadingContainer) {
-        loadingContainer.style.display = "flex";
-        loadingContainer.style.opacity = "0";
-        loadingContainer.style.transition = "opacity 0.2s ease-in";
-        
-        requestAnimationFrame(() => {
-            loadingContainer.style.opacity = "1";
-        });
-    }
-}
-
-function hideLoadingBar() {
-    const loadingContainer = document.getElementById("loadingContainer");
-    if (loadingContainer) {
-        loadingContainer.style.transition = "opacity 0.2s ease-out";
-        loadingContainer.style.opacity = "0";
-
-        setTimeout(() => {
-            loadingContainer.style.display = "none";
-        }, 200);
-    }
-}

@@ -31,6 +31,5 @@ if ($response === false || $http_code !== 200) {
     exit;
 }
 
-// Réponse JSON valide
 header('Content-Type: application/json');
 echo $response;
