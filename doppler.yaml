@@ -1,3 +1,0 @@
-setup:
-  - project: genjiparkour_website
-    config: production

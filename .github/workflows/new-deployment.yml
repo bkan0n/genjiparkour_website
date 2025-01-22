@@ -12,4 +12,5 @@ jobs:
     uses: bkan0n/bkan0n-deploy-workflow/.github/workflows/main.yml@main
     with:
       environment: production
+      docker_compose_file: docker-compose.prod.yaml
     secrets: inherit
