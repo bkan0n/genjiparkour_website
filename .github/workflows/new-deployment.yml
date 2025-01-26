@@ -6,17 +6,31 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [ init ]
-  
+
 jobs:
-  deploy:
+  deploy-push:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: bkan0n/bkan0n-deploy-workflow/.github/workflows/main.yml@main
     with:
       environment: production
       docker_compose_file: docker-compose.prod.yaml
     secrets: inherit
 
+  deploy-repository-dispatch:
+    if: github.event_name == 'repository_dispatch' && github.event.action == 'init'
+    strategy:
+      matrix:
+        environment: [production, development]
+    uses: bkan0n/bkan0n-deploy-workflow/.github/workflows/main.yml@main
+    with:
+      environment: ${{ matrix.environment }}
+      docker_compose_file: ${{ matrix.environment == 'production' && 'docker-compose.prod.yaml' || 'docker-compose.dev.yaml' }}
+    secrets: inherit
+
   pull-assets:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Update Assets Volume via Git Pull
         uses: appleboy/ssh-action@master
@@ -30,10 +44,12 @@ jobs:
             git pull origin main
 
   cloudflare-purge:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: production
     steps:
-    - name: Purge Cloudflare Cache
-      uses: jakejarvis/cloudflare-purge-action@master
-      env:
-        CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
-        CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+      - name: Purge Cloudflare Cache
+        uses: jakejarvis/cloudflare-purge-action@master
+        env:
+          CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
