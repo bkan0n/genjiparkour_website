@@ -15,20 +15,6 @@ jobs:
       docker_compose_file: docker-compose.prod.yaml
     secrets: inherit
 
-  pull-assets:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update Assets Volume via Git Pull
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.GENJI_PK_HOST }}
-          username: ${{ secrets.GENJI_PK_SSH_USER }}
-          key: ${{ secrets.GENJI_PK_SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd ~/bkan0n/repos/genji.pk/prod/genjiparkour_website
-            git pull origin main
-
   cloudflare-purge:
     runs-on: ubuntu-latest
     steps:
