@@ -1,5 +1,5 @@
 services:
-  web:
+  genjiparkour_website-test:
     container_name: genjiparkour_website-test
     build: 
       context: .
