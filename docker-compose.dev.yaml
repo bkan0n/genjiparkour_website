@@ -25,7 +25,9 @@ services:
       - GLITCHTIP_DSN=${GLITCHTIP_DSN}
     volumes:
       - /home/nebula/bkan0n/repos/genji.pk/dev/genjiparkour_website/src/assets:/var/www/html/assets
-
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
 networks:
   caddy-network:
     external: true
