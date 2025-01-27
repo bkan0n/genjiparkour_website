@@ -17,7 +17,7 @@ COPY ./apache2.conf.prod /etc/apache2/apache2.conf
 
 # COPY ./000-default.conf /etc/apache2/sites-available/
 
-# COPY ./php.ini /usr/local/etc/php/
+COPY ./php.ini /usr/local/etc/php/
 
 COPY ./src .
 
