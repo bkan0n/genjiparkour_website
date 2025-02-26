@@ -1,11 +1,11 @@
 services:
-  web:
+  genjiparkour_website-prod:
     container_name: genjiparkour_website-prod
     build:
       context: .
       dockerfile: Dockerfile.prod
     networks:
-      - contabo_network
+      - caddy-network
       - genji-network
     restart: unless-stopped
     environment:
@@ -23,10 +23,12 @@ services:
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
       - TENOR_API_KEY=${TENOR_API_KEY}
     volumes:
-      - /home/nebula/genjipk_assets/main/genjiparkour_website/src/assets:/var/www/html/assets
-
+      - /home/nebula/bkan0n/repos/genji.pk/prod/genjiparkour_website/src/assets:/var/www/html/assets
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
 networks:
-  contabo_network:
+  caddy-network:
     external: true
   genji-network:
     external: true

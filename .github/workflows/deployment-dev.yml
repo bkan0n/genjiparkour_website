@@ -1,0 +1,23 @@
+name: Deployment - Development
+
+on:
+  push:
+    branches: [ dev ]
+  workflow_dispatch:
+  
+jobs:
+  deploy:
+    uses: bkan0n/bkan0n-deploy-workflow/.github/workflows/main.yml@main
+    with:
+      environment: development
+      docker_compose_file: docker-compose.dev.yaml
+    secrets: inherit
+
+  cloudflare-purge:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Purge Cloudflare Cache
+      uses: jakejarvis/cloudflare-purge-action@master
+      env:
+        CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+        CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
