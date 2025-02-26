@@ -21,7 +21,8 @@
             "rank_card": "Rank Card",
             "dashboard": "Dashboard",
             "contributors": "Translation contributors",
-            "website_creators": "Website creators"
+            "website_creators": "Website creators",
+            "settings": "Settings"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -456,7 +457,8 @@
             "rank_card": "Carte de rang",
             "dashboard": "Tableau de bord",
             "contributors": "Contributeurs aux traductions",
-            "website_creators": "Créateurs du site"
+            "website_creators": "Créateurs du site",
+            "settings": "Paramètres"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -790,7 +792,8 @@
             "rank_card": "Личная карта",
             "dashboard": "Панель управления",
             "contributors": "Участники перевода",
-            "website_creators": "Создатели сайта"
+            "website_creators": "Создатели сайта",
+            "settings": "Настройки"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -1125,7 +1128,8 @@
             "rank_card": "称号图标",
             "dashboard": "仪表板",
             "contributors": "翻译贡献者",
-            "website_creators": "网站创建者"
+            "website_creators": "网站创建者",
+            "settings": "设置"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1560,7 +1564,8 @@
             "rank_card": "ランクカード",
             "dashboard": "ダッシュボード",
             "contributors": "翻訳協力者",
-            "website_creators": "ウェブサイトの作成者"
+            "website_creators": "ウェブサイトの作成者",
+            "settings": "設定"
         },
         "hero": {
             "packOpening": "パックを開封する",
@@ -1995,7 +2000,8 @@
             "rank_card": "Rang Karte",
             "dashboard": "Armaturenbrett",
             "contributors": "Übersetzungsbeitragende",
-            "website_creators": "Webseiten-Ersteller"
+            "website_creators": "Webseiten-Ersteller",
+            "settings": "Einstellungen"
         },
         "hero": {
             "packOpening": "Pack öffnen",
