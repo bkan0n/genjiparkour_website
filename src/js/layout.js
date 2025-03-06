@@ -160,6 +160,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    if (currentLang === "de") {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            const parentLi = menu.closest('li');
+            if (!parentLi || !parentLi.classList.contains('lang-dropdown-nav')) {
+                menu.style.width = "150px";
+            }
+        });
+    }
 });
 
 //Search redirect

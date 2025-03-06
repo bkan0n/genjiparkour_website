@@ -38,6 +38,14 @@
             "event3": "Top Scorers of 2024",
             "event3Desc": "See the latest leaderboard and scores from the community"
         },
+        "settings": {
+            "message_on_verification": "Message on verification",
+            "message_on_skill_update": "Message on skill role update",
+            "message_on_lootbox": "Message on lootbox gain",
+            "ping_on_xp": "Ping on xp gain",
+            "ping_on_mastery": "Ping on mastery",
+            "ping_on_community_rank": "Ping on community rank update"
+        },
         "leaderboard": {
             "title": "Leaderboard",
             "searchBy_name": "Name",
@@ -474,6 +482,14 @@
             "event3": "Meilleurs Scores de 2024",
             "event3Desc": "Consultez le dernier classement et les scores de la communauté"
         },
+        "settings": {
+            "message_on_verification": "Message lors de la vérification",
+            "message_on_skill_update": "Message lors du changement de rang",
+            "message_on_lootbox": "Message lors du gain d'une lootbox",
+            "ping_on_xp": "Ping lors du gain d'xp",
+            "ping_on_mastery": "Ping lors de la maîtrise",
+            "ping_on_community_rank": "Ping lors du gain d'xp de rang communautaire"
+        },
         "leaderboard": {
             "title": "Classement",
             "searchBy_name": "Nom",
@@ -808,6 +824,14 @@
             "event2Desc": "Испытай себя последним выпуском самых захватывающих карт",
             "event3": "Наилучшие результаты 2024",
             "event3Desc": "Посмотрите последнюю таблицу лидеров и результаты сообщества"
+        },
+        "settings": {
+            "message_on_verification": "Сообщение об верификации",
+            "message_on_skill_update": "Сообщение о повышении роли",
+            "message_on_lootbox": "Сообщение о получении лутбокса",
+            "ping_on_xp": "Уведомление когда получен опыт",
+            "ping_on_mastery": "Уведомление когда получен значок мастерства",
+            "ping_on_community_rank": "Уведомление когда повышен ранг"
         },
         "leaderboard": {
             "title": "Таблица лидеров",
@@ -1144,6 +1168,14 @@
             "event2Desc": "技术与速度的终极考验",
             "event3": "2024得分榜",
             "event3Desc": "查看社区最新的排行榜"
+        },
+        "settings": {
+            "message_on_verification": "验证消息",
+            "message_on_skill_update": "技能角色提醒",
+            "message_on_lootbox": "新战利品箱提醒",
+            "ping_on_xp": "经验值提醒",
+            "ping_on_mastery": "精通等级提醒",
+            "ping_on_community_rank": "社区排名更新提醒"
         },
         "leaderboard": {
             "title": "排行榜",
@@ -1581,6 +1613,14 @@
             "event3": "2024年のトップスコアラー",
             "event3Desc": "コミュニティーの最新リーダーボードとスコアを確認する"
         },
+        "settings": {
+            "message_on_verification": "検証に関するメッセージ",
+            "message_on_skill_update": "スキルロールの更新に関するメッセージ",
+            "message_on_lootbox": "ルートボックス獲得に関するメッセージ",
+            "ping_on_xp": "経験値に関する通知",
+            "ping_on_mastery": "マスタリーの習得に関する通知",
+            "ping_on_community_rank": "コミュニティランクの更新に関する通知"
+        },
         "leaderboard": {
             "title": "リーダーボード",
             "searchBy_name": "名前",
@@ -2016,6 +2056,14 @@
             "event2Desc": "Fordere dich heraus mit brandneuen spannenden Maps",
             "event3": "Die top Spieler von 2024",
             "event3Desc": "Sehen Sie sich die neuesten Bestenlisten und  Punktzahlen der Community an"
+        },
+        "settings": {
+            "message_on_verification": "Nachricht bei Verifikation",
+            "message_on_skill_update": "Nachricht bei Rangaufstieg",
+            "message_on_lootbox": "Nachricht bei Lootboxinhalt",
+            "ping_on_xp": "Benachrichtigung bei XP Gewinn ",
+            "ping_on_mastery": "Benachrichtigung bei Meisterung ",
+            "ping_on_community_rank": "Benachrichtigung bei Community Rang Update"
         },
         "leaderboard": {
             "title": "Rangliste",
