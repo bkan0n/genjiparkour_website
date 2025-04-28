@@ -12,6 +12,11 @@ require BASE_PATH . "translations/load_translations.php";
         <button class="close-modal" aria-label="Close Modal">
             <i class="fa-solid fa-xmark"></i>
         </button>
+        
+        <div class="settings-overwatch">
+            <input type="text" id="overwatch-username" placeholder="Loading..." />
+            <button id="confirm-overwatch-username"><?= htmlspecialchars($translations['popup']['confirm_button'] ?? 'Confirm') ?></button>
+        </div>
 
         <div class="settings-grid">
             <div class="settings-column">
