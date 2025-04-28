@@ -1,3 +1,7 @@
+if (typeof window.currentLang === "undefined") {
+    window.currentLang = document.documentElement.lang || "en";
+}
+
 //Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
@@ -179,7 +183,7 @@ function getQueryParam(param) {
 
 function activateSectionFromURL() {
     const section = getQueryParam('section');
-    if (section) {
+    if (section && typeof selectSection === 'function') {
         selectSection(section);
 
         const activeButton = document.getElementById(section + "Btn");
