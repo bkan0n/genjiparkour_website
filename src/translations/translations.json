@@ -189,7 +189,8 @@
                 "spray": "Spray",
                 "skin": "Skin",
                 "pose": "Pose",
-                "background": "Background"
+                "background": "Background",
+                "coins": "Coins"
             }
         },
         "game": {
@@ -272,7 +273,10 @@
             "map_code_required": "Enter a map code",
             "no_results": "No results found",
             "filter_applied": "Filter applied for {filterId}: {value}",
-            "filters_cleared": "All filters have been cleared"
+            "filters_cleared": "All filters have been cleared",
+            "enter_username": "Enter a valid username",
+            "username_updated": "Your username has been updated",
+            "confirm_button": "Confirm"
         },
         "filters_toolbar": {
             "creator": "Creator",
@@ -633,7 +637,8 @@
                 "spray": "Spray",
                 "skin": "Skin",
                 "pose": "Pose",
-                "background": "Fond d'écran"
+                "background": "Fond d'écran",
+                "coins": "Pièces"
             }
         },
         "game": {
@@ -716,7 +721,10 @@
             "map_code_required": "Entrez un code de carte",
             "no_results": "Pas de résultats trouvé",
             "filter_applied": "Filtre apppliqué pour {filterId}: {value}",
-            "filters_cleared": "Tout les filtres ont été supprimés"
+            "filters_cleared": "Tout les filtres ont été supprimés",
+            "enter_username": "Entrez un nom d'utilisateur valide",
+            "username_updated": "Votre nom d'utilisateur a été mis à jour",
+            "confirm_button": "Confirmer"
         },
        "filters_toolbar": {
             "creator": "Créateur",
@@ -976,7 +984,8 @@
                 "spray": "Спрей",
                 "skin": "Скин",
                 "pose": "Поз",
-                "background": "Фон"
+                "background": "Фон",
+                "coins": "Монеты"
             }
         },
         "game": {
@@ -1059,7 +1068,10 @@
             "map_code_required": "Введите код карты",
             "no_results": "Результаты не найдены",
             "filter_applied": "Фильтр применен для {filterId}: {value}",
-            "filters_cleared": "Все фильтры очищены"
+            "filters_cleared": "Все фильтры очищены",
+            "enter_username": "Введите действительное имя пользователя",
+            "username_updated": "Ваше имя пользователя обновлено",
+            "confirm_button": "Подтвердить"
         },
         "filters_toolbar": {
             "creator": "Создатель",
@@ -1403,7 +1415,10 @@
             "map_code_required": "输入地图代码",
             "no_results": "未找到结果",
             "filter_applied": "应用于 {filterId} 的筛选器: {value}",
-            "filters_cleared": "所有过滤器均已清除"
+            "filters_cleared": "所有过滤器均已清除",
+            "enter_username": "请输入有效的用户名",
+            "username_updated": "您的用户名已更新",
+            "confirm_button": "确认"
         },
         "filters_toolbar": {
             "creator": "创作者",
@@ -1764,7 +1779,8 @@
                 "spray": "スプレー",
                 "skin": "スキン",
                 "pose": "ポーズ",
-                "background": "背景"
+                "background": "背景",
+                "coins": "金币"
             }
         },
         "game": {
@@ -1847,7 +1863,10 @@
             "map_code_required": "マップコードを入力",
             "no_results": "結果は見つかりませんでした",
             "filter_applied": "適用されるフィルター {filterId}: {value}",
-            "filters_cleared": "すべてのフィルターがクリアされました"
+            "filters_cleared": "すべてのフィルターがクリアされました",
+            "enter_username": "有効なユーザー名を入力してください",
+            "username_updated": "ユーザー名が更新されました",
+            "confirm_button": "確認"
         },
         "filters_toolbar": {
             "creator": "作成者",
@@ -2208,7 +2227,8 @@
                 "spray": "Spray",
                 "skin": "Skin",
                 "pose": "Pose",
-                "background": "Hintergrund"
+                "background": "Hintergrund",
+                "coins": "Münzen"
             }
         },
         "game": {
@@ -2291,7 +2311,10 @@
             "map_code_required": "Map Code eingeben",
             "no_results": "Keine Ergebnisse gefunden",
             "filter_applied": "Filter angewendet für {filterId}: {value}",
-            "filters_cleared": "Alle Filter wurden entfernt"
+            "filters_cleared": "Alle Filter wurden entfernt",
+            "enter_username": "Geben Sie einen gültigen Benutzernamen ein",
+            "username_updated": "Ihr Benutzername wurde aktualisiert",
+            "confirm_button": "Bestätigen"
         },
         "filters_toolbar": {
             "creator": "Ersteller",
