@@ -123,6 +123,24 @@ function initSettingsModal() {
   loadUserNotifications();
   loadOverwatchUsername();
 
+  const tabs = settingsModal.querySelectorAll(".settings-tab");
+  const sections = settingsModal.querySelectorAll(".settings-section");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      sections.forEach(section => (section.style.display = "none"));
+
+      tab.classList.add("active");
+
+      const targetId = tab.getAttribute("data-target");
+      const targetSection = settingsModal.querySelector("#" + targetId);
+      if (targetSection) {
+        targetSection.style.display = "block";
+      }
+    });
+  });
+
   const checkboxes = settingsModal.querySelectorAll('.settings-item input[type="checkbox"]');
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener("change", event => {
@@ -153,6 +171,8 @@ function initSettingsModal() {
 function loadOverwatchUsername() {
   if (!userId || isNaN(userId)) {
     console.error("userId is not defined or invalid");
+    const listContainer = document.getElementById('overwatch-usernames-list');
+    if (listContainer) listContainer.innerHTML = "";
     document.getElementById('overwatch-username').placeholder = "No user ID";
     return;
   }
@@ -163,52 +183,202 @@ function loadOverwatchUsername() {
       return response.json();
     })
     .then(data => {
-      if (data.usernames && data.usernames.length > 0) {
-        document.getElementById('overwatch-username').placeholder = data.usernames[0].username || "No username set";
+      const input = document.getElementById('overwatch-username');
+      const listContainer = document.getElementById('overwatch-usernames-list');
+      listContainer.innerHTML = "";
+
+      const usernames = data.usernames || [];
+
+      if (usernames.length > 0) {
+        const primaryUser = usernames.find(u => u.is_primary);
+        
+        if (primaryUser && primaryUser.username) {
+          input.placeholder = primaryUser.username;
+        } else {
+          input.placeholder = usernames[0].username || t("popup.no_username_set");
+        }
       } else {
-        document.getElementById('overwatch-username').placeholder = "No username set";
+        input.placeholder = t("popup.no_username_set");
+      }
+
+      usernames.forEach(userObj => {
+        const container = document.createElement("div");
+        container.className = "overwatch-username-item";
+        if (userObj.is_primary) container.classList.add("primary");
+
+        const userSpan = document.createElement("span");
+        userSpan.textContent = userObj.username + (userObj.is_primary ? " (Primary)" : "");
+        userSpan.style.cursor = "pointer";
+        userSpan.title = userObj.is_primary ? "" : t("popup.set_primary_username");
+        userSpan.addEventListener("click", () => {
+          if (!userObj.is_primary) {
+            setPrimaryUsername(userObj.username);
+          }
+        });
+        container.appendChild(userSpan);
+
+        const btnDelete = document.createElement("button");
+        btnDelete.className = "btn-delete";
+        btnDelete.title = t("popup.delete_username");
+        btnDelete.innerHTML = "&#10006;";
+        btnDelete.addEventListener("click", () => {
+          deleteUsername(userObj.username);
+        });
+        container.appendChild(btnDelete);
+
+        listContainer.appendChild(container);
+      });
+
+      const inputField = document.getElementById("overwatch-username");
+      const confirmBtn = document.getElementById("confirm-overwatch-username");
+      if (usernames.length >= 3) {
+        inputField.disabled = true;
+        confirmBtn.disabled = true;
+        confirmBtn.title = "Maximum 3 usernames allowed";
+      } else {
+        inputField.disabled = false;
+        confirmBtn.disabled = false;
+        confirmBtn.title = "";
       }
     })
     .catch(error => {
-      console.error('Error loading Overwatch username:', error);
+      console.error('Error loading Overwatch usernames:', error);
       document.getElementById('overwatch-username').placeholder = "Error loading username";
     });
 }
 
-// MAJ name
+// Supp username
+function deleteUsername(usernameToDelete) {
+  if (!userId || !usernameToDelete) return;
+
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+    .then(resp => resp.json())
+    .then(data => {
+      let usernames = data.usernames || [];
+      usernames = usernames.filter(u => u.username !== usernameToDelete);
+
+      if (!usernames.some(u => u.is_primary) && usernames.length > 0) {
+        usernames[0].is_primary = true;
+      }
+      
+      updateUsernames(usernames);
+    })
+    .catch(err => {
+      console.error("Erreur deleting the username :", err);
+      showErrorMessage("Erreur deleting the username");
+    });
+}
+
+//Username principal
+function setPrimaryUsername(usernamePrimary) {
+  if (!userId || !usernamePrimary) return;
+
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+    .then(resp => resp.json())
+    .then(data => {
+      const usernames = data.usernames || [];
+
+      const updatedUsernames = usernames.map(u => ({
+        username: u.username,
+        is_primary: u.username === usernamePrimary
+      }));
+
+      return fetch('api/settings/updateOverwatchUsernames.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          usernames: updatedUsernames
+        })
+      });
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    })
+    .then(data => {
+      if (data.success) {
+        showConfirmationMessage(t("popup.primary_username_updated"));
+        loadOverwatchUsername();
+      } else {
+        const errorText = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+        throw new Error(errorText || "Unknown error");
+      }
+    })
+    .catch(err => {
+      console.error("Erreur changement primary username :", err);
+      showErrorMessage("Erreur maj primary username");
+    });
+}
+
+// MAJ username
+function updateUsernames(usernamesArray) {
+  if (!userId) return;
+
+  fetch('api/settings/updateOverwatchUsernames.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: userId,
+      usernames: usernamesArray
+    })
+  })
+    .then(res => {
+      const contentType = res.headers.get("content-type") || "";
+      if (res.ok && contentType.includes("application/json")) {
+        return res.json();
+      } else {
+        return res.text().then(text => { throw new Error("Invalid JSON response: " + text); });
+      }
+    })
+    .then(data => {
+      if (data.success) {
+        showConfirmationMessage(t("popup.username_updated"));
+        loadOverwatchUsername();
+        document.getElementById('overwatch-username').value = "";
+      } else {
+        console.error("Update error:", data.error || data.message);
+        showErrorMessage("Error while updating the usernames list");
+      }
+    })
+    .catch(err => {
+      console.error("Erreur API update:", err);
+      showErrorMessage("Error while updating the usernames list");
+    });
+}
+
+// Ajouter un nouveau username
 document.getElementById('confirm-overwatch-username').addEventListener('click', () => {
   const newUsername = document.getElementById('overwatch-username').value.trim();
   if (newUsername.length === 0) {
-      showErrorMessage(t("popup.enter_username"));
-      return;
+    showErrorMessage(t("popup.enter_username"));
+    return;
   }
 
-  fetch('api/settings/updateOverwatchUsernames.php', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          user_id: userId,
-          usernames: [{
-              username: newUsername,
-              is_primary: true
-          }]
-      })
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-        showConfirmationMessage(t("popup.username_updated"));
-        document.getElementById('overwatch-username').value = "";
-        loadOverwatchUsername();
-      } else {
-          console.error("Update error:", data.error);
-          showErrorMessage("Error updating username: " + JSON.stringify(data.error));
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+    .then(resp => resp.json())
+    .then(data => {
+      let usernames = data.usernames || [];
+
+      if (usernames.length >= 3) {
+        showErrorMessage("Maximum 3 usernames allowed");
+        return;
       }
-  })
-  .catch(error => {
-      console.error('Error updating Overwatch username:', error);
-      showErrorMessage("An error occurred.");
-  });
+
+      if (usernames.some(u => u.username.toLowerCase() === newUsername.toLowerCase())) {
+        showErrorMessage(t("popup.already_exist_username"));
+        return;
+      }
+
+      usernames.push({
+        username: newUsername,
+        is_primary: usernames.length === 0
+      });
+
+      updateUsernames(usernames);
+    })
+    .catch(err => {
+      console.error("Erreur lors de l'ajout du username:", err);
+      showErrorMessage("Erreur lors de l'ajout du nom.");
+    });
 });

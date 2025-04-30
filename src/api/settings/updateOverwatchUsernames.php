@@ -25,7 +25,7 @@ if (
         'Content-Type: application/json',
         'X-API-KEY: ' . $apiKey
     ];
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

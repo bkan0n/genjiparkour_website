@@ -44,7 +44,9 @@
             "message_on_lootbox": "Message on lootbox gain",
             "ping_on_xp": "Ping on xp gain",
             "ping_on_mastery": "Ping on mastery",
-            "ping_on_community_rank": "Ping on community rank update"
+            "ping_on_community_rank": "Ping on community rank update",
+            "tab_overwatch": "Overwatch usernames",
+            "tab_notifications": "Notifications"
         },
         "leaderboard": {
             "title": "Leaderboard",
@@ -276,6 +278,11 @@
             "filters_cleared": "All filters have been cleared",
             "enter_username": "Enter a valid username",
             "username_updated": "Your username has been updated",
+            "primary_username_updated": "Primary username updated",
+            "already_exist_username": "Username already exist",
+            "set_primary_username": "Set as primary username",
+            "delete_username": "Delete username",
+            "no_username_set": "No username set",
             "confirm_button": "Confirm"
         },
         "filters_toolbar": {
@@ -492,7 +499,9 @@
             "message_on_lootbox": "Message lors du gain d'une lootbox",
             "ping_on_xp": "Ping lors du gain d'xp",
             "ping_on_mastery": "Ping lors de la maîtrise",
-            "ping_on_community_rank": "Ping lors du gain d'xp de rang communautaire"
+            "ping_on_community_rank": "Ping lors du gain d'xp de rang communautaire",
+            "tab_overwatch": "Noms Overwatch",
+            "tab_notifications": "Notifications"
         },
         "leaderboard": {
             "title": "Classement",
@@ -724,6 +733,11 @@
             "filters_cleared": "Tout les filtres ont été supprimés",
             "enter_username": "Entrez un nom d'utilisateur valide",
             "username_updated": "Votre nom d'utilisateur a été mis à jour",
+            "primary_username_updated": "Nom d'utilisateur principal mis à jour",
+            "already_exist_username": "Le nom d'utilisateur existe déjà",
+            "set_primary_username": "Définir comme nom principal",
+            "delete_username": "Supprimer le nom d'utilisateur",
+            "no_username_set": "Aucun nom d'utilisateur défini",
             "confirm_button": "Confirmer"
         },
        "filters_toolbar": {
@@ -839,7 +853,9 @@
             "message_on_lootbox": "Сообщение о получении лутбокса",
             "ping_on_xp": "Уведомление когда получен опыт",
             "ping_on_mastery": "Уведомление когда получен значок мастерства",
-            "ping_on_community_rank": "Уведомление когда повышен ранг"
+            "ping_on_community_rank": "Уведомление когда повышен ранг",
+            "tab_overwatch": "Имена в Overwatch",
+            "tab_notifications": "Уведомления"
         },
         "leaderboard": {
             "title": "Таблица лидеров",
@@ -1071,6 +1087,11 @@
             "filters_cleared": "Все фильтры очищены",
             "enter_username": "Введите действительное имя пользователя",
             "username_updated": "Ваше имя пользователя обновлено",
+            "primary_username_updated": "Основное имя пользователя обновлено",
+            "already_exist_username": "Имя пользователя уже существует",
+            "set_primary_username": "Установить как основное имя пользователя",
+            "delete_username": "Удалить имя пользователя",
+            "no_username_set": "Имя пользователя не задано",
             "confirm_button": "Подтвердить"
         },
         "filters_toolbar": {
@@ -1187,7 +1208,9 @@
             "message_on_lootbox": "新战利品箱提醒",
             "ping_on_xp": "经验值提醒",
             "ping_on_mastery": "精通等级提醒",
-            "ping_on_community_rank": "社区排名更新提醒"
+            "ping_on_community_rank": "社区排名更新提醒",
+            "tab_overwatch": "守望先锋用户名",
+            "tab_notifications": "通知"
         },
         "leaderboard": {
             "title": "排行榜",
@@ -1418,6 +1441,11 @@
             "filters_cleared": "所有过滤器均已清除",
             "enter_username": "请输入有效的用户名",
             "username_updated": "您的用户名已更新",
+            "primary_username_updated": "主用户名已更新",
+            "already_exist_username": "用户名已存在",
+            "set_primary_username": "设为主用户名",
+            "delete_username": "删除用户名",
+            "no_username_set": "未设置用户名",
             "confirm_button": "确认"
         },
         "filters_toolbar": {
@@ -1634,7 +1662,9 @@
             "message_on_lootbox": "ルートボックス獲得に関するメッセージ",
             "ping_on_xp": "経験値に関する通知",
             "ping_on_mastery": "マスタリーの習得に関する通知",
-            "ping_on_community_rank": "コミュニティランクの更新に関する通知"
+            "ping_on_community_rank": "コミュニティランクの更新に関する通知",
+            "tab_overwatch": "オーバーウォッチのユーザー名",
+            "tab_notifications": "通知"
         },
         "leaderboard": {
             "title": "リーダーボード",
@@ -1866,6 +1896,11 @@
             "filters_cleared": "すべてのフィルターがクリアされました",
             "enter_username": "有効なユーザー名を入力してください",
             "username_updated": "ユーザー名が更新されました",
+            "primary_username_updated": "プライマリユーザー名が更新されました",
+            "already_exist_username": "ユーザー名は既に存在します",
+            "set_primary_username": "プライマリユーザー名として設定",
+            "delete_username": "ユーザー名を削除",
+            "no_username_set": "ユーザー名が設定されていません",
             "confirm_button": "確認"
         },
         "filters_toolbar": {
@@ -2082,7 +2117,9 @@
             "message_on_lootbox": "Nachricht bei Lootboxinhalt",
             "ping_on_xp": "Benachrichtigung bei XP Gewinn ",
             "ping_on_mastery": "Benachrichtigung bei Meisterung ",
-            "ping_on_community_rank": "Benachrichtigung bei Community Rang Update"
+            "ping_on_community_rank": "Benachrichtigung bei Community Rang Update",
+            "tab_overwatch": "Overwatch-Benutzernamen",
+            "tab_notifications": "Benachrichtigungen"
         },
         "leaderboard": {
             "title": "Rangliste",
@@ -2314,6 +2351,11 @@
             "filters_cleared": "Alle Filter wurden entfernt",
             "enter_username": "Geben Sie einen gültigen Benutzernamen ein",
             "username_updated": "Ihr Benutzername wurde aktualisiert",
+            "primary_username_updated": "Primärer Benutzername aktualisiert",
+            "already_exist_username": "Benutzername existiert bereits",
+            "set_primary_username": "Als primären Benutzernamen festlegen",
+            "delete_username": "Benutzernamen löschen",
+            "no_username_set": "Kein Benutzername festgelegt",
             "confirm_button": "Bestätigen"
         },
         "filters_toolbar": {
