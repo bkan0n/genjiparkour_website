@@ -1,0 +1,248 @@
+.settings-modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 7rem;
+    z-index: 1000;
+}
+
+/*Section tabs*/
+
+.settings-tabs {
+    margin-top:1em;
+    margin-bottom: 1em;
+    display: block;
+    gap: 1em;
+}
+
+.settings-tab {
+    padding: 0.5em 1em;
+    border: var(--white-buttons-border);
+    background: var(--white-buttons-bg);
+    color: var(--white-buttons-color);
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.settings-tab.active {
+    background: #ffffff;
+    opacity: 1;
+}
+
+.settings-tab:hover:not(.active) {
+    background: #a0a0a0;
+}
+
+.settings-container {
+    position: relative;
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(54, 54, 54, 0.2);
+    color: white;
+    text-align: center;
+    width: 50%;
+    max-width: 500px;
+    min-width: 300px;
+}
+
+.settings-container h2 {
+    font-size: 2rem;
+}
+
+.settings-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.settings-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #333;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Switch Styles */
+input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.settings-toggle-label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 60px;
+    height: 30px;
+    background: grey;
+    display: block;
+    border-radius: 15px;
+    position: relative;
+}
+
+.settings-toggle-label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+input:checked + .settings-toggle-label {
+    background: #bada55;
+}
+
+input:checked + .settings-toggle-label:after {
+    left: calc(100% - 3px);
+    transform: translateX(-100%);
+}
+
+.settings-toggle-label:active:after {
+    width: 30px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.3s ease;
+    z-index: 1001;
+}
+
+.close-modal:hover {
+    color: #d31c1c;
+    transform: scale(1.05);
+}
+
+.close-modal i {
+    font-size: inherit;
+}
+
+/* Usernames section*/
+.settings-overwatch {
+    margin-top: 15px;
+}
+
+#overwatch-username {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #444;
+    color: white;
+    font-size: 1rem;
+}
+
+#confirm-overwatch-username {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#confirm-overwatch-username:hover {
+    background-color: #45a049;
+}
+
+#overwatch-usernames-wrapper {
+    display: flex;
+    max-width: 300px;
+    margin: 1em auto 0 auto;
+    align-items: flex-start;
+    gap: 8px;
+}
+  
+#overwatch-usernames-list {
+    max-width: 300px;
+    margin: 1em auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+  
+#delete-buttons-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.overwatch-username-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: transparent;
+    font-weight: normal;
+}
+
+.overwatch-username-item.primary {
+    font-weight: bold;
+}
+
+.overwatch-username-item .btn-delete {
+    color: red;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.2em;
+    line-height: 1;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .settings-container {
+        width: 80%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-container {
+        width: 90%;
+        padding: 10px;
+    }
+    .settings-item {
+        flex-direction: column;
+        gap: 10px;
+        text-align: left;
+    }
+}

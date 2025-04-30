@@ -1,9 +1,10 @@
+let selectedUserId = null;
+
 document.addEventListener("DOMContentLoaded", async function() {
     await initRankCard();
 });
 
 async function initRankCard() {
-    let selectedUserId = null;
     let userIdFromUrl = getQueryParam("user_id");
     const rankCardContent = document.getElementById("rankCardContent");
     const badgeMasteryContent = document.getElementById("badgeMasteryContent");

@@ -1,4 +1,3 @@
-const currentLang = document.documentElement.lang || "en";
 var isRunning = false;
 var openSound = new Audio('assets/sounds/open-box.ogg');
 var volume = 0.25;

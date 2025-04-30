@@ -21,7 +21,8 @@
             "rank_card": "Rank Card",
             "dashboard": "Dashboard",
             "contributors": "Translation contributors",
-            "website_creators": "Website creators"
+            "website_creators": "Website creators",
+            "settings": "Settings"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -36,6 +37,16 @@
             "event2Desc": "Challenge yourself with our latest set of thrilling maps",
             "event3": "Top Scorers of 2024",
             "event3Desc": "See the latest leaderboard and scores from the community"
+        },
+        "settings": {
+            "message_on_verification": "Message on verification",
+            "message_on_skill_update": "Message on skill role update",
+            "message_on_lootbox": "Message on lootbox gain",
+            "ping_on_xp": "Ping on xp gain",
+            "ping_on_mastery": "Ping on mastery",
+            "ping_on_community_rank": "Ping on community rank update",
+            "tab_overwatch": "Overwatch usernames",
+            "tab_notifications": "Notifications"
         },
         "leaderboard": {
             "title": "Leaderboard",
@@ -180,7 +191,8 @@
                 "spray": "Spray",
                 "skin": "Skin",
                 "pose": "Pose",
-                "background": "Background"
+                "background": "Background",
+                "coins": "Coins"
             }
         },
         "game": {
@@ -263,7 +275,15 @@
             "map_code_required": "Enter a map code",
             "no_results": "No results found",
             "filter_applied": "Filter applied for {filterId}: {value}",
-            "filters_cleared": "All filters have been cleared"
+            "filters_cleared": "All filters have been cleared",
+            "enter_username": "Enter a valid username",
+            "username_updated": "Your username has been updated",
+            "primary_username_updated": "Primary username updated",
+            "already_exist_username": "Username already exist",
+            "set_primary_username": "Set as primary username",
+            "delete_username": "Delete username",
+            "no_username_set": "No username set",
+            "confirm_button": "Confirm"
         },
         "filters_toolbar": {
             "creator": "Creator",
@@ -456,7 +476,8 @@
             "rank_card": "Carte de rang",
             "dashboard": "Tableau de bord",
             "contributors": "Contributeurs aux traductions",
-            "website_creators": "Créateurs du site"
+            "website_creators": "Créateurs du site",
+            "settings": "Paramètres"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -471,6 +492,16 @@
             "event2Desc": "Défiez-vous avec notre dernière série de cartes passionnantes",
             "event3": "Meilleurs Scores de 2024",
             "event3Desc": "Consultez le dernier classement et les scores de la communauté"
+        },
+        "settings": {
+            "message_on_verification": "Message lors de la vérification",
+            "message_on_skill_update": "Message lors du changement de rang",
+            "message_on_lootbox": "Message lors du gain d'une lootbox",
+            "ping_on_xp": "Ping lors du gain d'xp",
+            "ping_on_mastery": "Ping lors de la maîtrise",
+            "ping_on_community_rank": "Ping lors du gain d'xp de rang communautaire",
+            "tab_overwatch": "Noms Overwatch",
+            "tab_notifications": "Notifications"
         },
         "leaderboard": {
             "title": "Classement",
@@ -615,7 +646,8 @@
                 "spray": "Spray",
                 "skin": "Skin",
                 "pose": "Pose",
-                "background": "Fond d'écran"
+                "background": "Fond d'écran",
+                "coins": "Pièces"
             }
         },
         "game": {
@@ -698,7 +730,15 @@
             "map_code_required": "Entrez un code de carte",
             "no_results": "Pas de résultats trouvé",
             "filter_applied": "Filtre apppliqué pour {filterId}: {value}",
-            "filters_cleared": "Tout les filtres ont été supprimés"
+            "filters_cleared": "Tout les filtres ont été supprimés",
+            "enter_username": "Entrez un nom d'utilisateur valide",
+            "username_updated": "Votre nom d'utilisateur a été mis à jour",
+            "primary_username_updated": "Nom d'utilisateur principal mis à jour",
+            "already_exist_username": "Le nom d'utilisateur existe déjà",
+            "set_primary_username": "Définir comme nom principal",
+            "delete_username": "Supprimer le nom d'utilisateur",
+            "no_username_set": "Aucun nom d'utilisateur défini",
+            "confirm_button": "Confirmer"
         },
        "filters_toolbar": {
             "creator": "Créateur",
@@ -790,7 +830,8 @@
             "rank_card": "Личная карта",
             "dashboard": "Панель управления",
             "contributors": "Участники перевода",
-            "website_creators": "Создатели сайта"
+            "website_creators": "Создатели сайта",
+            "settings": "Настройки"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -805,6 +846,16 @@
             "event2Desc": "Испытай себя последним выпуском самых захватывающих карт",
             "event3": "Наилучшие результаты 2024",
             "event3Desc": "Посмотрите последнюю таблицу лидеров и результаты сообщества"
+        },
+        "settings": {
+            "message_on_verification": "Сообщение об верификации",
+            "message_on_skill_update": "Сообщение о повышении роли",
+            "message_on_lootbox": "Сообщение о получении лутбокса",
+            "ping_on_xp": "Уведомление когда получен опыт",
+            "ping_on_mastery": "Уведомление когда получен значок мастерства",
+            "ping_on_community_rank": "Уведомление когда повышен ранг",
+            "tab_overwatch": "Имена в Overwatch",
+            "tab_notifications": "Уведомления"
         },
         "leaderboard": {
             "title": "Таблица лидеров",
@@ -949,7 +1000,8 @@
                 "spray": "Спрей",
                 "skin": "Скин",
                 "pose": "Поз",
-                "background": "Фон"
+                "background": "Фон",
+                "coins": "Монеты"
             }
         },
         "game": {
@@ -1032,7 +1084,15 @@
             "map_code_required": "Введите код карты",
             "no_results": "Результаты не найдены",
             "filter_applied": "Фильтр применен для {filterId}: {value}",
-            "filters_cleared": "Все фильтры очищены"
+            "filters_cleared": "Все фильтры очищены",
+            "enter_username": "Введите действительное имя пользователя",
+            "username_updated": "Ваше имя пользователя обновлено",
+            "primary_username_updated": "Основное имя пользователя обновлено",
+            "already_exist_username": "Имя пользователя уже существует",
+            "set_primary_username": "Установить как основное имя пользователя",
+            "delete_username": "Удалить имя пользователя",
+            "no_username_set": "Имя пользователя не задано",
+            "confirm_button": "Подтвердить"
         },
         "filters_toolbar": {
             "creator": "Создатель",
@@ -1125,7 +1185,8 @@
             "rank_card": "称号图标",
             "dashboard": "仪表板",
             "contributors": "翻译贡献者",
-            "website_creators": "网站创建者"
+            "website_creators": "网站创建者",
+            "settings": "设置"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1140,6 +1201,16 @@
             "event2Desc": "技术与速度的终极考验",
             "event3": "2024得分榜",
             "event3Desc": "查看社区最新的排行榜"
+        },
+        "settings": {
+            "message_on_verification": "验证消息",
+            "message_on_skill_update": "技能角色提醒",
+            "message_on_lootbox": "新战利品箱提醒",
+            "ping_on_xp": "经验值提醒",
+            "ping_on_mastery": "精通等级提醒",
+            "ping_on_community_rank": "社区排名更新提醒",
+            "tab_overwatch": "守望先锋用户名",
+            "tab_notifications": "通知"
         },
         "leaderboard": {
             "title": "排行榜",
@@ -1367,7 +1438,15 @@
             "map_code_required": "输入地图代码",
             "no_results": "未找到结果",
             "filter_applied": "应用于 {filterId} 的筛选器: {value}",
-            "filters_cleared": "所有过滤器均已清除"
+            "filters_cleared": "所有过滤器均已清除",
+            "enter_username": "请输入有效的用户名",
+            "username_updated": "您的用户名已更新",
+            "primary_username_updated": "主用户名已更新",
+            "already_exist_username": "用户名已存在",
+            "set_primary_username": "设为主用户名",
+            "delete_username": "删除用户名",
+            "no_username_set": "未设置用户名",
+            "confirm_button": "确认"
         },
         "filters_toolbar": {
             "creator": "创作者",
@@ -1560,7 +1639,8 @@
             "rank_card": "ランクカード",
             "dashboard": "ダッシュボード",
             "contributors": "翻訳協力者",
-            "website_creators": "ウェブサイトの作成者"
+            "website_creators": "ウェブサイトの作成者",
+            "settings": "設定"
         },
         "hero": {
             "packOpening": "パックを開封する",
@@ -1575,6 +1655,16 @@
             "event2Desc": "スリル満点の最新マップに挑戦しよう！",
             "event3": "2024年のトップスコアラー",
             "event3Desc": "コミュニティーの最新リーダーボードとスコアを確認する"
+        },
+        "settings": {
+            "message_on_verification": "検証に関するメッセージ",
+            "message_on_skill_update": "スキルロールの更新に関するメッセージ",
+            "message_on_lootbox": "ルートボックス獲得に関するメッセージ",
+            "ping_on_xp": "経験値に関する通知",
+            "ping_on_mastery": "マスタリーの習得に関する通知",
+            "ping_on_community_rank": "コミュニティランクの更新に関する通知",
+            "tab_overwatch": "オーバーウォッチのユーザー名",
+            "tab_notifications": "通知"
         },
         "leaderboard": {
             "title": "リーダーボード",
@@ -1719,7 +1809,8 @@
                 "spray": "スプレー",
                 "skin": "スキン",
                 "pose": "ポーズ",
-                "background": "背景"
+                "background": "背景",
+                "coins": "金币"
             }
         },
         "game": {
@@ -1802,7 +1893,15 @@
             "map_code_required": "マップコードを入力",
             "no_results": "結果は見つかりませんでした",
             "filter_applied": "適用されるフィルター {filterId}: {value}",
-            "filters_cleared": "すべてのフィルターがクリアされました"
+            "filters_cleared": "すべてのフィルターがクリアされました",
+            "enter_username": "有効なユーザー名を入力してください",
+            "username_updated": "ユーザー名が更新されました",
+            "primary_username_updated": "プライマリユーザー名が更新されました",
+            "already_exist_username": "ユーザー名は既に存在します",
+            "set_primary_username": "プライマリユーザー名として設定",
+            "delete_username": "ユーザー名を削除",
+            "no_username_set": "ユーザー名が設定されていません",
+            "confirm_button": "確認"
         },
         "filters_toolbar": {
             "creator": "作成者",
@@ -1995,7 +2094,8 @@
             "rank_card": "Rang Karte",
             "dashboard": "Armaturenbrett",
             "contributors": "Übersetzungsbeitragende",
-            "website_creators": "Webseiten-Ersteller"
+            "website_creators": "Webseiten-Ersteller",
+            "settings": "Einstellungen"
         },
         "hero": {
             "packOpening": "Pack öffnen",
@@ -2010,6 +2110,16 @@
             "event2Desc": "Fordere dich heraus mit brandneuen spannenden Maps",
             "event3": "Die top Spieler von 2024",
             "event3Desc": "Sehen Sie sich die neuesten Bestenlisten und  Punktzahlen der Community an"
+        },
+        "settings": {
+            "message_on_verification": "Nachricht bei Verifikation",
+            "message_on_skill_update": "Nachricht bei Rangaufstieg",
+            "message_on_lootbox": "Nachricht bei Lootboxinhalt",
+            "ping_on_xp": "Benachrichtigung bei XP Gewinn ",
+            "ping_on_mastery": "Benachrichtigung bei Meisterung ",
+            "ping_on_community_rank": "Benachrichtigung bei Community Rang Update",
+            "tab_overwatch": "Overwatch-Benutzernamen",
+            "tab_notifications": "Benachrichtigungen"
         },
         "leaderboard": {
             "title": "Rangliste",
@@ -2154,7 +2264,8 @@
                 "spray": "Spray",
                 "skin": "Skin",
                 "pose": "Pose",
-                "background": "Hintergrund"
+                "background": "Hintergrund",
+                "coins": "Münzen"
             }
         },
         "game": {
@@ -2237,7 +2348,15 @@
             "map_code_required": "Map Code eingeben",
             "no_results": "Keine Ergebnisse gefunden",
             "filter_applied": "Filter angewendet für {filterId}: {value}",
-            "filters_cleared": "Alle Filter wurden entfernt"
+            "filters_cleared": "Alle Filter wurden entfernt",
+            "enter_username": "Geben Sie einen gültigen Benutzernamen ein",
+            "username_updated": "Ihr Benutzername wurde aktualisiert",
+            "primary_username_updated": "Primärer Benutzername aktualisiert",
+            "already_exist_username": "Benutzername existiert bereits",
+            "set_primary_username": "Als primären Benutzernamen festlegen",
+            "delete_username": "Benutzernamen löschen",
+            "no_username_set": "Kein Benutzername festgelegt",
+            "confirm_button": "Bestätigen"
         },
         "filters_toolbar": {
             "creator": "Ersteller",

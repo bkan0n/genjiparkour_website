@@ -1,3 +1,7 @@
+if (typeof window.currentLang === "undefined") {
+    window.currentLang = document.documentElement.lang || "en";
+}
+
 //Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
@@ -160,6 +164,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    if (currentLang === "de") {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            const parentLi = menu.closest('li');
+            if (!parentLi || !parentLi.classList.contains('lang-dropdown-nav')) {
+                menu.style.width = "150px";
+            }
+        });
+    }
 });
 
 //Search redirect
@@ -170,7 +183,7 @@ function getQueryParam(param) {
 
 function activateSectionFromURL() {
     const section = getQueryParam('section');
-    if (section) {
+    if (section && typeof selectSection === 'function') {
         selectSection(section);
 
         const activeButton = document.getElementById(section + "Btn");
@@ -378,6 +391,49 @@ function loadCSS(href) {
     document.head.appendChild(link);
     //console.log(`CSS chargé : ${href}`);
 }
+
+//Settings
+document.addEventListener("DOMContentLoaded", function () {
+    const settingsBtn = document.getElementById("user-settings");
+    const settingsModal = document.getElementById("settingsModal");
+
+    if (!settingsBtn || !settingsModal) {
+        console.warn("Bouton ou modal #settingsModal manquant");
+        return;
+    }
+
+    settingsBtn.addEventListener("click", async () => {
+        try {
+            loadCSS("styles/notifications.css");
+
+            const response = await fetch('modal/notifications.php');
+            const html = await response.text();
+
+            settingsModal.innerHTML = html;
+
+            settingsModal.style.display = "flex";
+            document.body.classList.add("modal-active");
+
+            await loadScript("js/notifications.js");
+
+            if (typeof initSettingsModal === "function") {
+                initSettingsModal();
+            } else {
+                console.warn("initSettingsModal non défini dans notifications.js");
+            }
+
+        } catch (error) {
+            console.error("Erreur lors du chargement du modal :", error);
+        }
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === settingsModal) {
+            settingsModal.style.display = "none";
+            document.body.classList.remove("modal-active");
+        }
+    });
+});
 
 //Loading bar
 function showLoadingBar() {
