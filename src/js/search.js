@@ -377,7 +377,7 @@ function initializeToolbarButtons() {
                 case "creator":
                     input = getOrCreateInput("mapCreatorInput", t("filters_toolbar.enter_creator"), button);
                     input.addEventListener("input", (event) =>
-                        showSuggestions(event, "getUsersAutoComplete.php", "creatorSuggestionsContainer", "name")
+                        showSuggestions(event, "getUsersAutoComplete.php", "creatorSuggestionsContainer", "creator")
                     );
                     break;
 
@@ -390,7 +390,7 @@ function initializeToolbarButtons() {
                 case "user":
                     input = getOrCreateInput("userNicknameInput", t("filters_toolbar.enter_nickname"), button);
                     input.addEventListener("input", (event) =>
-                        showSuggestions(event, "getUsersAutoComplete.php", "nicknameSuggestionsContainer", "name")
+                        showSuggestions(event, "getUsersAutoComplete.php", "nicknameSuggestionsContainer", "user")
                     );
                     break;
 
@@ -1003,21 +1003,78 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
                 }
 
                 data.forEach(item => {
-                    if (item[propertyName]) {
-                        const rawValue = item[propertyName];
-                        const translatedValue = item.translated_map_name || rawValue;
-
+                    if (propertyName === "creator" && item.name && item.user_id) {
+                        const displayName = item.name;
+                        const rawValue = item.user_id;
+                
                         const suggestion = document.createElement("div");
-                        suggestion.textContent = translatedValue;
+                        suggestion.textContent = displayName;
                         suggestion.classList.add("suggestion-item");
-
                         suggestion.setAttribute("data-raw-value", rawValue);
+                
+                        suggestion.addEventListener("click", () => {
+                            event.stopPropagation();
+                
+                            input.setAttribute("data-selected-raw-value", rawValue);
+                            input.value = displayName;
+                
+                            //console.log(`Filtre appliqué - clé: creator, valeur: ${rawValue}`);
+                
+                            showConfirmationMessage(
+                              t("popup.filter_applied", { filterId: "creator", value: displayName })
+                            );
+                
+                            suggestionsContainer.style.display = "none";
+                
+                            updateActiveFilters();
+                        });
+                
+                        suggestionsContainer.appendChild(suggestion);
+                        return;
+                    }
 
+                    if (propertyName === "user" && item.name && item.user_id) {
+                        const displayName = item.name;
+                        const rawValue = item.user_id;
+                    
+                        const suggestion = document.createElement("div");
+                        suggestion.textContent = displayName;
+                        suggestion.classList.add("suggestion-item");
+                        suggestion.setAttribute("data-raw-value", rawValue);
+                    
                         suggestion.addEventListener("click", () => {
                             event.stopPropagation();
                             input.setAttribute("data-selected-raw-value", rawValue);
-                            input.value = translatedValue;
+                            input.value = displayName;
+                    
+                            showConfirmationMessage(
+                                t("popup.filter_applied", { filterId: "user", value: displayName })
+                            );
+                    
+                            suggestionsContainer.style.display = "none";
+                    
+                            updateActiveFilters();
+                        });
+                    
+                        suggestionsContainer.appendChild(suggestion);
+                        return;
+                    }
 
+                    if (item[propertyName]) {
+                        const rawValue = item[propertyName];
+                        const displayName = item.translated_map_name || rawValue;
+                
+                        const suggestion = document.createElement("div");
+                        suggestion.textContent = displayName;
+                        suggestion.classList.add("suggestion-item");
+                        suggestion.setAttribute("data-raw-value", rawValue);
+                
+                        suggestion.addEventListener("click", () => {
+                            event.stopPropagation();
+                
+                            input.setAttribute("data-selected-raw-value", rawValue);
+                            input.value = displayName;
+                
                             let labelId = "";
                             switch (propertyName) {
                                 case "map_code":
@@ -1032,18 +1089,18 @@ function showSuggestions(event, apiEndpoint, containerId, propertyName) {
                                 default:
                                     labelId = propertyName;
                             }
-
+                
                             const translatedMessage = t("popup.filter_applied", {
                                 filterId: labelId,
-                                value: translatedValue
+                                value: displayName
                             });
-
+                
                             showConfirmationMessage(translatedMessage);
                             suggestionsContainer.style.display = "none";
-
+                
                             updateActiveFilters();
                         });
-
+                
                         suggestionsContainer.appendChild(suggestion);
                     }
                 });
