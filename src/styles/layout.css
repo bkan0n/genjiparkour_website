@@ -1968,7 +1968,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   font-size: 14px;
-  z-index: 1000;
+  z-index: 9900;
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }

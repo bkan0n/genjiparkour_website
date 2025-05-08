@@ -11,7 +11,6 @@ const CATEGORY_OPTIONS = [
 ];
 
 const DIFFICULTY_OPTIONS = [
-    { text: () => t("filters_toolbar.beginner"), value: "Beginner", raw:"Beginner" },
     { text: () => t("filters_toolbar.easy"), value: "Easy", raw:"Easy" },
     { text: () => t("filters_toolbar.medium"), value: "Medium", raw:"Medium" },
     { text: () => t("filters_toolbar.hard"), value: "Hard", raw:"Hard" },
@@ -26,8 +25,8 @@ async function loadTranslations() {
         const response = await fetch("translations/translations.json");
         const data = await response.json();
         const currentLangData = data[currentLang] || {};
-        const { thead = {}, pagination = {}, popup = {}, filters_toolbar = {}, chart = {}, mechanics = {}, restrictions = {}, map_name = {}, map_type = {} } = currentLangData;
-        translations = { thead, pagination, popup, filters_toolbar, chart, mechanics, restrictions, map_name, map_type };
+        const { pagination = {}, popup = {}, mechanics = {}, restrictions = {}, map_name = {}, map_type = {}, submit = {}, thead = {}, filters_toolbar = {}} = currentLangData;
+        translations = { pagination, popup, mechanics, restrictions, map_name, map_type, submit, thead, filters_toolbar };
     } catch (error) {
         console.error("Erreur lors du chargement des traductions :", error);
     }
@@ -72,7 +71,7 @@ function populateRadioDropdown(dropdownId, options, groupName, placeholder) {
         options.forEach(opt => {
             const displayText = typeof opt.text === 'function' ? opt.text() : opt.text;
             const label = document.createElement('label');
-            label.innerHTML = `<input type="radio" name="${groupName}" value="${opt.value}" required> ${displayText}`;
+            label.innerHTML = `<input type="radio" name="${groupName}" value="${opt.value}"> ${displayText}`;
             list.appendChild(label);
         });
     }
@@ -158,10 +157,30 @@ function setupCustomMultiselect(id, placeholderText = "Select...") {
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
         document.querySelectorAll('.custom-multiselect').forEach(drop=>{
-            if(drop!==container) drop.classList.remove('open');
+            if(drop!==container) {
+                drop.classList.remove('open');
+                const list = drop.querySelector('.custom-multiselect-list');
+                if(list) list.classList.remove('show');
+            }
         });
+        const wasOpen = container.classList.contains('open');
         container.classList.toggle('open');
+        if (list) {
+            if (!wasOpen) {
+                list.classList.add('show');
+            } else {
+                list.classList.remove('show');
+            }
+        }
     });
+
+    document.addEventListener('click', function(e) {
+        if (!container.contains(e.target)) {
+            container.classList.remove('open');
+            if (list) list.classList.remove('show');
+        }
+    });
+
     function updateButton() {
         if (radios.length) {
             let selected = Array.from(radios).find(r=>r.checked);
@@ -196,27 +215,77 @@ function setupCustomMultiselect(id, placeholderText = "Select...") {
 
 // ----------- FORM HANDLERS -----------
 function setupForms() {
+    // Submit record
     document.getElementById('submitRecordForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = e.target;
-        setTimeout(() => { form.reset(); }, 800);
+        if (!validateSubmitRecordForm(e)) {
+            e.preventDefault();
+        } else {
+            e.preventDefault();
+            showConfirmationMessage(t('submit.submit_record_confirm'));
+            setTimeout(() => { resetForms(e.target); }, 1200);
+        }
     });
-    document.querySelectorAll('.cancel-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const form = btn.closest('form');
-            if (form) { form.reset(); }
-        });
-    });
+
+    // Submit playtest
     document.getElementById('playtestForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const form = e.target;
-        setTimeout(() => { form.reset(); }, 800);
+        resetForms(e.target);
     });
-    document.getElementById('submitMapForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = e.target;
-        setTimeout(() => { form.reset(); }, 1200);
+
+    // Submit map
+    document.getElementById("submitMapForm").addEventListener("submit", function(e) {
+        if (!validateSubmitMapForm(e)) {
+            e.preventDefault();
+        } else {
+            e.preventDefault();
+            showConfirmationMessage(t('submit.submit_map_confirm'));
+            setTimeout(() => { resetForms(e.target); }, 1200);
+        }
     });
+
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            let formId = btn.getAttribute('form');
+            if (!formId) return;
+            let form = document.getElementById(formId);
+            if (!form) return;
+            resetForms(form);
+    
+            form.querySelectorAll('.custom-multiselect').forEach(dropdown => {
+                dropdown.classList.remove('open');
+                let list = dropdown.querySelector('.custom-multiselect-list');
+                if (list) list.classList.remove('show');
+            });
+        });
+    });
+}
+
+function resetForms(form) {
+    form.reset();
+
+    form.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => {
+        el.checked = false;
+    });
+
+    form.querySelectorAll('.custom-multiselect').forEach(dropdown => {
+        const btn = dropdown.querySelector('.custom-multiselect-btn');
+        if (!btn) return;
+        let placeholder = btn.getAttribute('data-placeholder') || btn.getAttribute('placeholder') || "Select...";
+        btn.textContent = placeholder;
+    });
+
+    const dropzone = document.getElementById('screenshotDrop');
+    if (dropzone) {
+        dropzone.innerHTML = `
+            <input type="file" id="screenshotInput" name="screenshot" accept="image/*" style="display:none;">
+            <div id="screenshotPlaceholder" class="screenshot-placeholder">
+                <span>${t("submit.drag_and_drop")}</span>
+            </div>
+        `;
+        dragAndDrop();
+    }
+    window.screenshotFile = null;
 }
 
 // ----------- AUTOCOMPLETE (MetaCreator/Map) -----------
@@ -238,11 +307,14 @@ function renderSuggestionDisplay(item, config) {
 function setupAutocompleteInline(input, suggestionsDropdown, config) {
     let debounceTimeout;
 
+    input.__autocompleteSuggestions = [];
+
     input.addEventListener("input", function() {
         const filterValue = input.value.trim();
         clearTimeout(debounceTimeout);
         if (filterValue.length < 2) {
             suggestionsDropdown.style.display = "none";
+            input.__autocompleteSuggestions = [];
             return;
         }
         debounceTimeout = setTimeout(() => {
@@ -251,6 +323,14 @@ function setupAutocompleteInline(input, suggestionsDropdown, config) {
                 .then(resp => resp.ok ? resp.json() : [])
                 .then(data => {
                     suggestionsDropdown.innerHTML = "";
+                    if (Array.isArray(data) && data.length > 0) {
+                        input.__autocompleteSuggestions = data.map(item => {
+                            const {display, raw} = renderSuggestionDisplay(item, config);
+                            return { display, raw };
+                        });
+                    } else {
+                        input.__autocompleteSuggestions = [];
+                    }
                     if (!Array.isArray(data) || data.length === 0) {
                         suggestionsDropdown.style.display = "none";
                         return;
@@ -275,6 +355,7 @@ function setupAutocompleteInline(input, suggestionsDropdown, config) {
                 })
                 .catch(() => {
                     suggestionsDropdown.style.display = "none";
+                    input.__autocompleteSuggestions = [];
                 });
         }, 200);
     });
@@ -366,14 +447,28 @@ function editInline(field) {
 
     function validateEdit() {
         let newValue = input.value.trim();
+    
+        if (field === 'metaMap') {
+            const sugg = input.__autocompleteSuggestions || [];
+            const match = sugg.some(item =>
+                item.display?.toLowerCase().trim() === newValue.toLowerCase().trim() ||
+                item.raw?.toLowerCase().trim() === newValue.toLowerCase().trim()
+            );
+            if (!match) {
+                showErrorMessage(t("popup.no_results"));
+                input.focus();
+                return;
+            }
+        }
         if (field === 'optGuide' && newValue === '') newValue = "N/A";
-        if (field === 'optDescription' && newValue === '') newValue = "No description yet.";
+        if (field === 'optDescription' && newValue === '') newValue = t('submit.no_description');
         if (field === 'metaCheckpoints') {
             if (newValue === "" || isNaN(newValue) || newValue < 0) return input.focus();
         }
         label.textContent = newValue;
         closeEdit();
     }
+
     function cancelEdit() { closeEdit(); }
     function closeEdit() {
         label.style.display = "";
@@ -635,47 +730,111 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSecondaryCreators();
 });
 
-// -------- FERMETURE DROPDOWN GLOBAL -----------
-function hideOnClickOutside() {
-    document.addEventListener('click', function(e) {
-        document.querySelectorAll('.custom-multiselect.open').forEach(dropdown => {
-            if (!dropdown.contains(e.target)) dropdown.classList.remove('open');
-        });
-    });
+function validateSubmitMapForm(event) {
+    const form = document.getElementById("submitMapForm");
+    let valid = true;
+
+    const mainCreator = document.getElementById("metaCreatorMain");
+    if (!mainCreator || !mainCreator.getAttribute("data-raw-id")) {
+        showErrorMessage(t('submit.creator'));
+        valid = false;
+        return false;
+    }
+
+    const mapLabel = document.getElementById("metaMap");
+    if (!mapLabel || !mapLabel.textContent.trim() || mapLabel.textContent.trim() === "N/A") {
+        showErrorMessage(t('submit.map_name'));
+        valid = false;
+        return false;
+    }
+
+    const checkpointsLabel = document.getElementById("metaCheckpoints");
+    if (!checkpointsLabel || !checkpointsLabel.textContent.trim() || isNaN(checkpointsLabel.textContent.trim()) || Number(checkpointsLabel.textContent.trim()) <= 0) {
+        showErrorMessage(t('submit.checkpoints'));
+        valid = false;
+        return false;
+    }
+
+    const diffRadios = document.querySelectorAll('#difficultyDropdown input[type="radio"]');
+    const hasDiff = Array.from(diffRadios).some(r => r.checked);
+    if (!hasDiff) {
+        showErrorMessage(t('submit.difficulty'));
+        valid = false;
+        return false;
+    }
+
+    const typeRadios = document.querySelectorAll('#categoryDropdown input[type="radio"]');
+    const hasType = Array.from(typeRadios).some(r => r.checked);
+    if (!hasType) {
+        showErrorMessage(t('submit.map_type'));
+        valid = false;
+        return false;
+    }
+
+    const mechanicsBoxes = document.querySelectorAll('#mechanicsDropdown input[type="checkbox"]');
+    const hasMechanics = Array.from(mechanicsBoxes).some(c => c.checked);
+    if (!hasMechanics) {
+        showErrorMessage(t('submit.mechanics'));
+        valid = false;
+        return false;
+    }
+
+    const restrictionsBoxes = document.querySelectorAll('#restrictionsDropdown input[type="checkbox"]');
+    const hasRestrictions = Array.from(restrictionsBoxes).some(c => c.checked);
+    if (!hasRestrictions) {
+        showErrorMessage(t('submit.restrictions'));
+        valid = false;
+        return false;
+    }
+    return true;
 }
 
 // ============= SUBMIT RECORD =============
 // --- DRAG & DROP SCREENSHOT ---
+window.screenshotFile = null;
+
 function dragAndDrop() {
     const dropzone = document.getElementById("screenshotDrop");
     const input = document.getElementById("screenshotInput");
-    if (dropzone && input) {
-        dropzone.addEventListener("click", () => input.click());
-        dropzone.addEventListener("dragover", (e) => {
-            e.preventDefault(); dropzone.classList.add("dragover");
-        });
-        dropzone.addEventListener("dragleave", (e) => {
-            e.preventDefault(); dropzone.classList.remove("dragover");
-        });
-        dropzone.addEventListener("drop", (e) => {
-            e.preventDefault(); dropzone.classList.remove("dragover");
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                input.files = e.dataTransfer.files;
-                showScreenshotPreview(input.files[0]);
-            }
-        });
-        input.addEventListener("change", () => {
-            if (input.files && input.files[0]) showScreenshotPreview(input.files[0]);
-        });
+    if (!dropzone || !input) return;
 
-        function showScreenshotPreview(file) {
-            if (!file.type.startsWith("image/")) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                dropzone.innerHTML = `<img src="${e.target.result}" alt="Screenshot preview">`;
-            };
-            reader.readAsDataURL(file);
+    dropzone.replaceWith(dropzone.cloneNode(true));
+    const newDropzone = document.getElementById("screenshotDrop");
+    const newInput = newDropzone.querySelector("#screenshotInput");
+
+    newDropzone.onclick = function(e) {
+        if (e.target === newInput) return;
+        newInput.click();
+    };
+
+    newDropzone.addEventListener("dragover", (e) => {
+        e.preventDefault(); newDropzone.classList.add("dragover");
+    });
+    newDropzone.addEventListener("dragleave", (e) => {
+        e.preventDefault(); newDropzone.classList.remove("dragover");
+    });
+    newDropzone.addEventListener("drop", (e) => {
+        e.preventDefault(); newDropzone.classList.remove("dragover");
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            window.screenshotFile = e.dataTransfer.files[0];
+            showScreenshotPreview(window.screenshotFile);
         }
+    });
+
+    newInput.addEventListener("change", () => {
+        if (newInput.files && newInput.files[0]) {
+            window.screenshotFile = newInput.files[0];
+            showScreenshotPreview(window.screenshotFile);
+        }
+    });
+
+    function showScreenshotPreview(file) {
+        if (!file.type.startsWith("image/")) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            newDropzone.innerHTML = `<img src="${e.target.result}" alt="Screenshot preview">`;
+        };
+        reader.readAsDataURL(file);
     }
 }
 
@@ -820,16 +979,604 @@ function mapCodeAutoComplete() {
     }
 }
 
+// --- FORCE DECIMAL ---
+function forceDotDecimalInput(selector) {
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    el.addEventListener('input', function() {
+        if (this.value.includes(',')) {
+            this.value = this.value.replace(/,/g, '.');
+        }
+    });
+    el.addEventListener('keydown', function(e) {
+        if (e.key === ',') {
+            e.preventDefault();
+            document.execCommand('insertText', false, '.');
+        }
+    });
+}
+document.addEventListener("DOMContentLoaded", function() {
+    forceDotDecimalInput('#inputTime');
+});
+
+function validateSubmitRecordForm(event) {
+    let valid = true;
+
+    const mapCodeInput = document.getElementById("mapCodeInput");
+    if (!mapCodeInput || !mapCodeInput.value.trim()) {
+        showErrorMessage(t('submit.map_code'));
+        valid = false;
+        return false;
+    }
+
+    const inputTime = document.getElementById("inputTime");
+    const timeValue = inputTime ? inputTime.value.trim() : "";
+    if (!timeValue || isNaN(timeValue) || Number(timeValue) <= 0) {
+        showErrorMessage(t('submit.time'));
+        valid = false;
+        return false;
+    }
+
+    const qualityChecks = document.querySelectorAll('#qualityDropdown input[type="radio"], #qualityDropdown input[type="checkbox"]');
+    let hasQuality = false;
+    if (qualityChecks.length) {
+        hasQuality = Array.from(qualityChecks).some(c => c.checked);    
+    } else {
+        const qualityBtn = document.getElementById('qualityDropdownBtn');
+        hasQuality = qualityBtn && qualityBtn.textContent && qualityBtn.textContent.trim() !== "Select...";
+    }
+    if (!hasQuality) {
+        showErrorMessage(t('submit.quality'));
+        valid = false;
+        return false;
+    }
+
+    if (!(window.screenshotFile)) {
+        showErrorMessage(t('submit.screenshot_confirm'));
+        return false;
+    }
+
+    return true;
+}
+
+// ============= SUBMIT PLAYTEST =============
+const DEFAULT_AVATAR = "assets/img/genjibot.jpg";
+const playtestDataArray = [
+    {
+        "username": "Joe",
+        "user_id": "141372217677053952",
+        "map_thumbnail": "assets/banners/rialto.png",
+        "title": "Calling all Playtesters!",
+        "code": "9XHMX",
+        "map": "Rialto",
+        "type": "Classic",
+        "checkpoints": 15,
+        "difficulty": "Very Hard +",
+        "mechanics": [
+            "Edge Climb", "Bhop", "Crouch Edge", "Save Climb", "Bhop First",
+            "High Edge", "Distance Edge", "Quick Climb", "Slide", "Dash", "Ultimate"
+        ],
+        "restrictions": [
+            "Dash Start", "Emote Save Bhop", "Death Bhop",
+            "Multi Climb", "Standing Create Bhop", "Create Bhop"
+        ]
+    },
+    {
+        "username": "Cannon",
+        "user_id": "172525704183939076",
+        "map_thumbnail": "assets/banners/hanamura.png",
+        "title": "Calling all Playtesters!",
+        "code": "BLV54",
+        "map": "Hanamura",
+        "type": "Increasing Difficulty",
+        "checkpoints": 21,
+        "difficulty": "Extreme",
+        "mechanics": [
+            "Bhop", "Edge Climb", "Quick Climb", "Slide"
+        ],
+        "restrictions": [
+            "Ultimate", "Standing Create Bhop", "Death Bhop"
+        ]
+    },
+    {
+        "username": "FishoFire",
+        "user_id": "273775694008549376",
+        "map_thumbnail": "assets/banners/route66.png",
+        "title": "Calling all Playtesters!",
+        "code": "UYZKD",
+        "map": "Route 66",
+        "type": "Classic",
+        "checkpoints": 9,
+        "difficulty": "Medium",
+        "mechanics": [
+            "Bhop", "Distance Edge", "Quick Climb"
+        ],
+        "restrictions": [
+            "Emote Save Bhop"
+        ]
+    },
+    {
+        "username": "JackHerer",
+        "user_id": "142676949041414145",
+        "map_thumbnail": "assets/banners/lijiangtower.png",
+        "title": "Calling all Playtesters!",
+        "code": "M12GE",
+        "map": "Lijiang Tower",
+        "type": "Tournament",
+        "checkpoints": 17,
+        "difficulty": "Hell",
+        "mechanics": [
+            "Edge Climb", "Bhop", "Save Climb", "Multi Climb", "Dash"
+        ],
+        "restrictions": [
+            "Dash Start", "Death Bhop"
+        ]
+    },
+    {
+        "username": "kami",
+        "user_id": "397755164200665088",
+        "map_thumbnail": "assets/banners/volskayaindustries.png",
+        "title": "Calling all Playtesters!",
+        "code": "WXVJQ",
+        "map": "Volskaya",
+        "type": "Classic",
+        "checkpoints": 13,
+        "difficulty": "Hard",
+        "mechanics": [
+            "Crouch Edge", "Dash", "Save Climb"
+        ],
+        "restrictions": [
+            "Standing Create Bhop", "Create Bhop"
+        ]
+    },
+    {
+        "username": "LulledLion",
+        "user_id": "313459248942153729",
+        "map_thumbnail": "assets/banners/junkertown.png",
+        "title": "Calling all Playtesters!",
+        "code": "TYRTZ",
+        "map": "Junkertown",
+        "type": "Tournament",
+        "checkpoints": 18,
+        "difficulty": "Very Hard",
+        "mechanics": [
+            "High Edge", "Edge Climb", "Multi Climb", "Slide", "Ultimate"
+        ],
+        "restrictions": [
+            "Dash Start", "Standing Create Bhop"
+        ]
+    },
+    {
+        "username": "Genjibot",
+        "user_id": "969632729643753482",
+        "map_thumbnail": "assets/banners/ilios.png",
+        "title": "Calling all Playtesters!",
+        "code": "S1C4T",
+        "map": "Ilios",
+        "type": "Increasing Difficulty",
+        "checkpoints": 10,
+        "difficulty": "Hard",
+        "mechanics": [
+            "Dash", "Bhop", "Edge Climb", "Quick Climb"
+        ],
+        "restrictions": [
+            "Multi Climb"
+        ]
+    },
+    {
+        "username": "weds",
+        "user_id": "1139078481834160170",
+        "map_thumbnail": "assets/banners/oasis.png",
+        "title": "Calling all Playtesters!",
+        "code": "PQRTZ",
+        "map": "Oasis",
+        "type": "Classic",
+        "checkpoints": 8,
+        "difficulty": "Easy",
+        "mechanics": [
+            "Edge Climb", "Slide", "Bhop"
+        ],
+        "restrictions": [
+            "Ultimate"
+        ]
+    },
+    {
+        "username": "vertigo",
+        "user_id": "887010867265294397",
+        "map_thumbnail": "assets/banners/dorado.png",
+        "title": "Calling all Playtesters!",
+        "code": "LMB8S",
+        "map": "Dorado",
+        "type": "Tournament",
+        "checkpoints": 20,
+        "difficulty": "Extreme",
+        "mechanics": [
+            "Save Climb", "Bhop", "Slide", "Dash"
+        ],
+        "restrictions": [
+            "Create Bhop", "Standing Create Bhop", "Emote Save Bhop"
+        ]
+    },
+    {
+        "username": "killerkiwi",
+        "user_id": "464331467498192907",
+        "map_thumbnail": "assets/banners/kingsrow.png",
+        "title": "Calling all Playtesters!",
+        "code": "QWSTD",
+        "map": "King's Row",
+        "type": "Classic",
+        "checkpoints": 13,
+        "difficulty": "Medium",
+        "mechanics": [
+            "Quick Climb", "Crouch Edge", "Edge Climb", "Dash"
+        ],
+        "restrictions": [
+            "Death Bhop", "Multi Climb"
+        ]
+    }
+];
+
+playtestDataArray.forEach(d => d.avatar = DEFAULT_AVATAR);
+
+// -------  RENDU CARDS -------
+function renderPlaytestCard(data, index) {
+    const mechanicsStr = data.mechanics.join(', ');
+    const restrictionsStr = data.restrictions.join(', ');
+  
+    return `
+      <div class="playtest-embed" data-ptidx="${index}">
+        <div class="playtest-header">
+            <img src="${data.avatar}" alt="User avatar" class="playtest-avatar" data-ptidx="${index}">
+            <div class="playtest-user-info">
+                <span class="playtest-username">${data.username}</span>
+            </div>
+            <img src="${data.map_thumbnail}" alt="Map thumbnail" class="playtest-map-thumb">
+        </div>
+        <div class="playtest-content-scroll">
+          <div class="playtest-fields">
+                <div><span class="field-label">${t("thead.mapCode")}</span> <span class="field-value">${data.code}</span></div>
+                <div><span class="field-label">${t("thead.mapName")}</span> <span class="field-value">${data.map}</span></div>
+                <div><span class="field-label">${t("thead.mapType")}</span> <span class="field-value">${data.type}</span></div>
+                <div><span class="field-label">${t("thead.mapCheckpoints")}</span> <span class="field-value">${data.checkpoints}</span></div>
+                <div><span class="field-label">${t("thead.mapDifficulty")}</span> <span class="field-value">${data.difficulty}</span></div>
+          </div>
+        </div>
+      </div>
+    `;
+}
+
+function renderPlaytestModal(data) {
+    return `
+    <div class="ptmodal-row" style="display:flex;">
+        <img src="${data.avatar}" alt="User avatar" class="ptmodal-avatar">
+        <div>
+            <div class="ptmodal-username">${data.username}</div>
+            <div class="ptmodal-title"><span>${t("submit.playtest_title")}</span></div>
+        </div>
+        <img src="${data.map_thumbnail}" alt="Map thumbnail" class="ptmodal-mapthumb">
+    </div>
+    <div class="ptmodal-rowinfo">
+        <div><b>${t("thead.mapCode")}</b> <span class="ptmodal-code">${data.code}</span></div>
+        <div><b>${t("thead.mapName")}</b> <span class="ptmodal-map">${data.map}</span></div>
+        <div><b>${t("thead.mapType")}</b> <span>${data.type}</span></div>
+        <div><b>${t("thead.mapCheckpoints")}</b> <span>${data.checkpoints}</span></div>
+        <div><b>${t("thead.mapDifficulty")}</b> <span class="ptmodal-difficulty">${data.difficulty}</span></div>
+    </div>
+  
+    <div class="ptmodal-section">
+        <div class="ptmodal-rowinfo2">
+            <b>${t("thead.mapMechanics")}</b><br>
+            <span>
+            ${data.mechanics.map(m =>
+                `<span class="ptmodal-badge ptmodal-badge-mech">${m}</span>`
+            ).join(' ')}
+            </span>
+        </div>
+    </div>
+    <div class="ptmodal-section">
+        <div class="ptmodal-rowinfo2">
+            <b>${t("thead.mapRestrictions")}</b><br>
+            <span>
+            ${data.restrictions.length
+                ? data.restrictions.map(m =>
+                    `<span class="ptmodal-badge ptmodal-badge-restrict">${m}</span>`
+                ).join(' ')
+                : '<i>None</i>'
+                }
+            </span>
+        </div>
+    </div>
+    <div class="ptmodal-ratingblock">
+        <div class="ptmodal-ratingheader">
+            <div>
+                <div class="ptmodal-ratingtitle">${t("submit.difficulty_rating")}</div>
+                <div class="ptmodal-ratingsub">${t("submit.rating_sub")}</div>
+            </div>
+            <img src="assets/img/card-banner.png" alt="Genji Logo" class="ptmodal-genjilogo">
+        </div>
+        <div class="ptmodal-chartbox">
+            <canvas id="difficultyChart" width="440" height="140"></canvas>
+        </div>
+        <div class="ptmodal-ratequestion">
+            <span class="ptmodal-qtext">${t("submit.question_difficulty")}</span>
+            <span class="ptmodal-qicon">
+            <svg width="20" height="20" viewBox="0 0 22 22"><path fill="#bbb" d="M7.41 8.59 11 12.17l3.59-3.58L16 10l-5 5-5-5z"></path></svg>
+            </span>
+            <div class="ptmodal-ratedropdown" style="display:none;"></div>
+        </div>
+    </div>
+    `;
+  }
+
+const ALL_DIFFICULTIES = [
+    "Easy -", "Easy", "Easy +",
+    "Medium -", "Medium", "Medium +",
+    "Hard -", "Hard", "Hard +",
+    "Very Hard -", "Very Hard", "Very Hard +",
+    "Extreme -", "Extreme", "Extreme +",
+    "Hell -", "Hell", "Hell +"
+];
+
+let uniqueDropdown = null;
+
+// -------  DROPDOWN DIFF -------
+function closeGlobalDifficultyDropdown() {
+    if (uniqueDropdown && uniqueDropdown.parentNode) {
+        uniqueDropdown.parentNode.removeChild(uniqueDropdown);
+        uniqueDropdown = null;
+    }
+}
+
+function setupRatingDropdown() {
+    const difficulties = [
+        "Easy -", "Easy", "Easy +",
+        "Medium -", "Medium", "Medium +",
+        "Hard -", "Hard", "Hard +",
+        "Very Hard -", "Very Hard", "Very Hard +",
+        "Extreme -", "Extreme", "Extreme +",
+        "Hell"
+    ];
+
+    const rateQuestion = document.querySelector('.ptmodal-ratequestion');
+    const dropdown = rateQuestion.querySelector('.ptmodal-ratedropdown');
+
+    dropdown.innerHTML = difficulties.map(d =>
+        `<div class="ptmodal-ratedropitem" tabindex="0" data-value="${d}">${d}</div>`
+    ).join('');
+    
+    rateQuestion.addEventListener('click', function(e) {
+        if(e.target.closest('.ptmodal-qicon') || e.target.closest('.ptmodal-qtext') || e.target === rateQuestion) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    });
+
+    dropdown.addEventListener('click', function(e) {
+        const item = e.target.closest('.ptmodal-ratedropitem');
+        if (item) {
+            const selected = item.getAttribute('data-value');
+            dropdown.style.display = 'none';
+            showConfirmationMessage(`You voted: ${selected}`);
+        }
+    });
+
+    document.addEventListener('mousedown', function(e) {
+        if (!rateQuestion.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+}
+
+// -------  AVATARS -------
+async function fetchDiscordAvatar(user_id) {
+    try {
+      const response = await fetch(`api/settings/getUserAvatar.php?user_id=${user_id}`);
+      if (!response.ok) return null;
+      const json = await response.json();
+      return json.avatar_url || null;
+    } catch (e) {
+      return null;
+    }
+}
+  
+function patchAvatarsAsync() {
+    playtestDataArray.forEach(async (pt, idx) => {
+      const url = await fetchDiscordAvatar(pt.user_id);
+      if (url) {
+        pt.avatar = url;
+        const avatarImg = document.querySelector(`.playtest-avatar[data-ptidx="${idx}"]`);
+        if (avatarImg) avatarImg.src = url;
+        const modalAvatar = document.querySelector('.ptmodal-avatar');
+        if (modalAvatar && modalAvatar.src.indexOf(pt.user_id) === -1) {
+          modalAvatar.src = url;
+        }
+      }
+    });
+}
+
+// -------  INIT CARDS -------
+async function initializePlaytestCards() {
+    const container = document.getElementById('playtestCardContainer');
+    container.innerHTML = playtestDataArray.map((data, idx) => renderPlaytestCard(data, idx)).join('');
+    patchAvatarsAsync();
+
+    document.getElementById("playtestSection").style.display = "none";
+
+    const modal = document.getElementById("playtestModal");
+    const modalInner = document.getElementById("playtestModalInner");
+    const closeBtn = modal.querySelector(".playtest-modal-close");
+    const backdrop = modal.querySelector(".playtest-modal-backdrop");
+
+    container.querySelectorAll(".playtest-embed").forEach((card, idx) => {
+        card.addEventListener("click", (e) => {
+            e.stopPropagation();
+            modalInner.innerHTML = renderPlaytestModal(playtestDataArray[idx]);
+            modal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+            setTimeout(() => {
+                initDifficultyChart(playtestDataArray[idx]);
+                setupRatingDropdown();
+            }, 0);
+        });
+    });
+
+    [closeBtn, backdrop].forEach(el => el.addEventListener("click", () => {
+        modal.style.display = "none";
+        document.body.style.overflow = "";
+        modalInner.innerHTML = "";
+    }));
+
+    document.addEventListener("keydown", (e) => {
+        if (modal.style.display !== "none" && e.key === "Escape") {
+            modal.style.display = "none";
+            document.body.style.overflow = "";
+            modalInner.innerHTML = "";
+        }
+    });
+}
+
+// -------  GRAPH MODAL -------
+function initDifficultyChart(data) {
+    const ctx = document.getElementById('difficultyChart');
+    if (!ctx) return;
+
+    const baseDivisions = ["Easy", "Medium", "Hard", "Very Hard", "Extreme"];
+    const subDivs = ["-", "", "+"];
+    const difficultyLabels = baseDivisions.flatMap(div => subDivs.map(sub => div + sub)).concat(["Hell"]);
+
+    const baseColors = [
+        [102, 255, 102],   // Easy
+        [255, 230, 77],    // Medium
+        [255, 162, 24],    // Hard
+        [255, 100, 16],    // Very Hard
+        [255, 36, 36],     // Extreme
+    ];
+    const hellColor = [120, 0, 33]; 
+
+    function shades([r,g,b]) {
+        return [
+            `rgba(${r},${g},${b},0.45)`,
+            `rgba(${r},${g},${b},0.72)`,
+            `rgba(${r},${g},${b},1.0)`,
+        ];
+    }
+    const difficultyColors = [
+        ...baseColors.flatMap(shades),
+        `rgba(${hellColor[0]},${hellColor[1]},${hellColor[2]},1.0)`
+    ];
+
+    let votes = data.difficulty_votes;
+    if (!votes || votes.length !== 16) {
+        votes = Array(16).fill(0);
+    }
+    const plottedVotes = votes.map(v => v > 0 ? v : 7);
+
+    const totalVotes = votes.reduce((a, b) => a + b, 0);
+    let meanDifficulty = 0;
+    if (totalVotes) {
+        meanDifficulty = votes.reduce((sum, v, i) => sum + v * (i + 1), 0) / totalVotes;
+    }
+
+    const chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: difficultyLabels,
+            datasets: [
+                {
+                    label: "Votes",
+                    data: plottedVotes,
+                    backgroundColor: difficultyColors,
+                    borderSkipped: false,
+                    barPercentage: 1,
+                    categoryPercentage: 1,
+                }
+            ]
+        },
+        options: {
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 10, weight: "bold" },
+                        color: "#222",
+                        autoSkip: false,
+                        callback: function(value, index) {
+                            const mainLabels = ["Easy", "Medium", "Hard", "Very Hard", "Extreme", "Hell"];
+                            if ([0,3,6,9,12,15].includes(index)) {
+                                if (index === 15) return "Hell";
+                                return mainLabels[Math.floor(index/3)];
+                            }
+                            return "";
+                        }
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    display: false,
+                    min: 0,
+                    suggestedMax: 9
+                }
+            },
+            layout: { padding: 3 },
+            animation: false,
+            responsive: false,
+            maintainAspectRatio: false,
+            events: []
+        },
+        plugins: [{
+            id: 'drawMeanDot',
+            afterDatasetsDraw(chart, args, pluginOptions) {
+                if (!totalVotes) return;
+                const { ctx, chartArea, scales } = chart;
+                const xScale = scales.x;
+
+                const minX = xScale.getPixelForValue(0);
+                const maxX = xScale.getPixelForValue(difficultyLabels.length - 1);
+                const x = minX + (maxX - minX) * ((meanDifficulty - 1) / (difficultyLabels.length - 1));
+                const yTop = chartArea.top + 4;
+                const yBottom = chartArea.bottom - 3;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, yTop);
+                ctx.lineTo(x, yBottom);
+                ctx.lineWidth = 6;
+                ctx.strokeStyle = "#111";
+                ctx.shadowColor = "#000";
+                ctx.shadowBlur = 7;
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(x, yTop - 10, 10, 0, 2 * Math.PI);
+                ctx.fillStyle = "#161616";
+                ctx.shadowColor = "#000";
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x, yTop - 10, 5.7, 0, 2 * Math.PI);
+                ctx.fillStyle = "#222";
+                ctx.fill();
+                ctx.restore();
+            }
+        }]
+    });
+}
+
 // --------- INITIALISATION GLOBALE ---------
 async function initializeSubmitMap() {
-    await loadTranslations();
     loadMainCreatorFromUserId(user_id);
     setupTabs();
     populateStaticDropdowns();
     await loadDynamicOptions();
     setupAllCustomDropdowns();
     setupForms();
-    hideOnClickOutside();
 }
 
 function initializeSubmitRecord() {
@@ -839,8 +1586,12 @@ function initializeSubmitRecord() {
 }
 
 async function initializeApp() {
+    showLoadingBar();
+    await loadTranslations();
+    await initializePlaytestCards();
     await initializeSubmitMap();
     initializeSubmitRecord();
+    hideLoadingBar();
 }
 
 document.addEventListener("DOMContentLoaded", initializeApp);

@@ -61,7 +61,7 @@ body {
     min-height: 500px;
     background-color: var(--form-main-bg);
     border-radius: 10px;
-    height: 100%;
+    height: 93%;
     position: relative;
 }
 
@@ -470,13 +470,27 @@ h2 {
     font-size: 1.25em;
     letter-spacing: .01em;
     color: var(--form-label-bold);
+    position: relative;
 }
+
+.optional-block h3::after,
+.required-block h3::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 100%;
+    background: white;
+    opacity: 0.55;
+    margin-top: 8px;
+}
+
 .required-block, .optional-block {
     background: var(--form-main-bg);
     border-radius: 10px;
     padding: 24px 20px 20px 20px;
     margin-bottom: 0;
 }
+
 .optional-block { background: var(--form-main-bg); }
 .block-row {
     display: flex;
@@ -576,11 +590,21 @@ select:after, .custom-multiselect-btn:after {
     margin-top: 4px;
     z-index: 16;
     padding: 8px 14px 10px 14px;
-    max-height: 10em;
-    overflow-y: auto;
-    transition: none;
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 0.32s cubic-bezier(.5,0,.22,1), opacity 0.18s linear;
 }
+
+.custom-multiselect-list.show  {
+    display: block;
+    max-height: 10em;
+    opacity: 1;
+    pointer-events: auto;
+    overflow-y: auto;
+}
+
 .custom-multiselect.open .custom-multiselect-list { display: block; }
 .custom-multiselect-list label {
     font-size: 15px;
@@ -774,16 +798,419 @@ select:after, .custom-multiselect-btn:after {
     margin-bottom: 6px;
 }
 
-.custom-multiselect-list.show {
-    display: block;
+.optional-block2 {
+    background: var(--form-main-bg);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 0;
 }
 
-/* -------------- Responsive tweaks -------------- */
+.optional-block2 h3 {
+    margin: 0 0 12px 0;
+    font-weight: 800;
+    font-size: 1.25em;
+    letter-spacing: .01em;
+    color: var(--form-label-bold);
+    position: relative;
+}
+
+.optional-block2 h3::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 100%;
+    background: white;
+    opacity: 0.55;
+    margin-top: 8px;
+}
+
+/* ========= PLAYTEST ========== */
+
+#playtestSection {
+    position: relative;
+    width: 100vw;
+    max-width: none;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+#playtestSection form {
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+#playtestCardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+/* ---- CARTE ---- */
+.playtest-embed {
+    background: var(--form-main-bg);
+    border-radius: 18px;
+    padding: 18px 12px 14px 12px;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(30,40,70,0.22);
+    width: calc(20% - 10px);
+    aspect-ratio: 1 / 0.87;
+    min-width: 240px;
+    max-width: 370px;
+    box-sizing: border-box;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.98em;
+
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.17s, transform 0.14s;
+}
+
+.playtest-embed:hover {
+    box-shadow: 0 8px 35px rgba(90,130,255,0.32);
+    transform: translateY(-2px) scale(1.03);
+    z-index: 2;
+}
+
+/* ---- HEADER & AVATARS ---- */
+.playtest-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.playtest-avatar {
+    width: 2.2em;
+    height: 2.2em;
+    margin-right: 8px;
+    border-radius: 50%;
+}
+
+.playtest-user-info {
+    flex: 1;
+}
+
+.playtest-username {
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.playtest-map-thumb {
+    width: 8em;
+    height: 3em;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-left: 10px;
+}
+
+.playtest-title {
+    font-weight: bold;
+    font-size: 0.97em;
+    margin: 5px 0 8px 0;
+}
+
+/* ---- CHAMPS ---- */
+.playtest-content-scroll {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.playtest-fields {
+    background: var(--sub-form-bg);
+    padding: 9px 10px 9px 8px;
+    font-size: 0.9em;
+    line-height: 1.12em;
+    border-radius: 7px;
+    white-space: pre-line;
+}
+
+
+.field-label {
+    color: #8fa3be;
+    font-weight: 500;
+    margin-right: 0.23em;
+    font-size: 1em;
+}
+
+.field-value {
+    color: #fff;
+    font-size: 1em;
+}
+
+/* =========== MODAL PLAYTEST =========== */
+.playtest-modal {
+    position: fixed;
+    z-index: 1200;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Black translucent BG */
+.playtest-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(16,18,24,0.82);
+    backdrop-filter: blur(1.5px);
+}
+
+/* Modal content */
+.playtest-modal-content {
+    position: relative;
+    background: var(--form-main-bg);;
+    border-radius: 16px;
+    box-shadow: 0 12px 44px #000a;
+    padding: 34px 30px 22px 30px;
+    min-width: 370px;
+    max-width: 96vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    color: #fff;
+    animation: bounceIn .3s;
+}
+
+@keyframes bounceIn {
+    from { transform: scale(.97) translateY(14px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.playtest-modal-close {
+    position: absolute;
+    top: 10px; right: 14px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.9em;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: .73;
+    transition: opacity .13s;
+}
+
+.playtest-modal-close:hover {
+    opacity: 1;
+}
+
+.ptmodal-row {
+    display: flex;
+    align-items: center;
+    gap: 19px;
+}
+.ptmodal-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+}
+.ptmodal-mapthumb {
+    height: 48px;
+    border-radius: 7px;
+    margin-left: auto;
+}
+@media (max-width:600px) {
+    .ptmodal-mapthumb { display:none; }
+}
+
+.ptmodal-username {
+    font-size: 1.38em;
+    font-weight: bold;
+}
+.ptmodal-title {
+    color: #8fa3be;
+    font-size: 0.99em;
+    margin-bottom: 2px;
+}
+
+.ptmodal-rowinfo {
+    margin-top: 16px;
+    font-size: 1.08em;
+    color: #eaeef1;
+    background: none;
+    padding: 0 0 4px 0;
+
+}
+
+.ptmodal-rowinfo div {
+    line-height: 1.7;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: baseline;
+}
+
+.ptmodal-rowinfo b {
+    color: #fff;
+    font-weight: 700;
+    width: 110px;
+    display: inline-block;
+}
+.ptmodal-rowinfo span {
+    color: #fff;
+    font-weight: 400;
+    margin-left: 20px;
+}
+
+.ptmodal-rowinfo2 span {
+    color: #fff;
+    font-weight: 400;
+    margin-left: 0;
+}
+
+.ptmodal-code {
+    letter-spacing: 1px;
+    color: #e7e7ff;
+    font-size: 1em;
+}
+
+.ptmodal-difficulty {
+    color: #88cfff;
+    font-weight: 600;
+}
+
+.ptmodal-section {
+    margin: 15px 0 7px;
+    line-height: 1.6;
+}
+.ptmodal-section:last-of-type {
+    margin-bottom: 3px;
+}
+
+.ptmodal-badge {
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin: 1.5px 4px 1.5px 0;
+    display: inline-block;
+    font-size: 0.99em;
+}
+.ptmodal-badge-mech {
+    background: #23283a;
+}
+.ptmodal-badge-restrict {
+    background: #3a2331;
+}
+
+.ptmodal-ratingblock {
+    background: #23262d;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin: 34px 0 0 0;
+    color: #fff;
+    box-shadow: 0px 2px 12px #0002;
+}
+.ptmodal-ratingheader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+.ptmodal-ratingtitle {
+    font-weight: bold;
+    font-size: 1.16em;
+}
+.ptmodal-ratingsub {
+    font-size: 0.98em;
+    opacity: 0.84;
+    margin-top: 3px;
+}
+.ptmodal-genjilogo {
+    height: 38px;
+    margin-left: 16px;
+}
+.ptmodal-chartbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 8px 2px 8px;
+    margin: 15px 0 9px 0;
+}
+
+.difficultyChart {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ptmodal-ratequestion {
+    background: #23262d;
+    border-radius: 9px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid;
+}
+
+.ptmodal-qtext {
+    font-size: 1.09em;
+    font-weight: bold;
+}
+
+.ptmodal-qicon {
+    margin-left: auto;
+    opacity: 0.72;
+    display: flex;
+    align-items: center;
+}
+
+.ptmodal-ratedropdown {
+    position: absolute;
+    left: 0; right: 0; top: -150px;
+    z-index: 100;
+    background: #20232a;
+    border-radius: 10px;
+    padding: 4px 0 4px 0;
+    margin-top: 7px;
+    box-shadow: 0 4px 26px #0007;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    color: #eee;
+    font-size: 1.05em;
+    max-height: 222px;
+    overflow-y: auto;
+}
+.ptmodal-ratedropdown .ptmodal-ratedropitem {
+    cursor: pointer;
+    padding: 8px 24px;
+    transition: background 0.13s;
+    border: none;
+    background: none;
+    text-align: left;
+}
+.ptmodal-ratedropdown .ptmodal-ratedropitem:hover,
+.ptmodal-ratedropdown .ptmodal-ratedropitem:focus {
+    background: #444d6b;
+    color: #fff;
+}
+.ptmodal-ratequestion {
+    position: relative;
+}
+
+#playtestModalInner img { border-radius: 10px; }
+
+/* ========= Responsive design ========= */
 @media (max-width: 1200px) {
     #submitMapSection .map-form-layout,
     #submitMapForm.form-blocks {
-        flex-direction: column;
         gap: 18px;
+        max-width: 95vw;
     }
     #submitMapForm .meta-block,
     #submitMapForm .required-block,
@@ -823,7 +1250,8 @@ select:after, .custom-multiselect-btn:after {
         padding: 0 5vw 28px 5vw;
     }
     .section, .meta-block, .required-block, .optional-block {
-        padding: 12px 5vw 12px 5vw;
+        padding: 0 5vw 12px 5vw;
+        margin-bottom: 25px;
         min-height: unset !important;
         height: auto !important;
     }
@@ -835,4 +1263,205 @@ select:after, .custom-multiselect-btn:after {
 #submitMapSection .section {
     padding-left: 0;
     padding-right: 0;
+}
+
+/* ===== RESPONSIVE ====== */
+@media (max-width: 1700px) {
+    #playtestSection form { max-width: 1500px; }
+    .playtest-embed { max-width: 320px; }
+}
+@media (max-width: 1300px) {
+    #playtestCardContainer { gap: 22px; }
+    .playtest-embed { width: calc(25% - 18px); }
+}
+@media (max-width: 1150px) {
+    .playtest-embed { width: calc(33.333% - 45px); }
+}
+@media (max-width: 800px) {
+    .playtest-embed { width: calc(50% - 10px); min-width: 180px; }
+    #playtestCardContainer { gap: 16px; }
+}
+@media (max-width: 700px) {
+    .playtest-embed { width: 100%; min-width: 0; }
+    #playtestCardContainer { gap: 9px; }
+    .playtest-header { flex-direction: column; align-items: flex-start; gap: 7px;}
+    .playtest-map-thumb { margin-left: 0; margin-top: 5px;}
+}
+
+@media (max-width: 400px) {
+    #playtestSection { padding-left: 2vw; padding-right: 2vw; }
+}
+
+@media (max-width: 600px) {
+    .playtest-modal-content { min-width: 0; width: 97vw; padding: 18px 2vw; }
+}
+
+/* ---------- RESPONSIVE: max-width: 1024px ---------- */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 98vw;
+        width: 98vw;
+        padding: 0 2vw 28px 2vw;
+        min-width: unset;
+    }
+    #submitMapForm.form-blocks {
+        flex-direction: column;
+        gap: 18px;
+        padding: 18px 10px 80px 10px;
+        min-height: unset;
+    }
+    #submitMapForm .meta-block,
+    #submitMapForm .required-block,
+    #submitMapForm .optional-block {
+        min-width: unset !important;
+        max-width: unset !important;
+        width: 100%;
+        margin: 0 0 14px 0;
+        padding: 18px 12px 18px 12px;
+    }
+    .form-actions-out {
+        padding: 20px 14px 14px 14px;
+    }
+    .playtest-embed {
+        width: calc(33% - 10px);
+        min-width: 180px;
+    }
+    #playtestCardContainer {
+        gap: 12px;
+    }
+  }
+  
+  /* ---------- RESPONSIVE: max-width: 768px ---------- */
+  @media (max-width: 768px) {
+    .container {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0 1vw 18px 1vw;
+    }
+    #submitMapSection,
+    #submitMapSection .map-form-layout,
+    #submitMapForm.form-blocks {
+        flex-direction: column !important;
+        gap: 14px !important;
+        min-height: unset !important;
+        padding: 15px;
+    }
+    #submitMapForm .meta-block,
+    #submitMapForm .required-block,
+    #submitMapForm .optional-block {
+        padding: 13px 5vw 13px 5vw;
+        margin-bottom: 10px;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+        width: 100%;
+        border-radius: 8px;
+    }
+    .form-actions-out {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 14px 8px 14px 8px;
+    }
+  
+    .optional-block .block-row,
+    .required-block .block-row {
+        align-items: flex-start;
+        gap: 7px;
+    }
+  
+    .playtest-embed {
+        min-width: 0;
+        max-width: unset;
+    }
+    #playtestCardContainer {
+        gap: 9px;
+    }
+  
+    /* Modal */
+    .playtest-modal-content {
+        min-width: 0 !important;
+        width: 97vw !important;
+        padding: 14px 2vw;
+    }
+  }
+  
+  /* ---------- RESPONSIVE: max-width: 530px ---------- */
+@media (max-width: 840px) {
+    .container {
+      padding: 0 0 60px 0;
+    }
+    #submitMapForm .meta-block,
+    #submitMapForm .required-block,
+    #submitMapForm .optional-block {
+        padding: 10px 2vw 11px 2vw;
+        border-radius: 7px;
+        margin-bottom: 8px;
+    }
+    .form-actions-out,
+    #submitMapForm .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 8px 2vw 12px 2vw;
+    }
+    /* Réduire la taille des boutons */
+    button[type="submit"], .accept-btn, .cancel-btn, .delete-btn {
+        padding: 10px 14px;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .block-label, .block-label2, .meta-label {
+        font-size: 13.5px;
+        padding: 3px 6px;
+    }
+    /* Playtest Card */
+    .playtest-embed {
+        min-width: 0;
+        max-width: unset;
+        padding: 8px 3px 9px 3px;
+        font-size: 0.96em;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px #0002;
+    }
+    .playtest-header {
+        display: flex;
+        gap: 5px;
+        position: relative;
+    }
+    .playtest-map-thumb {
+        position: absolute;
+        top: 0.2em;
+        right: 0.7em;
+        width: 4em;
+        height: 2.1em;
+        border-radius: 5px;
+        object-fit: cover;
+        margin: 0;
+        box-shadow: 0 1px 3px #0002;
+    }
+    .meta-row, .meta-row2 {
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 7px;
+    }
+    #difficultyChart {
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 800px) {
+    .form-blocks {
+      flex-direction: column;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .col-right, .col-left {
+      min-width: 0 !important;
+      max-width: 100vw !important;
+      width: 100%;
+    }
+    .playtest-embed {
+        width: calc(33% - 10px);
+        min-width: 180px;
+    }
 }
