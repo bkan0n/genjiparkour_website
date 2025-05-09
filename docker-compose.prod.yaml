@@ -22,6 +22,7 @@ services:
       - TRANSLATION_API_ROOT=${TRANSLATION_API_ROOT}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
       - TENOR_API_KEY=${TENOR_API_KEY}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
     volumes:
       - /home/nebula/bkan0n/repos/genji.pk/prod/genjiparkour_website/src/assets:/var/www/html/assets
     labels:
