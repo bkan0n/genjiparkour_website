@@ -10,7 +10,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY composer.json composer.json
 COPY composer.lock composer.lock
 
-USER www-data
+
 
 COPY ./apache2.conf.dev /etc/apache2/apache2.conf
 
@@ -21,3 +21,8 @@ COPY ./php.ini /usr/local/etc/php/
 COPY ./src .
 
 CMD bash -c "composer install && apache2-foreground"
+
+CMD chown -R www-data:www-data /var/www/html
+
+RUN groupadd -r user && useradd -r -g user user
+USER user
