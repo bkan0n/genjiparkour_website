@@ -23,6 +23,7 @@ services:
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
       - TENOR_API_KEY=${TENOR_API_KEY}
       - GLITCHTIP_DSN=${GLITCHTIP_DSN}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
     volumes:
       - /home/nebula/bkan0n/repos/genji.pk/dev/genjiparkour_website/src/assets:/var/www/html/assets
     labels:
