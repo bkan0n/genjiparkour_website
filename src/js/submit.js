@@ -1235,11 +1235,11 @@ function renderPlaytestCard(data, index) {
         </div>
         <div class="playtest-content-scroll">
           <div class="playtest-fields">
-                <div><span class="field-label">${t("thead.mapCode")}</span> <span class="field-value">${data.code}</span></div>
-                <div><span class="field-label">${t("thead.mapName")}</span> <span class="field-value">${data.map}</span></div>
-                <div><span class="field-label">${t("thead.mapType")}</span> <span class="field-value">${data.type}</span></div>
-                <div><span class="field-label">${t("thead.mapCheckpoints")}</span> <span class="field-value">${data.checkpoints}</span></div>
-                <div><span class="field-label">${t("thead.mapDifficulty")}</span> <span class="field-value">${data.difficulty}</span></div>
+                <div class="playtest-subfields"><span class="field-label">${t("thead.mapCode")}</span> <span class="field-value">${data.code}</span></div>
+                <div class="playtest-subfields"><span class="field-label">${t("thead.mapName")}</span> <span class="field-value">${data.map}</span></div>
+                <div class="playtest-subfields"><span class="field-label">${t("thead.mapType")}</span> <span class="field-value">${data.type}</span></div>
+                <div class="playtest-subfields"><span class="field-label">${t("thead.mapCheckpoints")}</span> <span class="field-value">${data.checkpoints}</span></div>
+                <div class="playtest-subfields"><span class="field-label">${t("thead.mapDifficulty")}</span> <span class="field-value">${data.difficulty}</span></div>
           </div>
         </div>
       </div>

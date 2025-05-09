@@ -933,7 +933,10 @@ select:after, .custom-multiselect-btn:after {
     font-size: 0.9em;
     line-height: 1.12em;
     border-radius: 7px;
-    white-space: pre-line;
+}
+
+.playtest-subfields {
+    padding: 10px 0 10px 0;
 }
 
 
@@ -974,8 +977,8 @@ select:after, .custom-multiselect-btn:after {
     border-radius: 16px;
     box-shadow: 0 12px 44px #000a;
     padding: 34px 30px 22px 30px;
-    min-width: 370px;
-    max-width: 96vw;
+    min-width: 30em;
+    max-width: 40em;
     max-height: 88vh;
     display: flex;
     flex-direction: column;
@@ -1286,6 +1289,7 @@ select:after, .custom-multiselect-btn:after {
     #playtestCardContainer { gap: 9px; }
     .playtest-header { flex-direction: column; align-items: flex-start; gap: 7px;}
     .playtest-map-thumb { margin-left: 0; margin-top: 5px;}
+    .playtest-subfields { padding: 2px 0 2px 0;}
 }
 
 @media (max-width: 400px) {
@@ -1404,7 +1408,6 @@ select:after, .custom-multiselect-btn:after {
         gap: 8px;
         padding: 8px 2vw 12px 2vw;
     }
-    /* Réduire la taille des boutons */
     button[type="submit"], .accept-btn, .cancel-btn, .delete-btn {
         padding: 10px 14px;
         font-size: 15px;
@@ -1414,11 +1417,10 @@ select:after, .custom-multiselect-btn:after {
         font-size: 13.5px;
         padding: 3px 6px;
     }
-    /* Playtest Card */
     .playtest-embed {
         min-width: 0;
         max-width: unset;
-        padding: 8px 3px 9px 3px;
+        padding: 8px 5px 9px 5px;
         font-size: 0.96em;
         border-radius: 10px;
         box-shadow: 0 1px 2px #0002;
@@ -1446,6 +1448,9 @@ select:after, .custom-multiselect-btn:after {
     }
     #difficultyChart {
         max-width: 300px;
+    }
+    .playtest-subfields {
+        padding: 5px 0 5px 0;
     }
 }
 
