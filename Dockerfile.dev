@@ -10,7 +10,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY composer.json composer.json
 COPY composer.lock composer.lock
 
-RUN groupadd -r www-data && useradd -r -g www-data www-data
 USER www-data
 
 COPY ./apache2.conf.dev /etc/apache2/apache2.conf
