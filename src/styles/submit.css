@@ -866,11 +866,11 @@ select:after, .custom-multiselect-btn:after {
 .playtest-embed {
     background: var(--form-main-bg);
     border-radius: 18px;
-    padding: 18px 12px 14px 12px;
+    padding: 14px 12px 14px 12px;
     color: #fff;
     box-shadow: 0 4px 16px rgba(30,40,70,0.22);
     width: calc(20% - 10px);
-    aspect-ratio: 1 / 0.87;
+    aspect-ratio: 1.075 / 0.87;
     min-width: 240px;
     max-width: 370px;
     box-sizing: border-box;
@@ -1922,7 +1922,7 @@ select:after, .custom-multiselect-btn:after {
     .playtest-map-thumb {
         position: absolute;
         top: 0.2em;
-        right: 0.7em;
+        right: 0.2em;
         width: 4em;
         height: 2.1em;
         border-radius: 5px;
