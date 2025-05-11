@@ -2011,32 +2011,33 @@ i.flag-zw:before,i.flag-zimbabwe:before {
 
 /*Barre chargement */
 .loading-bar  {
-  --uib-size: 35px;
-  --uib-color: white;
-  --uib-speed: 1.5s;
-  --uib-dot-size: calc(var(--uib-size) * 0.4);
-  position: absolute;
-  display: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  align-items: center;
-  justify-content: center;
-  height: var(--uib-size);
-  width: var(--uib-size);
-  animation: rotate calc(var(--uib-speed) * 1.667) infinite linear;
+    --uib-size: 35px;
+    --uib-color: white;
+    --uib-speed: 1.5s;
+    --uib-dot-size: calc(var(--uib-size) * 0.4);
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    justify-content: center;
+    height: var(--uib-size);
+    width: var(--uib-size);
+    animation: rotate calc(var(--uib-speed) * 1.667) infinite linear;
+    z-index: 2000;
 }
 
 .loading-bar::before,
 .loading-bar::after {
-  content: '';
-  position: absolute;
-  height: var(--uib-dot-size);
-  width: var(--uib-dot-size);
-  border-radius: 50%;
-  background-color: var(--uib-color);
-  flex-shrink: 0;
-  transition: background-color 0.3s ease;
+    content: '';
+    position: absolute;
+    height: var(--uib-dot-size);
+    width: var(--uib-dot-size);
+    border-radius: 50%;
+    background-color: var(--uib-color);
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
 }
 
 .loading-bar::before {

@@ -10,7 +10,7 @@ if (empty($_GET['user_id'])) {
 
 $user_id = preg_replace('/[^0-9]/', '', $_GET['user_id']);
 $cache_file = __DIR__ . "/cache/avatar_{$user_id}.json";
-$cache_duration = 3600;
+$cache_duration = 604800;
 
 if (file_exists($cache_file) && (time() - filemtime($cache_file) < $cache_duration)) {
     echo file_get_contents($cache_file);
@@ -23,6 +23,7 @@ $opts = [
         "header" => "Authorization: Bot $bot_token\r\n"
     ]
 ];
+
 $context = stream_context_create($opts);
 $response = @file_get_contents($discordApi, false, $context);
 

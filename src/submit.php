@@ -80,6 +80,10 @@ include BASE_PATH . "discord/header.php";
             </div>
         </div>
         <div id="playtestSection" class="section" style="display:none;">
+            <div class="toolbar-container">
+                <div id="icon-name" class="icon-name"></div>
+                <div class="toolbar"></div>
+            </div>
             <form id="playtestForm">
                 <div id="playtestCardContainer"></div>
             </form>
@@ -103,6 +107,11 @@ include BASE_PATH . "discord/header.php";
                             <button type="button" id="addCreatorBtn" class="block-edit-btn">+</button>
                             </span>
                         </div>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label"><?= htmlspecialchars($translations['thead']['mapCode']) ?></span>
+                        <span class="meta-value" id="metaCode">N/A</span>
+                        <button type="button" class="block-edit-btn" onclick="editInline('metaCode')"><?= htmlspecialchars($translations['submit']['edit']) ?></button>
                     </div>
                     <div class="meta-row">
                         <span class="meta-label"><?= htmlspecialchars($translations['submit']['map']) ?></span>
@@ -168,10 +177,13 @@ include BASE_PATH . "discord/header.php";
       </div>
     </div>
 </div>
+<div class="loading-bar" id="loadingContainer">
+    <div class="line"></div>
+</div>
+<div class="pagination-container" id="paginationContainer"></div>
 <script>
 let user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
 </script>
 <?php include 'footer.php'; ?>
 </body>
-<div class="loading-bar" id="loadingContainer">
 </html>
