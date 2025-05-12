@@ -1662,9 +1662,14 @@ async function initializePlaytestToolbar() {
         toolbar.appendChild(button);
         button.insertAdjacentHTML('beforeend', '<div class="selection-circle"></div>');
 
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
             const selectionCircle = button.querySelector('.selection-circle');
             const buttonWidth = button.offsetWidth;
+            e.stopPropagation();
+
+            if (e.target.classList.contains('custom-toolbar-input')) {
+                return;
+            }
 
             document.querySelectorAll('#playtestSection .toolbar-button.selected').forEach(btn => btn.classList.remove('selected'));
             button.classList.add('selected');
@@ -1672,30 +1677,40 @@ async function initializePlaytestToolbar() {
 
             if (selectionCircle) {
                 selectionCircle.style.transition = "all 0.4s ease-in-out";
-
                 selectionCircle.style.left     = `${(buttonWidth - selectionCircle.offsetWidth) / 2}px`;
                 selectionCircle.style.top      = "0px";
             }
 
-            if (currentInput) { currentInput.remove(); currentInput = null; }
-            if (currentOptionsContainer) { currentOptionsContainer.remove(); currentOptionsContainer = null; }
+            if (currentInput) {
+                currentInput.remove();
+                currentInput = null;
+            }
+            if (currentOptionsContainer) {
+                currentOptionsContainer.remove();
+                currentOptionsContainer = null;
+            }
 
             if (icon.id === 'apply_filters') {
                 applyFilters();
-            return;
+                return;
             }
-
             if (icon.id === 'clear_filters') {
                 clearFilters();
-            return;
+                return;
             }
 
             const type = filterType[icon.id];
             if (type === 'input') {
+                if (button.querySelector('.custom-toolbar-input')) {
+                    button.querySelector('.custom-toolbar-input').focus();
+                    return;
+                }
+
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'custom-toolbar-input';
                 input.placeholder = icon.name;
+
                 button.appendChild(input);
                 positionInputOrDropdown(input, null, button);
                 input.focus();
@@ -1728,12 +1743,13 @@ async function initializePlaytestToolbar() {
             } else if (type === 'dropdown') {
                 const id = icon.id + 'Options';
                 const useWrapper = ['mechanics','restrictions'].includes(icon.id);
-                const optionsContainer = showOptionsContainer(id, dropdownOptions[icon.id], button, useWrapper);
-                if (optionsContainer) positionInputOrDropdown(null, optionsContainer, button);
+                const opts = showOptionsContainer(id, dropdownOptions[icon.id], button, useWrapper);
+                if (opts) positionInputOrDropdown(null, opts, button);
             }
         });
     });
 }
+
 
 function initializeIcons() {
     icons = [
@@ -2144,6 +2160,12 @@ function initializeSubmitRecord() {
 async function initializeApp() {
     showLoadingBar();
     await loadTranslations();
+    if (!user_id) {
+        showErrorMessage(t('popup.login_required_msg'));
+        document.querySelector('.tab-buttons').style.display = 'none';
+        hideLoadingBar();
+        return;
+    }
     setupTabs();
     setupForms();
     hideLoadingBar();
