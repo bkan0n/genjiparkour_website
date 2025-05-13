@@ -67,7 +67,6 @@ include BASE_PATH . "discord/header.php";
         },
         "retina_detect": true
     });
-
     </script>
 </body>
 </html>

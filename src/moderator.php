@@ -47,9 +47,6 @@ include BASE_PATH . "discord/header.php";
         <div id="user-edit-container" class="user-edit-container"></div>
         <div id="user-edit-multiple-container" class="user-edit-multiple-container"></div>
     </div>
-    <script>
-    let user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
-    </script>
     <?php include 'footer.php'; ?>
 </body>
 </html>

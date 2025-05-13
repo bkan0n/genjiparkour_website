@@ -50,12 +50,12 @@ function notificationTypeToId(notificationType) {
 }
 
 function loadUserNotifications() {
-  if (!userId) {
-    console.error("Aucun userId défini !");
+  if (!user_id) {
+    console.error("Aucun user_id défini !");
     return;
   }
 
-  fetch(`api/settings/getNotifications.php?user_id=${userId}`)
+  fetch(`api/settings/getNotifications.php?user_id=${user_id}`)
     .then(response => {
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des notifications (HTTP non-OK)");
@@ -93,7 +93,7 @@ function updateUserNotification(notificationType, enabled) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      user_id: userId,
+      user_id: user_id,
       notification_type: notificationType,
       enabled: enabled
     })
@@ -169,15 +169,15 @@ function initSettingsModal() {
 
 // OW Actuel
 function loadOverwatchUsername() {
-  if (!userId || isNaN(userId)) {
-    console.error("userId is not defined or invalid");
+  if (!user_id || isNaN(user_id)) {
+    console.error("user_id is not defined or invalid");
     const listContainer = document.getElementById('overwatch-usernames-list');
     if (listContainer) listContainer.innerHTML = "";
     document.getElementById('overwatch-username').placeholder = "No user ID";
     return;
   }
 
-  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${user_id}`)
     .then(response => {
       if (!response.ok) throw new Error("HTTP error " + response.status);
       return response.json();
@@ -249,9 +249,9 @@ function loadOverwatchUsername() {
 
 // Supp username
 function deleteUsername(usernameToDelete) {
-  if (!userId || !usernameToDelete) return;
+  if (!user_id || !usernameToDelete) return;
 
-  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${user_id}`)
     .then(resp => resp.json())
     .then(data => {
       let usernames = data.usernames || [];
@@ -271,9 +271,9 @@ function deleteUsername(usernameToDelete) {
 
 //Username principal
 function setPrimaryUsername(usernamePrimary) {
-  if (!userId || !usernamePrimary) return;
+  if (!user_id || !usernamePrimary) return;
 
-  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${user_id}`)
     .then(resp => resp.json())
     .then(data => {
       const usernames = data.usernames || [];
@@ -287,7 +287,7 @@ function setPrimaryUsername(usernamePrimary) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
+          user_id: user_id,
           usernames: updatedUsernames
         })
       });
@@ -313,13 +313,13 @@ function setPrimaryUsername(usernamePrimary) {
 
 // MAJ username
 function updateUsernames(usernamesArray) {
-  if (!userId) return;
+  if (!user_id) return;
 
   fetch('api/settings/updateOverwatchUsernames.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_id: userId,
+      user_id: user_id,
       usernames: usernamesArray
     })
   })
@@ -355,7 +355,7 @@ document.getElementById('confirm-overwatch-username').addEventListener('click', 
     return;
   }
 
-  fetch(`api/settings/getOverwatchUsernames.php?user_id=${userId}`)
+  fetch(`api/settings/getOverwatchUsernames.php?user_id=${user_id}`)
     .then(resp => resp.json())
     .then(data => {
       let usernames = data.usernames || [];

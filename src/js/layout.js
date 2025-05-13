@@ -45,8 +45,15 @@ function preventExcessiveRefresh(maxRefreshes, timeWindow) {
     refreshes.push(now);
 
     if (refreshes.length > maxRefreshes) {
-        document.body.innerHTML = `<h1>Excessive page refresh (${maxRefreshes} in ${timeWindow / 1000} secondes detected)</h1>`;
-        throw new Error('Excessive page refresh. Page blocked.');
+        const uid = (typeof user_id !== 'undefined' && user_id !== null)
+            ? `<p><strong>User ID :</strong> ${user_id}</p>`
+            : '';
+
+        document.body.innerHTML = `
+          <h1>Excessive page refresh (${maxRefreshes} rafraîchissements en ${timeWindow/1000}s détectés)</h1>
+          ${uid}
+        `;
+        throw new Error(typeof user_id !== 'undefined' && user_id !== null ? `Excessive page refresh. Page blocked. UID: ${user_id}` : 'Excessive page refresh. Page blocked.');
     }
 
     localStorage.setItem(storageKey, JSON.stringify(refreshes));
@@ -204,6 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('translationModal');
     const modalMessage = document.getElementById('modalMessage');
     const closeModal = document.getElementById('closeModal');
+    if (!modal || !modalMessage || !closeModal) {
+        console.warn('Modal or sub-element not in dom');
+        return;
+    }
 
     unavailableLinks.forEach(link => {
         link.addEventListener('click', (event) => {
@@ -233,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //Favicon navbar
 document.addEventListener("DOMContentLoaded", () => {
     const logoIcon = document.getElementById("logoIcon");
+    if (!logoIcon) return;
 
     logoIcon.addEventListener("mouseenter", () => {
         logoIcon.src = "assets/img/favicon-anim.gif";
