@@ -22,7 +22,8 @@
             "dashboard": "Dashboard",
             "contributors": "Translation contributors",
             "website_creators": "Website creators",
-            "settings": "Settings"
+            "settings": "Settings",
+            "submit": "Submit"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -356,7 +357,7 @@
        "submit": {
             "submit_record_confirm": "Your completion has been submitted",
             "submit_map_confirm": "Your map has been submitted for playtest",
-            "submit_record": "Submit record",
+            "submit_record": "Submit completion",
             "submit_map": "Submit map",
             "cancel": "Cancel",
             "playtest": "Playtest",
@@ -517,7 +518,8 @@
             "dashboard": "Tableau de bord",
             "contributors": "Contributeurs aux traductions",
             "website_creators": "Créateurs du site",
-            "settings": "Paramètres"
+            "settings": "Paramètres",
+            "submit": "Poster"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -911,7 +913,8 @@
             "dashboard": "Панель управления",
             "contributors": "Участники перевода",
             "website_creators": "Создатели сайта",
-            "settings": "Настройки"
+            "settings": "Настройки",
+            "submit": "Опубликовать"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -1306,7 +1309,8 @@
             "dashboard": "仪表板",
             "contributors": "翻译贡献者",
             "website_creators": "网站创建者",
-            "settings": "设置"
+            "settings": "设置",
+            "submit": "发布"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1801,7 +1805,8 @@
             "dashboard": "ダッシュボード",
             "contributors": "翻訳協力者",
             "website_creators": "ウェブサイトの作成者",
-            "settings": "設定"
+            "settings": "設定",
+            "submit": "投稿"
         },
         "hero": {
             "packOpening": "パックを開封する",
@@ -2296,7 +2301,8 @@
             "dashboard": "Armaturenbrett",
             "contributors": "Übersetzungsbeitragende",
             "website_creators": "Webseiten-Ersteller",
-            "settings": "Einstellungen"
+            "settings": "Einstellungen",
+            "submit": "Posten"
         },
         "hero": {
             "packOpening": "Pack öffnen",
@@ -2623,6 +2629,43 @@
                 "extreme": "Extreme",
                 "hell": "Hell"
             }
+        },
+        "submit": {
+            "submit_record_confirm": "Dein Abschluss wurde eingereicht",
+            "submit_map_confirm": "Deine Karte wurde für den Playtest eingereicht",
+            "submit_record": "Abschluss einreichen",
+            "submit_map": "Karte einreichen",
+            "cancel": "Abbrechen",
+            "playtest": "Playtest",
+            "drag_and_drop": "Screenshot hierher ziehen & ablegen<br>oder<br><b>Zum Durchsuchen klicken</b>",
+            "no_description": "Keine Beschreibung verfügbar",
+            "creator": "Bitte wähle einen Ersteller aus",
+            "map_name": "Bitte gib einen Kartennamen ein",
+            "checkpoints": "Bitte gib eine gültige Anzahl an Checkpoints ein",
+            "difficulty": "Bitte wähle eine Schwierigkeit aus",
+            "map_type": "Bitte wähle einen Kartentyp aus",
+            "mechanics": "Bitte wähle mindestens eine Mechanik aus",
+            "restrictions": "Bitte wähle mindestens eine Einschränkung aus",
+            "map_code": "Bitte gib einen Karten-Code ein",
+            "time": "Bitte gib eine gültige Zeit ein (z. B. 123,45)",
+            "quality": "Bitte wähle eine Qualität aus",
+            "screenshot_confirm": "Bitte lade einen Screenshot hoch",
+            "screenshot": "Screenshot",
+            "difficulty_rating": "Schwierigkeitsbewertungen",
+            "rating_sub": "Du kannst deine Stimme ändern, aber nicht mehrfach abgeben!",
+            "question_difficulty": "Wie würdest du die Schwierigkeit dieser Karte bewerten?",
+            "playtest_title": "An alle Playtester!",
+            "select_quality": "Qualität auswählen",
+            "optional": "Optional",
+            "required": "Erforderlich",
+            "video": "Video",
+            "map": "Karte",
+            "guide": "Anleitung",
+            "edit": "Bearbeiten",
+            "select_difficulty": "Schwierigkeit auswählen",
+            "select_category": "Kategorie auswählen",
+            "select_mechanics": "Mechaniken auswählen",
+            "select_restrictions": "Einschränkungen auswählen"
         },
         "footer": {
             "credits": "Credits"

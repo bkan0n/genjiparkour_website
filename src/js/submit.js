@@ -72,17 +72,31 @@ function t(path, params = {}) {
 
 // --------- TAB SYSTEM -------
 function setupTabs() {
-    selectSection('submitRecord');
+    const params = new URLSearchParams(window.location.search);
+    const initial = params.get('section');
+    selectSection(sectionIds.includes(initial) ? initial : currentSection);
 }
 
+
 function selectSection(section) {
+    if (!sectionIds.includes(section)) {
+        section = currentSection;
+    }
+
+    history.replaceState(null, '', `?section=${section}`);
+
+    if (currentSection !== section) {
+        document.getElementById('playtestCardContainer').innerHTML = '';
+        document.getElementById('paginationContainer').innerHTML = '';
+    }
+    currentSection = section;
+
     document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`${section}Btn`).classList.add('active');
 
-    document.getElementById('playtestSection').style.display = (section === 'playtest') ? 'block' : 'none';
-    document.getElementById('submitMapSection').style.display = (section === 'submitMap') ? 'block' : 'none';
+    document.getElementById('playtestSection').style.display    = (section === 'playtest')    ? 'block' : 'none';
+    document.getElementById('submitMapSection').style.display  = (section === 'submitMap')   ? 'block' : 'none';
     document.getElementById('submitRecordSection').style.display = (section === 'submitRecord') ? 'block' : 'none';
-    paginationContainer.innerHTML = "";
 
     if (section === "playtest") {
         showPlaytestSectionWithToolbar();

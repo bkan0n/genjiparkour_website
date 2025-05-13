@@ -678,7 +678,7 @@ select:after, .custom-multiselect-btn:after {
 
 .tab-buttons button {
     border: 2px solid var(--tab-buttons-border);
-    padding: 10px 30px;
+    padding: 10px 10px;
     background: var(--tab-buttons-bg);
     color: var(--tab-buttons-color);
     text-transform: uppercase;
