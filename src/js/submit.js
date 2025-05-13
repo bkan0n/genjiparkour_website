@@ -1614,9 +1614,9 @@ function initDifficultyChart(difficulty_value) {
 
 // --------- Toolbar ---------
 function showPlaytestSectionWithToolbar() {
-    document.getElementById('playtestSection').style.display = 'block';
+    document.getElementById('playtestSection').style.display = 'none';
 
-    if (!icons.length) initializeIcons();
+    initializeIcons();
     initializePlaytestToolbar();
     setupToolbarDeselectOnClickOutside();
     initializePlaytestCards(user_id);
@@ -1670,6 +1670,7 @@ async function initializePlaytestToolbar() {
             { text: t("filters_toolbar.participated_no"),  raw: "not_participated"  }
         ]
     };
+    document.getElementById('playtestSection').style.display = 'block';
 
     playtestIcons.forEach(icon => {
         const button = createButton(icon);
@@ -1687,7 +1688,6 @@ async function initializePlaytestToolbar() {
 
             document.querySelectorAll('#playtestSection .toolbar-button.selected').forEach(btn => btn.classList.remove('selected'));
             button.classList.add('selected');
-            document.getElementById('icon-name').textContent = icon.name;
 
             if (selectionCircle) {
                 selectionCircle.style.transition = "all 0.4s ease-in-out";

@@ -67,6 +67,7 @@ footer {
     border-radius: 10px;
     height: 93%;
     position: relative;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 #submitMapForm.form-blocks {
@@ -709,6 +710,7 @@ select:after, .custom-multiselect-btn:after {
     display: flex;
     flex-direction: column;
     height: 100%;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .form-blocks {
@@ -860,6 +862,7 @@ select:after, .custom-multiselect-btn:after {
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 /* ---- CARTE ---- */
@@ -1238,6 +1241,7 @@ select:after, .custom-multiselect-btn:after {
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 2vw;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .pagination-container button {
@@ -1275,10 +1279,21 @@ select:after, .custom-multiselect-btn:after {
     align-items: center;
     gap: 10px;
     padding: 5px;
-    animation: fadeInUp 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-.icon-name {
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toolbar-button .icon-name {
     position: absolute;
     font-size: 14px;
     font-weight: bold;
@@ -1293,10 +1308,7 @@ select:after, .custom-multiselect-btn:after {
     transition: opacity 0.3s ease;
     white-space: nowrap;
     pointer-events: none;
-}
-
-.toolbar-button .icon-name {
-  z-index: 999;
+    z-index: 999;
 }
 
 .toolbar-button:hover .icon-name {

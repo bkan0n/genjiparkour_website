@@ -203,7 +203,7 @@ async function selectSection(sectionId) {
     }
     
     currentPage = 1;
-    document.getElementById("filterActions").style.display = "flex";
+    document.getElementById("filterActions").style.display = "none";
 
     const selectedModeText = document.getElementById("selectedMode");
     const addFilterMessage = document.getElementById("addFilterMessage");
@@ -240,6 +240,7 @@ async function initializeApp() {
     initializeIcons();
     await loadDynamicOptions();
     initializeToolbarButtons();
+    document.getElementById("filterActions").style.display = "flex";
     hideOnClickOutside();
 }
 
@@ -363,7 +364,6 @@ function initializeToolbarButtons() {
                 selectionCircle.style.top = "0px";
             }
 
-            iconName.textContent = icon.name;
             let input, optionsContainer;
 
             switch (icon.id) {

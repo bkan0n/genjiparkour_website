@@ -43,7 +43,6 @@ include BASE_PATH . "discord/header.php";
             </div>
             <div class="filter-actions" id="filterActions" style="display: none;">
                 <div class="toolbar-container">
-                    <div id="icon-name" class="icon-name"></div>
                     <div class="toolbar">
                         <div class="selection-circle"></div>
                     </div>
