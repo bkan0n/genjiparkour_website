@@ -4,10 +4,9 @@ if (typeof window.currentLang === "undefined") {
 
 let translations2 = {};
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadTranslationsPopup();
+document.addEventListener("DOMContentLoaded", () => {
+    loadTranslationsPopup();
 });
-
 //Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
@@ -196,7 +195,7 @@ function getQueryParam(param) {
 
 function handleCtaSubmit() {
     if (!user_id) {
-        showErrorMessage(t('popup.login_required_msg'));
+        showErrorMessage(t2('popup.login_required_msg'));
     } else {
         window.location.href = 'submit.php?section=playtest';
     }
@@ -289,22 +288,22 @@ window.addEventListener('offline', () => {
 //Trad
 async function loadTranslationsPopup() {
     try {
-        const response = await fetch("translations/translations.json");
-        const data = await response.json();
+        const response2 = await fetch("translations/translations.json");
+        const data2 = await response2.json();
         
-        const currentLangData = data[currentLang] || {};
+        const currentLangData2 = data2[currentLang] || {};
         
-        const { popup = {} } = currentLangData;
+        const { popup = {} } = currentLangData2;
         
         translations2 = { popup };
 
-        //console.log("Traductions chargées :", translations);
+        //console.log("Traductions chargées :", translations2);
     } catch (error) {
         console.error("Erreur lors du chargement des traductions :", error);
     }
 }
 
-function t(path, params = {}) {
+function t2(path, params = {}) {
     const parts = path.split('.');
     let result = translations2;
     for (const part of parts) {
