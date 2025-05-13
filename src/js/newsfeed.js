@@ -503,21 +503,24 @@ async function formatMessageContent(messageContent) {
         const userId = match[1];
         userPromises.push(
             fetch(`api/getGlobalName.php?user_id=${userId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.name) {
-                        const userName = data.name;
-                        messageContent = messageContent.replace(
-                            `<@${userId}>`, 
-                            `<span class="blue-highlight">@${userName}</span>`
-                        );
-                    } else {
-                        messageContent = messageContent.replace(
-                            `<@${userId}>`, 
-                            `<span class="blue-highlight">@${userId}</span>`
-                        );
-                    }
-                })
+            .then(response => response.json())
+            .then(data => {
+                let displayName;
+                if (userId === '969632729643753482') {
+                    displayName = 'GenjiBot';
+                }
+                else if (data.name) {
+                    displayName = data.name;
+                }
+                else {
+                    displayName = userId;
+                }
+
+                messageContent = messageContent.replace(
+                    `<@${userId}>`,
+                    `<span class="blue-highlight">@${displayName}</span>`
+                );
+            })
         );
     }
 
@@ -525,7 +528,12 @@ async function formatMessageContent(messageContent) {
 
     return messageContent
         .replace(/<@&1073292414271356938>/g, '<span class="grey-highlight">@General Announcements</span>')
+        .replace(/<@&1001688523067371582>/g, '<span class="grey-highlight">@Mapmaker</span>')
+        .replace(/<@&1072538245637865685>/g, '<span class="grey-highlight">@GenjiBot</span>')
         .replace(/<#1316560101360013443>/g, '<span class="grey-highlight">#change-requests</span>')
+        .replace(/<#1342953312000934069>/g, '<span class="grey-highlight">#change-requests</span>')
+        .replace(/<#1326941087767462009>/g, '<span class="grey-highlight">#xp-info</span>')
+        .replace(/<#1326941138057429083>/g, '<span class="grey-highlight">#website-info</span>')
         .replace(/`([^`]+)`/g, '<span class="code-highlight">$1</span>')
         .replace(/```([^`]+)```/gs, '<pre class="code-block">$1</pre>')
         .replace(/\*\*\*([^*]+)\*\*\*/g, '<span class="bold-italic">$1</span>')
