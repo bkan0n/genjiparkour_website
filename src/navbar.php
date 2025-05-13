@@ -30,7 +30,7 @@
         </li>
         <li class="dropdown-nav">
             <div class="button-cta-container">
-                <button class="button-cta button-cta-pulse" aria-haspopup="true" aria-expanded="false" onclick="window.location.href='submit.php?section=playtest';"><?= htmlspecialchars($translations['navbar']['submit']) ?></button>
+                <button class="button-cta button-cta-pulse" aria-haspopup="true" aria-expanded="false" onclick="handleCtaSubmit()"><?= htmlspecialchars($translations['navbar']['submit']) ?></button>
             </div>
         </li>
     </ul>

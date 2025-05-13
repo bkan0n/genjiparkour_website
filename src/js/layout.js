@@ -2,6 +2,12 @@ if (typeof window.currentLang === "undefined") {
     window.currentLang = document.documentElement.lang || "en";
 }
 
+let translations2 = {};
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadTranslationsPopup();
+});
+
 //Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
@@ -188,6 +194,14 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+function handleCtaSubmit() {
+    if (!user_id) {
+        showErrorMessage(t('popup.login_required_msg'));
+    } else {
+        window.location.href = 'submit.php?section=playtest';
+    }
+}
+
 function activateSectionFromURL() {
     const section = getQueryParam('section');
     if (section && typeof selectSection === 'function') {
@@ -273,21 +287,26 @@ window.addEventListener('offline', () => {
 });
 
 //Trad
-async function loadTranslationsRankcard() {
+async function loadTranslationsPopup() {
     try {
         const response = await fetch("translations/translations.json");
         const data = await response.json();
-        const currentLang = document.documentElement.lang || "en";
+        
         const currentLangData = data[currentLang] || {};
-        translations = { rank_card: currentLangData.rank_card || {} };
+        
+        const { popup = {} } = currentLangData;
+        
+        translations2 = { popup };
+
+        //console.log("Traductions chargées :", translations);
     } catch (error) {
-        console.error("Erreur chargement traductions :", error);
+        console.error("Erreur lors du chargement des traductions :", error);
     }
 }
 
 function t(path, params = {}) {
     const parts = path.split('.');
-    let result = translations;
+    let result = translations2;
     for (const part of parts) {
         result = result?.[part];
         if (!result) break;
