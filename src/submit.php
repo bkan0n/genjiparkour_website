@@ -83,6 +83,7 @@ include BASE_PATH . "discord/header.php";
         </div>
         <div id="playtestSection" class="section" style="display:none;">
             <div class="toolbar-container">
+                <div id="icon-name" class="icon-name"></div>
                 <div class="toolbar"></div>
             </div>
             <form id="playtestForm">
