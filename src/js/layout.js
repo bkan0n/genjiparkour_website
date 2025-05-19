@@ -2,6 +2,11 @@ if (typeof window.currentLang === "undefined") {
     window.currentLang = document.documentElement.lang || "en";
 }
 
+let translations2 = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadTranslationsPopup();
+});
 //Profil discord
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("user-profile");
@@ -45,8 +50,15 @@ function preventExcessiveRefresh(maxRefreshes, timeWindow) {
     refreshes.push(now);
 
     if (refreshes.length > maxRefreshes) {
-        document.body.innerHTML = `<h1>Excessive page refresh (${maxRefreshes} in ${timeWindow / 1000} secondes detected)</h1>`;
-        throw new Error('Excessive page refresh. Page blocked.');
+        const uid = (typeof user_id !== 'undefined' && user_id !== null)
+            ? `<p><strong>User ID :</strong> ${user_id}</p>`
+            : '';
+
+        document.body.innerHTML = `
+          <h1>Excessive page refresh (${maxRefreshes} rafraîchissements en ${timeWindow/1000}s détectés)</h1>
+          ${uid}
+        `;
+        throw new Error(typeof user_id !== 'undefined' && user_id !== null ? `Excessive page refresh. Page blocked. UID: ${user_id}` : 'Excessive page refresh. Page blocked.');
     }
 
     localStorage.setItem(storageKey, JSON.stringify(refreshes));
@@ -181,6 +193,15 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+function handleCtaSubmit() {
+    if (!user_id) {
+        showErrorMessage(t2('popup.login_required_msg'));
+    } else {
+        //window.location.href = 'submit.php?section=playtest';
+        showErrorMessage("This page is not available yet");
+    }
+}
+
 function activateSectionFromURL() {
     const section = getQueryParam('section');
     if (section && typeof selectSection === 'function') {
@@ -204,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('translationModal');
     const modalMessage = document.getElementById('modalMessage');
     const closeModal = document.getElementById('closeModal');
+    if (!modal || !modalMessage || !closeModal) {
+        console.warn('Modal or sub-element not in dom');
+        return;
+    }
 
     unavailableLinks.forEach(link => {
         link.addEventListener('click', (event) => {
@@ -233,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //Favicon navbar
 document.addEventListener("DOMContentLoaded", () => {
     const logoIcon = document.getElementById("logoIcon");
+    if (!logoIcon) return;
 
     logoIcon.addEventListener("mouseenter", () => {
         logoIcon.src = "assets/img/favicon-anim.gif";
@@ -261,21 +287,26 @@ window.addEventListener('offline', () => {
 });
 
 //Trad
-async function loadTranslationsRankcard() {
+async function loadTranslationsPopup() {
     try {
-        const response = await fetch("translations/translations.json");
-        const data = await response.json();
-        const currentLang = document.documentElement.lang || "en";
-        const currentLangData = data[currentLang] || {};
-        translations = { rank_card: currentLangData.rank_card || {} };
+        const response2 = await fetch("translations/translations.json");
+        const data2 = await response2.json();
+        
+        const currentLangData2 = data2[currentLang] || {};
+        
+        const { popup = {} } = currentLangData2;
+        
+        translations2 = { popup };
+
+        //console.log("Traductions chargées :", translations2);
     } catch (error) {
-        console.error("Erreur chargement traductions :", error);
+        console.error("Erreur lors du chargement des traductions :", error);
     }
 }
 
-function t(path, params = {}) {
+function t2(path, params = {}) {
     const parts = path.split('.');
-    let result = translations;
+    let result = translations2;
     for (const part of parts) {
         result = result?.[part];
         if (!result) break;

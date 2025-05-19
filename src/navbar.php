@@ -28,6 +28,11 @@
                 <li><a href="graphs.php"><?= htmlspecialchars($translations['navbar']['statistics']) ?></a></li>
             </ul>
         </li>
+        <li class="dropdown-nav">
+            <div class="button-cta-container">
+                <button class="button-cta button-cta-pulse" aria-haspopup="true" aria-expanded="false" onclick="handleCtaSubmit()"><?= htmlspecialchars($translations['navbar']['submit']) ?></button>
+            </div>
+        </li>
     </ul>
     <div class="navbar-right">
         <?php if (isset($_SESSION['is_moderator']) && $_SESSION['is_moderator'] === true): ?>
@@ -92,11 +97,6 @@
 <div id="sessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.7); z-index: 9999;">
     <div id="sessionModalContent" class="modal-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; max-width: 400px;"></div>
 </div>
-
 <script>
-<?php if (isset($_SESSION['user_id'])): ?>
-    const userId = "<?php echo htmlspecialchars($_SESSION['user_id']); ?>";
-<?php else: ?>
-    const userId = null;
-<?php endif; ?>
+let user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
 </script>

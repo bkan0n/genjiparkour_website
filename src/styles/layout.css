@@ -53,6 +53,33 @@
   --background-color: radial-gradient(circle, rgba(82, 82, 82, 1) 0%, rgba(43, 43, 43, 1) 100%);
   --background-color-index: radial-gradient(circle, rgba(60, 77, 87, 1) 0%, rgba(27, 33, 34, 0.9934348739495799) 100%);
   --background-color-rankcard: #0c0c0c;
+  /* Cards */
+  --form-block-bg: #222328;
+  --form-block-radius: 14px;
+  --form-label: #f6f6f6;
+  --form-label-bold: #ececec;
+  --input-bg: #fff;
+  --input-text: #222;
+  --input-border: #bbb;
+  --input-border-focus: #5865f2;
+  --input-radius: 7px;
+  --edit-btn-bg: #222127;
+  --edit-btn-color: #bbb;
+  --edit-btn-bg-hover: #3636c6;
+  --edit-btn-color-hover: #fff;
+  --meta-tag-bg: #f4f4f4;
+  --meta-tag-text: #333;
+  --block-label-bg: #f4f4f4;
+  --block-label-color: #333;
+  --btn-main: #fff;
+  --btn-main-hover: #404ecd;
+  --btn-text: #fff;
+  --btn-confirm: #43b581;
+  --btn-cancel: #fa5555;
+  --btn-cancel-hover: #eb1c1c;
+  --btn-cancel-text: #fff;
+  --sub-form-bg: #24272e;
+  --form-main-bg: #212226;
 }
 
 html, body, div, span, applet, object, iframe,
@@ -170,7 +197,7 @@ main {
     flex: 1;
 }
 
-/* Styles du pied de page */
+/* ---- FOOTER ---- */
 footer {
     font-family: 'Mona Sans', Helvetica, Arial, sans-serif;
     font-weight: 400;
@@ -260,7 +287,7 @@ footer {
     border-radius: 10px;
 }
 
-/* Style pour le modal */
+/* ---- USER MODAL PROFILE ---- */
 .container-profile {
   position: fixed;
   top: 50%;
@@ -322,7 +349,7 @@ footer {
   z-index: 2000;
 }
 
-/* Section 2 */
+/* ---- SECTION MIDDLE NAVBAR ---- */
 .navbar-menu {
   display: flex;
   list-style: none;
@@ -352,7 +379,7 @@ footer {
   border-radius: 4px;
 }
 
-/* Dropdown */
+/* ---- DROPDOWN ---- */
 .dropdown-nav .dropdown-toggle-nav {
   background: none;
   border: none;
@@ -410,7 +437,7 @@ footer {
   text-align: center;
 }
 
-/* Section 3 */
+/* ---- SECTION RIGHT NAVBAR ---- */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -477,7 +504,7 @@ footer {
   transition: transform 0.3s ease;
 }
 
-/* Animation nav links*/
+/* ---- ANIMATION NAV LINKS ---- */
 .navbar-menu a,
 .dropdown-nav .dropdown-toggle-nav {
     position: relative;
@@ -525,7 +552,7 @@ footer {
     transform-origin: right center;
 }
 
-/* Barre nav principale */
+/* ---- MAIN NAVBAR ---- */
 .navbar {
   position: relative;
   top: 0;
@@ -546,7 +573,7 @@ footer {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-/* Section gauche */
+/* ----LEFT SECTION NAVBAR ---- */
 .navbar-left {
   display: flex;
   align-items: center;
@@ -568,7 +595,7 @@ footer {
   color: var(--navbar-color);
 }
 
-/* Section menu */
+/* ---- SECTION MENU ---- */
 .navbar-menu {
   display: flex;
   list-style: none;
@@ -597,7 +624,7 @@ footer {
   border-radius: 4px;
 }
 
-/* Dropdown */
+/* ---- DROPDOWN NAVBAR ---- */
 .dropdown-nav .dropdown-menu {
   position: absolute;
   top: calc(100% + 10px);
@@ -618,7 +645,7 @@ footer {
 }
 
 
-/* Section droite */
+/* ---- RIGHT SECTION ---- */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -651,7 +678,7 @@ footer {
   background-color: #7a7a7a;
 }
 
-/* Animation pour les liens de la navbar, lang-menu et dropdown toggles */
+/* ---- NAVBAR ANIMATION ---- */
 .navbar-menu a,
 .lang-menu a,
 .dropdown-nav .dropdown-toggle-nav,
@@ -698,7 +725,7 @@ footer {
   transform-origin: left center;
 }
 
-/* Styles user dropdown */
+/* ---- USER LOGGED IN DROPDOWN ---- */
 
 .user-avatar-dropdown {
   position: relative;
@@ -751,7 +778,7 @@ footer {
   transition: background-color 0.3s ease;
 }
 
-/* Menu principal des langues */
+/* ---- TRANSLATION DROPDOWN ---- */
 .lang-menu {
   display: flex;
   list-style: none;
@@ -1905,7 +1932,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   }
 }
 
-/* Modal traduction */
+/* ---- TRANSLATE MODAL ---- */
 #translationModal {
   display: none;
   position: fixed;
@@ -1956,7 +1983,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   color: #fff;
 }
 
-/* Pop up*/
+/* ---- POPUP ---- */
 .confirmation-popup {
   position: fixed;
   top: 50%;
@@ -1968,7 +1995,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   font-size: 14px;
-  z-index: 1000;
+  z-index: 9900;
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -2009,34 +2036,35 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   transform: translate(-50%, -50%) scale(0.9);
 }
 
-/*Barre chargement */
+/* ---- LOADING BAR ---- */
 .loading-bar  {
-  --uib-size: 35px;
-  --uib-color: white;
-  --uib-speed: 1.5s;
-  --uib-dot-size: calc(var(--uib-size) * 0.4);
-  position: absolute;
-  display: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  align-items: center;
-  justify-content: center;
-  height: var(--uib-size);
-  width: var(--uib-size);
-  animation: rotate calc(var(--uib-speed) * 1.667) infinite linear;
+    --uib-size: 35px;
+    --uib-color: white;
+    --uib-speed: 1.5s;
+    --uib-dot-size: calc(var(--uib-size) * 0.4);
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    justify-content: center;
+    height: var(--uib-size);
+    width: var(--uib-size);
+    animation: rotate calc(var(--uib-speed) * 1.667) infinite linear;
+    z-index: 2000;
 }
 
 .loading-bar::before,
 .loading-bar::after {
-  content: '';
-  position: absolute;
-  height: var(--uib-dot-size);
-  width: var(--uib-dot-size);
-  border-radius: 50%;
-  background-color: var(--uib-color);
-  flex-shrink: 0;
-  transition: background-color 0.3s ease;
+    content: '';
+    position: absolute;
+    height: var(--uib-dot-size);
+    width: var(--uib-dot-size);
+    border-radius: 50%;
+    background-color: var(--uib-color);
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
 }
 
 .loading-bar::before {
@@ -2142,3 +2170,52 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   opacity: 0.65;
   }
 }
+
+/* ---- CTA BUTTON ----- */
+.button-cta-container {
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-width: 930px) {
+  .button-cta-container {
+    flex-direction: column;
+  }
+}
+
+.button-cta {
+  position: relative;
+  color: white;
+  background: transparent;
+  text-decoration: none;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid white;
+  border-radius: 1000px;
+  padding: 10px 20px;
+  margin: 0;
+  box-shadow: 0 2px 5px 0 rgba(3,6,26,0.15);
+  transition: .5s all ease-in-out;
+}
+
+.button-cta:hover {
+  cursor: pointer;
+  background: white;
+  color: #1F4141;
+  animation: none;
+}
+
+.button-cta-pulse {
+  animation: pulse 2s infinite 3s cubic-bezier(0.25, 0, 0, 1);
+  box-shadow: 0 0 0 0 white;
+}
+
+@keyframes pulse {
+  to {
+    box-shadow: 0 0 0 7px rgba(255, 255, 255, 0);
+  }
+}
+

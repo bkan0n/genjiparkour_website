@@ -22,7 +22,8 @@
             "dashboard": "Dashboard",
             "contributors": "Translation contributors",
             "website_creators": "Website creators",
-            "settings": "Settings"
+            "settings": "Settings",
+            "submit": "Submit"
         },
         "hero": {
             "packOpening": "Pack opening",
@@ -313,6 +314,9 @@
             "only_false": "False",
             "ignore_completions": "Ignore completions",
             "only_maps_with_medals": "Only medals",
+            "participation_filter": "Participation filter",
+            "participated_yes": "Particapted",
+            "participated_no": "Not participated",
             "apply_filters": "Apply filters",
             "clear_filters": "Clear filters"
        },
@@ -350,6 +354,43 @@
                 "hell": "Hell"
             }
        },
+       "submit": {
+            "submit_record_confirm": "Your completion has been submitted",
+            "submit_map_confirm": "Your map has been submitted for playtest",
+            "submit_record": "Submit completion",
+            "submit_map": "Submit map",
+            "cancel": "Cancel",
+            "playtest": "Playtest",
+            "drag_and_drop": "Drag & drop screenshot here<br>or<br><b>Click to browse</b>",
+            "no_description": "No description available",
+            "creator": "Please select a creator",
+            "map_name": "Please enter a map name",
+            "checkpoints": "Please enter a valid checkpoint count",
+            "difficulty": "Please select a difficulty",
+            "map_type": "Please select a map type",
+            "mechanics": "Please select at least one mechanic",
+            "restrictions": "Please select at least one restriction",
+            "map_code": "Please enter a map code",
+            "time": "Please enter a valid time (e.g. 123.45)",
+            "quality": "Please select a quality",
+            "screenshot_confirm": "Please upload a screenshot",
+            "screenshot": "Screenshot",
+            "difficulty_rating": "Difficulty Ratings",
+            "rating_sub": "You can change your vote, but you cannot cast multiple!",
+            "question_difficulty": "What difficulty would you rate this map?",
+            "playtest_title": "Calling all Playtesters!",
+            "select_quality": "Select quality",
+            "optional": "Optional",
+            "required": "Required",
+            "video": "Video",
+            "map": "Map",
+            "guide": "Guide",
+            "edit": "Edit",
+            "select_difficulty": "Select difficulty",
+            "select_category": "Select category",
+            "select_mechanics": "Select mechanics",
+            "select_restrictions": "Select restrictions"
+        },
        "mechanics": {
             "edge_climb": "Edge Climb",
             "bhop": "Bhop",
@@ -477,7 +518,8 @@
             "dashboard": "Tableau de bord",
             "contributors": "Contributeurs aux traductions",
             "website_creators": "Créateurs du site",
-            "settings": "Paramètres"
+            "settings": "Paramètres",
+            "submit": "Poster"
         },
         "hero": {
             "packOpening": "Ouverture de pack",
@@ -768,6 +810,9 @@
             "only_false": "Non",
             "ignore_completions": "Ignorer les complétions",
             "only_maps_with_medals": "Seulement les médailles",
+            "participation_filter": "Filtre de participation",
+            "participated_yes": "Participé",
+            "participated_no": "Non participé",
             "apply_filters": "Appliquer les filtres",
             "clear_filters": "Réinitialiser les filtres"
        },
@@ -805,6 +850,43 @@
                 "hell": "Infernal"
             }
         },
+        "submit": {
+            "submit_record_confirm": "Votre record a été posté",
+            "submit_map_confirm": "Votre carte a été postée pour playtest",
+            "submit_record": "Poster un record",
+            "submit_map": "Poster une carte",
+            "cancel": "Annuler",
+            "playtest": "Playtest",
+            "drag_and_drop": "Glissez-déposez une capture d’écran ici<br>ou<br><b>Cliquez pour parcourir</b>",
+            "no_description": "Aucune description disponible",
+            "creator": "Veuillez sélectionner un créateur",
+            "map_name": "Veuillez entrer un nom de carte",
+            "checkpoints": "Veuillez entrer un nombre de checkpoints valide",
+            "difficulty": "Veuillez sélectionner une difficulté",
+            "map_type": "Veuillez sélectionner un type de carte",
+            "mechanics": "Veuillez sélectionner au moins une mécanique",
+            "restrictions": "Veuillez sélectionner au moins une restriction",
+            "map_code": "Veuillez entrer un code de carte",
+            "time": "Veuillez entrer un temps valide (par ex. 123,45)",
+            "quality": "Veuillez sélectionner une qualité",
+            "screenshot_confirm": "Veuillez poster une capture d’écran",
+            "screenshot": "Capture d’écran",
+            "difficulty_rating": "Évaluations de difficulté",
+            "rating_sub": "Vous pouvez changer votre vote, mais vous ne pouvez pas voter plusieurs fois !",
+            "question_difficulty": "Quelle difficulté donneriez-vous à cette carte ?",
+            "playtest_title": "Appel à tous les Playtesters !",
+            "select_quality": "Sélectionnez la qualité",
+            "optional": "Optionnel",
+            "required": "Obligatoire",
+            "video": "Vidéo",
+            "map": "Carte",
+            "guide": "Guide",
+            "edit": "Modifier",
+            "select_difficulty": "Sélectionnez la difficulté",
+            "select_category": "Sélectionnez la catégorie",
+            "select_mechanics": "Sélectionnez les mécaniques",
+            "select_restrictions": "Sélectionnez les restrictions"
+        },
         "footer": {
             "credits": "Credits"
         }
@@ -831,7 +913,8 @@
             "dashboard": "Панель управления",
             "contributors": "Участники перевода",
             "website_creators": "Создатели сайта",
-            "settings": "Настройки"
+            "settings": "Настройки",
+            "submit": "Опубликовать"
         },
         "hero": {
             "packOpening": "Открытие комплектов",
@@ -1122,6 +1205,9 @@
             "only_false": "Нет",
             "ignore_completions": "Игнорировать прохождения",
             "only_maps_with_medals": "Только медали",
+            "participation_filter": "Фильтр участия",
+            "participated_yes": "Участвовал",
+            "participated_no": "Не участвовал",
             "apply_filters": "Применить фильтры",
             "clear_filters": "Очистить фильтры"
         },
@@ -1159,6 +1245,43 @@
                 "hell": "Hell"
             }
         },
+        "submit": {
+            "submit_record_confirm": "Ваше прохождение было отправлено",
+            "submit_map_confirm": "Ваша карта отправлена в плейтест",
+            "submit_record": "Отправить прохождение",
+            "submit_map": "Отправить карту",
+            "cancel": "Отменить",
+            "playtest": "Плейтест",
+            "drag_and_drop": "Перетащите скриншот сюда<br>или<br><b>Нажмите, чтобы просмотреть</b>",
+            "no_description": "Нет описания",
+            "creator": "Выберите создателя",
+            "map_name": "Введите имя карты",
+            "checkpoints": "Введите допустимое количество точек",
+            "difficulty": "Выберите сложность",
+            "map_type": "Выберите тип карты",
+            "mechanics": "Выберите как минимум одну механику",
+            "restrictions": "Выберите как минимум один из ограничений",
+            "map_code": "Введите код карты",
+            "time": "Введите допустимое время(например 123.45)",
+            "quality": "Выберите качество карты",
+            "screenshot_confirm": "Загрузите скриншот",
+            "screenshot": "Скриншот",
+            "difficulty_rating": "Рейтинги сложности",
+            "rating_sub": "Вы можете изменить свой голос, но не можете отдать несколько голосов!",
+            "question_difficulty": "Какую сложность вы бы дали данной карте?",
+            "playtest_title": "Приглашаем всех плейтестеров!",
+            "select_quality": "Выберите качество",
+            "optional": "Необязательно",
+            "required": "Требуется",
+            "video": "Видео",
+            "map": "Карта",
+            "guide": "Гайд",
+            "edit": "Редактировать",
+            "select_difficulty": "Выберите сложность",
+            "select_category": "Выберите категорию",
+            "select_mechanics": "Выберите механики",
+            "select_restrictions": "Выберите ограничения"
+        },
         "footer": {
             "credits": "Авторы"
         }
@@ -1186,7 +1309,8 @@
             "dashboard": "仪表板",
             "contributors": "翻译贡献者",
             "website_creators": "网站创建者",
-            "settings": "设置"
+            "settings": "设置",
+            "submit": "发布"
         },
         "hero": {
             "packOpening": "开箱",
@@ -1271,14 +1395,14 @@
             "mapCreator": "作者",
             "mapDifficulty": "难度",
             "mapCheckpoints": "关卡数",
-            "mapQuality": "质量",
+            "mapQuality": "评分",
             "mapGold": "黄金",
             "mapSilver": "白银",
             "mapBronze": "青铜",
             "mapDetails": "详情",
             "mapNickname": "昵称",
             "mapDiscordTag":"Discord昵称",
-            "mapTime":"时间",
+            "mapTime":"通关时间",
             "mapMedal":"奖项",
             "mapVideo":"介绍视频",
             "mapXP":"XP",
@@ -1476,6 +1600,9 @@
             "only_false": "否",
             "ignore_completions": "忽略已跑图",
             "only_maps_with_medals": "竞速图",
+            "participation_filter": "参与筛选",
+            "participated_yes": "已参与",
+            "participated_no": "未参与",
             "apply_filters": "应用筛选",
             "clear_filters": "清除筛选条件"
        },
@@ -1513,6 +1640,43 @@
                 "hell": "Hell"
             }
        },
+       "submit": {
+            "submit_record_confirm": "你的记录已经成功上传",
+            "submit_map_confirm": "你的地图已经上传到“玩家测试”",
+            "submit_record": "上传通关记录",
+            "submit_map": "上传新做的图",
+            "cancel": "取消",
+            "playtest": "地图测试",
+            "drag_and_drop": "拖拽你的截图<br>或者<br><b>点击浏览文件夹选择图片</b>",
+            "no_description": "还没有更多描述",
+            "creator": "请选择作者",
+            "map_name": "请输入地图名",
+            "checkpoints": "请输入正确的检查点数",
+            "difficulty": "请选择难度",
+            "map_type": "请选择地图类型",
+            "mechanics": "标注出地图使用了哪些源跑技巧",
+            "restrictions": "标注出禁用了哪些源跑技巧",
+            "map_code": "输入地图代码",
+            "time": "输入正确的时间记录 (e.g. 123.45)",
+            "quality": "地图打分",
+            "screenshot_confirm": "请上传截图",
+            "screenshot": "上传截图",
+            "difficulty_rating": "地图难度区间",
+            "rating_sub": "难度投票虽好，但不能贪多哦",
+            "question_difficulty": "选择你觉得的地图难度",
+            "playtest_title": "大火快来试试咸淡",
+            "select_quality": "地图打分",
+            "optional": "想要额外添加点什么吗:D",
+            "required": "必填",
+            "video": "视频",
+            "map": "地图",
+            "guide": "通关路线",
+            "edit": "编辑",
+            "select_difficulty": "选择地图难度",
+            "select_category": "选择类别",
+            "select_mechanics": "选择源跑技巧",
+            "select_restrictions": "选择禁用的技巧"
+        },
         "mechanics": {
             "edge_climb": "扒",
             "bhop": "小跳",
@@ -1542,7 +1706,8 @@
             "multi_climb": "蹭留",
             "standing_create_bhop": "站卡",
             "create_bhop": "卡小",
-            "wall_climb": "爬墙"
+            "wall_climb": "爬墙",
+            "bhop": "小跳"
         },
         "map_name": {
             "ayutthaya": "阿育陀耶",
@@ -1640,7 +1805,8 @@
             "dashboard": "ダッシュボード",
             "contributors": "翻訳協力者",
             "website_creators": "ウェブサイトの作成者",
-            "settings": "設定"
+            "settings": "設定",
+            "submit": "投稿"
         },
         "hero": {
             "packOpening": "パックを開封する",
@@ -1931,6 +2097,9 @@
             "only_false": "False",
             "ignore_completions": "Ignore completions",
             "only_maps_with_medals": "Only medals",
+            "participation_filter": "参加フィルター",
+            "participated_yes": "参加済み",
+            "participated_no": "未参加",
             "apply_filters": "Apply filters",
             "clear_filters": "Clear filters"
        },
@@ -1968,6 +2137,43 @@
                 "hell": "Hell"
             }
        },
+        "submit": {
+           "submit_record_confirm": "あなたの記録が送信されました",
+           "submit_map_confirm": "あなたのマップがプレイテストに送信されました",
+           "submit_record": "記録を送信",
+           "submit_map": "マップを送信",
+           "cancel": "キャンセル",
+           "playtest": "プレイテスト",
+           "drag_and_drop": "ここにスクリーンショットをドラッグ＆ドロップ<br>または<br><b>クリックしてフォルダーから参照</b>",
+           "no_description": "説明はありません",
+           "creator": "制作者を選択してください",
+           "map_name": "マップ名を入力してください",
+           "checkpoints": "有効なチェックポイント数を入力してください",
+           "difficulty": "難易度を選択してください",
+           "map_type": "マップの種類を選択してください",
+           "mechanics": "少なくとも1つのメカニクスを選択してください",
+           "restrictions": "少なくとも1つの制限を選択してください",
+           "map_code": "マップコードを入力してください",
+           "time": "有効なタイムを入力してください (例: 123.45)",
+           "quality": "品質を選択してください",
+           "screenshot_confirm": "スクリーンショットをアップロードしてください",
+           "screenshot": "スクリーンショット",
+           "difficulty_rating": "難易度評価",
+           "rating_sub": "投票を変更できますが、複数回投票することはできません！",
+           "question_difficulty": "このマップの難易度をどのように評価しますか？",
+           "playtest_title": "プレイテスター募集中！",
+           "select_quality": "品質を選択",
+           "optional": "任意",
+           "required": "必須",
+           "video": "動画",
+           "map": "マップ",
+           "guide": "ガイド",
+           "edit": "編集",
+           "select_difficulty": "難易度を選択",
+           "select_category": "カテゴリを選択",
+           "select_mechanics": "メカニクスを選択",
+           "select_restrictions": "制限を選択"
+	},
        "mechanics": {
             "edge_climb": "Edge Climb",
             "bhop": "Bhop",
@@ -2095,7 +2301,8 @@
             "dashboard": "Armaturenbrett",
             "contributors": "Übersetzungsbeitragende",
             "website_creators": "Webseiten-Ersteller",
-            "settings": "Einstellungen"
+            "settings": "Einstellungen",
+            "submit": "Posten"
         },
         "hero": {
             "packOpening": "Pack öffnen",
@@ -2422,6 +2629,43 @@
                 "extreme": "Extreme",
                 "hell": "Hell"
             }
+        },
+        "submit": {
+            "submit_record_confirm": "Dein Abschluss wurde eingereicht",
+            "submit_map_confirm": "Deine Karte wurde für den Playtest eingereicht",
+            "submit_record": "Abschluss einreichen",
+            "submit_map": "Karte einreichen",
+            "cancel": "Abbrechen",
+            "playtest": "Playtest",
+            "drag_and_drop": "Screenshot hierher ziehen & ablegen<br>oder<br><b>Zum Durchsuchen klicken</b>",
+            "no_description": "Keine Beschreibung verfügbar",
+            "creator": "Bitte wähle einen Ersteller aus",
+            "map_name": "Bitte gib einen Kartennamen ein",
+            "checkpoints": "Bitte gib eine gültige Anzahl an Checkpoints ein",
+            "difficulty": "Bitte wähle eine Schwierigkeit aus",
+            "map_type": "Bitte wähle einen Kartentyp aus",
+            "mechanics": "Bitte wähle mindestens eine Mechanik aus",
+            "restrictions": "Bitte wähle mindestens eine Einschränkung aus",
+            "map_code": "Bitte gib einen Karten-Code ein",
+            "time": "Bitte gib eine gültige Zeit ein (z. B. 123,45)",
+            "quality": "Bitte wähle eine Qualität aus",
+            "screenshot_confirm": "Bitte lade einen Screenshot hoch",
+            "screenshot": "Screenshot",
+            "difficulty_rating": "Schwierigkeitsbewertungen",
+            "rating_sub": "Du kannst deine Stimme ändern, aber nicht mehrfach abgeben!",
+            "question_difficulty": "Wie würdest du die Schwierigkeit dieser Karte bewerten?",
+            "playtest_title": "An alle Playtester!",
+            "select_quality": "Qualität auswählen",
+            "optional": "Optional",
+            "required": "Erforderlich",
+            "video": "Video",
+            "map": "Karte",
+            "guide": "Anleitung",
+            "edit": "Bearbeiten",
+            "select_difficulty": "Schwierigkeit auswählen",
+            "select_category": "Kategorie auswählen",
+            "select_mechanics": "Mechaniken auswählen",
+            "select_restrictions": "Einschränkungen auswählen"
         },
         "footer": {
             "credits": "Credits"

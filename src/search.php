@@ -43,7 +43,6 @@ include BASE_PATH . "discord/header.php";
             </div>
             <div class="filter-actions" id="filterActions" style="display: none;">
                 <div class="toolbar-container">
-                    <div id="icon-name" class="icon-name"></div>
                     <div class="toolbar">
                         <div class="selection-circle"></div>
                     </div>
@@ -59,9 +58,6 @@ include BASE_PATH . "discord/header.php";
         <div class="results-container" id="resultsContainer"></div>
         <div class="pagination-container" id="paginationContainer"></div>
     </div>
-    <script>
-    let user_id = <?= isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
-    </script>
     <?php include 'footer.php'; ?>
 </body>
 </html>

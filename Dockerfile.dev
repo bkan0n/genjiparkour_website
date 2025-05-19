@@ -7,18 +7,18 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 COPY composer.json composer.json
 COPY composer.lock composer.lock
-
-RUN groupadd -r user && useradd -r -g user user
-USER user
-
 COPY ./apache2.conf.dev /etc/apache2/apache2.conf
-
-# COPY ./000-default.conf /etc/apache2/sites-available/
-
 COPY ./php.ini /usr/local/etc/php/
-
 COPY ./src .
+
+RUN chown -R www-data:www-data /var/www/html
+
+RUN find /var/www/html -type d -exec chmod 755 {} \; && \
+    find /var/www/html -type f -exec chmod 644 {} \;
+
+USER www-data
 
 CMD bash -c "composer install && apache2-foreground"
