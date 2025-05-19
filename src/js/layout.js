@@ -197,7 +197,8 @@ function handleCtaSubmit() {
     if (!user_id) {
         showErrorMessage(t2('popup.login_required_msg'));
     } else {
-        window.location.href = 'submit.php?section=playtest';
+        //window.location.href = 'submit.php?section=playtest';
+        showErrorMessage("This page is not available yet");
     }
 }
 

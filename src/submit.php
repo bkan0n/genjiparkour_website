@@ -2,6 +2,8 @@
 if (!defined('BASE_PATH')) { define('BASE_PATH', __DIR__ . '/'); }
 require BASE_PATH . "discord/session_init.php";
 require BASE_PATH . "translations/load_translations.php";
+require BASE_PATH . "discord/auth.php";
+checkModeratorAccess();
 include BASE_PATH . "discord/header.php";
 ?>
 <!DOCTYPE html>
