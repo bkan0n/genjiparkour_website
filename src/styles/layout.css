@@ -53,6 +53,33 @@
   --background-color: radial-gradient(circle, rgba(82, 82, 82, 1) 0%, rgba(43, 43, 43, 1) 100%);
   --background-color-index: radial-gradient(circle, rgba(60, 77, 87, 1) 0%, rgba(27, 33, 34, 0.9934348739495799) 100%);
   --background-color-rankcard: #0c0c0c;
+  /* Cards */
+  --form-block-bg: #222328;
+  --form-block-radius: 14px;
+  --form-label: #f6f6f6;
+  --form-label-bold: #ececec;
+  --input-bg: #fff;
+  --input-text: #222;
+  --input-border: #bbb;
+  --input-border-focus: #5865f2;
+  --input-radius: 7px;
+  --edit-btn-bg: #222127;
+  --edit-btn-color: #bbb;
+  --edit-btn-bg-hover: #3636c6;
+  --edit-btn-color-hover: #fff;
+  --meta-tag-bg: #f4f4f4;
+  --meta-tag-text: #333;
+  --block-label-bg: #f4f4f4;
+  --block-label-color: #333;
+  --btn-main: #fff;
+  --btn-main-hover: #404ecd;
+  --btn-text: #fff;
+  --btn-confirm: #43b581;
+  --btn-cancel: #fa5555;
+  --btn-cancel-hover: #eb1c1c;
+  --btn-cancel-text: #fff;
+  --sub-form-bg: #24272e;
+  --form-main-bg: #212226;
 }
 
 html, body, div, span, applet, object, iframe,
