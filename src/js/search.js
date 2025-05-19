@@ -203,7 +203,6 @@ async function selectSection(sectionId) {
     }
     
     currentPage = 1;
-    document.getElementById("filterActions").style.display = "none";
 
     const selectedModeText = document.getElementById("selectedMode");
     const addFilterMessage = document.getElementById("addFilterMessage");
@@ -232,16 +231,18 @@ async function selectSection(sectionId) {
     initializeToolbarButtons();
     applyFilters();
     clearFilters();
+    document.getElementById("filterActions").style.display = "flex";
 }
 
 //Toolbar
 async function initializeApp() {
     await loadTranslations();
+    document.getElementById("filterActions").style.display = "none";
     initializeIcons();
     await loadDynamicOptions();
     initializeToolbarButtons();
-    document.getElementById("filterActions").style.display = "flex";
     hideOnClickOutside();
+    document.getElementById("filterActions").style.display = "flex";
 }
 
 document.addEventListener("DOMContentLoaded", initializeApp);
