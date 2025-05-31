@@ -15,7 +15,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="stylesheet" href="styles/convertor.css">
     <script src="https://cdn.jsdelivr.net/gh/Zezombye/overpy@master/out/overpy_standalone.js" defer></script>
     <script src="js/layout.js" defer></script>
-    <script src="js/convertor.js" defer></script>
+    <script type="module" src="js/convertor.js" defer></script>
 </head>
 <body>
 <?php include 'navbar.php'; ?>
@@ -72,7 +72,8 @@ include BASE_PATH . "discord/header.php";
       <div class="convert-controls">
         <label for="lang">Client language:</label>
         <select id="lang">
-          <option>English [en-US]</option>
+          <option value="en-US">English</option>
+          <option value="zh-CN">简体中文</option>
         </select>
         <button id="convert-btn">convert data</button>
       </div>
