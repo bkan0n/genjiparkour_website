@@ -279,7 +279,7 @@ function attachNicknameClickEvents() {
         cell.addEventListener('click', () => {
             const userId = cell.getAttribute('data-user-id');
             
-            if (typeof session_user_id !== 'undefined' && session_user_id !== null) {
+            if (user_id !== null) {
                 if (userId) {
                     window.location.href = `rank_card.php?user_id=${encodeURIComponent(userId)}`;
                 } else {
@@ -291,7 +291,6 @@ function attachNicknameClickEvents() {
         });
     });
 }
-
 
 function getSkillRankClass(skillRank) {
     switch (skillRank?.toLowerCase()) {
