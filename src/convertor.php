@@ -24,6 +24,7 @@ include BASE_PATH . "discord/header.php";
     <div class="tab-buttons" id="mainTabs">
         <button onclick="selectSection('convertMap')" id="convertMapBtn" class="active">Convert map</button>
         <button onclick="selectSection('help')"      id="helpBtn">Help ?</button>
+        <button onclick="selectSection('mapSettings')" id="mapSettingsBtn">Map settings</button>
     </div>
 
     <div id="convertMap" class="convert-map-layout">
@@ -94,6 +95,9 @@ include BASE_PATH . "discord/header.php";
         <li>Étape 3 : Select client language</li>
         <li>Étape 4 : Click to convert</li>
       </ul>
+    </div>
+    <div id="mapSettings" class="convert-map-layout" style="display: none; flex-direction: column; gap: 8px; padding: 16px;">
+      <div class="empty-message">Please use the converter first</div>
     </div>
 </div>
 
