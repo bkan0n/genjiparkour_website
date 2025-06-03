@@ -15,7 +15,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="stylesheet" href="styles/convertor.css">
     <script src="https://cdn.jsdelivr.net/gh/Zezombye/overpy@master/out/overpy_standalone.js" defer></script>
     <script src="js/layout.js" defer></script>
-    <script src="js/convertor.js" defer></script>
+    <script type="module" src="js/convertor.js" defer></script>
 </head>
 <body>
 <?php include 'navbar.php'; ?>
@@ -24,6 +24,7 @@ include BASE_PATH . "discord/header.php";
     <div class="tab-buttons" id="mainTabs">
         <button onclick="selectSection('convertMap')" id="convertMapBtn" class="active">Convert map</button>
         <button onclick="selectSection('help')"      id="helpBtn">Help ?</button>
+        <button onclick="selectSection('mapSettings')" id="mapSettingsBtn">Map settings</button>
     </div>
 
     <div id="convertMap" class="convert-map-layout">
@@ -72,7 +73,8 @@ include BASE_PATH . "discord/header.php";
       <div class="convert-controls">
         <label for="lang">Client language:</label>
         <select id="lang">
-          <option>English [en-US]</option>
+          <option value="en-US">English</option>
+          <option value="zh-CN">简体中文</option>
         </select>
         <button id="convert-btn">convert data</button>
       </div>
@@ -93,6 +95,9 @@ include BASE_PATH . "discord/header.php";
         <li>Étape 3 : Select client language</li>
         <li>Étape 4 : Click to convert</li>
       </ul>
+    </div>
+    <div id="mapSettings" class="convert-map-layout" style="display: none; flex-direction: column; gap: 8px; padding: 16px;">
+      <div class="empty-message">Please use the converter first</div>
     </div>
 </div>
 
