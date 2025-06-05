@@ -1,0 +1,202 @@
+{
+  "assault": {
+    "en-US": "Assault",
+    "de-DE": "Angriff",
+    "es-MX": "Asalto",
+    "pt-BR": "Ataque",
+    "ja-JP": "アサルト",
+    "ko-KR": "점령",
+    "ru-RU": "Захват точек",
+    "zh-CN": "攻防作战"
+  },
+  "bountyHunter": {
+    "en-US": "Bounty Hunter",
+    "de-DE": "Kopfgeldjäger",
+    "es-MX": "Cazarrecompensas",
+    "pt-BR": "Caçador de Recompensas",
+    "ja-JP": "バウンティ・ハンター",
+    "ko-KR": "현상금 사냥꾼",
+    "ru-RU": "Охота за головами",
+    "zh-CN": "赏金猎手"
+  },
+  "clash": {
+    "en-US": "Clash",
+    "de-DE": "Clash",
+    "es-MX": "Batalla",
+    "pt-BR": "Embate",
+    "ja-JP": "クラッシュ",
+    "ko-KR": "격돌",
+    "ru-RU": "Битва",
+    "zh-CN": "攻防阵线"
+  },
+  "control": {
+    "en-US": "Control",
+    "de-DE": "Kontrolle",
+    "es-MX": "Control",
+    "pt-BR": "Controle",
+    "ja-JP": "コントロール",
+    "ko-KR": "점령",
+    "ru-RU": "Контроль",
+    "zh-CN": "占领要点"
+  },
+  "ctf": {
+    "en-US": "Capture The Flag",
+    "de-DE": "Flaggeneroberung",
+    "es-MX": "Captura la bandera",
+    "pt-BR": "Capture a Bandeira",
+    "ja-JP": "キャプチャー・ザ・フラッグ",
+    "ko-KR": "깃발 뺏기",
+    "ru-RU": "Захват флага",
+    "zh-CN": "勇夺金旗"
+  },
+  "elimination": {
+    "en-US": "Elimination",
+    "de-DE": "Eliminierung",
+    "es-MX": "Eliminación",
+    "pt-BR": "Eliminação",
+    "ja-JP": "エリミネーション",
+    "ko-KR": "살면서 전투",
+    "ru-RU": "Ликвидация",
+    "zh-CN": "决斗先锋"
+  },
+  "escort": {
+    "en-US": "Escort",
+    "de-DE": "Eskorte",
+    "es-MX": "Escolta",
+    "pt-BR": "Escolta",
+    "ja-JP": "エスコート",
+    "ko-KR": "호위",
+    "ru-RU": "Сопровождение",
+    "zh-CN": "运载目标"
+  },
+  "ffa": {
+    "en-US": "Deathmatch",
+    "de-DE": "Deathmatch",
+    "es-MX": "Combate a muerte",
+    "pt-BR": "Combate até a Morte",
+    "ja-JP": "デスマッチ",
+    "ko-KR": "데스매치",
+    "ru-RU": "Схватка",
+    "zh-CN": "死斗"
+  },
+  "flashpoint": {
+    "en-US": "Flashpoint",
+    "de-DE": "Flashpoint",
+    "es-MX": "Punto crítico",
+    "pt-BR": "Ponto de Tumulto",
+    "ja-JP": "フラッシュポイント",
+    "ko-KR": "플래시포인트",
+    "ru-RU": "Точка возгорания",
+    "zh-CN": "闪点作战"
+  },
+  "freezethawElimination": {
+    "en-US": "Freezethaw Elimination",
+    "de-DE": "Frosttau-Eliminierung",
+    "es-MX": "Eliminación por congelamiento",
+    "pt-BR": "Eliminação Descongelante",
+    "ja-JP": "フリーズソー・エリミネーション",
+    "ko-KR": "얼음녹음 살면서 전투",
+    "ru-RU": "Ледяная ликвидация",
+    "zh-CN": "融冰决斗"
+  },
+  "hybrid": {
+    "en-US": "Hybrid",
+    "de-DE": "Hybrid",
+    "es-MX": "Híbrido",
+    "pt-BR": "Híbrido",
+    "ja-JP": "ハイブリッド",
+    "ko-KR": "협력",
+    "ru-RU": "Гибридный режим",
+    "zh-CN": "攻护混合"
+  },
+  "junkenstein": {
+    "en-US": "Junkenstein's Revenge",
+    "de-DE": "Junkensteins Rache",
+    "es-MX": "La venganza de Junkenstein",
+    "pt-BR": "A vingança de Junkenstein",
+    "ja-JP": "ジャンケンシュタインの復讐",
+    "ko-KR": "정크헨슈타인의 복수",
+    "ru-RU": "Месть Крысенштейна",
+    "zh-CN": "怪鼠复仇"
+  },
+  "lucioball": {
+    "en-US": "Lúcioball",
+    "de-DE": "Lúcioball",
+    "es-MX": "Lúciobol",
+    "pt-BR": "Luciobol",
+    "ja-JP": "ルシオボール",
+    "ko-KR": "루시오볼",
+    "ru-RU": "Лусиобол",
+    "zh-CN": "动画斗球"
+  },
+  "meisSnowballOffensive": {
+    "en-US": "Mei's Snowball Offensive",
+    "de-DE": "Meis Schneeballschlacht",
+    "es-MX": "Mei: Operación Bola de Nieve",
+    "pt-BR": "Ofensiva de Bola de Neve da Mei",
+    "ja-JP": "メイの雪球戦",
+    "ko-KR": "메이의 눈싸움 대작전",
+    "ru-RU": "Операция «Метельица»",
+    "zh-CN": "雪球攻势"
+  },
+  "practiceRange": {
+    "en-US": "Practice Range",
+    "de-DE": "Trainingsbereich",
+    "es-MX": "Campo de pruebas",
+    "pt-BR": "Campo de Treinamento",
+    "ja-JP": "練習場",
+    "ko-KR": "훈련장",
+    "ru-RU": "Учебный полигон",
+    "zh-CN": "练习靶场"
+  },
+  "push": {
+    "en-US": "Push",
+    "de-DE": "Schub",
+    "es-MX": "Avance",
+    "pt-BR": "Avanço",
+    "ja-JP": "プッシュ",
+    "ko-KR": "밀기",
+    "ru-RU": "Натиск",
+    "zh-CN": "机动推进"
+  },
+  "skirmish": {
+    "en-US": "Skirmish",
+    "de-DE": "Übungsgefecht",
+    "es-MX": "Escaramuza",
+    "pt-BR": "Confronto",
+    "ja-JP": "スカーミッシュ",
+    "ko-KR": "연습 전투",
+    "ru-RU": "Разминка",
+    "zh-CN": "突击模式"
+  },
+  "snowballFfa": {
+    "en-US": "Snowball Deathmatch",
+    "de-DE": "Schneeball-Deathmatch",
+    "es-MX": "Combate a muerte Bola de Nieve",
+    "pt-BR": "Combate até a Morte de Bola de Neve",
+    "ja-JP": "雪合戦（デスマッチ）",
+    "ko-KR": "눈싸움 데스매치",
+    "ru-RU": "Снежная схватка",
+    "zh-CN": "雪球死斗"
+  },
+  "tdm": {
+    "en-US": "Team Deathmatch",
+    "de-DE": "Team-Deathmatch",
+    "es-MX": "Combate a muerte por equipos",
+    "pt-BR": "Combate até a Morte em Equipe",
+    "ja-JP": "チーム・デスマッチ",
+    "ko-KR": "팀 데스매치",
+    "ru-RU": "Командная схватка",
+    "zh-CN": "团队死斗"
+  },
+  "yetiHunter": {
+    "en-US": "Yeti Hunter",
+    "de-DE": "Yetijagd",
+    "es-MX": "Cazadora de yetis",
+    "pt-BR": "Caça ao Yeti",
+    "ja-JP": "イエティ・ハント",
+    "ko-KR": "예티 사냥꾼",
+    "ru-RU": "Охота на йети",
+    "zh-CN": "雪域猎手"
+  }
+}
