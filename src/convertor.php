@@ -43,27 +43,24 @@ include BASE_PATH . "discord/header.php";
           <ul>
             <li>Checkpoint positions</li>
             <li>Teleports</li>
-            <li>bounce /kill orbs (per cp)</li>
-            <li>ult and dash plugin</li>
+            <li>Bounce /kill orbs (per cp)</li>
+            <li>Ult and dash plugin</li>
+            <li>Teams in some modes and numbers</li>
+            <li>Workshop bans and bans per cp</li>
           </ul>
         </div>
         <div class="column maybe">
           <h3>Maybe</h3>
           <ul>
-            <li>Names (detected only in some cases)</li>
+            <li>Addons rules</li>
             <li>Sky cp’s (will load, won’t function)</li>
-            <li>Teams in some modes and numbers</li>
           </ul>
         </div>
         <div class="column no">
           <h3>No</h3>
           <ul>
-            <li>orbs / kills that work for entire map</li>
+            <li>Orbs / kills that work for entire map</li>
             <li>Custom added code</li>
-            <li>hud text and in world texts</li>
-            <li>bans</li>
-            <li>custom portals</li>
-            <li>titles</li>
             <li>if’s, returns or aborts in rule data</li>
             <li>everything else</li>
           </ul>
@@ -71,12 +68,32 @@ include BASE_PATH . "discord/header.php";
       </div>
 
       <div class="convert-controls">
-        <label for="lang">Client language:</label>
+        <label for="lang">Pasta language:</label>
         <select id="lang">
           <option value="en-US">English</option>
           <option value="zh-CN">简体中文</option>
+          <option value="ja-JP">日本語</option>
+          <option value="ko-KR">한국어</option>
+          <option value="ru-RU">Русский</option>
+          <option value="es-MX">Español</option>
+          <option value="pt-BR">Português</option>
+          <option value="de-DE">Deutsch</option>
         </select>
         <button id="convert-btn">convert data</button>
+
+        <label for="targetLang" style="margin-left:1em">Target language:</label>
+        <select id="targetLang">
+          <option value="en-US">English</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="ja-JP">日本語</option>
+          <option value="ko-KR">한국어</option>
+          <option value="ru-RU">Русский</option>
+          <option value="es-MX">Español</option>
+          <option value="pt-BR">Português</option>
+          <option value="de-DE">Deutsch</option>
+        </select>
+
+        <button id="translate-btn" style="margin-left:0.5em">translate data</button>
       </div>
 
       <textarea class="mapdata" placeholder="mapdata here"></textarea>
@@ -96,9 +113,47 @@ include BASE_PATH . "discord/header.php";
         <li>Étape 4 : Click to convert</li>
       </ul>
     </div>
-    <div id="mapSettings" class="convert-map-layout" style="display: none; flex-direction: column; gap: 8px; padding: 16px;">
-      <div class="empty-message">Please use the converter first</div>
+  <div id="mapSettings" class="convert-map-layout" style="display: none; flex-direction: column; gap: 8px; padding: 16px; position: relative;">
+    <div class="global-infos">
+      <div class="global-bans"></div>
+      <div class="settings-buttons">
+        <button id="globalSettingsBtn" class="global-edit-mode-btn">Global settings</button>
+        <button id="editModeBtn" class="edit-mode-btn">Edit mode</button>
+      </div>
     </div>
+
+    <div class="empty-message">Please use the converter first</div>
+  </div>
+
+  <div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content2">
+      <span id="closeModal2" class="modal-close2">&times;</span>
+      <h3>Edit Checkpoint</h3>
+      <form id="editForm">
+        <div id="editFieldsContainer"></div>
+        <div class="modal-buttons3">
+          <button type="button" id="saveChangesBtn">Save</button>
+          <button type="button" id="cancelChangesBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="globalSettingsModal" class="modal" style="display: none;">
+    <div class="modal-content2">
+      <div class="modal-header">
+        <span id="closeModal2" class="modal-close2">&times;</span>
+      </div>
+      <h3>Global Settings</h3>
+      <form id="globalSettingsForm">
+        <div class="modal-buttons2">
+          <button type="button" id="saveGlobalChangesBtn">Save</button>
+          <button type="button" id="cancelGlobalChangesBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>
 
 <?php include 'footer.php'; ?>

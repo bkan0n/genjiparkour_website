@@ -7,7 +7,6 @@
     box-sizing: border-box;
 }
 
-
 /* ----- Sections ----- */
 .tab-buttons {
     display: flex;
@@ -18,7 +17,7 @@
 }
 
 .tab-buttons button {
-    border: 2px solid var(--tab-buttons-border);;
+    border: 2px solid var(--tab-buttons-border);
     padding: 5px 30px;
     background: var(--tab-buttons-bg);
     color: var(--tab-buttons-color);
@@ -47,7 +46,7 @@
     flex-direction: column;
 }
 
-/* ----- Convert map card -----*/
+/* ----- Convert map card ----- */
 .convert-map-layout {
     background: var(--form-main-bg);
     border-radius: 18px;
@@ -74,6 +73,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+
 .copy-btn:hover {
     background: var(--button-hover-bg, #d1d1d1);
 }
@@ -93,36 +93,42 @@
     gap: 10px;
     margin-bottom: 20px;
 }
+
 .column {
     flex: 1;
     padding: 12px;
     background: var(--sub-form-bg);
     border-radius: 4px;
 }
+
 .column h3 {
     text-transform: capitalize;
     text-align: center;
     margin-bottom: 8px;
     font-size: 1em;
 }
+
 .column ul {
     list-style: none;
 }
+
 .column li {
     margin-bottom: 6px;
     font-size: 0.85em;
     line-height: 1.3;
 }
+
 .column.yes h3   { color: var(--yes-color, #7fff7f); }
 .column.maybe h3 { color: var(--maybe-color, #ffff7f); }
 .column.no h3    { color: var(--no-color, #ff7f7f); }
 
-/* Summary */
+/* ----- Summary ----- */
 .summary {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
 }
+
 .summary-inner {
     display: flex;
     align-items: center;
@@ -130,17 +136,20 @@
     padding: 8px 12px;
     border-radius: 4px;
 }
+
 .summary-header {
     text-transform: uppercase;
     font-size: 0.75em;
     margin-right: 10px;
     color: var(--text-muted, #bbb);
 }
+
 .icons img {
     width: 24px;
     height: 24px;
     margin-right: 6px;
 }
+
 .arrow {
     font-size: 1.4em;
     margin-left: 8px;
@@ -154,10 +163,12 @@
     gap: 10px;
     margin-bottom: 10px;
 }
+
 .convert-controls label {
     font-size: 0.9em;
     color: var(--text-color, #ddd);
 }
+
 .convert-controls select {
     padding: 4px 8px;
     border-radius: 4px;
@@ -165,6 +176,7 @@
     color: var(--block-label-color);
     background: var(--block-label-bg);
 }
+
 .convert-controls button {
     padding: 6px 12px;
     border: none;
@@ -174,6 +186,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+
 .convert-controls button:hover {
     background: var(--button-hover-bg, #d1d1d1);
 }
@@ -214,18 +227,74 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background-color: #1e2228;
+  background-color: var(--form-main-bg);;
   border: 1px solid #333;
-  border-radius: 6px;
+  border-radius: 18px;
   max-height: 80vh;
   overflow-y: auto;
+}
+
+/* ----- Global Infos (bans à gauche, boutons à droite) ----- */
+.global-infos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.global-bans {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-x: auto;
+  padding-right: 12px; /* espace pour que le contenu ne chevauche pas les boutons */
+}
+
+.global-ban-icon {
+  font-size: 1.2rem;
+  color: var(--input-bg);
+  opacity: 0.9;
+  user-select: none;
+  background: rgba(255,255,255,0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: transform 0.15s ease-in-out;
+}
+
+.global-ban-icon:hover {
+  transform: scale(1.1);
+}
+
+.settings-buttons {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+}
+
+/* ----- Boutons d’édition (Edit mode & Global settings) ----- */
+.edit-mode-btn,
+.global-edit-mode-btn {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-mode-btn:hover,
+.global-edit-mode-btn:hover {
+  background-color: #1171d9;
 }
 
 /* ----- Checkpoint-card ----- */
 .checkpoint-card {
   display: flex;
   flex-direction: column;
-  background-color: #2d2f36;
+  background-color: var(--sub-form-bg);;
   border: 1px solid #444;
   border-radius: 8px;
   padding: 16px;
@@ -235,12 +304,30 @@
   position: relative;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .checkpoint-card:hover {
   background-color: #32353d;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
-/* ----- header ----- */
+.checkpoint-card.editable {
+  cursor: pointer;
+  outline: 2px dashed var(--pagination-hover);
+}
+.checkpoint-card.editable:hover {
+  background-color: #3a3d45;
+}
+
+.empty-message {
+  color: #fff;
+  font-size: 1.4rem;
+  text-align: center;
+  padding: 24px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ----- Header ----- */
 .checkpoint-header {
   display: flex;
   justify-content: space-between;
@@ -293,6 +380,7 @@
   display: flex;
   gap: 6px;
 }
+
 .ban-icon {
   font-size: 1.2rem;
   color: #ff6666;
@@ -337,12 +425,12 @@
 }
 
 .detail__text {
-  /*flex: 1;*/
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* ----- Animations pour les cercles ----- */
 @keyframes pulse-blue {
   0% {
     box-shadow: 0 0 6px #00aaff;
@@ -379,6 +467,7 @@
   }
 }
 
+/* ----- Cercles « kill », « pin » etc. ----- */
 .circle {
   display: inline-block;
   width: 12px;
@@ -404,21 +493,13 @@
   animation: pulse-orange 1.5s infinite ease-in-out;
 }
 
-.empty-message {
-  color: #fff;
-  font-size: 1.4rem;
-  text-align: center;
-  padding: 24px 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* ----- Icônes pinball (ultime/dash dans “detail”) ----- */
+/* ----- Icônes pinball (ultime/dash) ----- */
 .pinball-icons {
   display: flex;
   gap: 6px;
   margin-left: 8px;
 }
+
 .pinball-icon {
   width: 16px;
   height: 16px;
@@ -432,6 +513,7 @@
   gap: 8px;
   margin-left: 4px;
 }
+
 .ability-icon {
   width: 24px;
   height: 24px;
@@ -444,9 +526,9 @@
   flex-direction: column;
   gap: 8px;
   padding: 16px;
-  background-color: #1e2228;
+  background-color: var(--form-main-bg);;
   border: 1px solid #333;
-  border-radius: 6px;
+  border-radius: 18px;
   color: #ffffff;
   font-family: sans-serif;
 }
@@ -483,33 +565,251 @@
   display: flex;
 }
 
+/* ----- Modal (overlay général) ----- */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none; /* Affiché via JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-/* ----- Global Bans ----- */
-.global-ban-icons {
+/* ----- Contenu du Modal global settings ----- */
+.modal-content2 {
+  background-color: #2d2f36;
+  color: #fff;
+  padding: 20px 24px;
+  border-radius: 8px;
+  width: 60vw;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+/* Titre du modal */
+.modal-content2 h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+  color: #f0f0f0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 4px;
+}
+
+/* ---------- Section “Kill orbs” et “Bounce orbs” dynamiques ---------- */
+.orb-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.orb-row input[type="number"] {
+  width: 80px;
+}
+
+/* ---------- Conteneur des champs d’édition ---------- */
+#editFieldsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- Style général des labels / inputs ---------- */
+#editFieldsContainer label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  margin-right: 10px;
+}
+#editFieldsContainer input[type="number"],
+#editFieldsContainer select,
+#editFieldsContainer textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background-color: #1e2228;
+  color: #fff;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+#editFieldsContainer input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* ----- Bouton de fermeture (×) ----- */
+.modal-close2 {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.2s ease;
+}
+
+.modal-close2:hover {
+  color: var(--red, #e74c3c);
+}
+
+/* ----- Conteneur des champs du modal ----- */
+#globalSettingsForm {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+/* ----- Chaque ligne du formulaire (label + champ) ----- */
+.modal-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Label général du formulaire */
+.modal-label {
+  font-size: 0.95em;
+  color: #ddd;
+  font-weight: 500;
+}
+
+/* Styles des inputs et selects */
+.modal-input,
+.modal-select {
+  width: 100%;
+  padding: 6px 10px;
+  background: #40444b;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 0.95em;
+  box-sizing: border-box;
+}
+
+.modal-input:focus,
+.modal-select:focus {
+  outline: none;
+  border-color: #7289da;
+  background: #4b4e57;
+}
+
+/* ----- Conteneur des cases à cocher “bans” ----- */
+.bans-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Chaque étiquette de ban (checkbox + texte) */
+.ban-label {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 4px;
-  margin-bottom: 8px;
-}
-
-.global-ban-icon {
-  font-size: 1.2rem;
-  color: #ff6666;
-  opacity: 0.9;
+  background: #ffffff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.9em;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   user-select: none;
-  transition: transform 0.15s ease-in-out;
-}
-.global-ban-icon:hover {
-  transform: scale(1.1);
 }
 
-.global-ban-icons .ban-icon {
-  margin-right: 12px;
+.ban-label input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: #7289da;
 }
 
+/* ----- Boutons Save / Cancel dans le modal ----- */
+.modal-buttons2 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
 
-/* ----- Responsive design ----- */
+.modal-buttons2 button {
+  min-width: 100px;
+  padding: 8px 14px;
+  font-size: 0.95em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.modal-buttons3 button {
+  min-width: 100px;
+  padding: 8px 14px;
+  font-size: 0.95em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.modal-buttons3 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+.modal-buttons3 .btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+.modal-buttons3 .btn-save {
+  background-color: #28a745;
+}
+.modal-buttons3 .btn-cancel {
+  background-color: #dc3545;
+}
+
+#saveGlobalChangesBtn {
+  background-color: var(--green);
+  color: #fff;
+}
+#cancelGlobalChangesBtn {
+  background-color: var(--red);
+  color: #fff;
+}
+#saveGlobalChangesBtn:hover {
+  background-color: var(--green-hover);
+}
+#cancelGlobalChangesBtn:hover {
+  background-color: var(--red-hover);
+}
+
+#saveChangesBtn {
+  background-color: var(--green);
+  color: #fff;
+}
+#cancelChangesBtn {
+  background-color: var(--red);
+  color: #fff;
+}
+#saveChangesBtn:hover {
+  background-color: var(--green-hover);
+}
+#cancelChangesBtn:hover {
+  background-color: var(--red-hover);
+}
+
+/* ----- Responsive design pour petits écrans ----- */
 @media (max-width: 500px) {
   .checkpoint-header {
     flex-direction: column;
@@ -529,5 +829,18 @@
   }
   .ban-icon {
     font-size: 1.1rem;
+  }
+
+  /* Adaptation du modal pour petit écran */
+  .modal-content2 {
+    width: 90vw;
+    padding: 16px 20px;
+  }
+  .modal-row {
+    grid-template-columns: 1fr; /* colonne unique */
+    row-gap: 8px;
+  }
+  .modal-label {
+    width: 100%;
   }
 }
