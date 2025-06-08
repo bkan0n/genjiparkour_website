@@ -350,6 +350,7 @@ regla ("Editor | Hud and Effects") {
         Esperar(0.832000000000000, Ignorar condición);
         "cant be condition because host player can leaves, removing the rule fx"
         Esperar hasta(La entidad existe(Todos los jugadores(Todos los equipos)), 999999999999);
+        Esperar(Falso, Ignorar condición);
         Si((Todos los jugadores(Todos los equipos)).editor_on);
             "hostPlayer.editor_lock = true\\nremove unnesesary huds"
             Mientras(Conteo de(Global.HudStoreEdit));

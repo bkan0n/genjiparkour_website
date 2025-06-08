@@ -350,6 +350,7 @@ export const frameworkTemplate = `设置
         等待(0.832000000000000, 无视条件);
         "cant be condition because host player can leaves, removing the rule fx"
         等待直到 (实体存在(所有玩家(所有队伍)), 999999999999);
+        等待(假, 无视条件);
         If((所有玩家(所有队伍)).editor_on);
             "hostPlayer.editor_lock = true\\nremove unnesesary huds"
             While(数量(全局.HudStoreEdit));
@@ -2136,7 +2137,7 @@ export const frameworkTemplate = `设置
                     If(与(比较((事件玩家).checkpoint_current, ==, 减(数量(全局.A), 真)), 非((事件玩家).editor_on)));
                         停止追踪玩家变量(事件玩家, timer_normal);
                         等待(假, 无视条件);
-                        大字体信息(首个(真), 自定义字符串("{0} {1} {2}", 事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("已通关! 用时"), 自定义字符串("Mission complete! Time")), 自定义字符串("{0} sec", (事件玩家).timer_normal)));
+                        大字体信息(首个(真), 自定义字符串("{0} {1} {2} sec", 事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("已通关! 用时"), 自定义字符串("Mission complete! Time")), (事件玩家).timer_normal));
                         调用子程序(LeaderboardUpdate);
                         If(与(全局.CompMode, 全局.CompAtmpNum));
                             If(比较((事件玩家).comp_countAttempts, ==, 全局.CompAtmpNum));
@@ -2384,7 +2385,7 @@ export const frameworkTemplate = `设置
         "top 5"
         设置全局变量(LeaderBoardFull, 已排序的数组(全局.LeaderBoardFull, 数组中的值(当前数组元素, 真)));
         设置全局变量(LeaderBoardRemake, 空数组);
-        设置全局变量(LeaderBoardHuds, 映射的数组(全局.LeaderBoardFull, 首个(自定义字符串("　 {0}:　{1} - {2}", 加(当前数组索引, 真), 首个(当前数组元素), 最后(当前数组元素)))));
+        设置全局变量(LeaderBoardHuds, 映射的数组(全局.LeaderBoardFull, 自定义字符串("　 {0}:　{1} - {2}", 加(当前数组索引, 真), 首个(当前数组元素), 最后(当前数组元素))));
         While(数量(全局.LeaderBoardHuds));
             设置全局变量(LeaderBoardRemake, 自定义字符串("{0}\\n{1}", 全局.LeaderBoardRemake, 首个(全局.LeaderBoardHuds)));
             修改全局变量(LeaderBoardHuds, 根据索引从数组中移除, 假);
@@ -2426,7 +2427,7 @@ export const frameworkTemplate = `设置
     }
     动作 {
         等待(0.512, 无视条件);
-        创建HUD文本(事件玩家, 空, If-Then-Else((事件玩家).toggle_practice, 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("练习用时"), 自定义字符串("Practice Time:")), 自定义字符串("{0} sec", (事件玩家).timer_practice)), 空数组), 自定义字符串("{0} {1}                                                                                                ", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("用时"), 自定义字符串("Time:")), 自定义字符串("{0} sec", (事件玩家).timer_normal)), 左边, -196, 空, 颜色(灰色), 数组中的值(全局.ColorConfig, 3), 字符串, 默认可见度);
+        创建HUD文本(事件玩家, 空, If-Then-Else((事件玩家).toggle_practice, 自定义字符串("{0} {1} sec", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("练习用时"), 自定义字符串("Practice Time:")), (事件玩家).timer_practice), 空数组), 自定义字符串("{0} {1} sec                                                                                                ", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("用时"), 自定义字符串("Time:")), (事件玩家).timer_normal), 左边, -196, 空, 颜色(灰色), 数组中的值(全局.ColorConfig, 3), 字符串, 默认可见度);
         创建HUD文本(If-Then-Else((事件玩家).toggle_leaderboard, 空, 事件玩家), If-Then-Else((事件玩家).preview_array1, 自定义字符串(" {0} ({1}/{2}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else((事件玩家).preview_i, If-Then-Else(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), 自定义字符串("弹球"), 自定义字符串("自定义传送门")), 自定义字符串("检查点")), If-Then-Else((事件玩家).preview_i, If-Then-Else(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), 自定义字符串("orb"), 自定义字符串("portal")), 自定义字符串("checkpoint"))), 加((事件玩家).preview_i, 真), 自定义字符串("{0})\\n―――――――――――\\n {1}\\n", 数量((事件玩家).preview_array1), If-Then-Else(与(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), (事件玩家).preview_i), 自定义字符串("{0} {1} {2}", If-Then-Else(数组中的值(全局.TQ5, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 技能图标字符串(英雄(源氏), 按钮(终极技能)), 空数组), If-Then-Else(数组中的值(全局.TQ6, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 技能图标字符串(英雄(源氏), 按钮(技能1)), 空数组), 自定义字符串("{0} {1}", If-Then-Else(数组中的值(全局.BounceToggleLock, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 图标字符串(警告), 空数组), If-Then-Else(比较(数组中的值(全局.EditMode, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), >, 空), 图标字符串(箭头：向上), If-Then-Else(比较(数组中的值(全局.EditMode, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), <, 空), 图标字符串(箭头：向下), 空数组)))), If-Then-Else((事件玩家).preview_i, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(最后(数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("传送门 {0} 出口 ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("传送门 {0} 入口 ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i))), If-Then-Else(最后(数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("portal {0} destination ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("portal {0} start ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)))), (事件玩家).banString)))), 空数组), If-Then-Else((事件玩家).preview_array1, 空数组, 自定义字符串("{0}{1} {2}", If-Then-Else(与((事件玩家).toggle_guide, 字符串长度((事件玩家).banString)), 自定义字符串("{0}\\n", (事件玩家).banString), 空数组), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("关卡"), 自定义字符串("Level")), 自定义字符串("{0} / {1}", (事件玩家).checkpoint_current, 减(数量(全局.A), 真)))), If-Then-Else(与((事件玩家).cache_bounceMaxLocks, 非((事件玩家).preview_array1)), 自定义字符串("{0}{1} {2}", 数组中的值(全局.ColorConfig, 16), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("球"), 自定义字符串(" orbs")), 自定义字符串("{0} / {1}", 数量((事件玩家).cache_collectedLocks), (事件玩家).cache_bounceMaxLocks)), 空数组), 顶部, -172, 数组中的值(全局.ColorConfig, 4), 数组中的值(全局.ColorConfig, 4), 数组中的值(全局.ColorConfig, 16), 可见和字符串, 默认可见度);
         创建HUD文本(事件玩家, 空, 空, 自定义字符串("{0}{1}{2}", If-Then-Else(X方向分量((事件玩家).cache_inputs), 自定义字符串("■"), 自定义字符串("□")), If-Then-Else(比较(Z方向分量(阈值(事件玩家)), >, 空), 自定义字符串("▲"), 自定义字符串("△")), 自定义字符串("{0}\\n{1}{2}", If-Then-Else(Y方向分量((事件玩家).cache_inputs), 自定义字符串("●"), 自定义字符串("○")), If-Then-Else(比较(X方向分量(阈值(事件玩家)), >, 空), 自定义字符串("◀"), 自定义字符串("◁")), 自定义字符串("{0}{1}                                                                                                ", If-Then-Else(比较(Z方向分量(阈值(事件玩家)), <, 空), 自定义字符串("▼"), 自定义字符串("∇")), If-Then-Else(比较(X方向分量(阈值(事件玩家)), <, 空), 自定义字符串("▶"), 自定义字符串("▷"))))), 左边, -192, 空, 空, 单次赋值(数组中的值(全局.ColorConfig, 3)), 字符串, 默认可见度);
         "climb/bhop indicators"

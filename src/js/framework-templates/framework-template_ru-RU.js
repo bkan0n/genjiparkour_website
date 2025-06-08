@@ -350,6 +350,7 @@ rule ("Editor | Hud and Effects") {
         Wait(0.832000000000000, Ignore Condition);
         "cant be condition because host player can leaves, removing the rule fx"
         Wait Until(Entity Exists(All Players(All Teams)), 999999999999);
+        Wait(False, Ignore Condition);
         If((All Players(All Teams)).editor_on);
             "hostPlayer.editor_lock = true\\nremove unnesesary huds"
             While(Count Of(Global.HudStoreEdit));
