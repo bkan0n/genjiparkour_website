@@ -1,49 +1,49 @@
 /* ----- Container principal ----- */
 .container {
-    max-width: 90em;
-    width: 75em;
-    margin: 30px auto 8vw auto;
-    padding: 0 20px 35px 20px;
-    box-sizing: border-box;
+  width: 100%;
+  max-width: 90em;
+  margin: 30px auto 8vw;
+  padding: 0 20px 35px;
 }
 
 /* ----- Sections ----- */
 .tab-buttons {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    justify-content: center;
-    animation: fadeInUp 0.5s ease-in-out;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  animation: fadeInUp 0.5s ease-in-out;
 }
 
 .tab-buttons button {
-    border: 2px solid var(--tab-buttons-border);
-    padding: 5px 30px;
-    background: var(--tab-buttons-bg);
-    color: var(--tab-buttons-color);
-    text-transform: uppercase;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    width: 200px;
-    max-width: 100%;
-    border-radius: 5px;
-    z-index: 4;
-    display: inline-block;
-    cursor: pointer;
+  flex: 1;
+  max-width: 200px;
+  padding: 5px 20px;
+  text-transform: uppercase;
+  font-size: 1rem;
+  border: 2px solid var(--tab-buttons-border);
+  background: var(--tab-buttons-bg);
+  color: var(--tab-buttons-color);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .tab-buttons button:hover,
 .tab-buttons .active {
-    background-color: var(--tab-buttons-hover-bg);
-    color: var(--tab-buttons-hover-color);
+  background: var(--tab-buttons-hover-bg);
+  color: var(--tab-buttons-hover-color);
 }
 
 /* ----- Contenu de l’onglet ----- */
 .content {
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: var(--form-main-bg);
+  border: 1px solid #333;
+  border-radius: 18px;
 }
 
 /* ----- Convert map card ----- */
@@ -61,22 +61,20 @@
 
 /* ----- Bouton "copy map to clipboard" ----- */
 .copy-btn {
-    align-self: center;
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    color: var(--block-label-color);
-    background: var(--block-label-bg);
-    border: none;
-    border-radius: 4px;
-    text-transform: uppercase;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  align-self: center;
+  margin-bottom: 20px;
+  padding: 8px 16px;
+  background: var(--block-label-bg);
+  color: var(--block-label-color);
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.copy-btn:hover {
-    background: var(--button-hover-bg, #d1d1d1);
-}
+.copy-btn:hover { background: var(--button-hover-bg, #d1d1d1); }
 
 /* ----- Description ----- */
 .description {
@@ -156,52 +154,60 @@
     color: var(--text-color, #ddd);
 }
 
-/* ----- Contrôles bas (language + convert) ----- */
+/* ----- Contrôles bas ----- */
 .convert-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  width: 100%;
 }
+
+.diff-btn {margin-left: auto;}
 
 .convert-controls label {
-    font-size: 0.9em;
-    color: var(--text-color, #ddd);
+  font-size: 0.9em;
+  color: var(--text-color, #ddd);
 }
 
-.convert-controls select {
-    padding: 4px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--block-label-color);
-    background: var(--block-label-bg);
-}
-
+.convert-controls select,
 .convert-controls button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    color: var(--block-label-color);
-    background: var(--block-label-bg);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--block-label-bg);
+  color: var(--block-label-color);
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.convert-controls button:hover {
-    background: var(--button-hover-bg, #d1d1d1);
-}
+.convert-controls button:hover { background: var(--button-hover-bg, #d1d1d1); }
+
 
 .mapdata {
-    flex: 1;
-    width: 100%;
-    min-height: 200px;
-    padding: 12px;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px;
-    background: var(--sub-form-bg);
-    color: var(--input-bg);
-    resize: vertical;
-    font-size: 0.9em;
+  flex: 1;
+  width: 100%;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  background: var(--sub-form-bg);
+  color: var(--input-bg);
+  resize: vertical;
+  font-size: 0.9em;
+}
+
+/* ----- Diffchecker ----- */
+.diff-line {
+  white-space: pre;
+  font-family: monospace;
+}
+.diff-line.added {
+  color: #4CAF50;
+}
+.diff-line.removed {
+  color: #F44336;
 }
 
 /* ----- Footer ----- */
@@ -248,22 +254,20 @@
   flex-wrap: wrap;
   gap: 8px;
   overflow-x: auto;
-  padding-right: 12px; /* espace pour que le contenu ne chevauche pas les boutons */
 }
 
 .global-ban-icon {
-  font-size: 1.2rem;
-  color: var(--input-bg);
-  opacity: 0.9;
-  user-select: none;
-  background: rgba(255,255,255,0.1);
   padding: 4px 8px;
+  background: rgba(255,255,255,0.1);
   border-radius: 4px;
-  transition: transform 0.15s ease-in-out;
+  font-size: 0.9rem;
+  color: var(--input-bg);
+  user-select: none;
+  transition: transform 0.15s;
 }
 
 .global-ban-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.01);
 }
 
 .settings-buttons {
@@ -292,17 +296,16 @@
 
 /* ----- Checkpoint-card ----- */
 .checkpoint-card {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--sub-form-bg);;
+  background: var(--sub-form-bg);
   border: 1px solid #444;
   border-radius: 8px;
   padding: 16px;
-  margin-bottom: 12px;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-  position: relative;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
 .checkpoint-card:hover {
@@ -430,44 +433,14 @@
   text-overflow: ellipsis;
 }
 
-/* ----- Animations pour les cercles ----- */
-@keyframes pulse-blue {
-  0% {
-    box-shadow: 0 0 6px #00aaff;
-  }
-  50% {
-    box-shadow: 0 0 14px #00aaff;
-  }
-  100% {
-    box-shadow: 0 0 6px #00aaff;
-  }
-}
+/* ----- Animations ----- */
+@keyframes pulse-blue   { 0%,100%{box-shadow:0 0 6px #00aaff;}50%{box-shadow:0 0 14px #00aaff;} }
+@keyframes pulse-green  { 0%,100%{box-shadow:0 0 6px #33cc33;}50%{box-shadow:0 0 14px #33cc33;} }
+@keyframes pulse-orange { 0%,100%{box-shadow:0 0 6px #ff8800;}50%{box-shadow:0 0 14px #ff8800;} }
+@keyframes pulse-purple { 0%,100%{box-shadow:0 0 6px #9b59b6;}50%{box-shadow:0 0 14px #9b59b6;} }
 
-@keyframes pulse-green {
-  0% {
-    box-shadow: 0 0 6px #33cc33;
-  }
-  50% {
-    box-shadow: 0 0 14px #33cc33;
-  }
-  100% {
-    box-shadow: 0 0 6px #33cc33;
-  }
-}
 
-@keyframes pulse-orange {
-  0% {
-    box-shadow: 0 0 6px #ff8800;
-  }
-  50% {
-    box-shadow: 0 0 14px #ff8800;
-  }
-  100% {
-    box-shadow: 0 0 6px #ff8800;
-  }
-}
-
-/* ----- Cercles « kill », « pin » etc. ----- */
+/* ----- Circle pinball/killorbs/portals ----- */
 .circle {
   display: inline-block;
   width: 12px;
@@ -475,51 +448,17 @@
   border-radius: 50%;
 }
 
-.circle-blue {
-  background-color: #00aaff;
-  box-shadow: 0 0 6px #00aaff;
-  animation: pulse-blue 1.5s infinite ease-in-out;
-}
+.circle-blue   { background:#00aaff;   animation:pulse-blue 1.5s infinite ease-in-out; }
+.circle-green  { background:#33cc33;   animation:pulse-green 1.5s infinite ease-in-out; }
+.circle-orange { background:#ff8800;   animation:pulse-orange 1.5s infinite ease-in-out; }
+.circle-purple { background:#9b59b6;   animation:pulse-purple 1.5s infinite ease-in-out; }
 
-.circle-green {
-  background-color: #33cc33;
-  box-shadow: 0 0 6px #33cc33;
-  animation: pulse-green 1.5s infinite ease-in-out;
-}
 
-.circle-orange {
-  background-color: #ff8800;
-  box-shadow: 0 0 6px #ff8800;
-  animation: pulse-orange 1.5s infinite ease-in-out;
-}
-
-/* ----- Icônes pinball (ultime/dash) ----- */
-.pinball-icons {
-  display: flex;
-  gap: 6px;
-  margin-left: 8px;
-}
-
-.pinball-icon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
-}
-
-/* ----- Abilities ----- */
-.ability-icons {
-  display: flex;
-  gap: 8px;
-  margin-left: 4px;
-}
-
-.ability-icon {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
-}
+/* Icons */
+.pinball-icons { display: flex; gap: 6px; margin-left: 8px; }
+.pinball-icon  { width: 16px; height: 16px; object-fit: contain; }
+.ability-icons { display: flex; gap: 8px; margin-left: 4px; }
+.ability-icon  { width: 24px; height: 24px; }
 
 /* ----- Help ----- */
 .content {
@@ -565,7 +504,7 @@
   display: flex;
 }
 
-/* ----- Modal (overlay général) ----- */
+/* ----- Modal ----- */
 .modal {
   position: fixed;
   top: 0;
@@ -579,7 +518,9 @@
   z-index: 1000;
 }
 
-/* ----- Contenu du Modal global settings ----- */
+.modal-diff { display: none; align-items: center; justify-content: center; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index:1000; }
+.modal-diff.show { display: flex; }
+
 .modal-content2 {
   background-color: #2d2f36;
   color: #fff;
@@ -593,17 +534,19 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
-/* Titre du modal */
 .modal-content2 h3 {
   margin-top: 0;
   margin-bottom: 12px;
   font-size: 1.2rem;
   color: #f0f0f0;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #b5b3b3;
   padding-bottom: 4px;
 }
 
-/* ---------- Section “Kill orbs” et “Bounce orbs” dynamiques ---------- */
+.sub-header {
+  border-bottom: 1px solid #444;
+}
+
 .orb-row {
   display: flex;
   gap: 6px;
@@ -613,14 +556,21 @@
   width: 80px;
 }
 
-/* ---------- Conteneur des champs d’édition ---------- */
+.portal-block {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.portal-block input[type="number"] {
+  width: 80px;
+}
+
 #editFieldsContainer {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* ---------- Style général des labels / inputs ---------- */
 #editFieldsContainer label {
   font-size: 0.9rem;
   margin-bottom: 4px;
@@ -642,7 +592,6 @@
   margin-right: 6px;
 }
 
-/* ----- Bouton de fermeture (×) ----- */
 .modal-close2 {
   position: absolute;
   top: 8px;
@@ -657,14 +606,12 @@
   color: var(--red, #e74c3c);
 }
 
-/* ----- Conteneur des champs du modal ----- */
 #globalSettingsForm {
   display: flex;
   flex-direction: column;
   margin-top: 12px;
 }
 
-/* ----- Chaque ligne du formulaire (label + champ) ----- */
 .modal-row {
   display: grid;
   grid-template-columns: 180px 1fr;
@@ -672,17 +619,27 @@
   margin-bottom: 12px;
 }
 
-/* Label général du formulaire */
 .modal-label {
   font-size: 0.95em;
   color: #ddd;
   font-weight: 500;
 }
 
-/* Styles des inputs et selects */
 .modal-input,
 .modal-select {
   width: 100%;
+  padding: 6px 10px;
+  background: #40444b;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 0.95em;
+  box-sizing: border-box;
+}
+
+.modal-input2,
+.modal-select2 {
+  width: 50%;
   padding: 6px 10px;
   background: #40444b;
   border: 1px solid #555;
@@ -699,7 +656,6 @@
   background: #4b4e57;
 }
 
-/* ----- Conteneur des cases à cocher “bans” ----- */
 .bans-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -708,7 +664,6 @@
   margin-top: 4px;
 }
 
-/* Chaque étiquette de ban (checkbox + texte) */
 .ban-label {
   display: flex;
   align-items: center;
@@ -728,7 +683,6 @@
   accent-color: #7289da;
 }
 
-/* ----- Boutons Save / Cancel dans le modal ----- */
 .modal-buttons2 {
   display: flex;
   justify-content: flex-end;
@@ -794,22 +748,115 @@
   background-color: var(--red-hover);
 }
 
-#saveChangesBtn {
+#saveEditorChangesBtn {
   background-color: var(--green);
   color: #fff;
 }
-#cancelChangesBtn {
+#cancelEditorChangesBtn {
   background-color: var(--red);
   color: #fff;
 }
-#saveChangesBtn:hover {
+#saveEditorChangesBtn:hover {
   background-color: var(--green-hover);
 }
-#cancelChangesBtn:hover {
+#cancelEditorChangesBtn:hover {
   background-color: var(--red-hover);
 }
 
-/* ----- Responsive design pour petits écrans ----- */
+.delete-checkpoint-btn {
+  background-color: var(--red);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-right: auto;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.delete-checkpoint-btn:hover {
+  background-color: var(--red-hover);
+}
+
+/* ----- Map name input ----- */
+.map-name-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-name-text-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.map-name-text-wrapper .modal-input2 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.map-name-suggestions-container {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background: #2f3136;
+  border: 1px solid #484b51;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.map-name-suggestions-container .suggestion-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #ddd;
+}
+.map-name-suggestions-container .suggestion-item:hover {
+  background: #40444b;
+}
+
+.map-name-suggestions-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background: #2f3136;
+  border: 1px solid #484b51;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.map-name-input-wrapper .modal-input2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.map-name-input-wrapper .modal-select2 {
+  flex: none;
+  width: auto;
+}
+
+.convert-map-layout,
+#mapSettings {
+  width: 100%;
+  padding: 16px;
+  background: var(--form-main-bg);
+  border: 1px solid #333;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ----- Responsive design  ----- */
 @media (max-width: 500px) {
   .checkpoint-header {
     flex-direction: column;
@@ -831,16 +878,94 @@
     font-size: 1.1rem;
   }
 
-  /* Adaptation du modal pour petit écran */
   .modal-content2 {
     width: 90vw;
     padding: 16px 20px;
   }
   .modal-row {
-    grid-template-columns: 1fr; /* colonne unique */
+    grid-template-columns: 1fr;
     row-gap: 8px;
   }
   .modal-label {
     width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  #mapSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .checkpoint-card {
+    width: auto;
+    margin: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #mapSettings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .checkpoint-card {
+    flex: 1 1 calc(50% - 12px);
+  }
+}
+
+@media (max-width: 767px) {
+  #mapSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .checkpoint-card {
+    flex: none;
+    width: 100%;
+  }
+
+  .checkpoint-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section__items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .detail__text {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .global-infos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .settings-buttons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .convert-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .diff-btn {
+    margin-left: 0;
+  }
+}
+
+.convert-map-layout {
+  padding: 24px;
+}
+
+@media (max-width: 767px) {
+  .convert-map-layout {
+    padding: 12px;
   }
 }

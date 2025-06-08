@@ -14,6 +14,7 @@ include BASE_PATH . "discord/header.php";
     <link rel="stylesheet" href="styles/layout.css">
     <link rel="stylesheet" href="styles/convertor.css">
     <script src="https://cdn.jsdelivr.net/gh/Zezombye/overpy@master/out/overpy_standalone.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/diff@5.1.0/dist/diff.min.js"></script>
     <script src="js/layout.js" defer></script>
     <script type="module" src="js/convertor.js" defer></script>
 </head>
@@ -79,7 +80,7 @@ include BASE_PATH . "discord/header.php";
           <option value="pt-BR">Português</option>
           <option value="de-DE">Deutsch</option>
         </select>
-        <button id="convert-btn">convert data</button>
+        <button id="convert-btn">Convert data</button>
 
         <label for="targetLang" style="margin-left:1em">Target language:</label>
         <select id="targetLang">
@@ -93,7 +94,8 @@ include BASE_PATH . "discord/header.php";
           <option value="de-DE">Deutsch</option>
         </select>
 
-        <button id="translate-btn" style="margin-left:0.5em">translate data</button>
+        <button id="translate-btn" style="margin-left:0.5em">Translate data</button>
+        <button id="diff-btn" class="diff-btn" style="display:none;">Diffchecker</button>
       </div>
 
       <textarea class="mapdata" placeholder="mapdata here"></textarea>
@@ -103,14 +105,11 @@ include BASE_PATH . "discord/header.php";
 
     <div id="help" class="content" style="display: none;">
       <h2>Help ?</h2>
-      <p>
-          Example
-      </p>
       <ul>
-        <li>Étape 1 : Copy</li>
-        <li>Étape 2 : Paste</li>
-        <li>Étape 3 : Select client language</li>
-        <li>Étape 4 : Click to convert</li>
+        <li>Step 1 : Copy pasta from overwatch</li>
+        <li>Step 2 : Paste in convert map text area</li>
+        <li>Step 3 : Select client language</li>
+        <li>Step 4 : Click to convert</li>
       </ul>
     </div>
   <div id="mapSettings" class="convert-map-layout" style="display: none; flex-direction: column; gap: 8px; padding: 16px; position: relative;">
@@ -132,8 +131,8 @@ include BASE_PATH . "discord/header.php";
       <form id="editForm">
         <div id="editFieldsContainer"></div>
         <div class="modal-buttons3">
-          <button type="button" id="saveChangesBtn">Save</button>
-          <button type="button" id="cancelChangesBtn">Cancel</button>
+          <button type="button" id="saveEditorChangesBtn">Save</button>
+          <button type="button" id="cancelEditorChangesBtn">Cancel</button>
         </div>
       </form>
     </div>
@@ -151,6 +150,13 @@ include BASE_PATH . "discord/header.php";
           <button type="button" id="cancelGlobalChangesBtn">Cancel</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div id="diffModal" class="modal-diff">
+    <div class="modal-content3" style="max-width: 90vw; max-height: 80vh; overflow:auto; background:#2d2f36; padding:20px; border-radius:8px; color:#fff; position:relative;">
+      <span class="modal-close" style="position:absolute; top:8px; right:12px; cursor:pointer; font-size:1.5rem; color:#ccc;">&times;</span>
+      <pre id="diffContent" style="white-space: pre-wrap; font-family: monospace; font-size:0.9rem;"></pre>
     </div>
   </div>
 

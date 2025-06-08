@@ -133,7 +133,9 @@
     "Yellow": "黄色",
     "Custom Color": "自定义颜色",
     "Workshop Setting Toggle": "地图工坊设置开关",
-    "Visible Never": "始终不可见"
+    "Visible Never": "始终不可见",
+    "On": "开启",
+    "Off": "关闭"
   },
   "ja-JP": {
     "Global": "グローバル",
@@ -269,7 +271,9 @@
     "Yellow": "黄色",
     "Custom Color": "カスタム・カラー",
     "Workshop Setting Toggle": "ワークショップの設定の切り替え",
-    "Visible Never": "表示されない"
+    "Visible Never": "表示されない",
+    "On": "ON",
+    "Off": "OFF"
   },
   "ko-KR": {
     "Global": "Global",
@@ -405,7 +409,9 @@
     "Yellow": "Yellow",
     "Custom Color": "Custom Color",
     "Workshop Setting Toggle": "Workshop Setting Toggle",
-    "Visible Never": "Visible Never"
+    "Visible Never": "Visible Never",
+    "On": "On",
+    "Off": "Off"
   },
   "ru-RU": {
     "Global": "Global",
@@ -541,7 +547,9 @@
     "Yellow": "Yellow",
     "Custom Color": "Custom Color",
     "Workshop Setting Toggle": "Workshop Setting Toggle",
-    "Visible Never": "Visible Never"
+    "Visible Never": "Visible Never",
+    "On": "Вкл.",
+    "Off": "Выкл."
   },
   "es-MX": {
     "Global": "Global",
@@ -677,7 +685,9 @@
     "Yellow": "Amarillo",
     "Custom Color": "Color personalizado",
     "Workshop Setting Toggle": "Alternado de configuración del Workshop",
-    "Visible Never": "Nunca visible"
+    "Visible Never": "Nunca visible",
+    "On": "Activado",
+    "Off": "No"
   },
   "pt-BR": {
     "Global": "Global",
@@ -813,7 +823,9 @@
     "Yellow": "Yellow",
     "Custom Color": "Cor Personalizada",
     "Workshop Setting Toggle": "Alternar Configuração do Workshop",
-    "Visible Never": "Nunca Visível"
+    "Visible Never": "Nunca Visível",
+    "On": "Ligado",
+    "Off": "Desligado"
   },
   "de-DE": {
     "Global": "Global",
@@ -949,7 +961,9 @@
     "Yellow": "Yellow",
     "Custom Color": "Custom Color",
     "Workshop Setting Toggle": "Workshop Setting Toggle",
-    "Visible Never": "Visible Never"
+    "Visible Never": "Visible Never",
+    "On": "Ein",
+    "Off": "Aus"
   },
   "en-US": {
     "Global": "Global",
@@ -1085,7 +1099,9 @@
     "Yellow": "Yellow",
     "Custom Color": "Custom Color",
     "Workshop Setting Toggle": "Workshop Setting Toggle",
-    "Visible Never": "Visible Never"
+    "Visible Never": "Visible Never",
+    "On": "On",
+    "Off": "Off"
   },
   "es-ES": {
     "Global": "Global",
@@ -1212,6 +1228,8 @@
     "Yellow": "Yellow",
     "Custom Color": "Custom Color",
     "Workshop Setting Toggle": "Workshop Setting Toggle",
-    "Visible Never": "Visible Never"
+    "Visible Never": "Visible Never",
+    "On": "Activado",
+    "Off": "Desactivado"
   }
 }

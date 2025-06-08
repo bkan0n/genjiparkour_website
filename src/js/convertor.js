@@ -8,18 +8,20 @@ let heroesNames = null;
 let keywordTranslations = null;
 let iconTranslations = null;
 let lastFullText = "";
+let translations = {};
 window.selectSection = selectSection;
 
 let lastParsedWorkshopSettings = {
   editorMode: false,
-  portals: false
+  portals: false,
+  playtest: false
 };
 
 const globalSettings = {
   editorMode: false,
   difficultyHUD: "off",
   playtest: "off",
-  validator: "off",
+  validator: "on",
   portals: "off"
 };
 
@@ -45,15 +47,15 @@ const DIFFICULTY_MAP = [
 ];
 
 const GLOBAL_BANS = [
-  "BAN MULTICLIMB - 封禁蹿留",
-  "BAN CREATEBHOP - 封禁卡小",
-  "BAN STANDCREATE - 封禁站卡",
-  "BAN DEATHBHOP - 封禁死小",
-  "BAN EMOTE SAVEHOP - 封禁表情留小",
-  "BAN WALLCLIMB - 封禁爬墙",
-  "BAN SAVE DOUBLE - 封禁延二段跳",
-  "REQUIRE BHOP AVAILABLE - 留小跳进点",
-  "REQUIRE DJUMP AVAILABLE - 留二段跳"
+  "ban Multiclimb - 封禁蹿留",
+  "ban Createbhop - 封禁卡小",
+  "ban standcreate - 封禁站卡",
+  "ban Deathbhop - 封禁死小",
+  "ban Emote Savehop - 封禁表情留小",
+  "ban Wallclimb - 封禁爬墙",
+  "ban save double - 封禁延二段跳",
+  "require bhop available - 留小跳进点",
+  "require djump available - 留二段跳"
 ];
 
 const ADDON_RULE_TITLES = [
@@ -73,139 +75,42 @@ const ADDON_RULE_TITLES = [
   'Addon | Fake Triple Jump - 假三段跳'
 ];
 
-/* ------ Inject addons ------ */
-async function injectTranslatedAddons(tpl, fullText, sourceLang, targetLang) {
-  for (const title of ADDON_RULE_TITLES) {
-    const sourceBlock = extractEnabledBlock(fullText, title);
-    if (!sourceBlock) {
-      continue;
+/*----- Multilang ------*/
+async function loadTranslations() {
+    try {
+        const response = await fetch("translations/translations.json");
+        const data = await response.json();
+        
+        const currentLangData = data[currentLang] || {};
+        
+        const { newsfeed = {} } = currentLangData;
+        
+        translations = { newsfeed };
+
+        //console.log("Traductions chargées :", translations);
+    } catch (error) {
+        console.error("Erreur lors du chargement des traductions :", error);
     }
-
-    let reconstructed;
-    if (sourceLang === targetLang) {
-      reconstructed = sourceBlock.replace(/^\s*disabled\s+/i, '');
-    } else {
-      reconstructed = translateEntireAddonBlock(sourceBlock, sourceLang, targetLang);
-    }
-
-    tpl = removeAllBlocks(tpl, title);
-
-    tpl += "\n\n" + reconstructed;
-  }
-
-  return tpl;
 }
 
-function removeAllDisabledBlocks(tplStr, title) {
-  const disabledPrefixes = [
-    'disabled', 'deshabilitado', 'desabilitado',
-    'deaktiviert', '無効', '禁用'
-  ];
-  const ruleKeywords = ['rule', 'regla', 'regra', 'regel', 'ルール', '规则'];
-  const t = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-
-  const prefixGroup = disabledPrefixes.join('|');
-  const ruleGroup = ruleKeywords.join('|');
-
-  const regexSource = `(?:${prefixGroup})\\s+(?:${ruleGroup})\\s*\\(\\s*"${t}"\\s*\\)\\s*\\{`;
-  const reDisabledStart = new RegExp(regexSource, 'i');
-
-  let result = tplStr;
-  let m;
-  while ((m = result.match(reDisabledStart))) {
-    const startIdx = m.index;
-    const braceOpen = result.indexOf('{', startIdx);
-    if (braceOpen < 0) break;
-
-    let level = 1;
-    let i = braceOpen + 1;
-    for (; i < result.length; i++) {
-      if (result[i] === '{') level++;
-      else if (result[i] === '}') {
-        level--;
-        if (level === 0) break;
-      }
+function t(path, params = {}) {
+    const parts = path.split('.');
+    let result = translations;
+    for (const part of parts) {
+        result = result?.[part];
+        if (!result) break;
     }
-    if (level !== 0) break;
-
-    const endIdx = i + 1;
-    result = result.slice(0, startIdx) + result.slice(endIdx);
-  }
-
-  return result;
-}
-
-function buildEnabledRuleRegex(title) {
-  const disabledPrefixes = [
-    'disabled', 'deshabilitado', 'desabilitado',
-    'deaktiviert', '無効', '禁用'
-  ];
-  const ruleKeywords = ['rule', 'regla', 'regra', 'regel', 'ルール', '规则'];
-
-  const t = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  const negativeLookbehinds = disabledPrefixes
-    .map(pref => `(?<!(?:${pref}\\s))`)
-    .join('');
-  const keywordsGroup = ruleKeywords.join('|');
-  const regexSource = `${negativeLookbehinds}^[ \\t]*(?:${keywordsGroup})\\s*\\(\\s*"${t}(?:[^"]*)?"\\s*\\)\\s*\\{`;
-  return new RegExp(regexSource, 'mi');
-}
-
-
-function extractEnabledBlock(fullText, title) {
-  const reEnabledStart = buildEnabledRuleRegex(title);
-  const m = fullText.match(reEnabledStart);
-  if (!m) return null;
-
-  const startIdx = m.index;
-  const braceOpen = fullText.indexOf('{', startIdx);
-  if (braceOpen < 0) return null;
-
-  let level = 1;
-  let i = braceOpen + 1;
-  for (; i < fullText.length; i++) {
-    if (fullText[i] === '{') level++;
-    else if (fullText[i] === '}') {
-      level--;
-      if (level === 0) break;
+    if (!result) {
+        return path;
     }
-  }
-  if (level !== 0) return null;
-
-  return fullText.slice(startIdx, i + 1);
-}
-
-function removeAllBlocks(tplStr, title) {
-  tplStr = removeAllDisabledBlocks(tplStr, title);
-
-  const t = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  const ruleKeywords = ['rule', 'regla', 'regra', 'regel', 'ルール', '规则'];
-  const ruleGroup = ruleKeywords.join('|');
-  const regexActiveStart = new RegExp(`^[ \\t]*(?:${ruleGroup})\\s*\\(\\s*"${t}"\\s*\\)\\s*\\{`, 'mi');
-
-  let result = tplStr;
-  let m;
-  while ((m = result.match(regexActiveStart))) {
-    const startIdx = m.index;
-    const braceOpen = result.indexOf('{', startIdx);
-    if (braceOpen < 0) break;
-
-    let level = 1;
-    let i = braceOpen + 1;
-    for (; i < result.length; i++) {
-      if (result[i] === '{') level++;
-      else if (result[i] === '}') {
-        level--;
-        if (level === 0) break;
-      }
+    for (const key in params) {
+        result = result.replace(`{${key}}`, params[key]);
+        if (!result) {
+            console.error(`Clé de traduction introuvable: ${path}`);
+            return path;
+        }
     }
-    if (level !== 0) break;
-
-    const endIdx = i + 1;
-    result = result.slice(0, startIdx) + result.slice(endIdx);
-  }
-
-  return result;
+    return result;
 }
 
 /*----- selectSection ------*/
@@ -261,15 +166,16 @@ function selectSection(id) {
 }
 
 /* -------------- Boutons Convert & Copy -------------- */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadTranslations();
   selectSection("convertMap");
 
-  const btnConvert   = document.getElementById("convert-btn");
-  const btnTranslate = document.getElementById("translate-btn");
-  const btnCopy      = document.querySelector(".copy-btn");
-  const textarea     = document.querySelector(".mapdata");
-  const langEl       = document.getElementById("lang");
-  const targetEl     = document.getElementById("targetLang");
+  const btnConvert    = document.getElementById("convert-btn");
+  const btnTranslate  = document.getElementById("translate-btn");
+  const btnCopy       = document.querySelector(".copy-btn");
+  const textarea      = document.querySelector(".mapdata");
+  const langEl        = document.getElementById("lang");
+  const targetEl      = document.getElementById("targetLang");
 
   btnConvert.addEventListener("click", async () => {
     showLoader();
@@ -293,14 +199,15 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       hideLoader();
       btnConvert.disabled    = false;
-      btnConvert.textContent = "convert data";
+      btnConvert.textContent = "Convert data";
+      await checkForDiff();
     }
   });
 
   btnTranslate.addEventListener("click", async () => {
-    const clientLang = langEl.value || "en-US";
-    const targetLang = targetEl.value || "en-US";
-    const fullText   = textarea.value;
+    const clientLang  = langEl.value || "en-US";
+    const targetLang  = targetEl.value || "en-US";
+    const fullText    = textarea.value;
 
     lastParsedWorkshopSettings = parseWorkshopSettings(fullText);
 
@@ -312,18 +219,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let lobbyBlock = extractLobbyBlock(fullText, clientLang);
     let mapDataBlock = extractMapDataBlock(fullText, clientLang);
-
     const modeMapNames = extractModeMapNames(fullText);
+    let workshopSettingsBlock = extractWorkshopSettings(fullText);
 
     let creditsBlock = "";
     try { creditsBlock = extractMapCredits(fullText, clientLang); }
     catch(e) {  }
-    const globalBans = parseGlobalWorkshopBans(fullText);
-
     lobbyBlock = translateLobbyBlock(lobbyBlock, clientLang, targetLang);
     mapDataBlock = translateFromTo(mapDataBlock, clientLang, targetLang);
     creditsBlock = translateFromTo(creditsBlock, clientLang, targetLang);
     creditsBlock = translateHeroNames(creditsBlock, heroesNames, clientLang, targetLang);
+    workshopSettingsBlock = translateFromTo(workshopSettingsBlock, clientLang, targetLang);
 
     let tpl = await loadTemplate(targetLang);
 
@@ -351,23 +257,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const newFullMapEntry = `${translatedMapName} ${mapId}`;
 
-      tpl = insertMapNameIntoTemplate(
-        tpl,
-        targetModeName,
-        newFullMapEntry,
-        targetLang
-      );
+      tpl = insertMapNameIntoTemplate(tpl, targetModeName, newFullMapEntry, targetLang);
     }
 
     if (creditsBlock) {
       tpl = insertMapCreditsIntoTemplate(tpl, creditsBlock, targetLang);
     }
 
-    tpl = insertWorkshopBansIntoTemplate(tpl, globalBans, targetLang);
     //tpl = await injectTranslatedAddons(tpl, fullText, clientLang, targetLang);
+
+    const isValidator = parseBasicMapValidator(fullText);
+    tpl = insertBasicMapValidator(tpl, targetLang, !isValidator);
 
     if (lobbyBlock) {
       tpl = insertLobbyIntoTemplate(tpl, lobbyBlock, targetLang);
+    }
+
+    if (workshopSettingsBlock) {
+      tpl = insertWorkshopSettings(tpl, workshopSettingsBlock, targetLang);
     }
 
     const globalLocalplayerBlock = extractGlobalLocalplayerBlock(fullText);
@@ -382,6 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     textarea.value = tpl;
     renderMapSettings(fullText);
+    await checkForDiff();
   });
 
   btnCopy.addEventListener("click", async () => {
@@ -393,112 +301,18 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Copy failed: " + err.message);
     }
   });
+
+  if (btnConvert) {
+    btnConvert.addEventListener("click", () => {
+      setTimeout(addGlobalSettingsButton, 100);
+    });
+  }
+  if (btnTranslate) {
+    btnTranslate.addEventListener("click", () => {
+      setTimeout(addGlobalSettingsButton, 100);
+    });
+  }
 });
-
-/* ------- Extract & insert difficulty ------- */
-function extractGlobalLocalplayerBlock(fullText) {
-  const reHeader = /^[ \t]*(?:rule|规则|ルール)\s*\(\s*"Huds\s*\|\s*Global\s*Localplayer"\s*\)\s*\{/mi;
-  const m = fullText.match(reHeader);
-  if (!m) return "";
-
-  const startIdx = m.index;
-  const braceOpen = fullText.indexOf("{", startIdx);
-  if (braceOpen < 0) return "";
-
-  let level = 1;
-  let i = braceOpen + 1;
-  for (; i < fullText.length; i++) {
-    if (fullText[i] === "{") level++;
-    else if (fullText[i] === "}") {
-      level--;
-      if (level === 0) break;
-    }
-  }
-  if (level !== 0) return "";
-
-  return fullText.slice(startIdx, i + 1);
-}
-
-function parseDifficultyIndex(fullText, lang) {
-  const hudBlock = extractDifficultyHudBlock(fullText, lang);
-  if (!hudBlock) return -1;
-
-  const reIndex = /Difficultyhud\s*=\s*Array\s*\([\s\S]*?Combo\s*\([\s\S]*?,\s*(\d+)\s*\)/i;
-  const m = hudBlock.match(reIndex);
-  if (m && m[1]) {
-    return parseInt(m[1], 10);
-  }
-  return -1;
-}
-
-function extractDifficultyHudBlock(fullText, lang) {
-  let pattern;
-  switch (lang) {
-    case "ja-JP":
-      pattern = /グローバル\.Difficultyhud\s*=\s*[\s\S]*?;\s*/;
-      break;
-    case "zh-CN":
-      pattern = /全局\.Difficultyhud\s*=\s*[\s\S]*?;\s*/;
-      break;
-    default:
-      pattern = /Global\.Difficultyhud\s*=\s*Array\([\s\S]*?;\s*/;
-      break;
-  }
-  const m = fullText.match(pattern);
-  return m ? m[0] : "";
-}
-
-function fillDifficultyFields(parsedIndex) {
-  const playElem = document.getElementById("playtestToggle");
-  const diffElem = document.getElementById("difficultyHUDSelect");
-
-  if (parsedIndex === 0) {
-    if (playElem) playElem.value = "on";
-    if (diffElem) diffElem.value = "off";
-  } 
-  else if (parsedIndex > 0 && parsedIndex < DIFFICULTY_MAP.length) {
-    if (playElem) playElem.value = "off";
-    if (diffElem) diffElem.value = DIFFICULTY_MAP[parsedIndex];
-  } 
-  else {
-    if (playElem) playElem.value = globalSettings.playtest;
-    if (diffElem) diffElem.value = globalSettings.difficultyHUD;
-  }
-}
-
-function insertDifficultyHudBlock(tpl, hudBlock, lang) {
-  const cleanedHud = hudBlock.trim();
-  const reHeader = new RegExp(
-    `^[ \\t]*(?:rule|规则|ルール)\\s*\\(\\s*"Huds\\s*\\|\\s*Global\\s*Localplayer"\\s*\\)\\s*\\{`,
-    "mi"
-  );
-  const m = tpl.match(reHeader);
-  if (!m) {
-    return tpl;
-  }
-
-  const startIdx = m.index;
-  const braceOpenIdx = tpl.indexOf("{", startIdx);
-  if (braceOpenIdx < 0) {
-    return tpl;
-  }
-
-  let level = 1;
-  let i = braceOpenIdx + 1;
-  for (; i < tpl.length; i++) {
-    if (tpl[i] === "{") level++;
-    else if (tpl[i] === "}") {
-      level--;
-      if (level === 0) break;
-    }
-  }
-  if (level !== 0) {
-    return tpl;
-  }
-  const braceCloseIdx = i;
-
-  return tpl.slice(0, startIdx) + cleanedHud + tpl.slice(braceCloseIdx + 1);
-}
 
 /* ------- Translations ------- */
 async function loadMapNameTranslations() {
@@ -759,7 +573,7 @@ function translateLobbyBlock(lobbyText, sourceLang, targetLang) {
   return translatedLines.join("\n");
 }
 
-/* ------- Cache, overpy, parse/extract, render, modal ------- */
+/* ------- Cache, overpy  ------- */
 function getCacheURL(lang) {
   return new URL(`framework-templates/framework-template_${lang}.js`, import.meta.url).href;
 }
@@ -800,7 +614,6 @@ function cleanSource(src) {
   return src
     .replace(/^[ \t]*#!include.*$/gm, "")
     .replace(/^[ \t]*#!define\s+editortoggle.*$/gm, "")
-    .replace(/^[ \t]*#!define\s+enableInvisCommand.*$/gm, "")
     .replace(/^[ \t]*editortoggle\(.*\).*$/gm, "")
     .replace(/\beditoron\b/g, "false")
     .replace(/^[ \t]*(testData|selectedmap)\s*$/gm, "");
@@ -863,8 +676,7 @@ function buildRule(mapdata, lang) {
   let ruleText;
 
   if (lang === "zh-CN") {
-    ruleText = `规则("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") 
-{
+    ruleText = `规则("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     事件
     {
         持续 - 全局;
@@ -877,8 +689,7 @@ ${indented}
 }`;
   }
   else if (lang === "ko-KR") {
-    ruleText = `rule("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") 
-{
+    ruleText = `rule("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     event
     {
         Ongoing - Global;
@@ -891,8 +702,7 @@ ${indented}
 }`;
   }
   else if (lang === "ja-JP") {
-    ruleText = `ルール("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") 
-{
+    ruleText = `ルール("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     イベント
     {
         進行中 - グローバル;
@@ -905,8 +715,7 @@ ${indented}
 }`;
   }
   else if (lang === "ru-RU") {
-    ruleText = `rule ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力")
-{
+    ruleText = `rule ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     event
     {
         Ongoing - Global;
@@ -919,8 +728,7 @@ ${indented}
 }`;
   }
   else if (lang === "es-MX") {
-    ruleText = `regla ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力")
-{
+    ruleText = `regla ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     evento
     {
         En curso - Global;
@@ -933,8 +741,7 @@ ${indented}
 }`;
   }
   else if (lang === "pt-BR") {
-    ruleText = `regra ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力")
-{
+    ruleText = `regra ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     evento
     {
         Em andamento - Global;
@@ -947,8 +754,7 @@ ${indented}
 }`;
   }
   else if (lang === "de-DE") {
-    ruleText = `regel ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力")
-{
+    ruleText = `regel ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     event
     {
         Ongoing - Global;
@@ -961,8 +767,7 @@ ${indented}
 }`;
   }
   else {
-    ruleText = `rule ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力")
-{
+    ruleText = `rule ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     event
     {
         Ongoing - Global;
@@ -981,7 +786,7 @@ ${indented}
 function replaceMapData(tpl, newRule, lang) {
   let marker, startRule, endRule;
 
-  marker = '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入';
+  marker = '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE';
 
   if (lang === "zh-CN") {
     startRule = "规则";
@@ -1010,24 +815,29 @@ function replaceMapData(tpl, newRule, lang) {
   }
 
   const markerIdx = tpl.indexOf(marker);
-  if (markerIdx < 0) throw new Error(`Marker not found. Expected: ${marker}`);
+  if (markerIdx < 0) {
+    console.warn(`replaceMapData : marqueur non trouvé, on conserve le texte original.`);
+    return tpl;
+  }
 
   const start = tpl.lastIndexOf(startRule, markerIdx);
-  if (start < 0) throw new Error(`Rule start not found for: ${startRule}`);
+  if (start < 0) {
+    console.warn(`replaceMapData : début de règle ("${startRule}") introuvable, on conserve le texte original.`);
+    return tpl;
+  }
 
   let brace = 0, end = -1;
   for (let i = start; i < tpl.length; i++) {
-    if (tpl[i] === "{") {
-      brace++;
-    } else if (tpl[i] === "}") {
+    if (tpl[i] === "{") brace++;
+    else if (tpl[i] === "}") {
       brace--;
-      if (brace === 0) {
-        end = i + 1;
-        break;
-      }
+      if (brace === 0) { end = i + 1; break; }
     }
   }
-  if (end < 0) throw new Error(`Rule end not found for: ${endRule}`);
+  if (end < 0) {
+    console.warn(`replaceMapData : fin de règle introuvable, on conserve le texte original.`);
+    return tpl;
+  }
 
   return tpl.slice(0, start) + newRule + tpl.slice(end);
 }
@@ -1038,9 +848,10 @@ function extractMapDataBlock(fullText, lang) {
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入',
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力',
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE',
-    '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE',
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - Data Entry <---- INSERT HERE',
-    'Map Data <---- INSERT YOUR MAP DATA HERE'
+    'Map Data <---- INSERT YOUR MAP DATA HERE',
+    'Map Data     <---- INSERT YOUR MAP DATA HERE"',
+    'Map Data - 数据录入 <---- INSERT HERE / 在这输入'
   ];
 
   let headerIdx = -1;
@@ -1052,16 +863,8 @@ function extractMapDataBlock(fullText, lang) {
     }
   }
   if (headerIdx < 0) {
-    throw new Error(
-      `Impossible de trouver le marqueur "Map Data" (versions attendues :\n` +
-      `– ${markers[0]}\n` +
-      `– ${markers[1]}\n` +
-      `– ${markers[2]}\n` +
-      `– ${markers[3]}\n` +
-      `– ${markers[4]}\n` +
-      `– ${markers[5]}\n` +
-      `) dans le texte fourni.`
-    );
+    showErrorMessage("No map data rule found");
+    return "";
   }
 
   const afterHeader = fullText.slice(headerIdx);
@@ -1200,6 +1003,130 @@ function insertLobbyIntoTemplate(tpl, lobbyContent, lang) {
        + tpl.slice(endBrIdx);
 }
 
+/* ------- Extract & insert difficulty ------- */
+function extractGlobalLocalplayerBlock(fullText) {
+  const reHeader = /^[ \t]*(?:rule|规则|ルール)\s*\(\s*"Huds\s*\|\s*Global\s*Localplayer"\s*\)\s*\{/mi;
+  const m = fullText.match(reHeader);
+  if (!m) return "";
+
+  const startIdx = m.index;
+  const braceOpen = fullText.indexOf("{", startIdx);
+  if (braceOpen < 0) return "";
+
+  let level = 1;
+  let i = braceOpen + 1;
+  for (; i < fullText.length; i++) {
+    if (fullText[i] === "{") level++;
+    else if (fullText[i] === "}") {
+      level--;
+      if (level === 0) break;
+    }
+  }
+  if (level !== 0) return "";
+
+  return fullText.slice(startIdx, i + 1);
+}
+
+function parseDifficultyIndex(fullText, lang) {
+  const hudBlock = extractDifficultyHudBlock(fullText, lang);
+  if (!hudBlock) return -1;
+
+  let comboKeyword;
+  switch (lang) {
+    case "zh-CN":
+      comboKeyword = "地图工坊设置组合";
+      break;
+    case "ja-JP":
+      comboKeyword = "ワークショップ設定コンボ";
+      break;
+    case "es-MX":
+      comboKeyword = "Combinado de la configuración del Workshop";
+      break;
+    case "pt-BR":
+      comboKeyword = "Caixa de Combinação de Configurações do Workshop";
+      break;
+    default:
+      comboKeyword = "Workshop Setting Combo";
+  }
+
+  const regex = new RegExp(
+    comboKeyword.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&") +
+    "\\s*\\([\\s\\S]*?,\\s*(\\d+)\\s*\\)",
+    "i"
+  );
+  const m = hudBlock.match(regex);
+  return m && m[1] ? parseInt(m[1], 10) : -1;
+}
+
+function extractDifficultyHudBlock(fullText, lang) {
+  let pattern;
+  switch (lang) {
+    case "ja-JP":
+      pattern = /グローバル\.Difficultyhud\s*=\s*[\s\S]*?;\s*/;
+      break;
+    case "zh-CN":
+      pattern = /全局\.Difficultyhud\s*=\s*[\s\S]*?;\s*/;
+      break;
+    default:
+      pattern = /Global\.Difficultyhud\s*=\s*Array\([\s\S]*?;\s*/;
+      break;
+  }
+  const m = fullText.match(pattern);
+  return m ? m[0] : "";
+}
+
+function fillDifficultyFields(parsedIndex) {
+  const playElem = document.getElementById("playtestToggle");
+  const diffElem = document.getElementById("difficultyHUDSelect");
+
+  if (parsedIndex === 0) {
+    if (playElem) playElem.value = "on";
+    if (diffElem) diffElem.value = "off";
+  } 
+  else if (parsedIndex > 0 && parsedIndex < DIFFICULTY_MAP.length) {
+    if (playElem) playElem.value = "off";
+    if (diffElem) diffElem.value = DIFFICULTY_MAP[parsedIndex];
+  } 
+  else {
+    if (playElem) playElem.value = globalSettings.playtest;
+    if (diffElem) diffElem.value = globalSettings.difficultyHUD;
+  }
+}
+
+function insertDifficultyHudBlock(tpl, hudBlock, lang) {
+  const cleanedHud = hudBlock.trim();
+  const reHeader = new RegExp(
+    `^[ \\t]*(?:rule|规则|ルール)\\s*\\(\\s*"Huds\\s*\\|\\s*Global\\s*Localplayer"\\s*\\)\\s*\\{`,
+    "mi"
+  );
+  const m = tpl.match(reHeader);
+  if (!m) {
+    return tpl;
+  }
+
+  const startIdx = m.index;
+  const braceOpenIdx = tpl.indexOf("{", startIdx);
+  if (braceOpenIdx < 0) {
+    return tpl;
+  }
+
+  let level = 1;
+  let i = braceOpenIdx + 1;
+  for (; i < tpl.length; i++) {
+    if (tpl[i] === "{") level++;
+    else if (tpl[i] === "}") {
+      level--;
+      if (level === 0) break;
+    }
+  }
+  if (level !== 0) {
+    return tpl;
+  }
+  const braceCloseIdx = i;
+
+  return tpl.slice(0, startIdx) + cleanedHud + tpl.slice(braceCloseIdx + 1);
+}
+
 /* ------- Extract map name ------- */
 function extractModeMapNames(fullText) {
   const result = {};
@@ -1272,7 +1199,7 @@ function extractModeMapNames(fullText) {
   return result;
 }
 
-/* ------- Find & target map name ------- */
+/* ------- Parse & Insert map name ------- */
 function findModeKey(localizedName, lang) {
   if (!modesNames) return null;
   for (const [modeKey, translations] of Object.entries(modesNames)) {
@@ -1290,7 +1217,6 @@ function getTargetModeName(modeKey, targetLang, fallback) {
   return fallback;
 }
 
-/* ------- Insert map name ------- */
 function insertMapNameIntoTemplate(tpl, modeName, fullMapEntry, lang) {
   const modeRegex = new RegExp(`^\\s*${modeName.trim()}\\s*\\{`, "m");
   const modeHeaderMatch = tpl.match(modeRegex);
@@ -1347,7 +1273,7 @@ function insertMapNameIntoTemplate(tpl, modeName, fullMapEntry, lang) {
          + tpl.slice(braceEnabledClose);
 }
 
-/* ------- Extract & insertion du bloc "Credits and Colors" ------- */
+/* ------- Extract & Insert credits and colors ------- */
 function extractMapCredits(fullText, lang) {
   if (lang === "ja-JP") {
     const ruleHeaderRegex = /ルール\("<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE \/ (在这入力|在这输入)"\)/;
@@ -1539,7 +1465,142 @@ function insertMapCreditsIntoTemplate(tpl, creditsBlock, lang) {
        + tpl.slice(braceCloseIdx + 1);
 }
 
-/* ------- Extract Workshop bans ------- */
+/* ------ Extract & Insert addons ------ */
+async function injectTranslatedAddons(tpl, fullText, sourceLang, targetLang) {
+  for (const title of ADDON_RULE_TITLES) {
+    const sourceBlock = extractEnabledBlock(fullText, title);
+    if (!sourceBlock) {
+      continue;
+    }
+
+    let reconstructed;
+    if (sourceLang === targetLang) {
+      reconstructed = sourceBlock.replace(/^\s*disabled\s+/i, '');
+    } else {
+      reconstructed = translateEntireAddonBlock(sourceBlock, sourceLang, targetLang);
+    }
+
+    tpl = removeAllBlocks(tpl, title);
+
+    tpl += "\n\n" + reconstructed;
+  }
+
+  return tpl;
+}
+
+function removeAllDisabledBlocks(tplStr, title) {
+  const disabledPrefixes = [
+    'disabled', 'deshabilitado', 'desabilitado',
+    'deaktiviert', '無効', '禁用'
+  ];
+  const ruleKeywords = ['rule', 'regla', 'regra', 'regel', 'ルール', '规则'];
+  const t = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+  const prefixGroup = disabledPrefixes.join('|');
+  const ruleGroup = ruleKeywords.join('|');
+
+  const regexSource = `(?:${prefixGroup})\\s+(?:${ruleGroup})\\s*\\(\\s*"${t}"\\s*\\)\\s*\\{`;
+  const reDisabledStart = new RegExp(regexSource, 'i');
+
+  let result = tplStr;
+  let m;
+  while ((m = result.match(reDisabledStart))) {
+    const startIdx = m.index;
+    const braceOpen = result.indexOf('{', startIdx);
+    if (braceOpen < 0) break;
+
+    let level = 1;
+    let i = braceOpen + 1;
+    for (; i < result.length; i++) {
+      if (result[i] === '{') level++;
+      else if (result[i] === '}') {
+        level--;
+        if (level === 0) break;
+      }
+    }
+    if (level !== 0) break;
+
+    const endIdx = i + 1;
+    result = result.slice(0, startIdx) + result.slice(endIdx);
+  }
+
+  return result;
+}
+
+function buildEnabledRuleRegex(title) {
+  const disabledPrefixes = [
+    'disabled', 'deshabilitado', 'desabilitado',
+    'deaktiviert', '無効', '禁用'
+  ];
+  const ruleKeywords = ['rule', 'regla', 'regra', 'regel', 'ルール', '规则'];
+
+  const t = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const negativeLookbehinds = disabledPrefixes
+    .map(pref => `(?<!(?:${pref}\\s))`)
+    .join('');
+  const keywordsGroup = ruleKeywords.join('|');
+  const regexSource = `${negativeLookbehinds}^[ \\t]*(?:${keywordsGroup})\\s*\\(\\s*"${t}(?:[^"]*)?"\\s*\\)\\s*\\{`;
+  return new RegExp(regexSource, 'mi');
+}
+
+
+function extractEnabledBlock(fullText, title) {
+  const reEnabledStart = buildEnabledRuleRegex(title);
+  const m = fullText.match(reEnabledStart);
+  if (!m) return null;
+
+  const startIdx = m.index;
+  const braceOpen = fullText.indexOf('{', startIdx);
+  if (braceOpen < 0) return null;
+
+  let level = 1;
+  let i = braceOpen + 1;
+  for (; i < fullText.length; i++) {
+    if (fullText[i] === '{') level++;
+    else if (fullText[i] === '}') {
+      level--;
+      if (level === 0) break;
+    }
+  }
+  if (level !== 0) return null;
+
+  return fullText.slice(startIdx, i + 1);
+}
+
+function removeAllBlocks(tplStr, title) {
+  tplStr = removeAllDisabledBlocks(tplStr, title);
+
+  const t = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const ruleKeywords = ['rule', 'regla', 'regra', 'regel', 'ルール', '规则'];
+  const ruleGroup = ruleKeywords.join('|');
+  const regexActiveStart = new RegExp(`^[ \\t]*(?:${ruleGroup})\\s*\\(\\s*"${t}"\\s*\\)\\s*\\{`, 'mi');
+
+  let result = tplStr;
+  let m;
+  while ((m = result.match(regexActiveStart))) {
+    const startIdx = m.index;
+    const braceOpen = result.indexOf('{', startIdx);
+    if (braceOpen < 0) break;
+
+    let level = 1;
+    let i = braceOpen + 1;
+    for (; i < result.length; i++) {
+      if (result[i] === '{') level++;
+      else if (result[i] === '}') {
+        level--;
+        if (level === 0) break;
+      }
+    }
+    if (level !== 0) break;
+
+    const endIdx = i + 1;
+    result = result.slice(0, startIdx) + result.slice(endIdx);
+  }
+
+  return result;
+}
+
+/* ------- Extract Workshop settings ------- */
 function parseGlobalWorkshopBans(fullText) {
   const result = [];
   const regexWorkshop = /(?:workshop|地图工坊|ワークショップ)\s*\{([\s\S]*?)\}/i;
@@ -1557,82 +1618,115 @@ function parseGlobalWorkshopBans(fullText) {
   return result;
 }
 
-function insertWorkshopBansIntoTemplate(tpl, bans, lang) {
-  if (!bans.length) return tpl;
+function extractWorkshopSettings(fullText) {
+  const regex = /(?:workshop|地图工坊|ワークショップ)\s*\{([\s\S]*?)\}/i;
+  const match = fullText.match(regex);
+  return match ? match[1].trim() : "";
+}
 
-  let blockRegex;
-  if (lang === "zh-CN") {
-    blockRegex = /地图工坊\s*\{/;
-  } else if (lang === "ja-JP") {
-    blockRegex = /ワークショップ\s*\{/;
-  } else {
-    blockRegex = /\bworkshop\s*\{/i;
-  }
-
-  const workshopIdx = tpl.search(blockRegex);
-  if (workshopIdx < 0) {
-    return tpl;
-  }
-
-  const openBraceIdx = tpl.indexOf("{", workshopIdx);
-  if (openBraceIdx < 0) {
-    return tpl;
-  }
-
-  let level = 1;
-  let i = openBraceIdx + 1;
-  for (; i < tpl.length; i++) {
-    if (tpl[i] === "{") level++;
-    else if (tpl[i] === "}") {
-      level--;
-      if (level === 0) break;
+function insertWorkshopSettings(tpl, workshopSettingsBlock, lang) {
+  if (workshopSettingsBlock && workshopSettingsBlock.trim().length > 0) {
+    let reExtensions;
+    switch (lang) {
+      case "es-MX":
+        reExtensions = /^(\s*)extensiones\s*\{/mi;
+        break;
+      case "pt-BR":
+        reExtensions = /^(\s*)extensões\s*\{/mi;
+        break;
+      case "de-DE":
+        reExtensions = /^(\s*)Erweiterungen\s*\{/mi;
+        break;
+      case "ja-JP":
+        reExtensions = /^(\s*)拡張\s*\{/mi;
+        break;
+      case "zh-CN":
+        reExtensions = /^(\s*)扩展\s*\{/mi;
+        break;
+      default:
+        reExtensions = /^(\s*)extensions\s*\{/mi;
     }
-  }
-  if (level !== 0) {
-    return tpl;
-  }
-  const closeBraceIdx = i;
 
-  const indent = "    ";
-  let bansText;
+    const mExt = tpl.match(reExtensions);
+    if (!mExt) {
+      return tpl;
+    }
 
-  if (lang === "zh-CN") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : 开启`)
+    const baseIndent = mExt[1] || "";
+    const innerIndent = baseIndent + "    ";
+
+    const lines = workshopSettingsBlock.split(/\r?\n/);
+    const indentedLines = lines
+      .map(line => innerIndent + line.trim())
       .join("\n");
-  } else if (lang === "ja-JP") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : ON`)
-      .join("\n");
-  } else if (lang === "ko-KR") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : 활성화`)
-      .join("\n");
-  } else if (lang === "ru-RU") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : Вкл.`)
-      .join("\n");
-  } else if (lang === "es-MX") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : Activado`)
-      .join("\n");
-  } else if (lang === "pt-BR") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : Ligado`)
-      .join("\n");
-  } else if (lang === "de-DE") {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : Ein`)
-      .join("\n");
-  } else {
-    bansText = bans
-      .map(name => `${indent}ban ${name} : On`)
-      .join("\n");
+
+    let workshopKeyword;
+    switch (lang) {
+      case "zh-CN":
+        workshopKeyword = "地图工坊";
+        break;
+      case "ja-JP":
+        workshopKeyword = "ワークショップ";
+        break;
+      default:
+        workshopKeyword = "workshop";
+    }
+
+    const workshopBlock =
+      `${baseIndent}${workshopKeyword} {\n` +
+      `${indentedLines}\n` +
+      `${baseIndent}}\n\n`;
+
+    const insertPos = mExt.index;
+    return tpl.slice(0, insertPos) + workshopBlock + tpl.slice(insertPos);
   }
 
-  return tpl.slice(0, openBraceIdx + 1)
-       + "\n" + bansText + "\n"
-       + tpl.slice(closeBraceIdx);
+  if (Array.isArray(bans) && bans.length > 0) {
+    let blockRegex;
+    if (lang === "zh-CN") {
+      blockRegex = /^(?<indent>\s*)地图工坊\s*\{/mi;
+    } else if (lang === "ja-JP") {
+      blockRegex = /^(?<indent>\s*)ワークショップ\s*\{/mi;
+    } else {
+      blockRegex = /^(?<indent>\s*)workshop\s*\{/mi;
+    }
+
+    const mWork = tpl.match(blockRegex);
+    if (!mWork) {
+      return tpl;
+    }
+
+    const indentBase = (mWork.groups && mWork.groups.indent) != null
+      ? mWork.groups.indent
+      : "";
+
+    const workshopIdx = mWork.index;
+    const openBraceIdx = tpl.indexOf("{", workshopIdx);
+    if (openBraceIdx < 0) {
+      return tpl;
+    }
+
+    let level = 1;
+    let i = openBraceIdx + 1;
+    for (; i < tpl.length; i++) {
+      if (tpl[i] === "{") {
+        level++;
+      } else if (tpl[i] === "}") {
+        level--;
+        if (level === 0) break;
+      }
+    }
+    if (level !== 0) {
+      return tpl;
+    }
+    const closeBraceIdx = i;
+
+    const before = tpl.slice(0, openBraceIdx + 1);
+    const after = tpl.slice(closeBraceIdx);
+    return `${before}\n${bansText}\n${after}`;
+  }
+
+  return tpl;
 }
 
 /* ------- Extract Workshop settings------- */
@@ -1669,6 +1763,14 @@ function parseWorkshopSettings(fullText) {
     }
   }
 
+  const rePlaytest = /Playtest display\s*-\s*游戏测试\s*:\s*([^\r\n]+)/i;
+  const mPlay = block.match(rePlaytest);
+  if (mPlay) {
+    const val = mPlay[1].trim().toLowerCase();
+    const truthy = ["on", "开启", "활성화", "вкл.", "activado", "ligado", "ein"];
+    result.playtest = truthy.includes(val);
+  }
+
   return result;
 }
 
@@ -1702,6 +1804,78 @@ function parseBasicMapValidator(tplStr) {
   }
 
   return false;
+}
+
+function insertBasicMapValidator(tplStr, clientLang, shouldDisable) {
+  let disabledWord, ruleWord;
+  switch (clientLang) {
+    case "zh-CN":
+      disabledWord = "禁用";
+      ruleWord     = "规则";
+      break;
+    case "ja-JP":
+      disabledWord = "無効";
+      ruleWord     = "ルール";
+      break;
+    case "es-MX":
+      disabledWord = "deshabilitado";
+      ruleWord     = "regla";
+      break;
+    case "pt-BR":
+      disabledWord = "desabilitado";
+      ruleWord     = "regra";
+      break;
+    case "de-DE":
+      disabledWord = "deaktiviert";
+      ruleWord     = "regel";
+      break;
+    case "ko-KR":
+      disabledWord = "disabled";
+      ruleWord     = "rule";
+      break;
+    case "ru-RU":
+      disabledWord = "disabled";
+      ruleWord     = "rule";
+      break;
+    default:
+      disabledWord = "disabled";
+      ruleWord     = "rule";
+  }
+
+  const titleEscaped = 'Addon\\s*\\|\\s*SUB\\s*Basic\\s*Map\\s*Validator';
+  const openParen    = '\\(\\s*"' + titleEscaped + '"\\s*\\)';
+
+  const regexRuleLine = new RegExp(
+    `^([ \\t]*)(` +
+      `${ruleWord}\\s*${openParen}` +
+    `)`,
+    "m"
+  );
+
+  if (shouldDisable) {
+    const regexAlreadyDisabled = new RegExp(
+      `^[ \\t]*${disabledWord}\\s+${ruleWord}\\s*${openParen}`,
+      "m"
+    );
+    if (regexAlreadyDisabled.test(tplStr)) {
+      return tplStr;
+    }
+
+    return tplStr.replace(regexRuleLine, (_match, indent, rulePart) => {
+      return `${indent}${disabledWord} ${rulePart}`;
+    });
+  }
+  else {
+    const regexDisablePrefix = new RegExp(
+      `^([ \\t]*)${disabledWord}\\s+(` +
+        `${ruleWord}\\s*${openParen}` +
+      `)`,
+      "m"
+    );
+    return tplStr.replace(regexDisablePrefix, (_match, indent, rulePart) => {
+      return `${indent}${rulePart}`;
+    });
+  }
 }
 
 /* ------- Loader ------- */
@@ -1754,59 +1928,84 @@ function hideLoader() {
 
 /* ------- Extract & display data settings ------- */
 function parseGlobalACheckpoints(fullText) {
-  const results = [];
+  const checkpoints = [];
+  const teleportMap = {};
+
   const regexGlobalA = /(?:Global|全局|グローバル)\.A\s*=\s*(?:Array|Matriz|数组|配列)\s*\(\s*/;
   const matchGA = fullText.match(regexGlobalA);
-  if (!matchGA) return results;
+  if (!matchGA) {
+    return { checkpoints, teleportMap };
+  }
 
-  const startIdx = matchGA.index + matchGA[0].length;
   let level = 1;
-  let i = startIdx;
+  let i = matchGA.index + matchGA[0].length;
   for (; i < fullText.length; i++) {
-    if (fullText[i] === "(") level++;
-    else if (fullText[i] === ")") {
+    if (fullText[i] === '(') level++;
+    else if (fullText[i] === ')') {
       level--;
       if (level === 0) break;
     }
   }
-  if (level !== 0) return results;
-  const endIdx = i;
-
-  const inside = fullText.slice(startIdx, endIdx);
+  const inside = fullText.slice(matchGA.index + matchGA[0].length, i);
 
   const elements = [];
-  let current = "";
-  let depth = 0;
-  for (let c of inside) {
-    if (c === "(") {
-      depth++;
-      current += c;
-    } else if (c === ")") {
-      depth--;
-      current += c;
-    } else if (c === "," && depth === 0) {
+  let current = '', depth = 0;
+  for (const c of inside) {
+    if (c === '(') {
+      depth++; current += c;
+    } else if (c === ')') {
+      depth--; current += c;
+    } else if (c === ',' && depth === 0) {
       elements.push(current.trim());
-      current = "";
+      current = '';
     } else {
       current += c;
     }
   }
-  if (current.trim() !== "") elements.push(current.trim());
+  if (current.trim()) elements.push(current.trim());
 
-  const regexVector = /(?:Vector|矢量|ベクトル|Vetor)\s*\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)/;
-  elements.forEach((elem) => {
-    const m = elem.match(regexVector);
+  const vectorRegex = /^(?:Vector|矢量|ベクトル|Vetor)\s*\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)$/;
+  const tpRegex = new RegExp(
+    `^(?:Array|Matriz|数组|配列)\\s*\\(\\s*` +
+      `(Vector\\([^)]*\\))` +
+      `\\s*,\\s*` +
+      `(Vector\\([^)]*\\))` +
+    `\\s*\\)$`
+  );
+
+  elements.forEach(elem => {
+    let m = elem.match(vectorRegex);
     if (m) {
-      const x = parseFloat(m[1]);
-      const y = parseFloat(m[2]);
-      const z = parseFloat(m[3]);
-      if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
-        results.push({ x, y, z });
-      }
+      checkpoints.push({
+        x: parseFloat(m[1]),
+        y: parseFloat(m[2]),
+        z: parseFloat(m[3])
+      });
+      return;
     }
+
+    const mt = elem.match(tpRegex);
+    if (mt) {
+      const parseV = vStr => {
+        const mm = vStr.match(vectorRegex);
+        return {
+          x: parseFloat(mm[1]),
+          y: parseFloat(mm[2]),
+          z: parseFloat(mm[3])
+        };
+      };
+      const start = parseV(mt[1]);
+      const end   = parseV(mt[2]);
+      const idx = checkpoints.length;
+
+      checkpoints.push(start);
+      teleportMap[idx] = { start, end };
+      return;
+    }
+
   });
 
-  return results;
+  return { checkpoints, teleportMap };
 }
 
 function parseGlobalArrayNumbers(fullText, varName) {
@@ -1903,10 +2102,12 @@ let draggedCard = null;
 const container = document.getElementById("mapSettings");
 
 container.addEventListener("dragover", (e) => {
+  if (!isEditMode) return;
   e.preventDefault();
   e.dataTransfer.dropEffect = "move";
 });
 container.addEventListener("drop", (e) => {
+  if (!isEditMode) return;
   e.preventDefault();
   if (draggedCard) {
     container.appendChild(draggedCard);
@@ -1930,7 +2131,7 @@ function renderGlobalBans(fullText) {
   if (globalBans.length === 0) return null;
 
   const iconsContainer = document.createElement("div");
-  iconsContainer.classList.add("global-ban-icons");
+  iconsContainer.classList.add("global-bans");
 
   globalBans.forEach(banName => {
     const span = document.createElement("span");
@@ -1944,7 +2145,7 @@ function renderGlobalBans(fullText) {
 }
 
 function extractAllData(fullText) {
-  const checkpoints = parseGlobalACheckpoints(fullText);
+  const { checkpoints, teleportMap } = parseGlobalACheckpoints(fullText);
 
   const killNums   = parseGlobalArrayNumbers(fullText, "killballnumber");
   const Hpos       = parseGlobalArrayVectors(fullText, "H");
@@ -1969,6 +2170,10 @@ function extractAllData(fullText) {
   const BanStand      = parseGlobalArrayNumbers(fullText, "BanStand");
   const BanDjump      = parseGlobalArrayNumbers(fullText, "BanDjump");
   const BanSaveDouble = parseGlobalArrayNumbers(fullText, "BanSaveDouble");
+
+  const allStarts = parseGlobalArrayVectors(fullText, "CustomPortalStart");
+  const allEnds   = parseGlobalArrayVectors(fullText, "CustomPortalEndpoint");
+  const allCPs    = parseGlobalArrayNumbers(fullText, "CustomPortalCP").map(n => parseInt(n, 10));
 
   const killMap = {};
   killNums.forEach((chkNum, i) => {
@@ -2013,17 +2218,41 @@ function extractAllData(fullText) {
     SaveDouble: BanSaveDouble
   };
 
+  const portalMap = {};
+  allStarts.forEach((start, i) => {
+    const end = allEnds[i] || { x:0, y:0, z:0 };
+    const cp  = Number.isFinite(allCPs[i]) ? allCPs[i] : 0;
+    if (!portalMap[cp]) portalMap[cp] = [];
+    portalMap[cp].push({ start, end, cp });
+  });
+
+  const CustomPortalStart    = [];
+  const CustomPortalEndpoint = [];
+  const CustomPortalCP       = [];
+
+  (checkpoints || []).forEach((_, i) => {
+    const list = portalMap[i] || [];
+    CustomPortalStart[i]    = list.map(p => p.start);
+    CustomPortalEndpoint[i] = list.map(p => p.end);
+    CustomPortalCP[i]       = list.length > 0 ? list[0].cp : i;
+  });
+
   return {
     checkpoints,
     killMap,
     pinMap,
     abilityMap,
-    banMap
+    banMap,
+    portalMap,
+    teleportMap,
+    CustomPortalStart,
+    CustomPortalEndpoint,
+    CustomPortalCP
   };
 }
 
 function createCheckpointCard(idx, coords, data) {
-  const { killMap, pinMap, abilityMap, banMap } = data;
+  const { killMap, pinMap, abilityMap, banMap, portalMap } = data;
   const originalIndex = idx;
 
   const card = document.createElement("div");
@@ -2078,6 +2307,38 @@ function createCheckpointCard(idx, coords, data) {
     if (!isEditMode) return;
     openEditModal(originalIndex);
   });
+
+  const tp = data.teleportMap[idx];
+  if (tp) {
+    const secTp = document.createElement("div");
+    secTp.classList.add("section");
+    const title = document.createElement("div");
+    title.classList.add("section__title");
+    title.textContent = "Teleport";
+    secTp.appendChild(title);
+
+    const item = document.createElement("div");
+    item.classList.add("detail");
+
+    const dot = document.createElement("span");
+    dot.classList.add("circle", "circle-purple");
+    item.appendChild(dot);
+
+    const sx = coords.x.toFixed(3),
+          sy = coords.y.toFixed(3),
+          sz = coords.z.toFixed(3);
+    const ex = tp.end.x.toFixed(3),
+          ey = tp.end.y.toFixed(3),
+          ez = tp.end.z.toFixed(3);
+
+    const txt = document.createElement("span");
+    txt.classList.add("detail__text");
+    txt.textContent = `From (${sx}, ${sy}, ${sz}) → To (${ex}, ${ey}, ${ez})`;
+    item.appendChild(txt);
+
+    secTp.appendChild(item);
+    card.appendChild(secTp);
+  }
 
   const kills = killMap[originalIndex] || [];
   if (kills.length > 0) {
@@ -2170,6 +2431,46 @@ function createCheckpointCard(idx, coords, data) {
     card.appendChild(sectionPin);
   }
 
+  const portals = portalMap[idx] || [];
+  if (portals.length > 0) {
+    const section = document.createElement("div");
+    section.classList.add("section");
+    const title = document.createElement("div");
+    title.classList.add("section__title");
+    title.textContent = "Portals";
+    section.appendChild(title);
+
+    const container = document.createElement("div");
+    container.classList.add("section__items");
+    portals.forEach(p => {
+      const item = document.createElement("div");
+      item.classList.add("detail");
+
+      const dot = document.createElement("span");
+      dot.classList.add("circle", "circle-purple");
+      dot.style.backgroundColor = "#8e44ad";
+      item.appendChild(dot);
+
+      const sx = p.start.x.toFixed(3),
+            sy = p.start.y.toFixed(3),
+            sz = p.start.z.toFixed(3);
+      const ex = p.end.x.toFixed(3),
+            ey = p.end.y.toFixed(3),
+            ez = p.end.z.toFixed(3);
+
+      const txt = document.createElement("span");
+      txt.classList.add("detail__text");
+      txt.textContent =
+        `Start: (${sx}, ${sy}, ${sz}) → End: (${ex}, ${ey}, ${ez}), CP: ${p.cp}`;
+      item.appendChild(txt);
+
+      container.appendChild(item);
+    });
+
+    section.appendChild(container);
+    card.appendChild(section);
+  }
+
   const abilities = abilityMap[originalIndex] || {};
   if (abilities.ultimate || abilities.dash) {
     const sectionAbil = document.createElement("div");
@@ -2226,15 +2527,21 @@ function createCheckpointCard(idx, coords, data) {
   }
 
   card.addEventListener("dragstart", function (e) {
+    if (!isEditMode) {
+      e.preventDefault();
+      return;
+    }
     draggedCard = this;
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", "");
   });
   card.addEventListener("dragover", function (e) {
+    if (!isEditMode) return; 
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
   });
   card.addEventListener("drop", function (e) {
+    if (!isEditMode) return; 
     e.stopPropagation();
     if (!draggedCard || draggedCard === this) return;
     const rect = this.getBoundingClientRect();
@@ -2300,6 +2607,20 @@ function renderMapSettings(fullText) {
     settingsButtons.appendChild(editModeBtn);
   }
 
+  let globalSettingsBtn = document.getElementById("globalSettingsBtn");
+  if (!globalSettingsBtn) {
+    globalSettingsBtn = document.createElement("button");
+    globalSettingsBtn.id = "globalSettingsBtn";
+    globalSettingsBtn.textContent = "Global settings";
+    globalSettingsBtn.classList.add("global-edit-mode-btn");
+    globalSettingsBtn.style.marginLeft = "8px";
+    globalSettingsBtn.addEventListener("click", openGlobalSettingsModal);
+  }
+
+  if (!settingsButtons.contains(globalSettingsBtn)) {
+    settingsButtons.appendChild(globalSettingsBtn);
+  }
+
   bansContainer.innerHTML = "";
   const bansIconsEl = renderGlobalBans(fullText);
   if (bansIconsEl) {
@@ -2322,7 +2643,7 @@ function renderMapSettings(fullText) {
 
   if (dataModel.checkpoints.length === 0) {
     const msg = document.createElement("p");
-    msg.textContent = "Aucun checkpoint (Global.A) trouvé dans le texte.";
+    msg.textContent = "No map data found";
     msg.classList.add("empty-message");
     container.appendChild(msg);
     return;
@@ -2343,9 +2664,10 @@ function renderMapSettings(fullText) {
 
 /* ------- Convertor ------- */
 async function doConvert(fullText, lang) {
-  const globalBans = parseGlobalWorkshopBans(fullText);
   const lobbyBlock = extractLobbyBlock(fullText, lang);
   const mapDataBlock = extractMapDataBlock(fullText, lang);
+  const workshopSettingsBlock = extractWorkshopSettings(fullText);
+  const isValidatorOn = parseBasicMapValidator(fullText);
   debug('Bloc "actions" de Map Data extrait.');
 
   let tpl = await loadTemplate(lang);
@@ -2368,10 +2690,12 @@ async function doConvert(fullText, lang) {
     debug("Aucun bloc Credits trouvé : " + e.message);
   }
 
-  tpl = insertWorkshopBansIntoTemplate(tpl, globalBans, lang);
-
   if (lobbyBlock) {
     tpl = insertLobbyIntoTemplate(tpl, lobbyBlock, lang);
+  }
+
+  if (workshopSettingsBlock) {
+    tpl = insertWorkshopSettings(tpl, workshopSettingsBlock, lang);
   }
 
   const globalLocalplayerBlock = extractGlobalLocalplayerBlock(fullText);
@@ -2379,462 +2703,9 @@ async function doConvert(fullText, lang) {
     tpl = insertDifficultyHudBlock(tpl, globalLocalplayerBlock, lang);
   }
 
+  tpl = insertBasicMapValidator(tpl, lang, !isValidatorOn);
+
   return tpl;
-}
-
-/* ------- Modal editor mode ------- */
-function openEditModal(idx) {
-  editIndex = idx;
-  const modal = document.getElementById("editModal");
-  const fieldsContainer = document.getElementById("editFieldsContainer");
-  fieldsContainer.innerHTML = "";
-
-  const coords    = currentDataModel.checkpoints[idx];
-  const kills     = currentDataModel.killMap[idx]   || [];
-  const pins      = currentDataModel.pinMap[idx]    || [];
-  const abilities = currentDataModel.abilityMap[idx] || {};
-  const banMap = currentDataModel.banMap;
-
-  {
-    const wrapper = document.createElement("div");
-    const title   = document.createElement("div");
-    title.textContent = "Coordinates (X, Y, Z)";
-    title.style.fontWeight = "600";
-    title.style.marginBottom = "4px";
-    wrapper.appendChild(title);
-
-    const coordRow = document.createElement("div");
-    coordRow.classList.add("orb-row");
-
-    const inX = document.createElement("input");
-    inX.type = "number";
-    inX.step = "0.001";
-    inX.value = coords.x;
-    inX.id = "editCoordX";
-    coordRow.appendChild(inX);
-
-    const inY = document.createElement("input");
-    inY.type = "number";
-    inY.step = "0.001";
-    inY.value = coords.y;
-    inY.id = "editCoordY";
-    coordRow.appendChild(inY);
-
-    const inZ = document.createElement("input");
-    inZ.type = "number";
-    inZ.step = "0.001";
-    inZ.value = coords.z;
-    inZ.id = "editCoordZ";
-    coordRow.appendChild(inZ);
-
-    wrapper.appendChild(coordRow);
-    fieldsContainer.appendChild(wrapper);
-  }
-
-  {
-    const wrapper = document.createElement("div");
-    const title   = document.createElement("div");
-    title.textContent = "Kill orbs";
-    title.style.fontWeight = "600";
-    title.style.marginBottom = "4px";
-    wrapper.appendChild(title);
-
-    kills.forEach((kb, i) => {
-      const row = document.createElement("div");
-      row.classList.add("orb-row");
-      row.dataset.orbIndex = i;
-
-      const kx = document.createElement("input");
-      kx.type = "number";
-      kx.step = "0.001";
-      kx.value = kb.pos.x;
-      kx.classList.add("kill-x"); row.appendChild(kx);
-
-      const ky = document.createElement("input");
-      ky.type = "number";
-      ky.step = "0.001";
-      ky.value = kb.pos.y;
-      ky.classList.add("kill-y"); row.appendChild(ky);
-
-      const kz = document.createElement("input");
-      kz.type = "number";
-      kz.step = "0.001";
-      kz.value = kb.pos.z;
-      kz.classList.add("kill-z"); row.appendChild(kz);
-
-      const kr = document.createElement("input");
-      kr.type = "number";
-      kr.step = "0.001";
-      kr.value = kb.radius !== null ? kb.radius : 0;
-      kr.classList.add("kill-r"); row.appendChild(kr);
-
-      const btnDel = document.createElement("button");
-      btnDel.type = "button";
-      btnDel.textContent = "–";
-      btnDel.title = "Remove this kill orb";
-      btnDel.style.background = "#c62828";
-      btnDel.style.color = "#fff";
-      btnDel.style.border = "none";
-      btnDel.style.borderRadius = "4px";
-      btnDel.style.width = "24px";
-      btnDel.style.cursor = "pointer";
-      btnDel.addEventListener("click", () => row.remove());
-      row.appendChild(btnDel);
-
-      wrapper.appendChild(row);
-    });
-
-    const addKillBtn = document.createElement("button");
-    addKillBtn.type = "button";
-    addKillBtn.textContent = "+ Add kill orb";
-    addKillBtn.style.marginTop = "6px";
-    addKillBtn.style.padding = "4px 8px";
-    addKillBtn.style.background = "#1976d2";
-    addKillBtn.style.color = "#fff";
-    addKillBtn.style.border = "none";
-    addKillBtn.style.borderRadius = "4px";
-    addKillBtn.style.cursor = "pointer";
-    addKillBtn.addEventListener("click", () => {
-      const row = document.createElement("div");
-      row.classList.add("orb-row");
-
-      ["kill-x", "kill-y", "kill-z", "kill-r"].forEach(cls => {
-        const inp = document.createElement("input");
-        inp.type = "number";
-        inp.step = "0.001";
-        inp.value = 0;
-        inp.classList.add(cls);
-        row.appendChild(inp);
-      });
-      const btnDel = document.createElement("button");
-      btnDel.type = "button";
-      btnDel.textContent = "–";
-      btnDel.style.background = "#c62828";
-      btnDel.style.color = "#fff";
-      btnDel.style.border = "none";
-      btnDel.style.borderRadius = "4px";
-      btnDel.style.width = "24px";
-      btnDel.style.cursor = "pointer";
-      btnDel.addEventListener("click", () => row.remove());
-      row.appendChild(btnDel);
-
-      wrapper.appendChild(row);
-    });
-    wrapper.appendChild(addKillBtn);
-
-    fieldsContainer.appendChild(wrapper);
-  }
-
-  {
-    const wrapper = document.createElement("div");
-    const title   = document.createElement("div");
-    title.textContent = "Bounce orbs";
-    title.style.fontWeight = "600";
-    title.style.marginBottom = "4px";
-    wrapper.appendChild(title);
-
-    pins.forEach((pb, i) => {
-      const row = document.createElement("div");
-      row.classList.add("orb-row");
-      row.dataset.pinIndex = i;
-
-      const px = document.createElement("input");
-      px.type = "number";
-      px.step = "0.001";
-      px.value = pb.pos.x;
-      px.classList.add("pin-x"); row.appendChild(px);
-
-      const py = document.createElement("input");
-      py.type = "number";
-      py.step = "0.001";
-      py.value = pb.pos.y;
-      py.classList.add("pin-y"); row.appendChild(py);
-
-      const pz = document.createElement("input");
-      pz.type = "number";
-      pz.step = "0.001";
-      pz.value = pb.pos.z;
-      pz.classList.add("pin-z"); row.appendChild(pz);
-
-      const pf = document.createElement("input");
-      pf.type = "number";
-      pf.step = "0.001";
-      pf.value = pb.force != null ? pb.force : 0;
-      pf.classList.add("pin-f"); row.appendChild(pf);
-
-      const lockLabel = document.createElement("label");
-      const lockChk = document.createElement("input");
-      lockChk.type = "checkbox";
-      lockChk.checked = pb.locked;
-      lockChk.classList.add("pin-locked");
-      lockLabel.appendChild(lockChk);
-      lockLabel.appendChild(document.createTextNode("Lock"));
-      row.appendChild(lockLabel);
-
-      const u5Label = document.createElement("label");
-      const u5Chk = document.createElement("input");
-      u5Chk.type = "checkbox";
-      u5Chk.checked = pb.givesUlt5;
-      u5Chk.classList.add("pin-ult5");
-      u5Label.appendChild(u5Chk);
-      u5Label.appendChild(document.createTextNode("Dao"));
-      row.appendChild(u5Label);
-
-      const u6Label = document.createElement("label");
-      const u6Chk = document.createElement("input");
-      u6Chk.type = "checkbox";
-      u6Chk.checked = pb.givesUlt6;
-      u6Chk.classList.add("pin-ult6");
-      u6Label.appendChild(u6Chk);
-      u6Label.appendChild(document.createTextNode("Shift"));
-      row.appendChild(u6Label);
-
-      const btnDel = document.createElement("button");
-      btnDel.type = "button";
-      btnDel.textContent = "–";
-      btnDel.style.background = "#c62828";
-      btnDel.style.color = "#fff";
-      btnDel.style.border = "none";
-      btnDel.style.borderRadius = "4px";
-      btnDel.style.width = "24px";
-      btnDel.style.cursor = "pointer";
-      btnDel.addEventListener("click", () => row.remove());
-      row.appendChild(btnDel);
-
-      wrapper.appendChild(row);
-    });
-
-    const addPinBtn = document.createElement("button");
-    addPinBtn.type = "button";
-    addPinBtn.textContent = "+ Add bounce orb";
-    addPinBtn.style.marginTop = "6px";
-    addPinBtn.style.padding = "4px 8px";
-    addPinBtn.style.background = "#1976d2";
-    addPinBtn.style.color = "#fff";
-    addPinBtn.style.border = "none";
-    addPinBtn.style.borderRadius = "4px";
-    addPinBtn.style.cursor = "pointer";
-    addPinBtn.addEventListener("click", () => {
-      const row = document.createElement("div");
-      row.classList.add("orb-row");
-
-      ["pin-x", "pin-y", "pin-z", "pin-f"].forEach(cls => {
-        const inp = document.createElement("input");
-        inp.type = "number";
-        inp.step = "0.001";
-        inp.value = 0;
-        inp.classList.add(cls);
-        row.appendChild(inp);
-      });
-      ["pin-locked", "pin-ult5", "pin-ult6"].forEach(cls => {
-        const label = document.createElement("label");
-        const chk = document.createElement("input");
-        chk.type = "checkbox";
-        chk.classList.add(cls);
-        label.appendChild(chk);
-        label.appendChild(document.createTextNode(cls.replace("pin-", "")));
-        row.appendChild(label);
-      });
-      const btnDel = document.createElement("button");
-      btnDel.type = "button";
-      btnDel.textContent = "–";
-      btnDel.style.background = "#c62828";
-      btnDel.style.color = "#fff";
-      btnDel.style.border = "none";
-      btnDel.style.borderRadius = "4px";
-      btnDel.style.width = "24px";
-      btnDel.style.cursor = "pointer";
-      btnDel.addEventListener("click", () => row.remove());
-      row.appendChild(btnDel);
-
-      wrapper.appendChild(row);
-    });
-    wrapper.appendChild(addPinBtn);
-
-    fieldsContainer.appendChild(wrapper);
-  }
-
-  {
-    const wrapper = document.createElement("div");
-    const title   = document.createElement("div");
-    title.textContent = "Abilities";
-    title.style.fontWeight = "600";
-    title.style.marginBottom = "4px";
-    wrapper.appendChild(title);
-
-    const ultLabel = document.createElement("label");
-    const ultChk = document.createElement("input");
-    ultChk.type = "checkbox";
-    ultChk.checked = !!abilities.ultimate;
-    ultChk.id = "editAbilityUlt";
-    ultLabel.appendChild(ultChk);
-    ultLabel.appendChild(document.createTextNode("Ultimate available"));
-    wrapper.appendChild(ultLabel);
-
-    const dashLabel = document.createElement("label");  
-    const dashChk = document.createElement("input");
-    dashChk.type = "checkbox";
-    dashChk.checked = !!abilities.dash;
-    dashChk.id = "editAbilityDash";
-    dashLabel.appendChild(dashChk);
-    dashLabel.appendChild(document.createTextNode("Dash available"));
-    wrapper.appendChild(dashLabel);
-
-    fieldsContainer.appendChild(wrapper);
-  }
-
-  {
-    const wrapper = document.createElement("div");
-    const title   = document.createElement("div");
-    title.textContent = "Checkpoint-specific Bans";
-    title.style.fontWeight = "600";
-    title.style.marginBottom = "4px";
-    wrapper.appendChild(title);
-
-    Object.entries(banMap).forEach(([banKey, arr]) => {
-      const label = document.createElement("label");
-      const chk = document.createElement("input");
-      chk.type = "checkbox";
-      chk.classList.add("edit-ban-" + banKey);
-      chk.checked = arr.includes(idx);
-      label.appendChild(chk);
-      const text = {
-        Multi: "Ban Multi",
-        Create: "Ban Create",
-        Dead: "Ban Dead",
-        Emote: "Ban Emote",
-        Climb: "Ban Climb",
-        Bhop: "Ban Bhop",
-        Stand: "Ban Stand",
-        Djump: "Ban Djump",
-        SaveDouble: "Ban SaveDouble"
-      }[banKey] || banKey;
-      label.appendChild(document.createTextNode(text));
-      wrapper.appendChild(label);
-    });
-
-    fieldsContainer.appendChild(wrapper);
-  }
-
-  modal.style.display = "flex";
-
-  document.getElementById("closeModal2").onclick = () => modal.style.display = "none";
-  document.getElementById("cancelChangesBtn").onclick = () => modal.style.display = "none";
-}
-
-document.getElementById("saveChangesBtn").addEventListener("click", () => {
-  const idx = editIndex;
-  if (idx == null) return;
-
-  const newX = parseFloat(document.getElementById("editCoordX").value)  || 0;
-  const newY = parseFloat(document.getElementById("editCoordY").value)  || 0;
-  const newZ = parseFloat(document.getElementById("editCoordZ").value)  || 0;
-  currentDataModel.checkpoints[idx] = { x: newX, y: newY, z: newZ };
-
-  const killRows = Array.from(document.querySelectorAll("#editFieldsContainer .orb-row")).filter(r => r.querySelector(".kill-x"));
-  currentDataModel.killMap[idx] = killRows.map(row => {
-    const x = parseFloat(row.querySelector(".kill-x").value) || 0;
-    const y = parseFloat(row.querySelector(".kill-y").value) || 0;
-    const z = parseFloat(row.querySelector(".kill-z").value) || 0;
-    const r = parseFloat(row.querySelector(".kill-r").value) || 0;
-    return { pos: { x, y, z }, radius: r };
-  });
-
-  const pinRows = Array.from(document.querySelectorAll("#editFieldsContainer .orb-row")).filter(r => r.querySelector(".pin-x"));
-  currentDataModel.pinMap[idx] = pinRows.map(row => {
-    const x = parseFloat(row.querySelector(".pin-x").value) || 0;
-    const y = parseFloat(row.querySelector(".pin-y").value) || 0;
-    const z = parseFloat(row.querySelector(".pin-z").value) || 0;
-    const f = parseFloat(row.querySelector(".pin-f").value) || 0;
-    const locked = row.querySelector(".pin-locked").checked;
-    const givesUlt5 = row.querySelector(".pin-ult5").checked;
-    const givesUlt6 = row.querySelector(".pin-ult6").checked;
-    return { pos: { x, y, z }, force: f, locked, givesUlt5, givesUlt6 };
-  });
-
-  const ultChk  = document.getElementById("editAbilityUlt").checked;
-  const dashChk = document.getElementById("editAbilityDash").checked;
-  currentDataModel.abilityMap[idx] = { ultimate: ultChk, dash: dashChk };
-
-  Object.keys(currentDataModel.banMap).forEach(banKey => {
-    const cb = document.querySelector(".edit-ban-" + banKey);
-    if (!cb) return;
-    const arr = currentDataModel.banMap[banKey];
-    const isChecked = cb.checked;
-    const already = arr.includes(idx);
-    if (isChecked && !already) {
-      arr.push(idx);
-    } else if (!isChecked && already) {
-      currentDataModel.banMap[banKey] = arr.filter(n => n !== idx);
-    }
-  });
-
-  document.getElementById("editModal").style.display = "none";
-  renderMapSettingsWithModel(currentDataModel);
-});
-
-function renderMapSettingsWithModel(dataModel) {
-  const container   = document.getElementById("mapSettings");
-  const editModeBtn = document.getElementById("editModeBtn");
-  const globalInfos = container.querySelector(".global-infos");
-
-  if (editModeBtn && editModeBtn.parentNode === container) {
-    container.removeChild(editModeBtn);
-  }
-
-  container.innerHTML = "";
-
-  if (editModeBtn) {
-    container.appendChild(editModeBtn);
-  }
-
-  globalInfos.innerHTML = "";
-  globalInfos.classList.remove("no-bans");
-
-  if (!editModeBtn.dataset.listenerInstalled) {
-    editModeBtn.dataset.listenerInstalled = "true";
-    editModeBtn.addEventListener("click", () => {
-      isEditMode = !isEditMode;
-      editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
-      container.querySelectorAll(".checkpoint-card").forEach(card => {
-        if (isEditMode) card.classList.add("editable");
-        else            card.classList.remove("editable");
-      });
-    });
-  }
-  editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
-  globalInfos.appendChild(editModeBtn);
-
-  const bansIconsEl = renderGlobalBans(lastFullText);
-  if (bansIconsEl) {
-    globalInfos.appendChild(bansIconsEl);
-    globalInfos.classList.remove("no-bans");
-  } else {
-    globalInfos.classList.add("no-bans");
-  }
-
-  container.appendChild(globalInfos);
-
-  if (dataModel.checkpoints.length === 0) {
-    const msg = document.createElement("p");
-    msg.textContent = "Aucun checkpoint (Global.A) trouvé dans le texte.";
-    msg.classList.add("empty-message");
-    container.appendChild(msg);
-    return;
-  }
-
-  dataModel.checkpoints.forEach((coords, idx) => {
-    const card = createCheckpointCard(idx, coords, dataModel);
-    container.appendChild(card);
-  });
-
-  updateCardNumbers();
-
-  if (isEditMode) {
-    container.querySelectorAll(".checkpoint-card").forEach(card => {
-      card.classList.add("editable");
-    });
-  }
 }
 
 /* ------- Modal Global Settings ------- */
@@ -2847,7 +2718,13 @@ function buildGlobalSettingsFormFields() {
   rowMapName.classList.add("modal-row");
   rowMapName.innerHTML = `
     <label for="mapNameInput" class="modal-label">Map name :</label>
-    <input type="text" id="mapNameInput" class="modal-input" readonly />
+    <div class="map-name-input-wrapper">
+      <div class="map-name-text-wrapper">
+        <input type="text" id="mapNameInput" class="modal-input2"/>
+        <div class="map-name-suggestions-container"></div>
+      </div>
+      <select id="mapVariantSelect" class="modal-select2"></select>
+    </div>
   `;
   form.appendChild(rowMapName);
 
@@ -2956,83 +2833,218 @@ function addGlobalSettingsButton() {
   globalInfos.appendChild(btn);
 }
 
-function openGlobalSettingsModal() {
+async function openGlobalSettingsModal() {
   const modal = document.getElementById("globalSettingsModal");
   if (!modal) return;
 
   buildGlobalSettingsFormFields();
 
-  const mapNameInput = document.getElementById("mapNameInput");
   const modeMapNames = extractModeMapNames(lastFullText || "");
-  const names = Object.values(modeMapNames);
-  mapNameInput.value = names.length
-    ? names.join(" | ")
-    : "(aucun nom de map détecté)";
+  const fullEntries  = Object.values(modeMapNames);
 
-  const validatorOn = parseBasicMapValidator(lastFullText || "");
-  const activeBansRaw = parseGlobalWorkshopBans(lastFullText || "");
+  const mapNameInput  = document.getElementById("mapNameInput");
+  mapNameInput.setAttribute("autocomplete", "off");
+  document.getElementById("globalSettingsForm").setAttribute("autocomplete", "off");
+  const variantSelect = document.getElementById("mapVariantSelect");
+
+  if (fullEntries.length === 0) {
+    mapNameInput.value      = "(No map name detected)";
+    variantSelect.innerHTML = "";
+  }
+  else {
+    const fullMapEntry = fullEntries[0].trim();
+    const tokens       = fullMapEntry.split(/\s+/);
+    const rawId        = tokens[tokens.length - 1];
+    const rawName      = tokens.slice(0, tokens.length - 1).join(" ");
+
+    console.log("DEBUG mapName rawName =", rawName, "rawId =", rawId);
+
+    await loadMapNameTranslations();
+    const clientLang = document.getElementById("lang").value || "en-US";
+    const targetLang = document.getElementById("targetLang").value || clientLang;
+
+    let mapKeyFound = null;
+    for (const key of Object.keys(mapNamesTranslations || {})) {
+      const dict = mapNamesTranslations[key];
+      if (dict && dict[clientLang] === rawName) {
+        mapKeyFound = key;
+        break;
+      }
+    }
+
+    let displayRawName = rawName;
+    if (mapKeyFound) {
+      const dict    = mapNamesTranslations[mapKeyFound];
+      const tName   = dict[targetLang];
+      if (tName) {
+        displayRawName = tName;
+      }
+    }
+    mapNameInput.value = displayRawName;
+
+    variantSelect.innerHTML = "";
+    if (mapKeyFound) {
+      const variants = (mapNamesTranslations[mapKeyFound].variants || {});
+      Object.entries(variants).forEach(([variantKey, variantId]) => {
+        const opt = document.createElement("option");
+        opt.textContent = variantKey.charAt(0).toUpperCase() + variantKey.slice(1);
+        opt.value       = variantKey;
+        if (variantId === rawId) opt.selected = true;
+        variantSelect.appendChild(opt);
+      });
+    }
+
+  (function initMapNameSuggestions() {
+    const mapNameInput  = document.getElementById("mapNameInput");
+    const wrapper       = mapNameInput.closest(".map-name-input-wrapper");
+    let suggestionsContainer = wrapper.querySelector(".map-name-suggestions-container");
+
+    if (!suggestionsContainer) {
+      suggestionsContainer = document.createElement("div");
+      suggestionsContainer.classList.add("map-name-suggestions-container");
+      wrapper.appendChild(suggestionsContainer);
+    }
+
+    function clearSuggestions() {
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.style.display = "none";
+    }
+
+    function populateVariants(mapKey, selectedId) {
+      variantSelect.innerHTML = "";
+      const variants = mapNamesTranslations[mapKey].variants || {};
+      Object.entries(variants).forEach(([variantKey, variantId]) => {
+        const opt = document.createElement("option");
+        opt.value       = variantKey;
+        opt.textContent = variantKey.charAt(0).toUpperCase() + variantKey.slice(1);
+        if (String(variantId) === String(selectedId)) opt.selected = true;
+        variantSelect.appendChild(opt);
+      });
+    }
+
+    mapNameInput.addEventListener("input", () => {
+      const filter = mapNameInput.value.trim().toLowerCase();
+      clearSuggestions();
+      if (filter.length < 2) return;
+
+      const clientLang = document.getElementById("lang").value || "en-US";
+      const matches = Object.entries(mapNamesTranslations)
+        .filter(([, dict]) => (dict[clientLang] || "").toLowerCase().includes(filter))
+        .slice(0, 10);
+
+      if (!matches.length) return;
+
+      matches.forEach(([mapKey, dict]) => {
+        const item = document.createElement("div");
+        item.classList.add("suggestion-item");
+        item.textContent = dict[clientLang];
+        item.addEventListener("mousedown", () => {
+          const fullEntries = Object.values(extractModeMapNames(lastFullText || ""));
+          const rawId = fullEntries[0]?.split(/\s+/).pop();
+          mapNameInput.value = dict[clientLang];
+          populateVariants(mapKey, rawId);
+          clearSuggestions();
+        });
+        suggestionsContainer.appendChild(item);
+      });
+
+      suggestionsContainer.style.display = "block";
+    });
+
+    mapNameInput.addEventListener("blur", () => {
+      setTimeout(clearSuggestions, 100);
+    });
+
+    mapNameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const clientLang = document.getElementById("lang").value || "en-US";
+        const typed = mapNameInput.value.trim();
+        const found = Object.entries(mapNamesTranslations)
+          .find(([, dict]) => dict[clientLang] === typed);
+        if (found) {
+          const [mapKey] = found;
+          const fullEntries = Object.values(extractModeMapNames(lastFullText || ""));
+          const rawId = fullEntries[0]?.split(/\s+/).pop();
+          populateVariants(mapKey, rawId);
+        }
+        clearSuggestions();
+      }
+    });
+
+    const fullEntries = Object.values(extractModeMapNames(lastFullText || ""));
+    if (fullEntries.length) {
+      const rawId   = fullEntries[0].split(/\s+/).pop();
+      const clientLang = document.getElementById("lang").value || "en-US";
+      const rawName    = fullEntries[0].split(/\s+/).slice(0, -1).join(" ");
+      const foundKey = Object.entries(mapNamesTranslations)
+        .find(([, dict]) => dict[clientLang] === rawName)?.[0];
+      if (foundKey) populateVariants(foundKey, rawId);
+    }
+  })();
+
+  }
+
+  const validatorOn    = parseBasicMapValidator(lastFullText || "");
+  const activeBansRaw  = parseGlobalWorkshopBans(lastFullText || "");
   const activeBansNorm = activeBansRaw.map(b => b.trim().toLowerCase());
 
   const globalBansContainer = document.getElementById("globalBansContainer");
   globalBansContainer.innerHTML = "";
-
-  globalBansContainer.style.display = "grid";
+  globalBansContainer.style.display            = "grid";
   globalBansContainer.style.gridTemplateColumns = "repeat(auto-fill, minmax(220px, 1fr))";
-  globalBansContainer.style.gap = "8px";
-
+  globalBansContainer.style.gap                = "8px";
   GLOBAL_BANS.forEach(fullBanName => {
     const bareBanName = fullBanName.replace(/^\s*BAN\s+/i, "").trim();
-
     const label = document.createElement("label");
     label.classList.add("ban-label");
-    label.style.display = "flex";
-    label.style.alignItems = "center";
-    label.style.padding = "6px 10px";
-    label.style.background = "#40444b";
-    label.style.border = "1px solid #cccccc";
-    label.style.borderRadius = "4px";
-    label.style.cursor = "pointer";
-    label.style.userSelect = "none";
-    label.style.boxShadow = "0 1px 2px rgba(0,0,0,0.1)";
+    Object.assign(label.style, {
+      display:       "flex",
+      alignItems:    "center",
+      padding:       "6px 10px",
+      background:    "#40444b",
+      border:        "1px solid #cccccc",
+      borderRadius:  "4px",
+      cursor:        "pointer",
+      userSelect:    "none",
+      boxShadow:     "0 1px 2px rgba(0,0,0,0.1)"
+    });
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.classList.add("global-ban-checkbox");
     checkbox.style.marginRight = "6px";
-
     if (activeBansNorm.includes(bareBanName.toLowerCase())) {
       checkbox.checked = true;
     }
 
     const spanText = document.createElement("span");
-    spanText.textContent = fullBanName;
+    spanText.textContent   = fullBanName;
     spanText.style.fontSize = "0.9em";
-    spanText.style.color = "#ffffff";
+    spanText.style.color    = "#ffffff";
 
     label.appendChild(checkbox);
     label.appendChild(spanText);
     globalBansContainer.appendChild(label);
   });
 
-  const lang = document.getElementById("lang").value || "en-US";
+  const lang        = document.getElementById("lang").value || "en-US";
   const parsedIndex = parseDifficultyIndex(lastFullText || "", lang);
   fillDifficultyFields(parsedIndex);
 
   document.getElementById("editorModeToggle").value = lastParsedWorkshopSettings.editorMode ? "on" : "off";
-  document.getElementById("validatorToggle").value = validatorOn ? "on" : "off";
-  document.getElementById("portalsToggle").value = lastParsedWorkshopSettings.portals ? "on" : "off";
+  document.getElementById("validatorToggle").value  = validatorOn ? "on" : "off";
+  document.getElementById("portalsToggle").value    = lastParsedWorkshopSettings.portals ? "on" : "off";
+  document.getElementById("playtestToggle").value   = lastParsedWorkshopSettings.playtest ? "on" : "off";
 
-  document.getElementById("saveGlobalChangesBtn")
-          .addEventListener("click", saveGlobalSettings);
-  document.getElementById("cancelGlobalChangesBtn")
-          .addEventListener("click", closeGlobalSettingsModal);
+  document.getElementById("saveGlobalChangesBtn").addEventListener("click", saveGlobalSettings);
+  document.getElementById("cancelGlobalChangesBtn").addEventListener("click", closeGlobalSettingsModal);
   const closeSpan = document.querySelector("#globalSettingsModal .modal-close2");
   if (closeSpan) {
     closeSpan.addEventListener("click", closeGlobalSettingsModal);
   }
 
   window.addEventListener("click", onWindowClickForGlobalModal);
-
   modal.style.display = "flex";
 }
 
@@ -3051,50 +3063,1084 @@ function closeGlobalSettingsModal() {
   }
 }
 
-function saveGlobalSettings() {
-  const checkboxes = document.querySelectorAll(".global-ban-checkbox");
-  const newActiveBans = [];
-  checkboxes.forEach(cb => {
-    if (cb.checked) {
-      const banName = cb.parentElement.textContent.trim();
-      newActiveBans.push(banName);
-    }
-  });
 
-  globalSettings.editorMode   = (document.getElementById("editorModeToggle").value === "on");
+/* ------- Save Global Settings ------- */
+function getNewActiveBans() {
+  const checkboxes = document.querySelectorAll(".global-ban-checkbox");
+  return Array.from(checkboxes)
+    .filter(cb => cb.checked)
+    .map(cb => cb.parentElement.textContent.trim());
+}
+
+function updateGlobalSettingsFromForm() {
+  globalSettings.editorMode    = (document.getElementById("editorModeToggle").value === "on");
   globalSettings.difficultyHUD = document.getElementById("difficultyHUDSelect").value;
   globalSettings.playtest      = document.getElementById("playtestToggle").value;
   globalSettings.validator     = document.getElementById("validatorToggle").value;
   globalSettings.portals       = document.getElementById("portalsToggle").value;
+}
 
-  isEditMode = globalSettings.editorMode;
-  const editModeBtn = document.getElementById("editModeBtn");
+function resolveMapKeyAndVariant() {
+  const rawMapNameVisible = document.getElementById("mapNameInput").value;
+  const chosenVariantKey  = document.getElementById("mapVariantSelect").value;
+  const clientLang        = document.getElementById("lang").value || "en-US";
+
+  let mapKeyFound = null;
+  for (const key of Object.keys(mapNamesTranslations || {})) {
+    if (mapNamesTranslations[key][clientLang] === rawMapNameVisible) {
+      mapKeyFound = key;
+      break;
+    }
+  }
+  let chosenVariantId = null;
+  if (mapKeyFound) {
+    chosenVariantId = (mapNamesTranslations[mapKeyFound].variants || {})[chosenVariantKey] || null;
+  }
+
+  return { rawMapNameVisible, mapKeyFound, chosenVariantId };
+}
+
+function getLocalizedOnOff(clientLang) {
+  switch (clientLang) {
+    case "zh-CN": return { on: "开启", off: "关闭" };
+    case "ja-JP": return { on: "ON",   off: "OFF" };
+    case "ko-KR": return { on: "활성화", off: "비활성화" };
+    case "ru-RU": return { on: "Вкл.", off: "Выкл." };
+    case "es-MX": return { on: "Activado",   off: "Desactivado" };
+    case "pt-BR": return { on: "Ligado",     off: "Desligado" };
+    case "de-DE": return { on: "Ein",        off: "Aus" };
+    default:      return { on: "On",         off: "Off" };
+  }
+}
+
+function applyOnOffReplacements(text, localized, settings) {
+  text = text.replace(
+    /(Editor mode\s*-\s*作图模式\s*:\s*)(On|Off)/i,
+    `$1${settings.editorMode ? localized.on : localized.off}`
+  );
+  text = text.replace(
+    /(Playtest display\s*-\s*游戏测试\s*:\s*)(On|Off)/i,
+    `$1${settings.playtest === "on" ? localized.on : localized.off}`
+  );
+  text = text.replace(
+    /(enable portals control maps\s*-\s*启用传送门\s*占点地图\s*:\s*)(On|Off)/i,
+    `$1${settings.portals === "on" ? localized.on : localized.off}`
+  );
+  return text;
+}
+
+function applyValidatorToggle(text, clientLang, settings) {
+  let disabledWord, ruleWord;
+  switch (clientLang) {
+    case "zh-CN": disabledWord = "禁用"; ruleWord = "规则"; break;
+    case "ja-JP": disabledWord = "無効"; ruleWord = "ルール"; break;
+    case "es-MX": disabledWord = "deshabilitado"; ruleWord = "regla"; break;
+    case "pt-BR": disabledWord = "desabilitado";   ruleWord = "regra"; break;
+    case "de-DE": disabledWord = "deaktiviert";    ruleWord = "regel"; break;
+    default:      disabledWord = "disabled";       ruleWord = "rule";
+  }
+
+  const titlePattern = 'Addon\\s*\\|\\s*SUB\\s*Basic\\s*Map\\s*Validator[^"]*';
+  if (settings.validator === "on") {
+    text = text.replace(
+      new RegExp(`(?<=^[ \\t]*)${disabledWord}\\s+(${ruleWord}\\s*\\(\\s*"${titlePattern}"\\))`, "mi"),
+      "$1"
+    );
+  } else {
+    text = text.replace(
+      new RegExp(`(^[ \\t]*)(` +
+        `${ruleWord}\\s*\\(\\s*"${titlePattern}"\\)` +
+      `)`, "mi"),
+      `$1${disabledWord} $2`
+    );
+  }
+  return text;
+}
+
+function applyDifficultyIndex(text, clientLang, settings) {
+  let idx = DIFFICULTY_MAP.indexOf(settings.difficultyHUD);
+  if (idx < 0) idx = DIFFICULTY_MAP.length - 1;
+
+  let comboKeyword;
+  switch (clientLang) {
+    case "zh-CN":
+      comboKeyword = "地图工坊设置组合";
+      break;
+    case "ja-JP":
+      comboKeyword = "ワークショップ設定コンボ";
+      break;
+    case "es-MX":
+      comboKeyword = "Combinado de la configuración del Workshop";
+      break;
+    case "pt-BR":
+      comboKeyword = "Caixa de Combinação de Configurações do Workshop";
+      break;
+    default:
+      comboKeyword = "Workshop Setting Combo";
+  }
+
+  const escapedKeyword = comboKeyword.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  const re = new RegExp(
+    `(${escapedKeyword}\\s*\\([\\s\\S]*?,\\s*)(\\d+)(\\s*\\))`,
+    "i"
+  );
+
+  return text.replace(re, `$1${idx}$3`);
+}
+
+function applyMapEntryUpdate(text, resolution) {
+  const { rawMapNameVisible, mapKeyFound, chosenVariantId } = resolution;
+  if (!mapKeyFound || !chosenVariantId) return text;
+
+  const newFullMapEntry = `${rawMapNameVisible} ${chosenVariantId}`;
+  const lang = document.getElementById("lang")?.value || "en-US";
+
+  const SKIRMISH_NAMES = {
+    "en-US": "Skirmish",
+    "de-DE": "Übungsgefecht",
+    "es-ES": "Escaramuza",
+    "es-MX": "Escaramuza",
+    "fr-FR": "Échauffement",
+    "it-IT": "Schermaglia",
+    "ja-JP": "スカーミッシュ",
+    "ko-KR": "연습 전투",
+    "pl-PL": "Potyczka",
+    "pt-BR": "Confronto",
+    "ru-RU": "Разминка",
+    "th-TH": "บู๊ซ้อมรบ",
+    "tr-TR": "Müsademe",
+    "zh-CN": "突击模式",
+    "zh-TW": "衝突戰"
+  };
+  const skirmish = SKIRMISH_NAMES[lang] || SKIRMISH_NAMES["en-US"];
+  const enabledMapsPattern = `(?:enabled\\s+maps|mapas\\s+habilitados|mapas\\s+ativados|verfügbare\\s+karten|启用地图|有効なマップ)`;
+
+  const reAll = new RegExp(`${enabledMapsPattern}\\s*\\{[\\s\\S]*?\\}`, "gi");
+  text = text.replace(reAll, match => {
+    return match.replace(/\{[\s\S]*\}/, "{\n\n}");
+  });
+
+  const reSkirmish = new RegExp(
+    `(${skirmish.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}\\s*\\{[\\s\\S]*?` +
+    `${enabledMapsPattern}\\s*\\{)([\\s\\S]*?)(\\})`,
+    "i"
+  );
+
+  text = text.replace(reSkirmish, (_, p1, _oldContent, p3) => {
+    return `${p1}\n    ${newFullMapEntry}\n${p3}`;
+  });
+
+  return text;
+}
+
+function applyWorkshopBansUpdate(text, clientLang, newActiveBans, localized) {
+  const banOnValue = localized.on;
+  return text.replace(
+    new RegExp(`(^[ \\t]*(?:workshop|地图工坊|ワークショップ)\\s*\\{)([\\s\\S]*?)(\\})`, "mi"),
+    (match, pOpen, inner, pClose) => {
+      const lines     = inner.split("\n");
+      const filtered  = lines.filter(line => !/^\s*ban\s+[^:]+:\s*(On|开启|활성화|Вкл\.|Activado|Ligado|Ein)\s*$/i.test(line));
+      const indent    = (filtered[0]?.match(/^([ \t]*)/) || ["", "    "])[1];
+      const bansText  = newActiveBans.map(n => `${indent} ${n} : ${banOnValue}`).join("\n");
+      const rebuilt   = filtered.join("\n").trim();
+      const withBans  = bansText + (rebuilt ? "\n" + rebuilt + "\n" : "\n");
+      return `${pOpen}\n${withBans}${pClose}`;
+    }
+  );
+}
+
+async function saveGlobalSettings() {
+  const clientLang     = document.getElementById("lang").value || "en-US";
+  const textarea       = document.querySelector(".mapdata");
+  const originalText   = textarea.value;
+
+  const newActiveBans  = getNewActiveBans();
+  updateGlobalSettingsFromForm();
+  const resolution     = resolveMapKeyAndVariant();
+  const localized      = getLocalizedOnOff(clientLang);
+
+  let text = originalText;
+  text = applyOnOffReplacements(text, localized, globalSettings);
+  text = applyValidatorToggle(text, clientLang, globalSettings);
+  text = applyDifficultyIndex(text, clientLang, globalSettings);
+  text = applyMapEntryUpdate(text, resolution);
+  text = applyWorkshopBansUpdate(text, clientLang, newActiveBans, localized);
+
+  textarea.value = text;
+  lastFullText   = text;
+  renderMapSettings(text);
+  console.log("✅ globalSettings sauvegardés :", {
+    ...globalSettings,
+    activeGlobalBans: newActiveBans,
+    mapKey:           resolution.mapKeyFound,
+    variantId:        resolution.chosenVariantId
+  });
+  closeGlobalSettingsModal();
+  showConfirmationMessage("Settings have been saved");
+}
+
+/* ------- Modal editor mode ------- */
+function openEditModal(idx) {
+  editIndex = idx;
+  const modal = document.getElementById("editModal");
+  const fieldsContainer = document.getElementById("editFieldsContainer");
+  fieldsContainer.innerHTML = "";
+
+  const checkpoint = currentDataModel.checkpoints[idx];
+  const tp         = currentDataModel.teleportMap[idx];
+  const coords     = tp ? tp.start : currentDataModel.checkpoints[idx];
+  const kills      = currentDataModel.killMap[idx]   || [];
+  const pins       = currentDataModel.pinMap[idx]    || [];
+  const abilities  = currentDataModel.abilityMap[idx] || {};
+  const banMap     = currentDataModel.banMap;
+
+  const portalStarts = currentDataModel.CustomPortalStart[idx]    || [];
+  const portalEnds   = currentDataModel.CustomPortalEndpoint[idx] || [];
+  const cpValue      = currentDataModel.CustomPortalCP[idx] != null ? currentDataModel.CustomPortalCP[idx] : idx;
+
+  {
+    const wrapper = document.createElement("div");
+    const title   = document.createElement("div");
+    title.textContent = "Coordinates (X, Y, Z)";
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    wrapper.appendChild(title);
+
+    const coordRow = document.createElement("div");
+    coordRow.classList.add("orb-row");
+
+    const inX = document.createElement("input");
+    inX.type = "number"; inX.step = "0.001"; inX.value = coords.x; inX.id = "editCoordX";
+    coordRow.appendChild(inX);
+
+    const inY = document.createElement("input");
+    inY.type = "number"; inY.step = "0.001"; inY.value = coords.y; inY.id = "editCoordY";
+    coordRow.appendChild(inY);
+
+    const inZ = document.createElement("input");
+    inZ.type = "number"; inZ.step = "0.001"; inZ.value = coords.z; inZ.id = "editCoordZ";
+    coordRow.appendChild(inZ);
+
+    wrapper.appendChild(coordRow);
+    fieldsContainer.appendChild(wrapper);
+  }
+
+  {
+    const wrapper = document.createElement("div");
+    const title   = document.createElement("div");
+    title.classList.add("sub-header");
+    title.textContent = "Teleport";
+    title.style.fontWeight = "600";
+    title.style.margin = "8px 0 4px";
+    wrapper.appendChild(title);
+
+    if (tp) {
+      const row = document.createElement("div");
+      row.classList.add("orb-row");
+      row.dataset.tpKind = "start-end";
+
+      const startDifferent =
+        !(tp.start.x === checkpoint.x && tp.start.y === checkpoint.y && tp.start.z === checkpoint.z);
+      if (startDifferent) {
+        ["x","y","z"].forEach(axis => {
+          const inp = document.createElement("input");
+          inp.type = "number"; inp.step = "0.001";
+          inp.value = tp.start[axis];
+          inp.classList.add(`tp-start-${axis}`);
+          row.appendChild(inp);
+        });
+      }
+
+      ["x","y","z"].forEach(axis => {
+        const inp = document.createElement("input");
+        inp.type = "number"; inp.step = "0.001";
+        inp.value = tp.end[axis];
+        inp.classList.add(`tp-end-${axis}`);
+        row.appendChild(inp);
+      });
+
+      const btnDelTp = document.createElement("button");
+      btnDelTp.type = "button";
+      btnDelTp.textContent = "–";
+      Object.assign(btnDelTp.style, {
+        marginLeft:  "8px",
+        padding:     "4px",
+        background:  "#c62828",
+        color:       "#fff",
+        border:      "none",
+        borderRadius:"4px",
+        cursor:      "pointer"
+      });
+      btnDelTp.title = "Remove this teleport";
+      btnDelTp.addEventListener("click", () => {
+        delete currentDataModel.teleportMap[idx];
+        openEditModal(idx);
+      });
+      row.appendChild(btnDelTp);
+
+      wrapper.appendChild(row);
+    }
+    else {
+      const btnAdd = document.createElement("button");
+      btnAdd.type = "button";
+      btnAdd.textContent = "+ Add teleport";
+      Object.assign(btnAdd.style, {
+        marginTop:   "6px",
+        padding:     "4px 8px",
+        background:  "#8e44ad",
+        color:       "#fff",
+        border:      "none",
+        borderRadius:"4px",
+        cursor:      "pointer"
+      });
+      btnAdd.addEventListener("click", () => {
+        const cp = currentDataModel.checkpoints[idx];
+        currentDataModel.teleportMap[idx] = {
+          start: { x: cp.x, y: cp.y, z: cp.z },
+          end:   { x:0, y:0, z:0 }
+        };
+        openEditModal(idx);
+      });
+      wrapper.appendChild(btnAdd);
+    }
+
+    fieldsContainer.appendChild(wrapper);
+  }
+
+  {
+    const wrapper = document.createElement("div");
+    const title   = document.createElement("div");
+    title.classList.add("sub-header");
+    title.textContent = "Kill orbs";
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    wrapper.appendChild(title);
+
+    kills.forEach((kb, i) => {
+      const row = document.createElement("div");
+      row.classList.add("orb-row");
+      row.dataset.orbIndex = i;
+
+      ["x","y","z"].forEach(axis => {
+        const inp = document.createElement("input");
+        inp.type = "number"; inp.step = "0.001";
+        inp.value = kb.pos[axis];
+        inp.classList.add(`kill-${axis}`);
+        row.appendChild(inp);
+      });
+      const kr = document.createElement("input");
+      kr.type = "number"; kr.step = "0.001";
+      kr.value = kb.radius != null ? kb.radius : 0;
+      kr.classList.add("kill-r");
+      row.appendChild(kr);
+
+      const btnDel = document.createElement("button");
+      btnDel.type = "button"; btnDel.textContent = "–"; btnDel.title = "Remove this kill orb";
+      Object.assign(btnDel.style, {
+        background: "#c62828", color: "#fff", border: "none",
+        borderRadius: "4px", width: "24px", cursor: "pointer"
+      });
+      btnDel.addEventListener("click", () => row.remove());
+      row.appendChild(btnDel);
+
+      wrapper.appendChild(row);
+    });
+
+    const addKillBtn = document.createElement("button");
+    addKillBtn.type = "button"; addKillBtn.textContent = "+ Add kill orb";
+    Object.assign(addKillBtn.style, {
+      marginTop: "6px", padding: "4px 8px", background: "#1976d2",
+      color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer"
+    });
+    addKillBtn.addEventListener("click", () => {
+      const row = document.createElement("div");
+      row.classList.add("orb-row");
+      ["kill-x","kill-y","kill-z","kill-r"].forEach(cls => {
+        const inp = document.createElement("input");
+        inp.type = "number"; inp.step = "0.001"; inp.value = 0;
+        inp.classList.add(cls);
+        row.appendChild(inp);
+      });
+      const btnDel = document.createElement("button");
+      btnDel.type = "button"; btnDel.textContent = "–";
+      Object.assign(btnDel.style, {
+        background: "#c62828", color: "#fff", border: "none",
+        borderRadius: "4px", width: "24px", cursor: "pointer"
+      });
+      btnDel.addEventListener("click", () => row.remove());
+      row.appendChild(btnDel);
+      wrapper.appendChild(row);
+    });
+    wrapper.appendChild(addKillBtn);
+
+    fieldsContainer.appendChild(wrapper);
+  }
+
+  {
+    const wrapper = document.createElement("div");
+    const title   = document.createElement("div");
+    title.classList.add("sub-header");
+    title.textContent = "Bounce orbs";
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    wrapper.appendChild(title);
+
+    pins.forEach((pb, i) => {
+      const row = document.createElement("div");
+      row.classList.add("orb-row");
+      row.dataset.pinIndex = i;
+
+      ["x","y","z","f"].forEach((fld, ix) => {
+        const inp = document.createElement("input");
+        inp.type = "number"; inp.step = "0.001";
+        inp.value = fld === "f" ? pb.force : pb.pos[fld];
+        inp.classList.add(`pin-${fld}`);
+        row.appendChild(inp);
+      });
+
+      ["locked","ult5","ult6"].forEach(flag => {
+        const label = document.createElement("label");
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.checked = pb[
+          flag === "locked" ? "locked" :
+          flag === "ult5"   ? "givesUlt5" :
+                              "givesUlt6"
+        ];
+        chk.classList.add(`pin-${flag}`);
+        label.appendChild(chk);
+        label.appendChild(document.createTextNode(
+          flag === "locked" ? "Lock" :
+          flag === "ult5"   ? "Dao"  : "Shift"
+        ));
+        row.appendChild(label);
+      });
+
+      const btnDel = document.createElement("button");
+      btnDel.type = "button"; btnDel.textContent = "–";
+      Object.assign(btnDel.style, {
+        background: "#c62828", color: "#fff", border: "none",
+        borderRadius: "4px", width: "24px", cursor: "pointer"
+      });
+      btnDel.addEventListener("click", () => row.remove());
+      row.appendChild(btnDel);
+
+      wrapper.appendChild(row);
+    });
+
+    const addPinBtn = document.createElement("button");
+    addPinBtn.type = "button"; addPinBtn.textContent = "+ Add bounce orb";
+    Object.assign(addPinBtn.style, {
+      marginTop: "6px", padding: "4px 8px", background: "#1976d2",
+      color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer"
+    });
+    addPinBtn.addEventListener("click", () => {
+      const row = document.createElement("div");
+      row.classList.add("orb-row");
+      ["pin-x","pin-y","pin-z","pin-f"].forEach(cls => {
+        const inp = document.createElement("input");
+        inp.type = "number"; inp.step = "0.001"; inp.value = 0;
+        inp.classList.add(cls);
+        row.appendChild(inp);
+      });
+      ["pin-locked","pin-ult5","pin-ult6"].forEach(cls => {
+        const label = document.createElement("label");
+        const chk = document.createElement("input");
+        chk.type = "checkbox"; chk.classList.add(cls);
+        label.appendChild(chk);
+        label.appendChild(document.createTextNode(
+          cls === "pin-locked" ? "Lock" :
+          cls === "pin-ult5"   ? "Dao"  : "Shift"
+        ));
+        row.appendChild(label);
+      });
+      const btnDel = document.createElement("button");
+      btnDel.type = "button"; btnDel.textContent = "–";
+      Object.assign(btnDel.style, {
+        background: "#c62828", color: "#fff", border: "none",
+        borderRadius: "4px", width: "24px", cursor: "pointer"
+      });
+      btnDel.addEventListener("click", () => row.remove());
+      row.appendChild(btnDel);
+      wrapper.appendChild(row);
+    });
+    wrapper.appendChild(addPinBtn);
+
+    fieldsContainer.appendChild(wrapper);
+  }
+
+  {
+    const w = document.createElement("div");
+    const t = document.createElement("div");
+    t.classList.add("sub-header");
+    t.textContent = "Custom Portals";
+    t.style.cssText = "font-weight:600;margin-bottom:4px;";
+    w.appendChild(t);
+
+    portalStarts.forEach((start, i) => {
+      const block = document.createElement("div");
+      block.classList.add("portal-block");
+      block.dataset.portalIndex = i;
+      block.style.marginBottom = "8px";
+
+      const hdr = document.createElement("div");
+      hdr.textContent = `#${i+1}`;
+      hdr.style.fontWeight = "500";
+      block.appendChild(hdr);
+
+      ["Start","End"].forEach(kind => {
+        const row = document.createElement("div");
+        row.textContent = `${kind}:`;
+        block.appendChild(row);
+        ["X","Y","Z"].forEach(axis => {
+          const inp = document.createElement("input");
+          inp.type="number"; inp.step="0.001";
+          const src = kind==="Start" ? portalStarts : portalEnds;
+          const obj = src[i] || {x:0,y:0,z:0};
+          inp.value = obj[axis.toLowerCase()];
+          inp.id    = `portal${kind}${axis}_${i}`;
+          inp.style.marginRight = "4px";
+          block.appendChild(inp);
+        });
+        block.appendChild(document.createElement("br"));
+      });
+
+      const cpRow = document.createElement("div");
+      cpRow.style.margin = "4px 0 6px";
+      const lbl = document.createElement("label");
+      lbl.textContent = "CP:";
+      lbl.style.marginRight = "8px";
+      const cpInp = document.createElement("input");
+      cpInp.type="number"; cpInp.step="1"; cpInp.value=cpValue;
+      cpInp.id = `portalCP_${i}`;
+      cpInp.style.width="60px";
+      cpRow.appendChild(lbl);
+      cpRow.appendChild(cpInp);
+      block.appendChild(cpRow);
+
+      const del = document.createElement("button");
+      del.type="button"; del.textContent="–";
+      del.style.cssText="background:#c62828;color:#fff;border:none;border-radius:4px;padding:2px 6px;cursor:pointer;";
+      del.addEventListener("click", ()=> block.remove());
+      block.appendChild(del);
+
+      w.appendChild(block);
+    });
+
+    const add = document.createElement("button");
+    add.type="button"; add.textContent="+ Add Portal";
+    add.style.cssText="margin-top:6px;padding:4px 8px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;";
+    add.addEventListener("click", () => {
+      portalStarts.push({x:0,y:0,z:0});
+      portalEnds.push(  {x:0,y:0,z:0});
+      currentDataModel.CustomPortalStart[idx]    = portalStarts;
+      currentDataModel.CustomPortalEndpoint[idx] = portalEnds;
+      currentDataModel.CustomPortalCP[idx]       = cpValue;
+      openEditModal(idx);
+    });
+    w.appendChild(add);
+
+    fieldsContainer.appendChild(w);
+  }
+
+  {
+    const wrapper = document.createElement("div");
+    const title   = document.createElement("div");
+    title.classList.add("sub-header");
+    title.textContent = "Abilities";
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    wrapper.appendChild(title);
+
+    ["ultimate","dash"].forEach(key => {
+      const label = document.createElement("label");
+      const chk   = document.createElement("input");
+      chk.type    = "checkbox";
+      chk.checked = !!abilities[key];
+      chk.id      = `editAbility${key.charAt(0).toUpperCase() + key.slice(1)}`;
+      label.appendChild(chk);
+      label.appendChild(document.createTextNode(
+        key === "ultimate" ? "Ultimate available" : "Dash available"
+      ));
+      wrapper.appendChild(label);
+    });
+    fieldsContainer.appendChild(wrapper);
+  }
+
+  {
+    const wrapper = document.createElement("div");
+    const title   = document.createElement("div");
+    title.classList.add("sub-header");
+    title.textContent = "Checkpoint-specific Bans";
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    wrapper.appendChild(title);
+
+    Object.entries(banMap).forEach(([banKey, arr]) => {
+      const label = document.createElement("label");
+      const chk   = document.createElement("input");
+      chk.type    = "checkbox";
+      chk.checked = arr.includes(idx);
+      chk.classList.add(`edit-ban-${banKey}`);
+      label.appendChild(chk);
+      label.appendChild(document.createTextNode(banKey));
+      wrapper.appendChild(label);
+    });
+    fieldsContainer.appendChild(wrapper);
+  }
+  
+  {
+    const buttonsContainer = modal.querySelector('.modal-buttons3');
+    if (!buttonsContainer.querySelector('.delete-checkpoint-btn')) {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.textContent = "Delete checkpoint";
+      deleteBtn.classList.add("delete-checkpoint-btn");
+      buttonsContainer.insertBefore(deleteBtn, buttonsContainer.firstChild);
+      deleteBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        deleteCheckpoint(editIndex);
+      });
+    }
+  }
+
+  document.getElementById("closeModal2").onclick = () => modal.style.display = "none";
+  window.addEventListener("click", onWindowClickForEditorModal);
+  document.getElementById("cancelEditorChangesBtn").addEventListener("click", () => {
+    modal.style.display = "none";
+    showErrorMessage("Changes have been cancelled");
+  });
+
+  modal.style.display = "flex";
+}
+
+function onWindowClickForEditorModal(e) {
+  const modal = document.getElementById("editModal");
+  if (e.target === modal) {
+    closeSettingsModal();
+  }
+}
+
+function closeSettingsModal() {
+  const modal = document.getElementById("editModal");
+  if (modal) {
+    modal.style.display = "none";
+    window.removeEventListener("click", onWindowClickForEditorModal);
+  }
+}
+
+function applyEditorModalToModel() {
+  const idx = editIndex;
+  if (idx == null) return;
+
+  const newX = parseFloat(document.getElementById("editCoordX").value) || 0;
+  const newY = parseFloat(document.getElementById("editCoordY").value) || 0;
+  const newZ = parseFloat(document.getElementById("editCoordZ").value) || 0;
+  currentDataModel.checkpoints[idx] = { x: newX, y: newY, z: newZ };
+
+  const endEls = document.querySelectorAll(".tp-end-x");
+  if (endEls.length) {
+    const checkpoint = currentDataModel.checkpoints[idx];
+    const sxEl = document.querySelector(".tp-start-x");
+    const syEl = document.querySelector(".tp-start-y");
+    const szEl = document.querySelector(".tp-start-z");
+    const s = {
+      x: sxEl ? parseFloat(sxEl.value)||0 : checkpoint.x,
+      y: syEl ? parseFloat(syEl.value)||0 : checkpoint.y,
+      z: szEl ? parseFloat(szEl.value)||0 : checkpoint.z
+    };
+    const e = {
+      x: parseFloat(document.querySelector(".tp-end-x").value)||0,
+      y: parseFloat(document.querySelector(".tp-end-y").value)||0,
+      z: parseFloat(document.querySelector(".tp-end-z").value)||0
+    };
+    currentDataModel.teleportMap[idx] = { start: s, end: e };
+  } else {
+    delete currentDataModel.teleportMap[idx];
+  }
+
+  const killRows = Array.from(
+    document.querySelectorAll("#editFieldsContainer .orb-row")
+  ).filter(r => r.querySelector(".kill-x"));
+  currentDataModel.killMap[idx] = killRows.map(row => {
+    const x = parseFloat(row.querySelector(".kill-x").value) || 0;
+    const y = parseFloat(row.querySelector(".kill-y").value) || 0;
+    const z = parseFloat(row.querySelector(".kill-z").value) || 0;
+    const r = parseFloat(row.querySelector(".kill-r").value) || 0;
+    return { pos: { x, y, z }, radius: r };
+  });
+
+  const pinRows = Array.from(
+    document.querySelectorAll("#editFieldsContainer .orb-row")
+  ).filter(r => r.querySelector(".pin-x"));
+  currentDataModel.pinMap[idx] = pinRows.map(row => {
+    const x = parseFloat(row.querySelector(".pin-x").value) || 0;
+    const y = parseFloat(row.querySelector(".pin-y").value) || 0;
+    const z = parseFloat(row.querySelector(".pin-z").value) || 0;
+    const f = parseFloat(row.querySelector(".pin-f").value) || 0;
+    const locked   = row.querySelector(".pin-locked").checked;
+    const givesUlt5 = row.querySelector(".pin-ult5").checked;
+    const givesUlt6 = row.querySelector(".pin-ult6").checked;
+    return { pos: { x, y, z }, force: f, locked, givesUlt5, givesUlt6 };
+  });
+
+  const ultChk  = document.getElementById("editAbilityUltimate").checked;
+  const dashChk = document.getElementById("editAbilityDash").checked;
+  currentDataModel.abilityMap[idx] = { ultimate: ultChk, dash: dashChk };
+
+  Object.keys(currentDataModel.banMap).forEach(banKey => {
+    const cb = document.querySelector(".edit-ban-" + banKey);
+    if (!cb) return;
+    const arr       = currentDataModel.banMap[banKey];
+    const isChecked = cb.checked;
+    const already   = arr.includes(idx);
+    if (isChecked && !already) {
+      arr.push(idx);
+    } else if (!isChecked && already) {
+      currentDataModel.banMap[banKey] = arr.filter(n => n !== idx);
+    }
+  });
+
+  const blocks = Array.from(document.querySelectorAll("#editFieldsContainer .portal-block"));
+  const newStarts = [], newEnds = [], newCPs = [];
+  blocks.forEach(blk => {
+    const i = +blk.dataset.portalIndex;
+    const s = {}, e = {};
+    ["X","Y","Z"].forEach(ax => {
+      s[ax.toLowerCase()] = parseFloat(blk.querySelector(`#portalStart${ax}_${i}`).value) || 0;
+      e[ax.toLowerCase()] = parseFloat(blk.querySelector(`#portalEnd${ax}_${i}`).value)   || 0;
+    });
+    const cp = parseInt(blk.querySelector(`#portalCP_${i}`).value, 10);
+    newStarts.push(s);
+    newEnds.push(e);
+    newCPs.push(isNaN(cp) ? idx : cp);
+  });
+  currentDataModel.CustomPortalStart[idx]    = newStarts;
+  currentDataModel.CustomPortalEndpoint[idx] = newEnds;
+  currentDataModel.CustomPortalCP[idx]       = newCPs[0] != null ? newCPs[0] : idx;
+  currentDataModel.portalMap[idx] = newStarts.map((start, j) => ({
+    start,
+    end: newEnds[j],
+    cp: newCPs[j] != null ? newCPs[j] : idx
+  }));
+}
+
+document.getElementById("saveEditorChangesBtn").addEventListener("click", () => {
+    applyEditorModalToModel();
+    document.getElementById("editModal").style.display = "none";
+    saveEditorSettings();
+    renderMapSettingsWithModel(currentDataModel);
+    showConfirmationMessage("Settings have been saved");
+});
+
+function renderMapSettingsWithModel(dataModel) {
+  const container           = document.getElementById("mapSettings");
+  const editModeBtn         = document.getElementById("editModeBtn");
+  const globalSettingsBtn   = document.getElementById("globalSettingsBtn");
+  const globalInfos         = container.querySelector(".global-infos");
+
+  if (editModeBtn && editModeBtn.parentNode) {
+    editModeBtn.parentNode.removeChild(editModeBtn);
+  }
+  if (globalSettingsBtn && globalSettingsBtn.parentNode) {
+    globalSettingsBtn.parentNode.removeChild(globalSettingsBtn);
+  }
+
+  container.innerHTML = "";
+
+  globalInfos.innerHTML = "";
+  globalInfos.classList.remove("no-bans");
+
+  let settingsButtons = globalInfos.querySelector(".settings-buttons");
+  if (!settingsButtons) {
+    settingsButtons = document.createElement("div");
+    settingsButtons.classList.add("settings-buttons");
+  } else {
+    settingsButtons.innerHTML = "";
+  }
+
   if (editModeBtn) {
-    editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
-    document
-      .getElementById("mapSettings")
-      .querySelectorAll(".checkpoint-card")
-      .forEach(card => {
+    settingsButtons.appendChild(editModeBtn);
+  }
+  if (globalSettingsBtn) {
+    settingsButtons.appendChild(globalSettingsBtn);
+  }
+
+
+  if (editModeBtn && !editModeBtn.dataset.listenerInstalled) {
+    editModeBtn.dataset.listenerInstalled = "true";
+    editModeBtn.addEventListener("click", () => {
+      isEditMode = !isEditMode;
+      editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+      container.querySelectorAll(".checkpoint-card").forEach(card => {
         if (isEditMode) card.classList.add("editable");
         else            card.classList.remove("editable");
       });
+    });
   }
 
-  closeGlobalSettingsModal();
+  if (editModeBtn) {
+    editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+  }
+  if (!settingsButtons.contains(globalSettingsBtn)) {
+    settingsButtons.appendChild(globalSettingsBtn);
+  }
+
+  const bansIconsEl = renderGlobalBans(lastFullText);
+  if (bansIconsEl) {
+    globalInfos.appendChild(bansIconsEl);
+    globalInfos.classList.remove("no-bans");
+  } else {
+    globalInfos.classList.add("no-bans");
+  }
+
+  container.appendChild(globalInfos);
+  globalInfos.appendChild(settingsButtons);
+
+  if (!dataModel.checkpoints || dataModel.checkpoints.length === 0) {
+    const msg = document.createElement("p");
+    msg.textContent = "Aucun checkpoint (Global.A) trouvé dans le texte.";
+    msg.classList.add("empty-message");
+    container.appendChild(msg);
+    return;
+  }
+
+  dataModel.checkpoints.forEach((coords, idx) => {
+    const card = createCheckpointCard(idx, coords, dataModel);
+    container.appendChild(card);
+  });
+
+  updateCardNumbers();
+
+  if (isEditMode) {
+    container.querySelectorAll(".checkpoint-card").forEach(card => {
+      card.classList.add("editable");
+    });
+  }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const btnConvert   = document.getElementById("convert-btn");
-  const btnTranslate = document.getElementById("translate-btn");
+/* ------- Save & delete editor mode ------- */
+function updateMapDataRule(dataModel, lang) {
+  const dicts = {
+    "default": { G: "Global",    A: "Array",    V: "Vector",    T: "True", F: "False" },
+    "zh-CN":   { G: "全局",       A: "数组",      V: "矢量",       T: "真",    F: "假"    },
+    "ja-JP":   { G: "グローバル", A: "配列",      V: "ベクトル",   T: "True", F: "False" }
+  };
+  const { G, A, V, T, F } = dicts[lang] || dicts["default"];
 
-  if (btnConvert) {
-    btnConvert.addEventListener("click", () => {
-      setTimeout(addGlobalSettingsButton, 100);
+  const lines = [];
+
+  const arrA = [];
+  dataModel.checkpoints.forEach((c, i) => {
+    const tp = dataModel.teleportMap[i];
+    if (tp) {
+      const Astart = `${V}(${tp.start.x.toFixed(3)}, ${tp.start.y.toFixed(3)}, ${tp.start.z.toFixed(3)})`;
+      const Aend   = `${V}(${tp.end.x.toFixed(3)},   ${tp.end.y.toFixed(3)},   ${tp.end.z.toFixed(3)})`;
+      arrA.push(`${A}(${Astart}, ${Aend})`);
+    } else {
+      arrA.push(`${V}(${c.x.toFixed(3)}, ${c.y.toFixed(3)}, ${c.z.toFixed(3)})`);
+    }
+  });
+
+  lines.push(`${G}.A = ${A}(${arrA.join(', ')});`);
+
+  const arrH = [], arrI = [], arrKillNum = [];
+  dataModel.checkpoints.forEach((_, idx) => {
+    (dataModel.killMap[idx] || []).forEach(kb => {
+      const x = Number.isFinite(kb?.pos?.x) ? kb.pos.x : 0;
+      const y = Number.isFinite(kb?.pos?.y) ? kb.pos.y : 0;
+      const z = Number.isFinite(kb?.pos?.z) ? kb.pos.z : 0;
+      const r = Number.isFinite(kb.radius)      ? kb.radius   : 0;
+      arrH.push(`${V}(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)})`);
+      arrI.push(r.toFixed(3));
+      arrKillNum.push(idx);
     });
-  }
-  if (btnTranslate) {
-    btnTranslate.addEventListener("click", () => {
-      setTimeout(addGlobalSettingsButton, 100);
+  });
+  lines.push(`${G}.H = ${A}(${arrH.join(', ')});`);
+  lines.push(`${G}.I = ${A}(${arrI.join(', ')});`);
+  lines.push(`${G}.killballnumber = ${A}(${arrKillNum.join(', ')});`);
+
+  const arrDao   = Object.entries(dataModel.abilityMap)
+    .filter(([,a]) => a.ultimate).map(([i]) => i);
+  const arrShift = Object.entries(dataModel.abilityMap)
+    .filter(([,a]) => a.dash).map(([i]) => i);
+  lines.push(`${G}.Dao   = ${A}(${arrDao.join(', ')});`);
+  lines.push(`${G}.SHIFT = ${A}(${arrShift.join(', ')});`);
+
+  lines.push(`${G}.EditSelectIdArray = ${A}();`);
+
+  const arrTQ     = [], arrEM = [], arrT5 = [], arrT6 = [], arrBTL = [], arrPinNum = [];
+  dataModel.checkpoints.forEach((_, idx) => {
+    (dataModel.pinMap[idx] || []).forEach(pb => {
+      const x = Number.isFinite(pb?.pos?.x)  ? pb.pos.x    : 0;
+      const y = Number.isFinite(pb?.pos?.y)  ? pb.pos.y    : 0;
+      const z = Number.isFinite(pb?.pos?.z)  ? pb.pos.z    : 0;
+      const f = Number.isFinite(pb.force)    ? pb.force    : 0;
+      arrTQ.push(`${V}(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)})`);
+      arrEM.push(f.toFixed(3));
+      arrT5.push(pb.givesUlt5 ? T : F);
+      arrT6.push(pb.givesUlt6 ? T : F);
+      arrBTL.push(pb.locked   ? T : F);
+      arrPinNum.push(idx);
     });
+  });
+
+  const ps = [], pe = [], pc = [];
+  dataModel.checkpoints.forEach((_,i) => {
+    (dataModel.CustomPortalStart[i]||[]).forEach((v,j) => {
+      ps.push(`${V}(${v.x.toFixed(3)}, ${v.y.toFixed(3)}, ${v.z.toFixed(3)})`);
+      const e = (dataModel.CustomPortalEndpoint[i]||[])[j]||{x:0,y:0,z:0};
+      pe.push(`${V}(${e.x.toFixed(3)}, ${e.y.toFixed(3)}, ${e.z.toFixed(3)})`);
+      pc.push(dataModel.CustomPortalCP[i]!=null?dataModel.CustomPortalCP[i]:i);
+    });
+  });
+
+  lines.push(`${G}.TQ               = ${A}(${arrTQ.join(', ')});`);
+  lines.push(`${G}.EditMode         = ${A}(${arrEM.join(', ')});`);
+  lines.push(`${G}.TQ5              = ${A}(${arrT5.join(', ')});`);
+  lines.push(`${G}.TQ6              = ${A}(${arrT6.join(', ')});`);
+  lines.push(`${G}.BounceToggleLock = ${A}(${arrBTL.join(', ')});`);
+  lines.push(`${G}.pinballnumber    = ${A}(${arrPinNum.join(', ')});`);
+
+  lines.push(`${G}.LeaderBoardFull         = ${A}();`);
+  lines.push(`${G}.Difficultyhud           = ${A}(0, ${F});`);
+
+  lines.push(`${G}.CustomPortalStart    = ${A}(${ps.join(", ")});`);
+  lines.push(`${G}.CustomPortalEndpoint = ${A}(${pe.join(", ")});`);
+  lines.push(`${G}.CustomPortalCP       = ${A}(${pc.join(", ")});`);
+
+  lines.push(`${G}.HudStoreEdit            = ${A}();`);
+  lines.push(`${G}.Cachedcredits           = ${A}(0, 0);`);
+
+  for (const [banKey, arr] of Object.entries(dataModel.banMap)) {
+    lines.push(`${G}.Ban${banKey} = ${A}(${arr.join(', ')});`);
   }
+
+  return lines.join('\n');
+}
+
+function saveEditorSettings() {
+  const ta   = document.querySelector('#convertMap textarea.mapdata');
+  if (!ta) return;
+  const lang = document.getElementById('lang').value || 'en-US';
+  const raw  = ta.value;
+
+  const mapdata = updateMapDataRule(currentDataModel, lang);
+  const newRule = buildRule(mapdata, lang);
+
+  const replaced = replaceMapData(raw, newRule, lang);
+  ta.value     = replaced;
+  lastFullText = replaced;
+}
+
+function deleteCheckpoint(idx) {
+  if (idx == null) return;
+
+  currentDataModel.checkpoints.splice(idx, 1);
+  currentDataModel.CustomPortalStart.splice(idx, 1);
+  currentDataModel.CustomPortalEndpoint.splice(idx, 1);
+  currentDataModel.CustomPortalCP.splice(idx, 1);
+  currentDataModel.CustomPortalCP = currentDataModel.CustomPortalCP.map(cp =>
+    cp > idx ? cp - 1 : cp
+  );
+
+  const newKillMap = {};
+  Object.entries(currentDataModel.killMap).forEach(([key, arr]) => {
+    const k = Number(key);
+    if (k === idx) return;
+    const nk = k > idx ? k - 1 : k;
+    newKillMap[nk] = arr;
+  });
+  currentDataModel.killMap = newKillMap;
+
+  const newPinMap = {};
+  Object.entries(currentDataModel.pinMap).forEach(([key, arr]) => {
+    const k = Number(key);
+    if (k === idx) return;
+    const nk = k > idx ? k - 1 : k;
+    newPinMap[nk] = arr;
+  });
+  currentDataModel.pinMap = newPinMap;
+
+  const newAbility = {};
+  Object.entries(currentDataModel.abilityMap).forEach(([key, val]) => {
+    const k = Number(key);
+    if (k === idx) return;
+    const nk = k > idx ? k - 1 : k;
+    newAbility[nk] = val;
+  });
+  currentDataModel.abilityMap = newAbility;
+
+  Object.keys(currentDataModel.banMap).forEach(banKey => {
+    currentDataModel.banMap[banKey] = currentDataModel.banMap[banKey]
+      .filter(i => i !== idx)
+      .map(i => i > idx ? i - 1 : i);
+  });
+
+  const newPortalMap = {};
+  currentDataModel.CustomPortalStart.forEach((starts, i) => {
+    starts.forEach((start, j) => {
+      const end = currentDataModel.CustomPortalEndpoint[i][j];
+      const cp  = currentDataModel.CustomPortalCP[i];
+      if (!newPortalMap[i]) newPortalMap[i] = [];
+      newPortalMap[i].push({ start, end, cp });
+    });
+  });
+  currentDataModel.portalMap = newPortalMap;
+
+  document.getElementById("editModal").style.display = "none";
+  saveEditorSettings();
+  renderMapSettingsWithModel(currentDataModel);
+}
+
+/* ------- Diffchecker ------- */
+let lastDefaultTemplate = "";
+async function ensureDefaultTemplate(lang) {
+  if (!lastDefaultTemplate) {
+    lastDefaultTemplate = await loadTemplate(lang);
+  }
+  return lastDefaultTemplate;
+}
+
+async function checkForDiff() {
+  const lang = document.getElementById("lang").value || "en-US";
+  const defaultTpl = await ensureDefaultTemplate(lang);
+  const current   = document.querySelector(".mapdata").value;
+  const patch = Diff.createPatch("mapdata", defaultTpl, current, "", "");
+  const hasChanges = !/^\(\*\* No changes \*\*\)/m.test(patch) && patch.split("\n").length > 5;
+  document.getElementById("diff-btn").style.display = hasChanges ? "inline-block" : "none";
+  return patch;
+}
+
+const diffBtn     = document.getElementById("diff-btn");
+const diffModal   = document.getElementById("diffModal");
+const diffContent = document.getElementById("diffContent");
+
+document.querySelector(".modal-close").addEventListener("click", () => diffModal.classList.remove("show"));
+window.addEventListener('click', function(event) {
+  if (event.target === diffModal) {
+    diffModal.classList.remove('show');
+  }
+});
+
+diffBtn.addEventListener("click", async () => {
+  const patch = await checkForDiff();
+  const lines = patch
+    .split("\n")
+    .filter(l => /^[\+\-]{1}[^+\-\-]/.test(l))
+    .map(line => {
+      const escaped = line
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      const cls = line.startsWith("+")
+        ? "added"
+        : line.startsWith("-")
+        ? "removed"
+        : "";
+      return `<div class="diff-line ${cls}">${escaped}</div>`;
+    });
+  diffContent.innerHTML = lines.join("");
+  diffModal.classList.add("show");
 });
