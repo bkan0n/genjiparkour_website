@@ -48,7 +48,9 @@
   --badges-color-fade: #ccc;
   /* Popup */
   --green: #28a745;
+  --green-hover: #2f9b34;
   --red: #dc3545;
+  --red-hover: #cc1f1f;
   /* Backgrounds */
   --background-color: radial-gradient(circle, rgba(82, 82, 82, 1) 0%, rgba(43, 43, 43, 1) 100%);
   --background-color-index: radial-gradient(circle, rgba(60, 77, 87, 1) 0%, rgba(27, 33, 34, 0.9934348739495799) 100%);
