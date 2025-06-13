@@ -9,7 +9,10 @@ let keywordTranslations = null;
 let iconTranslations = null;
 let lastFullText = "";
 let translations = {};
+let draggedCard = null;
+let draggedIndex = null;
 window.selectSection = selectSection;
+const container = document.getElementById("mapSettings");
 
 let lastParsedWorkshopSettings = {
   editorMode: false,
@@ -55,7 +58,7 @@ const GLOBAL_BANS = [
   "ban Wallclimb - 封禁爬墙",
   "ban save double - 封禁延二段跳",
   "require bhop available - 留小跳进点",
-  "require djump available - 留二段跳"
+  "require djump available - 留二段跳进点"
 ];
 
 const ADDON_RULE_TITLES = [
@@ -155,10 +158,11 @@ function selectSection(id) {
       editModeBtn.addEventListener("click", () => {
         isEditMode = !isEditMode;
         editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
-        const container = document.getElementById("mapSettings");
-        container.querySelectorAll(".checkpoint-card").forEach(card => {
-          if (isEditMode) card.classList.add("editable");
-          else            card.classList.remove("editable");
+        document.querySelectorAll(".checkpoint-card").forEach(card => {
+          card.classList.toggle("editable", isEditMode);
+          card.querySelectorAll(".move-controls button").forEach(btn => {
+            btn.disabled = !isEditMode;
+          });
         });
       });
     }
@@ -178,16 +182,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   const targetEl      = document.getElementById("targetLang");
 
   btnConvert.addEventListener("click", async () => {
+    isEditMode = false;
+    const editModeBtn = document.getElementById("editModeBtn");
+    if (editModeBtn) editModeBtn.textContent = "Edit mode";
+    document.querySelectorAll(".checkpoint-card").forEach(card =>
+      card.classList.remove("editable")
+    );
+
     showLoader();
     btnConvert.disabled    = true;
     btnConvert.textContent = "Processing…";
     try {
       const lang     = langEl.value || "en-US";
       const fullText = textarea.value;
-
-      lastParsedWorkshopSettings = parseWorkshopSettings(fullText);
-
-      const lobbyBlock = extractLobbyBlock(fullText, lang);
 
       const resultTpl = await doConvert(fullText, lang);
 
@@ -205,6 +212,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   btnTranslate.addEventListener("click", async () => {
+    isEditMode = false;
+    const editModeBtn = document.getElementById("editModeBtn");
+    if (editModeBtn) editModeBtn.textContent = "Edit mode";
+    document.querySelectorAll(".checkpoint-card").forEach(card =>
+      card.classList.remove("editable")
+    );
+
     const clientLang  = langEl.value || "en-US";
     const targetLang  = targetEl.value || "en-US";
     const fullText    = textarea.value;
@@ -2098,21 +2112,11 @@ function parseGlobalArrayBooleans(fullText, varName) {
   return results;
 }
 
-let draggedCard = null;
-const container = document.getElementById("mapSettings");
-
+/* ------ REORDER CPS ------*/
 container.addEventListener("dragover", (e) => {
   if (!isEditMode) return;
   e.preventDefault();
   e.dataTransfer.dropEffect = "move";
-});
-container.addEventListener("drop", (e) => {
-  if (!isEditMode) return;
-  e.preventDefault();
-  if (draggedCard) {
-    container.appendChild(draggedCard);
-    draggedCard = null;
-  }
 });
 
 function updateCardNumbers() {
@@ -2123,6 +2127,49 @@ function updateCardNumbers() {
       circle.textContent = idx;
     }
   });
+}
+
+function moveCard(i, offset) {
+  const cards = Array.from(container.querySelectorAll(".checkpoint-card"));
+  const targetIdx = i + offset;
+  if (targetIdx < 0 || targetIdx >= cards.length) return;
+
+  const card    = cards[i];
+  const other   = cards[targetIdx];
+
+  if (offset === -1) {
+    container.insertBefore(card, other);
+  } else {
+    container.insertBefore(other, card);
+  }
+
+  swapDataModelEntries(i, targetIdx);
+
+  updateCardNumbers();
+  saveEditorSettings();
+  renderMapSettingsWithModel(currentDataModel);
+}
+
+function swapDataModelEntries(i, j) {
+  const m = currentDataModel;
+  [m.checkpoints[i], m.checkpoints[j]] = [m.checkpoints[j], m.checkpoints[i]];
+  [m.teleportMap[i], m.teleportMap[j]] = [m.teleportMap[j], m.teleportMap[i]];
+
+  [m.killMap[i],    m.killMap[j]]    = [m.killMap[j],    m.killMap[i]];
+  [m.pinMap[i],     m.pinMap[j]]     = [m.pinMap[j],     m.pinMap[i]];
+  [m.abilityMap[i], m.abilityMap[j]] = [m.abilityMap[j], m.abilityMap[i]];
+
+  [m.CustomPortalStart[i],    m.CustomPortalStart[j]]    = [m.CustomPortalStart[j],    m.CustomPortalStart[i]];
+  [m.CustomPortalEndpoint[i], m.CustomPortalEndpoint[j]] = [m.CustomPortalEndpoint[j], m.CustomPortalEndpoint[i]];
+  [m.CustomPortalCP[i],       m.CustomPortalCP[j]]       = [m.CustomPortalCP[j],       m.CustomPortalCP[i]];
+  for (const banKey in m.banMap) {
+    m.banMap[banKey] = m.banMap[banKey].map(idx => {
+      if (idx === i) return j;
+      if (idx === j) return i;
+      return idx;
+    });
+  }
+  [m.originalIndices[i], m.originalIndices[j]] = [m.originalIndices[j], m.originalIndices[i]];
 }
 
 /* ------- Settings section ------- */
@@ -2247,13 +2294,14 @@ function extractAllData(fullText) {
     teleportMap,
     CustomPortalStart,
     CustomPortalEndpoint,
-    CustomPortalCP
+    CustomPortalCP,
+    originalIndices: checkpoints.map((_, idx) => idx)
   };
 }
 
 function createCheckpointCard(idx, coords, data) {
   const { killMap, pinMap, abilityMap, banMap, portalMap } = data;
-  const originalIndex = idx;
+  const originalIndex = data.originalIndices ? data.originalIndices[idx] : idx
 
   const card = document.createElement("div");
   card.classList.add("checkpoint-card");
@@ -2340,7 +2388,7 @@ function createCheckpointCard(idx, coords, data) {
     card.appendChild(secTp);
   }
 
-  const kills = killMap[originalIndex] || [];
+  const kills = killMap[idx] || [];
   if (kills.length > 0) {
     const sectionKill = document.createElement("div");
     sectionKill.classList.add("section");
@@ -2375,7 +2423,7 @@ function createCheckpointCard(idx, coords, data) {
     card.appendChild(sectionKill);
   }
 
-  const pins = pinMap[originalIndex] || [];
+  const pins = pinMap[idx] || [];
   if (pins.length > 0) {
     const sectionPin = document.createElement("div");
     sectionPin.classList.add("section");
@@ -2471,7 +2519,7 @@ function createCheckpointCard(idx, coords, data) {
     card.appendChild(section);
   }
 
-  const abilities = abilityMap[originalIndex] || {};
+  const abilities = abilityMap[idx] || {};
   if (abilities.ultimate || abilities.dash) {
     const sectionAbil = document.createElement("div");
     sectionAbil.classList.add("section");
@@ -2502,7 +2550,7 @@ function createCheckpointCard(idx, coords, data) {
     card.appendChild(sectionAbil);
   }
 
-  const hasAnyBan = banList.some(({ arr }) => arr.includes(originalIndex));
+  const hasAnyBan = banList.some(({ arr }) => arr.includes(idx));
   if (hasAnyBan) {
     const sectionBan = document.createElement("div");
     sectionBan.classList.add("section", "section--bans");
@@ -2514,7 +2562,7 @@ function createCheckpointCard(idx, coords, data) {
     const banIcons2 = document.createElement("div");
     banIcons2.classList.add("ban-icons");
     banList.forEach(({ arr, icon }) => {
-      if (arr.includes(originalIndex)) {
+      if (arr.includes(idx)) {
         const iconSpan = document.createElement("span");
         iconSpan.classList.add("ban-icon");
         iconSpan.textContent = icon;
@@ -2532,6 +2580,7 @@ function createCheckpointCard(idx, coords, data) {
       return;
     }
     draggedCard = this;
+    draggedIndex = idx;
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", "");
   });
@@ -2552,9 +2601,48 @@ function createCheckpointCard(idx, coords, data) {
       if (this.nextSibling) container.insertBefore(draggedCard, this.nextSibling);
       else container.appendChild(draggedCard);
     }
-    updateCardNumbers();
-  });
+      const cards = Array.from(container.querySelectorAll(".checkpoint-card"));
+      const newIndex = cards.indexOf(draggedCard);
+      swapDataModelEntries(draggedIndex, newIndex);
+      updateCardNumbers();
+      saveEditorSettings();
+      renderMapSettingsWithModel(currentDataModel);
+      draggedCard = null;
+      draggedIndex = null;
+    });
   card.addEventListener("dragend", () => { draggedCard = null; });
+
+  const moveControls = document.createElement("div");
+  moveControls.classList.add("move-controls");
+  const upBtn = document.createElement("button");
+  upBtn.type = "button";
+  upBtn.textContent = "↑";
+  upBtn.title = "Move up";
+  const downBtn = document.createElement("button");
+  downBtn.type = "button";
+  downBtn.textContent = "↓";
+  downBtn.title = "Move down";
+  moveControls.append(upBtn, downBtn);
+  card.appendChild(moveControls);
+
+  const toggleMoveButtons = () => {
+    upBtn.disabled   = !isEditMode;
+    downBtn.disabled = !isEditMode;
+    upBtn.classList.toggle("disabled",   !isEditMode);
+    downBtn.classList.toggle("disabled", !isEditMode);
+  };
+  toggleMoveButtons();
+
+  upBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!isEditMode) return;
+    moveCard(idx, -1);
+  });
+  downBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!isEditMode) return;
+    moveCard(idx, +1);
+  });
 
   return card;
 }
@@ -2596,9 +2684,11 @@ function renderMapSettings(fullText) {
     editModeBtn.addEventListener("click", () => {
       isEditMode = !isEditMode;
       editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
-      container.querySelectorAll(".checkpoint-card").forEach(card => {
-        if (isEditMode) card.classList.add("editable");
-        else            card.classList.remove("editable");
+      document.querySelectorAll(".checkpoint-card").forEach(card => {
+        card.classList.toggle("editable", isEditMode);
+        card.querySelectorAll(".move-controls button").forEach(btn => {
+          btn.disabled = !isEditMode;
+        });
       });
     });
   }
@@ -3512,7 +3602,7 @@ function openEditModal(idx) {
         label.appendChild(chk);
         label.appendChild(document.createTextNode(
           flag === "locked" ? "Lock" :
-          flag === "ult5"   ? "Dao"  : "Shift"
+          flag === "ult5"   ? "Ult"  : "Dash"
         ));
         row.appendChild(label);
       });
@@ -3551,7 +3641,7 @@ function openEditModal(idx) {
         label.appendChild(chk);
         label.appendChild(document.createTextNode(
           cls === "pin-locked" ? "Lock" :
-          cls === "pin-ult5"   ? "Dao"  : "Shift"
+          cls === "pin-ult5"   ? "Ult"  : "Dash"
         ));
         row.appendChild(label);
       });
@@ -3873,9 +3963,11 @@ function renderMapSettingsWithModel(dataModel) {
     editModeBtn.addEventListener("click", () => {
       isEditMode = !isEditMode;
       editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
-      container.querySelectorAll(".checkpoint-card").forEach(card => {
-        if (isEditMode) card.classList.add("editable");
-        else            card.classList.remove("editable");
+      document.querySelectorAll(".checkpoint-card").forEach(card => {
+        card.classList.toggle("editable", isEditMode);
+        card.querySelectorAll(".move-controls button").forEach(btn => {
+          btn.disabled = !isEditMode;
+        });
       });
     });
   }
@@ -3961,10 +4053,12 @@ function updateMapDataRule(dataModel, lang) {
   lines.push(`${G}.I = ${A}(${arrI.join(', ')});`);
   lines.push(`${G}.killballnumber = ${A}(${arrKillNum.join(', ')});`);
 
-  const arrDao   = Object.entries(dataModel.abilityMap)
-    .filter(([,a]) => a.ultimate).map(([i]) => i);
-  const arrShift = Object.entries(dataModel.abilityMap)
-    .filter(([,a]) => a.dash).map(([i]) => i);
+  const arrDao   = Object.entries(dataModel.abilityMap || {})
+    .filter(([,a]) => a && a.ultimate)
+    .map(([i]) => i);
+  const arrShift = Object.entries(dataModel.abilityMap || {})
+    .filter(([,a]) => a && a.dash)
+    .map(([i]) => i);
   lines.push(`${G}.Dao   = ${A}(${arrDao.join(', ')});`);
   lines.push(`${G}.SHIFT = ${A}(${arrShift.join(', ')});`);
 
