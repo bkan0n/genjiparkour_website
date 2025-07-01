@@ -86,9 +86,9 @@ async function loadTranslations() {
         
         const currentLangData = data[currentLang] || {};
         
-        const { newsfeed = {} } = currentLangData;
+        const { newsfeed = {}, convertor = {} } = currentLangData;
         
-        translations = { newsfeed };
+        translations = { newsfeed, convertor };
 
         //console.log("Traductions chargées :", translations);
     } catch (error) {
@@ -157,7 +157,7 @@ function selectSection(id) {
       editModeBtn.dataset.listenerInstalled = "true";
       editModeBtn.addEventListener("click", () => {
         isEditMode = !isEditMode;
-        editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+        editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
         document.querySelectorAll(".checkpoint-card").forEach(card => {
           card.classList.toggle("editable", isEditMode);
           card.querySelectorAll(".move-controls button").forEach(btn => {
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnConvert.addEventListener("click", async () => {
     isEditMode = false;
     const editModeBtn = document.getElementById("editModeBtn");
-    if (editModeBtn) editModeBtn.textContent = "Edit mode";
+    if (editModeBtn) editModeBtn.textContent = t("convertor.edit_mode");
     document.querySelectorAll(".checkpoint-card").forEach(card =>
       card.classList.remove("editable")
     );
@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } finally {
       hideLoader();
       btnConvert.disabled    = false;
-      btnConvert.textContent = "Convert data";
+      btnConvert.textContent = t("convertor.convert_data");
       await checkForDiff();
     }
   });
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnTranslate.addEventListener("click", async () => {
     isEditMode = false;
     const editModeBtn = document.getElementById("editModeBtn");
-    if (editModeBtn) editModeBtn.textContent = "Edit mode";
+    if (editModeBtn) editModeBtn.textContent = t("convertor.edit_mode");
     document.querySelectorAll(".checkpoint-card").forEach(card =>
       card.classList.remove("editable")
     );
@@ -2345,7 +2345,7 @@ function createCheckpointCard(idx, coords, data) {
 
   const originalLabel = document.createElement("div");
   originalLabel.classList.add("original-label");
-  originalLabel.textContent = `Original position : ${originalIndex}`;
+  originalLabel.textContent = t("convertor.original_position", { index: originalIndex });
   rightGroup.appendChild(originalLabel);
 
   header.appendChild(rightGroup);
@@ -2362,7 +2362,7 @@ function createCheckpointCard(idx, coords, data) {
     secTp.classList.add("section");
     const title = document.createElement("div");
     title.classList.add("section__title");
-    title.textContent = "Teleport";
+    title.textContent = t("convertor.teleport");
     secTp.appendChild(title);
 
     const item = document.createElement("div");
@@ -2381,7 +2381,7 @@ function createCheckpointCard(idx, coords, data) {
 
     const txt = document.createElement("span");
     txt.classList.add("detail__text");
-    txt.textContent = `From (${sx}, ${sy}, ${sz}) → To (${ex}, ${ey}, ${ez})`;
+    txt.textContent = t("convertor.from_to", {sx, sy, sz, ex, ey, ez});
     item.appendChild(txt);
 
     secTp.appendChild(item);
@@ -2394,7 +2394,7 @@ function createCheckpointCard(idx, coords, data) {
     sectionKill.classList.add("section");
     const titleKill = document.createElement("div");
     titleKill.classList.add("section__title");
-    titleKill.textContent = "Kill orbs";
+    titleKill.textContent = t("convertor.kill_orbs");
     sectionKill.appendChild(titleKill);
 
     const itemsKill = document.createElement("div");
@@ -2414,7 +2414,7 @@ function createCheckpointCard(idx, coords, data) {
 
       const textSpan = document.createElement("span");
       textSpan.classList.add("detail__text");
-      textSpan.textContent = `Pos: (${px}, ${py}, ${pz}), Radius: ${r}`;
+      textSpan.textContent = t("convertor.position_radius", {px, py, pz, r});
       item.appendChild(textSpan);
 
       itemsKill.appendChild(item);
@@ -2429,7 +2429,7 @@ function createCheckpointCard(idx, coords, data) {
     sectionPin.classList.add("section");
     const titlePin = document.createElement("div");
     titlePin.classList.add("section__title");
-    titlePin.textContent = "Bounce orbs";
+    titlePin.textContent = t("convertor.bounce_orbs");
     sectionPin.appendChild(titlePin);
 
     const itemsPin = document.createElement("div");
@@ -2449,8 +2449,13 @@ function createCheckpointCard(idx, coords, data) {
 
       const textSpan = document.createElement("span");
       textSpan.classList.add("detail__text");
-      textSpan.textContent =
-        `Pos: (${px}, ${py}, ${pz}), Strength: ${f}, Lock: ${pb.locked ? "True" : "False"}`;
+      textSpan.textContent = t("convertor.pin_info", {
+        x: px,
+        y: py,
+        z: pz,
+        f: f,
+        locked: pb.locked ? t("convertor.true") : t("convertor.false")
+      });
       item.appendChild(textSpan);
 
       const iconsContainer = document.createElement("span");
@@ -2485,7 +2490,7 @@ function createCheckpointCard(idx, coords, data) {
     section.classList.add("section");
     const title = document.createElement("div");
     title.classList.add("section__title");
-    title.textContent = "Portals";
+    title.textContent = t("convertor.portals");
     section.appendChild(title);
 
     const container = document.createElement("div");
@@ -2508,8 +2513,7 @@ function createCheckpointCard(idx, coords, data) {
 
       const txt = document.createElement("span");
       txt.classList.add("detail__text");
-      txt.textContent =
-        `Start: (${sx}, ${sy}, ${sz}) → End: (${ex}, ${ey}, ${ez}), CP: ${p.cp}`;
+      txt.textContent = t("convertor.from_to", {sx, sy, sz, ex, ey, ez});
       item.appendChild(txt);
 
       container.appendChild(item);
@@ -2525,7 +2529,7 @@ function createCheckpointCard(idx, coords, data) {
     sectionAbil.classList.add("section");
     const titleAbil = document.createElement("div");
     titleAbil.classList.add("section__title");
-    titleAbil.textContent = "Abilities";
+    titleAbil.textContent = t("convertor.abilities");
     sectionAbil.appendChild(titleAbil);
 
     const iconsContainer = document.createElement("div");
@@ -2556,7 +2560,7 @@ function createCheckpointCard(idx, coords, data) {
     sectionBan.classList.add("section", "section--bans");
     const titleBan = document.createElement("div");
     titleBan.classList.add("section__title");
-    titleBan.textContent = "Bans";
+    titleBan.textContent = t("convertor.bans");
     sectionBan.appendChild(titleBan);
 
     const banIcons2 = document.createElement("div");
@@ -2617,11 +2621,11 @@ function createCheckpointCard(idx, coords, data) {
   const upBtn = document.createElement("button");
   upBtn.type = "button";
   upBtn.textContent = "↑";
-  upBtn.title = "Move up";
+  upBtn.title = t("convertor.move_up");
   const downBtn = document.createElement("button");
   downBtn.type = "button";
   downBtn.textContent = "↓";
-  downBtn.title = "Move down";
+  downBtn.title = t("convertor.move_down");
   moveControls.append(upBtn, downBtn);
   card.appendChild(moveControls);
 
@@ -2675,15 +2679,15 @@ function renderMapSettings(fullText) {
     editModeBtn = document.createElement("button");
     editModeBtn.id = "editModeBtn";
     editModeBtn.classList.add("edit-mode-btn");
-    editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+    editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
   } else {
-    editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+    editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
   }
   if (editModeBtn.dataset.listenerInstalled !== "true") {
     editModeBtn.dataset.listenerInstalled = "true";
     editModeBtn.addEventListener("click", () => {
       isEditMode = !isEditMode;
-      editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+      editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
       document.querySelectorAll(".checkpoint-card").forEach(card => {
         card.classList.toggle("editable", isEditMode);
         card.querySelectorAll(".move-controls button").forEach(btn => {
@@ -2701,7 +2705,7 @@ function renderMapSettings(fullText) {
   if (!globalSettingsBtn) {
     globalSettingsBtn = document.createElement("button");
     globalSettingsBtn.id = "globalSettingsBtn";
-    globalSettingsBtn.textContent = "Global settings";
+    globalSettingsBtn.textContent = t("convertor.global_settings");
     globalSettingsBtn.classList.add("global-edit-mode-btn");
     globalSettingsBtn.style.marginLeft = "8px";
     globalSettingsBtn.addEventListener("click", openGlobalSettingsModal);
@@ -2807,7 +2811,7 @@ function buildGlobalSettingsFormFields() {
   const rowMapName = document.createElement("div");
   rowMapName.classList.add("modal-row");
   rowMapName.innerHTML = `
-    <label for="mapNameInput" class="modal-label">Map name :</label>
+    <label for="mapNameInput" class="modal-label">${t("convertor.map_name")}</label>
     <div class="map-name-input-wrapper">
       <div class="map-name-text-wrapper">
         <input type="text" id="mapNameInput" class="modal-input2"/>
@@ -2821,7 +2825,7 @@ function buildGlobalSettingsFormFields() {
   const rowGlobalBans = document.createElement("div");
   rowGlobalBans.classList.add("modal-row");
   rowGlobalBans.innerHTML = `
-    <label class="modal-label">Global bans :</label>
+    <label class="modal-label">${t("convertor.global_bans")}</label>
     <div id="globalBansContainer" class="bans-container"></div>
   `;
   form.appendChild(rowGlobalBans);
@@ -2829,10 +2833,10 @@ function buildGlobalSettingsFormFields() {
   const rowEditorMode = document.createElement("div");
   rowEditorMode.classList.add("modal-row");
   rowEditorMode.innerHTML = `
-    <label for="editorModeToggle" class="modal-label">Editor mode :</label>
+    <label for="editorModeToggle" class="modal-label">${t("convertor.editor_mode")}</label>
     <select id="editorModeToggle" class="modal-select">
-      <option value="off">Off</option>
-      <option value="on">On</option>
+      <option value="off">${t("convertor.off")}</option>
+      <option value="on">${t("convertor.on")}</option>
     </select>
   `;
   form.appendChild(rowEditorMode);
@@ -2840,9 +2844,9 @@ function buildGlobalSettingsFormFields() {
   const rowDifficultyHUD = document.createElement("div");
   rowDifficultyHUD.classList.add("modal-row");
   rowDifficultyHUD.innerHTML = `
-    <label for="difficultyHUDSelect" class="modal-label">Difficulty display HUD :</label>
+    <label for="difficultyHUDSelect" class="modal-label">${t("convertor.difficulty_displayHUD")}</label>
     <select id="difficultyHUDSelect" class="modal-select">
-      <option value="playtest">Playtest</option>
+      <option value="playtest">${t("convertor.playtest")}</option>
       <option value="easy-">Easy −</option>
       <option value="easy">Easy</option>
       <option value="easy+">Easy +</option>
@@ -2859,7 +2863,7 @@ function buildGlobalSettingsFormFields() {
       <option value="extreme">Extreme</option>
       <option value="extreme+">Extreme +</option>
       <option value="hell">Hell</option>
-      <option value="off">Don't display</option>
+      <option value="off">${t("convertor.dont_display")}</option>
     </select>
   `;
   form.appendChild(rowDifficultyHUD);
@@ -2867,10 +2871,10 @@ function buildGlobalSettingsFormFields() {
   const rowPlaytest = document.createElement("div");
   rowPlaytest.classList.add("modal-row");
   rowPlaytest.innerHTML = `
-    <label for="playtestToggle" class="modal-label">Playtest display :</label>
+    <label for="playtestToggle" class="modal-label">${t("convertor.playtest_display")}</label>
     <select id="playtestToggle" class="modal-select">
-      <option value="off">Off</option>
-      <option value="on">On</option>
+      <option value="off">${t("convertor.off")}</option>
+      <option value="on">${t("convertor.on")}</option>
     </select>
   `;
   form.appendChild(rowPlaytest);
@@ -2878,10 +2882,10 @@ function buildGlobalSettingsFormFields() {
   const rowValidator = document.createElement("div");
   rowValidator.classList.add("modal-row");
   rowValidator.innerHTML = `
-    <label for="validatorToggle" class="modal-label">Basic map validator :</label>
+    <label for="validatorToggle" class="modal-label">${t("convertor.basic_validator")}</label>
     <select id="validatorToggle" class="modal-select">
-      <option value="off">Off</option>
-      <option value="on">On</option>
+      <option value="off">${t("convertor.off")}</option>
+      <option value="on">${t("convertor.on")}</option>
     </select>
   `;
   form.appendChild(rowValidator);
@@ -2889,10 +2893,10 @@ function buildGlobalSettingsFormFields() {
   const rowPortals = document.createElement("div");
   rowPortals.classList.add("modal-row");
   rowPortals.innerHTML = `
-    <label for="portalsToggle" class="modal-label">Enable portals :</label>
+    <label for="portalsToggle" class="modal-label">${t("convertor.enable_portals")}</label>
     <select id="portalsToggle" class="modal-select">
-      <option value="off">Off</option>
-      <option value="on">On</option>
+      <option value="off">${t("convertor.off")}</option>
+      <option value="on">${t("convertor.on")}</option>
     </select>
   `;
   form.appendChild(rowPortals);
@@ -2900,8 +2904,8 @@ function buildGlobalSettingsFormFields() {
   const rowButtons = document.createElement("div");
   rowButtons.classList.add("modal-buttons2");
   rowButtons.innerHTML = `
-    <button type="button" id="saveGlobalChangesBtn" class="btn btn-save">Save</button>
-    <button type="button" id="cancelGlobalChangesBtn" class="btn btn-cancel">Cancel</button>
+    <button type="button" id="saveGlobalChangesBtn" class="btn btn-save">${t("convertor.save")}</button>
+    <button type="button" id="cancelGlobalChangesBtn" class="btn btn-cancel">${t("convertor.cancel")}</button>
   `;
   form.appendChild(rowButtons);
 }
@@ -2915,7 +2919,7 @@ function addGlobalSettingsButton() {
 
   const btn = document.createElement("button");
   btn.id = "globalSettingsBtn";
-  btn.textContent = "Global settings";
+  btn.textContent = t("convertor.global_settings");
   btn.classList.add("global-edit-mode-btn");
   btn.style.marginLeft = "8px";
   btn.addEventListener("click", openGlobalSettingsModal);
@@ -3392,7 +3396,7 @@ function openEditModal(idx) {
   {
     const wrapper = document.createElement("div");
     const title   = document.createElement("div");
-    title.textContent = "Coordinates (X, Y, Z)";
+    title.textContent = t("convertor.coordinates");
     title.style.fontWeight = "600";
     title.style.marginBottom = "4px";
     wrapper.appendChild(title);
@@ -3420,7 +3424,7 @@ function openEditModal(idx) {
     const wrapper = document.createElement("div");
     const title   = document.createElement("div");
     title.classList.add("sub-header");
-    title.textContent = "Teleport";
+    title.textContent = t("convertor.teleport");
     title.style.fontWeight = "600";
     title.style.margin = "8px 0 4px";
     wrapper.appendChild(title);
@@ -3474,7 +3478,7 @@ function openEditModal(idx) {
     else {
       const btnAdd = document.createElement("button");
       btnAdd.type = "button";
-      btnAdd.textContent = "+ Add teleport";
+      btnAdd.textContent = t("convertor.add_teleport");;
       Object.assign(btnAdd.style, {
         marginTop:   "6px",
         padding:     "4px 8px",
@@ -3502,7 +3506,7 @@ function openEditModal(idx) {
     const wrapper = document.createElement("div");
     const title   = document.createElement("div");
     title.classList.add("sub-header");
-    title.textContent = "Kill orbs";
+    title.textContent = t("convertor.kill_orbs");
     title.style.fontWeight = "600";
     title.style.marginBottom = "4px";
     wrapper.appendChild(title);
@@ -3538,7 +3542,7 @@ function openEditModal(idx) {
     });
 
     const addKillBtn = document.createElement("button");
-    addKillBtn.type = "button"; addKillBtn.textContent = "+ Add kill orb";
+    addKillBtn.type = "button"; addKillBtn.textContent = t("convertor.add_kill_orb");
     Object.assign(addKillBtn.style, {
       marginTop: "6px", padding: "4px 8px", background: "#1976d2",
       color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer"
@@ -3571,7 +3575,7 @@ function openEditModal(idx) {
     const wrapper = document.createElement("div");
     const title   = document.createElement("div");
     title.classList.add("sub-header");
-    title.textContent = "Bounce orbs";
+    title.textContent = t("convertor.bounce_orbs");
     title.style.fontWeight = "600";
     title.style.marginBottom = "4px";
     wrapper.appendChild(title);
@@ -3601,8 +3605,8 @@ function openEditModal(idx) {
         chk.classList.add(`pin-${flag}`);
         label.appendChild(chk);
         label.appendChild(document.createTextNode(
-          flag === "locked" ? "Lock" :
-          flag === "ult5"   ? "Ult"  : "Dash"
+          flag === "locked" ? t("convertor.lock_orb") :
+          flag === "ult5"   ? t("convertor.ultimate")  : t("convertor.dash")
         ));
         row.appendChild(label);
       });
@@ -3620,7 +3624,7 @@ function openEditModal(idx) {
     });
 
     const addPinBtn = document.createElement("button");
-    addPinBtn.type = "button"; addPinBtn.textContent = "+ Add bounce orb";
+    addPinBtn.type = "button"; addPinBtn.textContent = t("convertor.add_bounce_orb");
     Object.assign(addPinBtn.style, {
       marginTop: "6px", padding: "4px 8px", background: "#1976d2",
       color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer"
@@ -3640,8 +3644,8 @@ function openEditModal(idx) {
         chk.type = "checkbox"; chk.classList.add(cls);
         label.appendChild(chk);
         label.appendChild(document.createTextNode(
-          cls === "pin-locked" ? "Lock" :
-          cls === "pin-ult5"   ? "Ult"  : "Dash"
+          cls === "pin-locked" ? t("convertor.lock_orb") :
+          cls === "pin-ult5"   ? t("convertor.ultimate")  : t("convertor.dash")
         ));
         row.appendChild(label);
       });
@@ -3662,11 +3666,11 @@ function openEditModal(idx) {
 
   {
     const w = document.createElement("div");
-    const t = document.createElement("div");
-    t.classList.add("sub-header");
-    t.textContent = "Custom Portals";
-    t.style.cssText = "font-weight:600;margin-bottom:4px;";
-    w.appendChild(t);
+    const r = document.createElement("div");
+    r.classList.add("sub-header");
+    r.textContent = t("convertor.custom_portals");
+    r.style.cssText = "font-weight:600;margin-bottom:4px;";
+    w.appendChild(r);
 
     portalStarts.forEach((start, i) => {
       const block = document.createElement("div");
@@ -3719,7 +3723,8 @@ function openEditModal(idx) {
     });
 
     const add = document.createElement("button");
-    add.type="button"; add.textContent="+ Add Portal";
+    add.type="button";
+    add.textContent= t("convertor.add_portal");
     add.style.cssText="margin-top:6px;padding:4px 8px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;";
     add.addEventListener("click", () => {
       portalStarts.push({x:0,y:0,z:0});
@@ -3738,7 +3743,7 @@ function openEditModal(idx) {
     const wrapper = document.createElement("div");
     const title   = document.createElement("div");
     title.classList.add("sub-header");
-    title.textContent = "Abilities";
+    title.textContent = t("convertor.abilities");
     title.style.fontWeight = "600";
     title.style.marginBottom = "4px";
     wrapper.appendChild(title);
@@ -3751,7 +3756,7 @@ function openEditModal(idx) {
       chk.id      = `editAbility${key.charAt(0).toUpperCase() + key.slice(1)}`;
       label.appendChild(chk);
       label.appendChild(document.createTextNode(
-        key === "ultimate" ? "Ultimate available" : "Dash available"
+        key === "ultimate" ? t("convertor.ultimate_available") : t("convertor.dash_available")
       ));
       wrapper.appendChild(label);
     });
@@ -3762,7 +3767,7 @@ function openEditModal(idx) {
     const wrapper = document.createElement("div");
     const title   = document.createElement("div");
     title.classList.add("sub-header");
-    title.textContent = "Checkpoint-specific Bans";
+    title.textContent = t("convertor.cp_specific_bans");
     title.style.fontWeight = "600";
     title.style.marginBottom = "4px";
     wrapper.appendChild(title);
@@ -3785,7 +3790,7 @@ function openEditModal(idx) {
     if (!buttonsContainer.querySelector('.delete-checkpoint-btn')) {
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
-      deleteBtn.textContent = "Delete checkpoint";
+      deleteBtn.textContent = t("convertor.remove_checkpoint");
       deleteBtn.classList.add("delete-checkpoint-btn");
       buttonsContainer.insertBefore(deleteBtn, buttonsContainer.firstChild);
       deleteBtn.addEventListener("click", (e) => {
@@ -3962,7 +3967,7 @@ function renderMapSettingsWithModel(dataModel) {
     editModeBtn.dataset.listenerInstalled = "true";
     editModeBtn.addEventListener("click", () => {
       isEditMode = !isEditMode;
-      editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+      editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
       document.querySelectorAll(".checkpoint-card").forEach(card => {
         card.classList.toggle("editable", isEditMode);
         card.querySelectorAll(".move-controls button").forEach(btn => {
@@ -3973,7 +3978,7 @@ function renderMapSettingsWithModel(dataModel) {
   }
 
   if (editModeBtn) {
-    editModeBtn.textContent = isEditMode ? "Exit edit" : "Edit mode";
+    editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
   }
   if (!settingsButtons.contains(globalSettingsBtn)) {
     settingsButtons.appendChild(globalSettingsBtn);
@@ -3992,7 +3997,7 @@ function renderMapSettingsWithModel(dataModel) {
 
   if (!dataModel.checkpoints || dataModel.checkpoints.length === 0) {
     const msg = document.createElement("p");
-    msg.textContent = "Aucun checkpoint (Global.A) trouvé dans le texte.";
+    msg.textContent = t("convert.mapdata_error");
     msg.classList.add("empty-message");
     container.appendChild(msg);
     return;

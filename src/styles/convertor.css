@@ -150,12 +150,6 @@
   margin-right: 6px;
 }
 
-.arrow {
-  font-size: 1.4em;
-  margin-left: 8px;
-  color: var(--text-color, #ddd);
-}
-
 /* ----- Contrôles bas ----- */
 .convert-controls {
   display: flex;
@@ -213,10 +207,21 @@
 
 /* ----- Footer ----- */
 .footer {
+  display: flex;
+  justify-content: space-between;
   margin-top: 12px;
   font-size: 0.8em;
   color: var(--text-muted, #888);
+}
+
+.footer-left {
+  text-align: left;
+  color: var(--text-muted, #888);
+}
+
+.footer-right {
   text-align: right;
+  color: var(--text-muted, #888);
 }
 
 /* ----- Styles globaux de la zone “Map settings” ----- */
@@ -593,11 +598,26 @@
 
 .orb-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   align-items: center;
 }
 .orb-row input[type="number"] {
   width: 80px;
+}
+
+.pin-x,
+.pin-y,
+.pin-z,
+.pin-f {
+  min-width: 73px;
+}
+
+.orb-row label {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .portal-block {
@@ -619,11 +639,13 @@
   font-size: 0.9rem;
   margin-bottom: 4px;
   margin-right: 10px;
+  white-space: nowrap;
 }
 #editFieldsContainer input[type="number"],
 #editFieldsContainer select,
 #editFieldsContainer textarea {
-  width: 100%;
+  width: fit-content;
+  max-width: 15%;
   padding: 6px 8px;
   border: 1px solid #555;
   border-radius: 4px;

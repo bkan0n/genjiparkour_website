@@ -375,7 +375,7 @@ export const frameworkTemplate = `設定
             HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング(" \\n{0} + {1} | 下一关", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング(" \\n{0} + {1} | Next checkpoint", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃)))), 右, -150, NULL, NULL, IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
             HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | Prev checkpoint\\n{2} (hold)| Fly\\n", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(アビリティ1)))), 右, -149, NULL, NULL, IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
             HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("保存地图长按 {0} + {1} + {2}", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0} 后按弹出窗口的提示进行操作                                                                                                ", 入力割り当ての文字列(ボタン(リロード)))), カスタムストリング("to save map, hold {0} + {1} + {2}", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0} then follow instructions                                                                                                ", 入力割り当ての文字列(ボタン(リロード))))), NULL, 左, -197, NULL, 色(黄色), NULL, 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ローカルプレイヤー).editor_saveCache, NULL, ローカルプレイヤー), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(カスタムストリング("检查点模式"), カスタムストリング("击杀球模式"), カスタムストリング("弹球模式"), カスタムストリング("封禁(单关)"), カスタムストリング("自定义传送门")), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} 源氏 编辑者 {0} ", アイコンストリング(雷光の弓)))), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} checkpoints\\n{1} boundary spheres\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} function orbs\\n{1} skill bans\\n{2} portals", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(カスタムストリング("checkpoints"), カスタムストリング("boundary spheres"), カスタムストリング("function orbs"), カスタムストリング("skill bans"), カスタムストリング("portals")), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} Genji editor {0} ", アイコンストリング(雷光の弓))))), NULL, NULL, トップ, -174, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ローカルプレイヤー).editor_saveCache, NULL, ローカルプレイヤー), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(文字列の分割(カスタムストリング("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), 最初の値(NULL)), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} 源氏 编辑者 {0} ", アイコンストリング(雷光の弓)))), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} checkpoints\\n{1} boundary spheres\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} function orbs\\n{1} skill bans\\n{2} portals", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(文字列の分割(カスタムストリング("checkpoints0boundary spheres0function orbs0skill bans0portals"), 最初の値(NULL)), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} Genji editor {0} ", アイコンストリング(雷光の弓))))), NULL, NULL, トップ, -174, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
             HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング("{0} + 射击 | 切换作图模式", 入力割り当ての文字列(ボタン(近接))), カスタムストリング("房主/编辑者 {0}", ホスト・プレイヤー)), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング("{0} + shoot | change mode", 入力割り当ての文字列(ボタン(近接))), カスタムストリング("Current host/editor: {0}", ホスト・プレイヤー))), NULL, トップ, -175, NULL, IF-THEN-ELSE((ローカルプレイヤー).editor_lock, 色(グレー), 色(白)), NULL, 表示される相手、文字列、色, デフォルト表示);
             HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, OR(NOT((ホスト・プレイヤー).editor_modeSelect), AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)))), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("弹球给刀"), カスタムストリング("检查点给刀")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ5, グローバル.EditSelected), 含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current)))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} give ult {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("Orb"), カスタムストリング("Level")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ5, グローバル.EditSelected), 含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current))))), 左, -189, NULL, NULL, IF-THEN-ELSE(AND(配列内の値(グローバル.TQ5, グローバル.EditSelected), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2)), 色(緑), IF-THEN-ELSE(AND(含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current), NOT((ホスト・プレイヤー).editor_modeSelect)), 色(緑), 色(オレンジ))), 表示される相手、文字列、色, デフォルト表示);
             HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, OR(NOT((ホスト・プレイヤー).editor_modeSelect), AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)))), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(サブ攻撃)), カスタムストリング("{0} {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("弹球给Shift"), カスタムストリング("检查点给Shift")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ6, グローバル.EditSelected), 含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current)))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(サブ攻撃)), カスタムストリング("{0} give dash {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("Orb"), カスタムストリング("Level")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ6, グローバル.EditSelected), 含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current))))), 左, -188, NULL, NULL, IF-THEN-ELSE(AND(配列内の値(グローバル.TQ6, グローバル.EditSelected), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2)), 色(緑), IF-THEN-ELSE(AND(含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current), NOT((ホスト・プレイヤー).editor_modeSelect)), 色(緑), 色(オレンジ))), 表示される相手、文字列、色, デフォルト表示);
@@ -3050,35 +3050,35 @@ export const frameworkTemplate = `設定
         待機(0.752, 条件無視);
         IF(COMPARE(現在のマップ, ==, マップ(BUSAN)));
             "\\"down > sanc\\",\\"down > meka\\",\\"sanc > down\\",\\"sanc > meka\\",\\"meka > sanc\\",\\"meka > down\\""
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("Sanctuary"), カスタムストリング("MEKA base"), カスタムストリング("Downtown"), カスタムストリング("MEKA base"), カスタムストリング("Sanctuary"), カスタムストリング("Downtown")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("Sanctuary0MEKA base0Downtown0MEKA base0Sanctuary0Downtown"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(47.946, 7.248, -93.922), ベクトル(55.921, 6.998, -94.024), ベクトル(-326.382, 10.81, 117.261), ベクトル(-330.96, 10.81, 117.416), ベクトル(219.567, 10.215, 243.653), ベクトル(225.976, 10.227, 240.799)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(-328.552, 10.01, 120.82), ベクトル(221.152, 9.376, 238.765), ベクトル(52.197, 6.301, -97.513), ベクトル(221.271, 9.431, 238.978), ベクトル(-328.601, 10.01, 120.823), ベクトル(52.197, 6.299, -97.513)));
         ELSE IF(COMPARE(現在のマップ, ==, マップ(ILIOS)));
             "\\"light > ruin\\",\\"light > well\\",\\"ruin > light\\",\\"ruin > well\\",\\"well > light\\",\\"well > ruin\\""
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("Ruins"), カスタムストリング("Well"), カスタムストリング("Lighthouse"), カスタムストリング("Well"), カスタムストリング("Lighthouse"), カスタムストリング("Ruins")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("Ruins0Well0Lighthouse0Well0Lighthouse0Ruins"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(325.722, -22.665, -40.401), ベクトル(327.43, -22.665, -36.089), ベクトル(26.176, 58.367, -156.415), ベクトル(30.472, 58.367, -156.307), ベクトル(-199.945, 2.015, -2.918), ベクトル(-194.93, 2.015, -8.054)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(28.375, 57.659, -161.195), ベクトル(-200.464, 1.306, -8.604), ベクトル(333.088, -23.389, -40.933), ベクトル(-200.464, 1.306, -8.604), ベクトル(333.088, -23.389, -40.933), ベクトル(28.375, 57.829, -161.195)));
         ELSE IF(OR(COMPARE(現在のマップ, ==, マップ(LIJIANG TOWER)), COMPARE(現在のマップ, ==, マップ(LIJIANG TOWER 旧正月))));
             "\\"control > garden\\",\\"control > market\\",\\"garden > control\\",\\"garden > market\\",\\"market > control\\",\\"market > garden\\""
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("Garden"), カスタムストリング("Night Market"), カスタムストリング("Control Center"), カスタムストリング("Night Market"), カスタムストリング("Control Center"), カスタムストリング("Garden")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("Garden0Night Market0Control Center0Night Market0Control Center0Garden"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(-2.815, 271, 295.373), ベクトル(2.905, 271, 295.052), ベクトル(5.788, 95.056, 135.298), ベクトル(-5.343, 95.05, 134.638), ベクトル(-2.738, False, -61.911), ベクトル(5.043, False, -61.879)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(0.286, 94.292, 140.396), ベクトル(0.584, -0.709, -54.469), ベクトル(0.245, 270.292, 301.428), ベクトル(0.773, -0.708, -54.361), ベクトル(0.245, 270.292, 301.428), ベクトル(0.286, 94.292, 140.396)));
         ELSE IF(COMPARE(現在のマップ, ==, マップ(NEPAL)));
             "\\"vil > shrine\\",\\"vil > sanc\\", \\"shrine > vil\\",\\"shrine > sanc\\",#\\"sanc > vil\\",\\"sanc > shrine\\""
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("Shrine"), カスタムストリング("Sanctum"), カスタムストリング("Village"), カスタムストリング("Sanctum"), カスタムストリング("Village"), カスタムストリング("Shrine")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("Shrine0Sanctum0Village0Sanctum0Village0Shrine"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(-194.732, -92.86, -3.802), ベクトル(-194.585, -92.86, 4.187), ベクトル(-33.165, 14, 5.212), ベクトル(-33.058, 14, -5.55), ベクトル(84.75, 129.008, -3.624), ベクトル(84.534, 129, 4.032)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(-40.19, 13.292, -0.105), ベクトル(78.43, 128.292, 0.149), ベクトル(-190.54, -93.569, 0.122), ベクトル(78.43, 128.292, 0.149), ベクトル(-190.54, -93.569, 0.122), ベクトル(-40.19, 13.292, -0.105)));
         ELSE IF(COMPARE(現在のマップ, ==, マップ(OASIS)));
             "\\"uni > garden\\",\\"uni > city\\",\\"garden > uni\\",\\"garden > city\\",\\"city > garden\\",\\"city > uni\\""
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("Gardens"), カスタムストリング("City Center"), カスタムストリング("University"), カスタムストリング("City Center"), カスタムストリング("Gardens"), カスタムストリング("University")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("Gardens0City Center0University0City Center0Gardens0University"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(-211.137, 20, -5.084), ベクトル(-211.346, 20, 5.029), ベクトル(143.061, 8.377, -245.04), ベクトル(139.333, 8.377, -249.964), ベクトル(157.297, 12.522, 255.759), ベクトル(151.452, 12.522, 261.099)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(134.366, 7.829, -240.53), ベクトル(158.27, 11.814, 262.272), ベクトル(-206.269, 19.292, 0.103), ベクトル(158.283, 11.814, 262.283), ベクトル(134.318, 7.829, -240.667), ベクトル(-206.269, 19.292, 0.103)));
         ELSE IF(COMPARE(現在のマップ, ==, マップ(ANTARCTIC PENINSULA)));
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("labs"), カスタムストリング("icebreaker"), カスタムストリング("Sublevel"), カスタムストリング("icebreaker"), カスタムストリング("labs"), カスタムストリング("Sublevel")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("labs0icebreaker0Sublevel0icebreaker0labs0Sublevel"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(280.66, -12.15, -223.65), ベクトル(273.27, 42.74, 198.15), ベクトル(266.58, 42.74, 198.17), ベクトル(-58.29, -154, 63.03), ベクトル(-58.36, -154, 56.47), ベクトル(287.08, -12.15, -223.59)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(270, 42.7, 190.44), ベクトル(284.07, -12.75, -216.15), ベクトル(-53.51, -154.5, 60.08), ベクトル(284.07, -12.75, -216.15), ベクトル(270, 42.7, 190.44), ベクトル(-53.51, -154.5, 60.08)));
         ELSE IF(COMPARE(現在のマップ, ==, マップ(SAMOA)));
-            グローバル変数を設定(PortalNames, 配列(カスタムストリング("beach"), カスタムストリング("volcano"), カスタムストリング("downtown"), カスタムストリング("volcano"), カスタムストリング("beach"), カスタムストリング("downtown")));
+            グローバル変数を設定(PortalNames, 文字列の分割(カスタムストリング("beach0volcano0downtown0volcano0beach0downtown"), 最初の値(NULL)));
             グローバル変数を設定(PortalLoc, 配列(ベクトル(231.98, 7.23, -262.84), ベクトル(236.78, 7.23, -262.75), ベクトル(-327.59, 3.6, -108.69), ベクトル(-332.71, 3.6, -108.59), ベクトル(25.4, 341, 354.38), ベクトル(30, 341, 354.34)));
             グローバル変数を設定(PortalDest, 配列(ベクトル(-329.86, 3.05, -103.4), ベクトル(27.59, 339.76, 348.77), ベクトル(234.07, 6.12, -266.88), ベクトル(27.59, 339.76, 348.77), ベクトル(-329.86, 3.05, -103.4), ベクトル(234.07, 6.12, -266.88)));
     }
@@ -3347,7 +3347,7 @@ export const frameworkTemplate = `設定
         "Instructions that show when you start comp mode.\\nDue to the hud text limit, you there is 4 huds available.\\nIf you dont need a field just empty the textfield."
         中止;
         "竞赛模式 指引消息\\n指引消息将 会在竞赛模 式开始时 显示\\n由于 hud 文本限制，你有 4 个hud可用\\n如果你不需 要一个字段 只是空文 本字段"
-        グローバル変数を設定(instructiontext, 配列(カスタムストリング("Change in Comp Mode instruction message hud 1"), カスタムストリング("Change in Comp Mode instruction message hud 2"), カスタムストリング("Change in Comp Mode instruction message hud 3"), カスタムストリング("Change in Comp Mode instruction message hud 4")));
+        グローバル変数を設定(instructiontext, 文字列の分割(カスタムストリング("Change in Comp Mode instruction message hud 10Change in Comp Mode instruction message hud 20Change in Comp Mode instruction m{0}", カスタムストリング("essage hud 30Change in Comp Mode instruction message hud 4")), 最初の値(NULL)));
     }
 }
 
@@ -3374,7 +3374,7 @@ export const frameworkTemplate = `設定
         "checkpoint number\\n每关数量"
         インデックスのグローバル変数を設定(TitleData, False, 配列(NULL, 10, 20, 30, 40, 50));
         "title\\n标题文本"
-        インデックスのグローバル変数を設定(TitleData, True, 配列(カスタムストリング("Bunny"), カスタムストリング("Jumper"), カスタムストリング("Ninja"), カスタムストリング("Pro"), カスタムストリング("Expert"), カスタムストリング("Master")));
+        インデックスのグローバル変数を設定(TitleData, True, 文字列の分割(カスタムストリング("Bunny0Jumper0Ninja0Pro0Expert0Master"), 最初の値(NULL)));
         "color\\n颜色"
         インデックスのグローバル変数を設定(TitleData, 2, 配列(色(ライムグリーン), 色(白), 色(黄色), 色(オレンジ), 色(紫), 色(赤)));
     }
@@ -3422,7 +3422,7 @@ export const frameworkTemplate = `設定
         "the example fill shows a text for cp 1 and cp 3\\n示例已填写 关卡1和3 的hud文本"
         待機(0.768, 条件無視);
         "in CpHudText fill in text\\n修改字符串 “CpHudText” 为顶部显示 的hud文本"
-        グローバル変数を設定(CpHudText, 配列(カスタムストリング("text cp 1"), カスタムストリング("text cp 3")));
+        グローバル変数を設定(CpHudText, 文字列の分割(カスタムストリング("text cp 10text cp 3"), 最初の値(NULL)));
         "in CpHudCp fill in the at wich to display\\n修改数组 “CpHudCp” 为hud文本 显示的关卡"
         グローバル変数を設定(CpHudCp, 配列(1, 3));
     }
@@ -3436,7 +3436,7 @@ export const frameworkTemplate = `設定
         "the example fill shows a text for cp 1 and cp 3\\n示例已填写 关卡1和3 的地图文本"
         待機(0.768, 条件無視);
         "in CpIwtText fill in text\\n修改字符串 “CpIwtText” 为关卡显示 的地图文本"
-        グローバル変数を設定(CpIwtText, 配列(カスタムストリング("text cp 1"), カスタムストリング("text cp 3")));
+        グローバル変数を設定(CpIwtText, 文字列の分割(カスタムストリング("text cp 10text cp 3"), 最初の値(NULL)));
         "in CpIwtCp fill in cp at wich to display\\n修改数组 “CpIwtCp” 为显示地图 文本的关卡"
         グローバル変数を設定(CpIwtCp, 配列(1, 3));
         "in CpIwtPos fill in the vector\\n修改数组 “CpIwtPos” 为地图文本 的矢量位置"
@@ -3454,7 +3454,7 @@ export const frameworkTemplate = `設定
         "the example fill shows a text for cp 1 and cp 3\\n示例已填写 关卡1和3 的提示文本"
         待機(0.768, 条件無視);
         "in HintText fill in text\\n修改字符串 “HintText” 为关卡显示 的提示文本"
-        グローバル変数を設定(HintText, 配列(カスタムストリング("text cp 1"), カスタムストリング("text cp 3")));
+        グローバル変数を設定(HintText, 文字列の分割(カスタムストリング("text cp 10text cp 3"), 最初の値(NULL)));
         "in HintCp fill in the at wich to display\\n修改数组 “HintCp” 为提示文本 显示的关卡"
         グローバル変数を設定(HintCp, 配列(1, 3));
     }
