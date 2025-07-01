@@ -470,6 +470,25 @@ footer {
   background-color: #7a7a7a;
 }
 
+.navbar-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: stroke 0.3s ease;
+}
+
+.navbar-icon .icon-svg {
+  width: 28px;
+  height: 28px;
+  stroke: #e7e7e7;
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), stroke 0.25s ease;
+}
+
+.navbar-icon:hover .icon-svg {
+  stroke: #ffffff;
+  transform: scale(1.05);
+}
+
 .moderator-btn {
   position: relative;
   display: flex;
@@ -595,6 +614,7 @@ footer {
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--navbar-color);
+  white-space: nowrap;
 }
 
 /* ---- SECTION MENU ---- */
@@ -692,6 +712,7 @@ footer {
   padding: 8px 0;
   transition: color 0.3s ease;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .navbar-menu a:hover::after,
@@ -2180,6 +2201,7 @@ i.flag-zw:before,i.flag-zimbabwe:before {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-right: 15px;
 }
 @media screen and (max-width: 930px) {
   .button-cta-container {

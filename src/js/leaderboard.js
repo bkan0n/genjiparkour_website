@@ -1,6 +1,7 @@
 let currentPage = 1;
 let totalPages = 1;
 let isSorting = false;
+let translations = {};
 const skillRankOrder = [
     "God",
     "Grandmaster",
