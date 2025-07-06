@@ -2002,11 +2002,11 @@
             "select_restrictions": "选择禁用的技巧"
         },
         "convertor" : {
-            "convert_map": "导入地图",
+            "convert_map": "导入地图", 
             "help": "帮助",
             "edit_map_data": "编辑地图数据",
             "copy_to_clipboard": "复制到剪切板",
-            "map_placeholder": "地图粘贴到此处",
+            "map_placeholder": "代码粘贴到此处",
 
             "description_line_1": "这是直接把你从游戏里直接复制设置出来的设置转换成可导入的代码的实验性功能",
             "description_line_2": "复制粘贴整个游戏设置代码，选择你需要的语言进行转换",
@@ -2044,7 +2044,7 @@
             "step1_text": "从游戏里复制游戏设置。使用代码54CRY(国服MSJVW)修改设置，当然你也可以复制别人做好的地图(绝大多数是这样)，然后复制游戏设置",
 
             "step2": "第二步",
-            "step2_text": "粘贴设置(代码)到下面区域",
+            "step2_text": "粘贴代码到下面区域",
 
             "step3": "第三步",
             "step3_text": "确保你选择的 \"导入所用语言\" 和你游戏客户端语言一致  然后你可以选择使用:",
