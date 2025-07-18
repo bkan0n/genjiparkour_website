@@ -375,7 +375,7 @@ export const frameworkTemplate = `设置
             创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串(" \\n{0} + {1} | 下一关", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串(" \\n{0} + {1} | Next checkpoint", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式)))), 右边, -150, 空, 空, If-Then-Else((主机玩家).toggle_guide, 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
             创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | Prev checkpoint\\n{2} (hold)| Fly\\n", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(技能1)))), 右边, -149, 空, 空, If-Then-Else((主机玩家).toggle_guide, 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
             创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("保存地图长按 {0} + {1} + {2}", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0} 后按弹出窗口的提示进行操作                                                                                                ", 输入绑定字符串(按钮(装填)))), 自定义字符串("to save map, hold {0} + {1} + {2}", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0} then follow instructions                                                                                                ", 输入绑定字符串(按钮(装填))))), 空, 左边, -197, 空, 颜色(黄色), 空, 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else((本地玩家).editor_saveCache, 空, 本地玩家), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(数组(自定义字符串("检查点模式"), 自定义字符串("击杀球模式"), 自定义字符串("弹球模式"), 自定义字符串("封禁(单关)"), 自定义字符串("自定义传送门")), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} 源氏 编辑者 {0} ", 图标字符串(箭矢)))), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} checkpoints\\n{1} boundary spheres\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} function orbs\\n{1} skill bans\\n{2} portals", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(数组(自定义字符串("checkpoints"), 自定义字符串("boundary spheres"), 自定义字符串("function orbs"), 自定义字符串("skill bans"), 自定义字符串("portals")), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} Genji editor {0} ", 图标字符串(箭矢))))), 空, 空, 顶部, -174, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else((本地玩家).editor_saveCache, 空, 本地玩家), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(字符串分割(自定义字符串("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), 首个(空)), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} 源氏 编辑者 {0} ", 图标字符串(箭矢)))), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} checkpoints\\n{1} boundary spheres\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} function orbs\\n{1} skill bans\\n{2} portals", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(字符串分割(自定义字符串("checkpoints0boundary spheres0function orbs0skill bans0portals"), 首个(空)), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} Genji editor {0} ", 图标字符串(箭矢))))), 空, 空, 顶部, -174, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
             创建HUD文本(首个(真), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串("{0} + 射击 | 切换作图模式", 输入绑定字符串(按钮(近身攻击))), 自定义字符串("房主/编辑者 {0}", 主机玩家)), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串("{0} + shoot | change mode", 输入绑定字符串(按钮(近身攻击))), 自定义字符串("Current host/editor: {0}", 主机玩家))), 空, 顶部, -175, 空, If-Then-Else((本地玩家).editor_lock, 颜色(灰色), 颜色(白色)), 空, 可见，字符串和颜色, 默认可见度);
             创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 或(非((主机玩家).editor_modeSelect), 与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)))), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("弹球给刀"), 自定义字符串("检查点给刀")), 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ5, 全局.EditSelected), 数组包含(全局.Dao, (主机玩家).checkpoint_current)))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} give ult {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("Orb"), 自定义字符串("Level")), 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ5, 全局.EditSelected), 数组包含(全局.Dao, (主机玩家).checkpoint_current))))), 左边, -189, 空, 空, If-Then-Else(与(数组中的值(全局.TQ5, 全局.EditSelected), 比较((主机玩家).editor_modeSelect, ==, 2)), 颜色(绿色), If-Then-Else(与(数组包含(全局.Dao, (主机玩家).checkpoint_current), 非((主机玩家).editor_modeSelect)), 颜色(绿色), 颜色(橙色))), 可见，字符串和颜色, 默认可见度);
             创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 或(非((主机玩家).editor_modeSelect), 与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)))), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(辅助攻击模式)), 自定义字符串("{0} {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("弹球给Shift"), 自定义字符串("检查点给Shift")), 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ6, 全局.EditSelected), 数组包含(全局.SHIFT, (主机玩家).checkpoint_current)))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(辅助攻击模式)), 自定义字符串("{0} give dash {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("Orb"), 自定义字符串("Level")), 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ6, 全局.EditSelected), 数组包含(全局.SHIFT, (主机玩家).checkpoint_current))))), 左边, -188, 空, 空, If-Then-Else(与(数组中的值(全局.TQ6, 全局.EditSelected), 比较((主机玩家).editor_modeSelect, ==, 2)), 颜色(绿色), If-Then-Else(与(数组包含(全局.SHIFT, (主机玩家).checkpoint_current), 非((主机玩家).editor_modeSelect)), 颜色(绿色), 颜色(橙色))), 可见，字符串和颜色, 默认可见度);
@@ -3027,35 +3027,35 @@ export const frameworkTemplate = `设置
         等待(0.752, 无视条件);
         If(比较(当前地图, ==, 地图(釜山)));
             "\\"down > sanc\\",\\"down > meka\\",\\"sanc > down\\",\\"sanc > meka\\",\\"meka > sanc\\",\\"meka > down\\""
-            设置全局变量(PortalNames, 数组(自定义字符串("Sanctuary"), 自定义字符串("MEKA base"), 自定义字符串("Downtown"), 自定义字符串("MEKA base"), 自定义字符串("Sanctuary"), 自定义字符串("Downtown")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("Sanctuary0MEKA base0Downtown0MEKA base0Sanctuary0Downtown"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(47.946, 7.248, -93.922), 矢量(55.921, 6.998, -94.024), 矢量(-326.382, 10.81, 117.261), 矢量(-330.96, 10.81, 117.416), 矢量(219.567, 10.215, 243.653), 矢量(225.976, 10.227, 240.799)));
             设置全局变量(PortalDest, 数组(矢量(-328.552, 10.01, 120.82), 矢量(221.152, 9.376, 238.765), 矢量(52.197, 6.301, -97.513), 矢量(221.271, 9.431, 238.978), 矢量(-328.601, 10.01, 120.823), 矢量(52.197, 6.299, -97.513)));
         Else If(比较(当前地图, ==, 地图(伊利奥斯)));
             "\\"light > ruin\\",\\"light > well\\",\\"ruin > light\\",\\"ruin > well\\",\\"well > light\\",\\"well > ruin\\""
-            设置全局变量(PortalNames, 数组(自定义字符串("Ruins"), 自定义字符串("Well"), 自定义字符串("Lighthouse"), 自定义字符串("Well"), 自定义字符串("Lighthouse"), 自定义字符串("Ruins")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("Ruins0Well0Lighthouse0Well0Lighthouse0Ruins"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(325.722, -22.665, -40.401), 矢量(327.43, -22.665, -36.089), 矢量(26.176, 58.367, -156.415), 矢量(30.472, 58.367, -156.307), 矢量(-199.945, 2.015, -2.918), 矢量(-194.93, 2.015, -8.054)));
             设置全局变量(PortalDest, 数组(矢量(28.375, 57.659, -161.195), 矢量(-200.464, 1.306, -8.604), 矢量(333.088, -23.389, -40.933), 矢量(-200.464, 1.306, -8.604), 矢量(333.088, -23.389, -40.933), 矢量(28.375, 57.829, -161.195)));
         Else If(或(比较(当前地图, ==, 地图(漓江塔)), 比较(当前地图, ==, 地图(春节漓江塔))));
             "\\"control > garden\\",\\"control > market\\",\\"garden > control\\",\\"garden > market\\",\\"market > control\\",\\"market > garden\\""
-            设置全局变量(PortalNames, 数组(自定义字符串("Garden"), 自定义字符串("Night Market"), 自定义字符串("Control Center"), 自定义字符串("Night Market"), 自定义字符串("Control Center"), 自定义字符串("Garden")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("Garden0Night Market0Control Center0Night Market0Control Center0Garden"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(-2.815, 271, 295.373), 矢量(2.905, 271, 295.052), 矢量(5.788, 95.056, 135.298), 矢量(-5.343, 95.05, 134.638), 矢量(-2.738, 假, -61.911), 矢量(5.043, 假, -61.879)));
             设置全局变量(PortalDest, 数组(矢量(0.286, 94.292, 140.396), 矢量(0.584, -0.709, -54.469), 矢量(0.245, 270.292, 301.428), 矢量(0.773, -0.708, -54.361), 矢量(0.245, 270.292, 301.428), 矢量(0.286, 94.292, 140.396)));
         Else If(比较(当前地图, ==, 地图(尼泊尔)));
             "\\"vil > shrine\\",\\"vil > sanc\\", \\"shrine > vil\\",\\"shrine > sanc\\",#\\"sanc > vil\\",\\"sanc > shrine\\""
-            设置全局变量(PortalNames, 数组(自定义字符串("Shrine"), 自定义字符串("Sanctum"), 自定义字符串("Village"), 自定义字符串("Sanctum"), 自定义字符串("Village"), 自定义字符串("Shrine")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("Shrine0Sanctum0Village0Sanctum0Village0Shrine"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(-194.732, -92.86, -3.802), 矢量(-194.585, -92.86, 4.187), 矢量(-33.165, 14, 5.212), 矢量(-33.058, 14, -5.55), 矢量(84.75, 129.008, -3.624), 矢量(84.534, 129, 4.032)));
             设置全局变量(PortalDest, 数组(矢量(-40.19, 13.292, -0.105), 矢量(78.43, 128.292, 0.149), 矢量(-190.54, -93.569, 0.122), 矢量(78.43, 128.292, 0.149), 矢量(-190.54, -93.569, 0.122), 矢量(-40.19, 13.292, -0.105)));
         Else If(比较(当前地图, ==, 地图(绿洲城)));
             "\\"uni > garden\\",\\"uni > city\\",\\"garden > uni\\",\\"garden > city\\",\\"city > garden\\",\\"city > uni\\""
-            设置全局变量(PortalNames, 数组(自定义字符串("Gardens"), 自定义字符串("City Center"), 自定义字符串("University"), 自定义字符串("City Center"), 自定义字符串("Gardens"), 自定义字符串("University")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("Gardens0City Center0University0City Center0Gardens0University"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(-211.137, 20, -5.084), 矢量(-211.346, 20, 5.029), 矢量(143.061, 8.377, -245.04), 矢量(139.333, 8.377, -249.964), 矢量(157.297, 12.522, 255.759), 矢量(151.452, 12.522, 261.099)));
             设置全局变量(PortalDest, 数组(矢量(134.366, 7.829, -240.53), 矢量(158.27, 11.814, 262.272), 矢量(-206.269, 19.292, 0.103), 矢量(158.283, 11.814, 262.283), 矢量(134.318, 7.829, -240.667), 矢量(-206.269, 19.292, 0.103)));
         Else If(比较(当前地图, ==, 地图(南极半岛)));
-            设置全局变量(PortalNames, 数组(自定义字符串("labs"), 自定义字符串("icebreaker"), 自定义字符串("Sublevel"), 自定义字符串("icebreaker"), 自定义字符串("labs"), 自定义字符串("Sublevel")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("labs0icebreaker0Sublevel0icebreaker0labs0Sublevel"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(280.66, -12.15, -223.65), 矢量(273.27, 42.74, 198.15), 矢量(266.58, 42.74, 198.17), 矢量(-58.29, -154, 63.03), 矢量(-58.36, -154, 56.47), 矢量(287.08, -12.15, -223.59)));
             设置全局变量(PortalDest, 数组(矢量(270, 42.7, 190.44), 矢量(284.07, -12.75, -216.15), 矢量(-53.51, -154.5, 60.08), 矢量(284.07, -12.75, -216.15), 矢量(270, 42.7, 190.44), 矢量(-53.51, -154.5, 60.08)));
         Else If(比较(当前地图, ==, 地图(萨摩亚)));
-            设置全局变量(PortalNames, 数组(自定义字符串("beach"), 自定义字符串("volcano"), 自定义字符串("downtown"), 自定义字符串("volcano"), 自定义字符串("beach"), 自定义字符串("downtown")));
+            设置全局变量(PortalNames, 字符串分割(自定义字符串("beach0volcano0downtown0volcano0beach0downtown"), 首个(空)));
             设置全局变量(PortalLoc, 数组(矢量(231.98, 7.23, -262.84), 矢量(236.78, 7.23, -262.75), 矢量(-327.59, 3.6, -108.69), 矢量(-332.71, 3.6, -108.59), 矢量(25.4, 341, 354.38), 矢量(30, 341, 354.34)));
             设置全局变量(PortalDest, 数组(矢量(-329.86, 3.05, -103.4), 矢量(27.59, 339.76, 348.77), 矢量(234.07, 6.12, -266.88), 矢量(27.59, 339.76, 348.77), 矢量(-329.86, 3.05, -103.4), 矢量(234.07, 6.12, -266.88)));
     }
@@ -3330,7 +3330,7 @@ export const frameworkTemplate = `设置
         "Instructions that show when you start comp mode.\\nDue to the hud text limit, you there is 4 huds available.\\nIf you dont need a field just empty the textfield."
         中止;
         "竞赛模式 指引消息\\n指引消息将 会在竞赛模 式开始时 显示\\n由于 hud 文本限制，你有 4 个hud可用\\n如果你不需 要一个字段 只是空文 本字段"
-        设置全局变量(instructiontext, 数组(自定义字符串("Change in Comp Mode instruction message hud 1"), 自定义字符串("Change in Comp Mode instruction message hud 2"), 自定义字符串("Change in Comp Mode instruction message hud 3"), 自定义字符串("Change in Comp Mode instruction message hud 4")));
+        设置全局变量(instructiontext, 字符串分割(自定义字符串("Change in Comp Mode instruction message hud 10Change in Comp Mode instruction message hud 20Change in Comp Mode instruction m{0}", 自定义字符串("essage hud 30Change in Comp Mode instruction message hud 4")), 首个(空)));
     }
 }
 
@@ -3357,7 +3357,7 @@ export const frameworkTemplate = `设置
         "checkpoint number\\n每关数量"
         在索引处设置全局变量(TitleData, 假, 数组(空, 10, 20, 30, 40, 50));
         "title\\n标题文本"
-        在索引处设置全局变量(TitleData, 真, 数组(自定义字符串("Bunny"), 自定义字符串("Jumper"), 自定义字符串("Ninja"), 自定义字符串("Pro"), 自定义字符串("Expert"), 自定义字符串("Master")));
+        在索引处设置全局变量(TitleData, 真, 字符串分割(自定义字符串("Bunny0Jumper0Ninja0Pro0Expert0Master"), 首个(空)));
         "color\\n颜色"
         在索引处设置全局变量(TitleData, 2, 数组(颜色(灰绿色), 颜色(白色), 颜色(黄色), 颜色(橙色), 颜色(亮紫色), 颜色(红色)));
     }
@@ -3405,7 +3405,7 @@ export const frameworkTemplate = `设置
         "the example fill shows a text for cp 1 and cp 3\\n示例已填写 关卡1和3 的hud文本"
         等待(0.768, 无视条件);
         "in CpHudText fill in text\\n修改字符串 “CpHudText” 为顶部显示 的hud文本"
-        设置全局变量(CpHudText, 数组(自定义字符串("text cp 1"), 自定义字符串("text cp 3")));
+        设置全局变量(CpHudText, 字符串分割(自定义字符串("text cp 10text cp 3"), 首个(空)));
         "in CpHudCp fill in the at wich to display\\n修改数组 “CpHudCp” 为hud文本 显示的关卡"
         设置全局变量(CpHudCp, 数组(1, 3));
     }
@@ -3419,7 +3419,7 @@ export const frameworkTemplate = `设置
         "the example fill shows a text for cp 1 and cp 3\\n示例已填写 关卡1和3 的地图文本"
         等待(0.768, 无视条件);
         "in CpIwtText fill in text\\n修改字符串 “CpIwtText” 为关卡显示 的地图文本"
-        设置全局变量(CpIwtText, 数组(自定义字符串("text cp 1"), 自定义字符串("text cp 3")));
+        设置全局变量(CpIwtText, 字符串分割(自定义字符串("text cp 10text cp 3"), 首个(空)));
         "in CpIwtCp fill in cp at wich to display\\n修改数组 “CpIwtCp” 为显示地图 文本的关卡"
         设置全局变量(CpIwtCp, 数组(1, 3));
         "in CpIwtPos fill in the vector\\n修改数组 “CpIwtPos” 为地图文本 的矢量位置"
@@ -3437,7 +3437,7 @@ export const frameworkTemplate = `设置
         "the example fill shows a text for cp 1 and cp 3\\n示例已填写 关卡1和3 的提示文本"
         等待(0.768, 无视条件);
         "in HintText fill in text\\n修改字符串 “HintText” 为关卡显示 的提示文本"
-        设置全局变量(HintText, 数组(自定义字符串("text cp 1"), 自定义字符串("text cp 3")));
+        设置全局变量(HintText, 字符串分割(自定义字符串("text cp 10text cp 3"), 首个(空)));
         "in HintCp fill in the at wich to display\\n修改数组 “HintCp” 为提示文本 显示的关卡"
         设置全局变量(HintCp, 数组(1, 3));
     }
