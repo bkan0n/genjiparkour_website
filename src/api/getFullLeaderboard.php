@@ -26,7 +26,7 @@ if ($search) {
     }
 }
 
-$querytring = http_build_query(array_filter($queryParams));
+$queryString = http_build_query(array_filter($queryParams));
 $fullApiUrl = "{$apiUrl}?{$queryString}";
 
 $ch = curl_init();
