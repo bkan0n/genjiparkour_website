@@ -1,6 +1,6 @@
 <?php
 $dsn = getenv("SENTRY_DSN");
-require_once __DIR__ . '/../../sentryInit.php';
+require_once 'sentryInit.php';
 $apiRoot = getenv("X_API_ROOT");
 $apiKey = getenv("X_API_KEY");
 $translationApiKey = getenv("TRANSLATION_API_KEY");
