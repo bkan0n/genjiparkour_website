@@ -1,4 +1,64 @@
 <script defer src="https://analytics.bkan0n.com/script.js" data-website-id="43f4faaa-b793-4f68-9bc9-2deccff8fc15"></script>
+<script src="js/sentry.js"></script>
+<script>
+class CustomTransport {
+  constructor(options) {
+    this.options = options;
+  }
+
+  send(envelope) {
+    const [header, items] = envelope;
+
+    const envelopeStr = [
+      JSON.stringify(header),
+      ...items.map(([itemHeader, payload]) =>
+        JSON.stringify(itemHeader) + '\n' + JSON.stringify(payload)
+      )
+    ].join('\n');
+
+    return fetch('api/sentryProxy.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-sentry-envelope'
+      },
+      body: envelopeStr
+    })
+    .then(async (res) => {
+      const contentType = res.headers.get("Content-Type");
+      const rawText = await res.text();
+
+      try {
+        const json = contentType && contentType.includes("application/json")
+          ? JSON.parse(rawText)
+          : { raw: rawText };
+
+        //console.log("Réponse du proxy Sentry :", json);
+      } catch (err) {
+        console.error("Erreur de parsing JSON :", err, "\nRéponse brute :", rawText);
+      }
+    })
+    .catch(err => {
+      console.error("Erreur d'envoi Sentry :", err);
+    });
+  }
+
+  flush() {
+    return Promise.resolve(true);
+  }
+
+  close() {
+    return Promise.resolve(true);
+  }
+}
+
+Sentry.init({
+  dsn: 'https://public@fake/0',
+  transport: (options) => new CustomTransport(options),
+  release: 'genji-pk@1.0.0',
+  environment: 'production'
+});
+</script>
+
 <nav class="navbar">
     <div class="navbar-left">
         <img src="assets/img/favicon.png" alt="Logo" class="logo-icon" id="logoIcon">

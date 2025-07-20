@@ -12,6 +12,8 @@ let translations = {};
 let draggedCard = null;
 let draggedIndex = null;
 window.selectSection = selectSection;
+
+const Diff = window.Diff;
 const container = document.getElementById("mapSettings");
 
 let lastParsedWorkshopSettings = {
@@ -171,8 +173,8 @@ function selectSection(id) {
 
 /* -------------- Boutons Convert & Copy -------------- */
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadTranslations();
   selectSection("convertMap");
+  await loadTranslations();
 
   const btnConvert    = document.getElementById("convert-btn");
   const btnTranslate  = document.getElementById("translate-btn");

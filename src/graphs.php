@@ -1,7 +1,5 @@
 <?php
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', __DIR__ . '/');
-}
+if (!defined('BASE_PATH')) { define('BASE_PATH', __DIR__ . '/'); }
 
 require BASE_PATH . "discord/session_init.php";
 require BASE_PATH . "translations/load_translations.php";

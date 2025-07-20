@@ -1,6 +1,4 @@
 <?php
-
-// Inclure la configuration avec les clés API et la racine API
 require_once 'config.php';
 
 if (isset($_GET['user_id']) && is_numeric($_GET['user_id'])) {
