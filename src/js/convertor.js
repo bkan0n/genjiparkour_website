@@ -12,6 +12,7 @@ let translations = {};
 let draggedCard = null;
 let draggedIndex = null;
 window.selectSection = selectSection;
+
 const Diff = window.Diff;
 const container = document.getElementById("mapSettings");
 
