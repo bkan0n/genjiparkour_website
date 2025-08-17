@@ -3,8 +3,8 @@ export const frameworkTemplate = `configuración
 {
 	principal
 	{
-		Nombre del modo: "Genji Parkour - 源氏跑酷 - v1.10.3F"
-		Descripción: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3F"
+		Nombre del modo: "Genji Parkour - 源氏跑酷 - v1.10.3G"
+		Descripción: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3G"
 	}
 	sala de espera
 	{
@@ -116,7 +116,6 @@ variables {
         34: LeaderBoardRemake
         35: kaxiaotiao
         38: NANBA
-        39: DashExploitToggle
         40: PortalNames
         41: PortalLoc
         42: PortalDest
@@ -231,8 +230,7 @@ variables {
         62: comp_instructionHud
         63: addon_toggle3rdPov
         64: addon_ledgeDash
-        65: addon_bounceId
-        66: addon_enableDoubleChecks
+        65: addon_enableDoubleChecks
 }
 subrutinas {
     0: StartGame
@@ -241,7 +239,7 @@ subrutinas {
     3: UpdateTitle
     4: DashUltGive
     5: CheckUlt
-    6: CheckDash
+    6: CheckAbility1
     7: UpdateCache
     8: DeleteSave
     9: MakeSave
@@ -257,13 +255,773 @@ subrutinas {
     19: RebuildBounceOrbs
 }
 //Optimize for size enabled
-regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页    </fg>v1.10.3F") {
+regla ("<tx0C00000000001344> Parkour v1.10.3G <tx0C00000000001344>") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("Parkour | Setup & Variables") {
     evento {
         En curso - Global;
     }
     acciones {
         "◀ The Official Genji Parkour Editor ▶\\nDiscord: dsc.gg/genjiparkour\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula"
-        Abortar;
+        Desactivar registro de Inspector;
+        Deshabilitar la finalización integrada del modo de juego;
+        Deshabilitar el sistema de puntuación integrado del modo de juego;
+        Deshabilitar la música integrada del modo de juego;
+        Deshabilitar el presentador integrado del modo de juego;
+        Comenzar a forzar cuarto de reaparición(Todos los equipos, Falso);
+        Comenzar a forzar cuarto de reaparición(Todos los equipos, 1);
+        Comenzar a forzar cuarto de reaparición(Todos los equipos, 2);
+        "wait for map data rule"
+        Esperar(0.24, Ignorar condición);
+        "fix team because of naming"
+        Si(Comparar(Valor en la matriz(Global.ColorConfig, 16), ==, Color(Equipo 1)));
+            Establecer variable global según el índice(ColorConfig, 16, Color(Azul));
+        Si no si(Comparar(Valor en la matriz(Global.ColorConfig, 16), ==, Color(Equipo 2)));
+            Establecer variable global según el índice(ColorConfig, 16, Color(Rojo));
+        Fin;
+        "prevent same color lock orbs"
+        Si(Comparar(Valor en la matriz(Global.ColorConfig, 15), ==, Valor en la matriz(Global.ColorConfig, 16)));
+            Establecer variable global según el índice(ColorConfig, 16, If-Then-Else(Comparar(Valor en la matriz(Global.ColorConfig, 15), ==, Color(Naranja)), Color(Verde), Color(Naranja)));
+        Fin;
+        "prevent same color bhop/climb used/unused"
+        Si(Comparar(Valor en la matriz(Global.ColorConfig, 7), ==, Valor en la matriz(Global.ColorConfig, 8)));
+            Establecer variable global según el índice(ColorConfig, 8, If-Then-Else(Comparar(Valor en la matriz(Global.ColorConfig, 7), ==, Color(Rojo)), Color(Naranja), Color(Rojo)));
+        Fin;
+        Establecer variable global(SaveName, Matriz vacía);
+        Establecer variable global(SaveCp, Matriz vacía);
+        Establecer variable global(SaveTimer, Matriz vacía);
+        Establecer variable global(SaveEnt, Matriz vacía);
+        "SavePauseTime = []\\nSavePauseEnabled = []"
+        Establecer variable global(SaveElapsed, Matriz vacía);
+        Establecer variable global(Dao, If-Then-Else(Conteo de(Global.Dao), Matriz filtrada(Global.Dao, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(SHIFT, If-Then-Else(Conteo de(Global.SHIFT), Matriz filtrada(Global.SHIFT, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(pinballnumber, If-Then-Else(Conteo de(Global.pinballnumber), Global.pinballnumber, Matriz vacía));
+        Establecer variable global(A, If-Then-Else(Conteo de(Global.A), Global.A, Matriz vacía));
+        Establecer variable global(A, If-Then-Else(Conteo de(Global.A), Global.A, Matriz vacía));
+        Establecer variable global(killballnumber, If-Then-Else(Conteo de(Global.killballnumber), Global.killballnumber, Matriz vacía));
+        Establecer variable global(H, If-Then-Else(Conteo de(Global.H), Global.H, Matriz vacía));
+        Establecer variable global(I, If-Then-Else(Conteo de(Global.I), Global.I, Matriz vacía));
+        Establecer variable global(K, If-Then-Else(Conteo de(Global.K), Global.K, Matriz vacía));
+        Establecer variable global(TQ, If-Then-Else(Conteo de(Global.TQ), Global.TQ, Matriz vacía));
+        Establecer variable global(TQ2, If-Then-Else(Conteo de(Global.TQ2), Global.TQ2, Matriz vacía));
+        Establecer variable global(EditMode, If-Then-Else(Conteo de(Global.EditMode), Global.EditMode, Matriz vacía));
+        Establecer variable global(TQ5, If-Then-Else(Conteo de(Global.TQ5), Global.TQ5, Matriz vacía));
+        Establecer variable global(TQ6, If-Then-Else(Conteo de(Global.TQ6), Global.TQ6, Matriz vacía));
+        Establecer variable global(BounceToggleLock, If-Then-Else(Conteo de(Global.BounceToggleLock), Global.BounceToggleLock, Matriz vacía));
+        Establecer variable global(CustomPortalStart, If-Then-Else(Conteo de(Global.CustomPortalStart), Global.CustomPortalStart, Matriz vacía));
+        Establecer variable global(CustomPortalEndpoint, If-Then-Else(Conteo de(Global.CustomPortalEndpoint), Global.CustomPortalEndpoint, Matriz vacía));
+        Establecer variable global(CustomPortalCP, If-Then-Else(Conteo de(Global.CustomPortalCP), Global.CustomPortalCP, Matriz vacía));
+        Establecer variable global(LeaderBoardFull, Matriz vacía);
+        Establecer variable global(TitleData, Nulo);
+        Establecer variable global(HintCp, Matriz vacía);
+        Establecer variable global(HintText, Matriz vacía);
+        "clean out -1's after the ban has loaded"
+        Establecer variable global(BanBhop, If-Then-Else(Conteo de(Global.BanBhop), Matriz filtrada(Global.BanBhop, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(BanClimb, If-Then-Else(Conteo de(Global.BanClimb), Matriz filtrada(Global.BanClimb, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(BanEmote, If-Then-Else(Conteo de(Global.BanEmote), Matriz filtrada(Global.BanEmote, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(BanDead, If-Then-Else(Conteo de(Global.BanDead), Matriz filtrada(Global.BanDead, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(BanCreate, If-Then-Else(Conteo de(Global.BanCreate), Matriz filtrada(Global.BanCreate, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(BanMulti, If-Then-Else(Conteo de(Global.BanMulti), Matriz filtrada(Global.BanMulti, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        "BanTriple = [i for i in BanTriple if i + false >= 0] if len(BanTriple) else [] # legacy code, now auto sets it to null to save space"
+        Establecer variable global(BanStand, If-Then-Else(Conteo de(Global.BanStand), Matriz filtrada(Global.BanStand, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
+        Establecer variable global(BanSaveDouble, If-Then-Else(Conteo de(Global.BanSaveDouble), Global.BanSaveDouble, Matriz vacía));
+        Establecer variable global(BanDjump, If-Then-Else(Conteo de(Global.BanDjump), Global.BanDjump, Matriz vacía));
+        Si(Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("Basic Map Validator - 验证地图"), Verdadero, 3));
+            Comenzar regla(AddonCheckMap, Hacer nada);
+        Fin;
+        Establecer variable global(PortalOn, Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), Verdadero, 4));
+        Establecer variable global(CompMode, Alternado de configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("Turn on competitive mode - 开启竞赛模式"), Falso, 100));
+        Si(Global.CompMode);
+            "-! comp minutes !-\\n5-240"
+            Establecer variable global(CompTime, Número entero de la configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
+            "-! comp attempt count !-"
+            Establecer variable global(CompAtmpNum, Número entero de la configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("attempt count - 尝试次数"), 5, 0, 500, 102));
+            "-! comp restartlimiter !-"
+            Establecer variable global(CompRestartLimit, Alternado de configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("disable restart during run - 竞赛中禁用重新开始"), Falso, 103));
+        Si no;
+            Establecer variable global(instructiontext, Nulo);
+    }
+}
+
+regla ("Parkour | Match time") {
+    evento {
+        En curso - Global;
+    }
+    acciones {
+        Si(Comparar(Modo de juego actual, !=, Modo de juego(Escaramuza)));
+            "0.25"
+            Esperar(Falso, Ignorar condición);
+            "1"
+            Establecer tiempo de la partida(Falso);
+            "1.1"
+            Esperar(Falso, Ignorar condición);
+            "1"
+            Establecer tiempo de la partida(Falso);
+            "1.1"
+            Esperar(Falso, Ignorar condición);
+        Fin;
+        Establecer tiempo de la partida(70);
+        Pausar tiempo de la partida;
+        Esperar(Falso, Ignorar condición);
+        Establecer variable global(TimeRemaining, 265);
+        Mientras(O(Global.TimeRemaining, (Jugador anfitrión).editor_on));
+            Esperar(60, Ignorar condición);
+            Modificar variable global(TimeRemaining, Restar, Verdadero);
+            Si(Global.CompMode);
+                Modificar variable global(CompTime, Restar, Verdadero);
+                Si(No(Global.CompTime));
+                    Mensaje grande(Primero de(Verdadero), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("时间到了"), Cadena personalizada("time's up")));
+                    Establecer variable de jugador(Todos los jugadores(Todos los equipos), comp_done, Verdadero);
+                    Detener seguimiento de variable de jugador(Todos los jugadores(Todos los equipos), timer_normal);
+                    "getAllPlayers().disableRespawn()"
+                    Establecer daño recibido(Todos los jugadores(Todos los equipos), 100);
+                    Matar(Todos los jugadores(Todos los equipos), Nulo);
+                Fin;
+            Fin;
+        Fin;
+        Mensaje grande(Primero de(Verdadero), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("房间已达最大持续时间, 即将重启"), Cadena personalizada("maximum lobby time elapsed, restarting")));
+        Esperar(5, Ignorar condición);
+        "Prevent crash during POTG and closing lobby"
+        Establecer variable de jugador(Todos los jugadores(Todos los equipos), lockState, Verdadero);
+        Declarar victoria del jugador(Jugador anfitrión);
+        Declarar la victoria del equipo(Equipo de(Jugador anfitrión));
+    }
+}
+
+regla ("Parkour | Player Initialize") {
+    evento {
+        El jugador se unió a la partida;
+        Todos;
+        Todos;
+    }
+    acciones {
+        "Turn Editor On"
+        Establecer variable de jugador(Jugador del evento, editor_on, Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("Editor mode - 作图模式"), Falso, -1));
+        Deshabilitar HUD del modo de juego(Jugador del evento);
+        Deshabilitar colisión de movimiento con jugadores(Jugador del evento);
+        Establecer daño recibido(Jugador del evento, 0);
+        Establecer variable de jugador(Jugador del evento, lockState, Verdadero);
+        Abortar si(Robot de entrenamiento(Jugador del evento));
+        Habilitar la observación de todos los jugadores como espectador muerto(Jugador del evento);
+        Habilitar la observación del HUD objetivo como espectador muerto(Jugador del evento);
+        Deshabilitar la reaparición integrada del modo de juego(Jugador del evento);
+        Precargar héroe(Jugador del evento, Héroe(Genji));
+        Establecer variable de jugador(Jugador del evento, editor_lock, Verdadero);
+        Establecer variable de jugador(Jugador del evento, toggle_guide, Verdadero);
+        Establecer variable de jugador(Jugador del evento, cache_bounceTouched, -1);
+        "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
+        Esperar(Verdadero, Ignorar condición);
+        Crear efecto(Jugador del evento, Anillo, Valor en la matriz(Global.ColorConfig, 9), Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current)), Verdadero, Posición y radio);
+        Crear efecto(If-Then-Else((Jugador del evento).checkpoint_notLast, Jugador del evento, Nulo), Anillo, Valor en la matriz(Global.ColorConfig, 10), Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero)), Verdadero, Visible para posición y radio);
+        Crear efecto(If-Then-Else((Jugador del evento).checkpoint_notLast, Jugador del evento, Nulo), Haz de luz, Valor en la matriz(Global.ColorConfig, 11), Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero)), Verdadero, Visible para posición y radio);
+        Crear ícono(If-Then-Else((Jugador del evento).checkpoint_notLast, Jugador del evento, Nulo), Agregar(Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero)), Arriba), Flecha: Hacia abajo, Visible para y posición, Valor en la matriz(Global.ColorConfig, 12), Verdadero);
+        Esperar hasta(Ha aparecido(Jugador del evento), 999999999999);
+        Establecer variable de jugador(Jugador del evento, editor_lock, Falso);
+        Si(Global.CompMode);
+            Establecer invisibilidad(Jugador del evento, Todos);
+            Si(La matriz contiene(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)));
+                Establecer variable de jugador(Jugador del evento, comp_countAttempts, Valor en la matriz(Global.CompAtmpSaveCount, Índice del valor de la matriz(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía))));
+            "instructions and settings for comp start"
+            Si no;
+                Establecer variable de jugador(Jugador del evento, comp_instructionHud, Verdadero);
+                Modificar variable global(CompAtmpSaveNames, Anexar a la matriz, Separación de cadena(Primero de(Jugador del evento), Matriz vacía));
+                Modificar variable global(CompAtmpSaveCount, Anexar a la matriz, 1);
+                Establecer variable de jugador(Jugador del evento, comp_countAttempts, 1);
+                Establecer velocidad de movimiento(Jugador del evento, Falso);
+                Establecer habilidad 1 habilitada(Jugador del evento, Falso);
+                Establecer habilidad máxima habilitada(Jugador del evento, Falso);
+                Esperar hasta(No(Botón presionado(Jugador del evento, Botón(Interactuar))), Verdadero);
+                Esperar hasta(O(Botón presionado(Jugador del evento, Botón(Interactuar)), Comparar(Global.CompTime, <, 1)), 999999999999);
+                Establecer velocidad de movimiento(Jugador del evento, 100);
+                Establecer variable de jugador(Jugador del evento, comp_instructionHud, Falso);
+            Fin;
+            Si(O(Comparar((Jugador del evento).comp_countAttempts, <, Nulo), Comparar(Global.CompTime, <, 1)));
+                Establecer variable de jugador(Jugador del evento, comp_done, Verdadero);
+            Fin;
+        Fin;
+        Esperar(Falso, Ignorar condición);
+        "initialization of the game"
+        Llamada a subrutina(StartGame);
+        Establecer variable de jugador(Jugador del evento, lockState, Falso);
+    }
+}
+
+regla ("Parkour | Player Leaves") {
+    evento {
+        El jugador abandonó la partida;
+        Todos;
+        Todos;
+    }
+    acciones {
+        Si(Valor en la matriz(Global.SaveCp, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)));
+            Si(Y(Comparar(Valor en la matriz(Global.SaveCp, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)), <, Restar(Conteo de(Global.A), Verdadero)), Valor en la matriz(Global.SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento))));
+                Establecer variable global según el índice(SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), Agregar(Restar(Tiempo total transcurrido, Valor en la matriz(Global.SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento))), Valor en la matriz(Global.SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento))));
+            Fin;
+        "delete if player didnt do first cp"
+        Si no;
+            Llamada a subrutina(DeleteSave);
+    }
+}
+
+regla ("Parkour | Ground: Traces, Arrive, & Reset") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        (Jugador del evento).lockState == Falso;
+        En el suelo(Jugador del evento) == Verdadero;
+        Está vivo(Jugador del evento) == Verdadero;
+    }
+    acciones {
+        Si(No((Jugador del evento).checkpoint_notLast));
+            Si(Y(En movimiento(Jugador del evento), No(O(O(O((Jugador del evento).toggle_practice, (Jugador del evento).toggle_invisible), (Jugador del evento).editor_on), Global.CompMode))));
+                "traces ----------------------------------------------------------------------------------------------------"
+                Establecer variable de jugador(Jugador del evento, cache_rainbow, Valor en la matriz(Matriz(Color(Rojo), Color(Naranja), Color(Amarillo), Color(Verde lima), Color(Verde), Color(Turquesa), Color(Azul), Color(Morado), Color(Violeta), Color(Rosa)), Módulo(Redondear a número entero(Multiplicar(Tiempo total transcurrido, 2), Abajo), 10)));
+                "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
+                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 0.4);
+                Esperar(0.048, Ignorar condición);
+                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 0.6);
+                Esperar(0.048, Ignorar condición);
+                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 0.8);
+                Esperar(0.048, Ignorar condición);
+                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 1);
+                Esperar(0.048, Ignorar condición);
+                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 1.2);
+                Esperar(0.048, Ignorar condición);
+                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 1.4);
+                Esperar(0.048, Ignorar condición);
+            Fin;
+        "or eventPlayer.lockState:"
+        Si no si(O((Jugador del evento).toggle_invincible, Y(Global.CompMode, No(Global.CompTime))));
+        Si no si(Comparar(Distancia entre(Jugador del evento, Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero))), <=, 1.4));
+            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
+            Si(Comparar(Conteo de((Jugador del evento).cache_collectedLocks), <, (Jugador del evento).cache_bounceMaxLocks));
+                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   ! 进点前需集齐所有收集球 !"), Cadena personalizada("   ! collect ALL {0} orbs to unlock !", Valor en la matriz(Global.ColorConfig, 16))));
+                "kill(eventPlayer, null)"
+                Llamada a subrutina(CheckpointFailReset);
+            Si no si(Y((Jugador del evento).ban_climb, (Jugador del evento).skill_usedClimb));
+                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   爬墙 ↑ 已禁用!"), Cadena personalizada("   Climb ↑ is banned!")));
+                Llamada a subrutina(CheckpointFailReset);
+            Si no si(Y((Jugador del evento).ban_bhop, (Jugador del evento).skill_usedBhop));
+                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   ≥ 留小跳进点!"), Cadena personalizada("   ≥ Must have a bhop to complete!")));
+                Llamada a subrutina(CheckpointFailReset);
+            Si no si(Y((Jugador del evento).ban_djump, (Jugador del evento).skill_usedDouble));
+                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   » 留二段跳!"), Cadena personalizada("   » Must have a double jump to complete!")));
+                Llamada a subrutina(CheckpointFailReset);
+            Si no;
+                Establecer variable de jugador(Jugador del evento, checkpoint_moved, Verdadero);
+                Modificar variable de jugador(Jugador del evento, checkpoint_current, Agregar, Verdadero);
+                Si(Comparar((Jugador del evento).timer_splitDisplay, >, -999999999999));
+                    Establecer variable de jugador(Jugador del evento, timer_splitDisplay, Restar(If-Then-Else((Jugador del evento).toggle_practice, (Jugador del evento).timer_practice, (Jugador del evento).timer_normal), (Jugador del evento).timer_split));
+                Fin;
+                Si((Jugador del evento).toggle_practice);
+                    Establecer variable de jugador(Jugador del evento, timer_split, (Jugador del evento).timer_practice);
+                Si no;
+                    Establecer variable de jugador(Jugador del evento, timer_split, (Jugador del evento).timer_normal);
+                    Llamada a subrutina(DeleteSave);
+                    "complete lvl"
+                    Si(Y(Comparar((Jugador del evento).checkpoint_current, ==, Restar(Conteo de(Global.A), Verdadero)), No((Jugador del evento).editor_on)));
+                        Detener seguimiento de variable de jugador(Jugador del evento, timer_normal);
+                        Llamada a subrutina(LeaderboardUpdate);
+                        Si(Y(Global.CompMode, Global.CompAtmpNum));
+                            Si(Comparar((Jugador del evento).comp_countAttempts, ==, Global.CompAtmpNum));
+                                Establecer variable global según el índice(CompAtmpSaveCount, Índice del valor de la matriz(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)), -1);
+                                Establecer variable de jugador(Jugador del evento, comp_countAttempts, -1);
+                                Establecer variable de jugador(Jugador del evento, comp_done, Verdadero);
+                                Establecer variable de jugador(Jugador del evento, toggle_leaderboard, Verdadero);
+                                "eventPlayer.disableRespawn()"
+                                Establecer daño recibido(Jugador del evento, 100);
+                                Matar(Jugador del evento, Nulo);
+                                Establecer daño recibido(Jugador del evento, 0);
+                            Si no;
+                                Establecer variable global según el índice(CompAtmpSaveCount, Índice del valor de la matriz(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)), Agregar((Jugador del evento).comp_countAttempts, Verdadero));
+                            Fin;
+                        Fin;
+                        Mensaje grande(Primero de(Verdadero), Cadena personalizada("{0} {1} {2} sec", Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("已通关! 用时"), Cadena personalizada("Mission complete! Time")), (Jugador del evento).timer_normal));
+                        Esperar(Falso, Ignorar condición);
+                    "update save"
+                    Si no;
+                        Llamada a subrutina(MakeSave);
+                    Fin;
+                    Llamada a subrutina(UpdateTitle);
+                Fin;
+                Llamada a subrutina(UpdateCache);
+                "teleport cps"
+                Si(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current)), >, 1));
+                    Llamada a subrutina(CheckpointFailReset);
+                Si no;
+                    Llamada a subrutina(AddonCustomLoadAndReset);
+                Fin;
+                Esperar(Falso, Ignorar condición);
+                "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\"))"
+                Reproducir efecto(Jugador del evento, Sonido de explosión en anillo, Color(Blanco), Jugador del evento, 100);
+                Reproducir efecto(If-Then-Else(O(Global.CompMode, (Jugador del evento).toggle_invisible), Jugador del evento, Verdadero), Explosión en anillo, Color(Azul cielo), Agregar(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current), Multiplicar(1.5, Arriba)), 4);
+            Fin;
+        Si no si(Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), >, 1.4));
+            Llamada a subrutina(CheckpointFailReset);
+        Fin;
+        Establecer variable de jugador(Jugador del evento, cache_collectedLocks, Matriz vacía);
+        Esperar(0.048, Ignorar condición);
+        Repetir si la condición es verdadera;
+    }
+}
+
+regla ("Parkour | Boundary Sphere") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        (Jugador del evento).cache_killPosition != Matriz vacía;
+        (Jugador del evento).toggle_invincible == Falso;
+        (Jugador del evento).checkpoint_notLast != Falso;
+        Es verdadero para cualquiera((Jugador del evento).cache_killRadii, Comparar(Multiplicar(Normalizar(Elemento de matriz actual), Distancia entre(Valor en la matriz((Jugador del evento).cache_killPosition, Índice de matriz actual), Jugador del evento)), <, Elemento de matriz actual)) == Verdadero;
+    }
+    acciones {
+        Llamada a subrutina(CheckpointFailReset);
+    }
+}
+
+regla ("Parkour | Bounce Ball / Orb") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        (Jugador del evento).cache_bouncePosition != Matriz vacía;
+        "@Condition eventPlayer.checkpoint_notLast # disabled coz editor"
+        Es verdadero para cualquiera((Jugador del evento).cache_bouncePosition, Comparar(Distancia entre(Elemento de matriz actual, Agregar(Posición de(Jugador del evento), Multiplicar(0.7, Arriba))), <, 1.4)) == Verdadero;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, cache_bounceTouched, Índice del valor de la matriz(Global.TQ, Matriz filtrada(Global.TQ, Y(Y(Y(Comparar(Valor en la matriz(Global.pinballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Índice de matriz actual, !=, (Jugador del evento).cache_bounceTouched)), No(La matriz contiene((Jugador del evento).cache_collectedLocks, Índice de matriz actual))), Comparar(Distancia entre(Agregar(Jugador del evento, Multiplicar(0.7, Arriba)), Elemento de matriz actual), <, 1.4)))));
+        "prevent same one activating twice in a row"
+        Si(Comparar((Jugador del evento).cache_bounceTouched, >=, Nulo));
+            Si(Valor en la matriz(Global.BounceToggleLock, (Jugador del evento).cache_bounceTouched));
+                Modificar variable de jugador(Jugador del evento, cache_collectedLocks, Anexar a la matriz, (Jugador del evento).cache_bounceTouched);
+                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   弹球已收集"), Cadena personalizada("   orb has been collected")));
+            Fin;
+            Si(Comparar(Valor en la matriz(Global.EditMode, (Jugador del evento).cache_bounceTouched), >, Nulo));
+                Aplicar impulso(Jugador del evento, Arriba, Valor en la matriz(Global.EditMode, (Jugador del evento).cache_bounceTouched), Al mundo, Cancelar movimiento contrario XYZ);
+            Si no si(Comparar(Valor en la matriz(Global.EditMode, (Jugador del evento).cache_bounceTouched), <, Nulo));
+                Cancelar acción primaria(Jugador del evento);
+                Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
+                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   二段跳已就绪"), Cadena personalizada("   Double Jump is ready")));
+            Fin;
+            Si(Valor en la matriz(Global.TQ5, (Jugador del evento).cache_bounceTouched));
+                Establecer habilidad máxima habilitada(Jugador del evento, Verdadero);
+                Establecer carga de habilidad máxima(Jugador del evento, 100);
+                Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1} ", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad máxima)), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("终极技能已就绪"), Cadena personalizada("Ultimate is ready"))));
+            Fin;
+            Si(Valor en la matriz(Global.TQ6, (Jugador del evento).cache_bounceTouched));
+                Si(Está utilizando la habilidad 1(Jugador del evento));
+                    Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Verdadero);
+                    Esperar(Falso, Ignorar condición);
+                Fin;
+                Establecer habilidad 1 habilitada(Jugador del evento, Verdadero);
+                Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1} ", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad 1)), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("技能1影已就绪"), Cadena personalizada("Dash is ready"))));
+            Fin;
+            Reproducir efecto(Jugador del evento, Sonido de explosión de potenciamiento, Color(Blanco), Jugador del evento, 75);
+        Fin;
+        Esperar(0.24, Ignorar condición);
+        Repetir si la condición es verdadera;
+        Establecer variable de jugador(Jugador del evento, cache_bounceTouched, -1);
+    }
+}
+
+regla ("Parkour | Death Reset") {
+    evento {
+        El jugador murió;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Robot de entrenamiento(Jugador del evento) == Falso;
+        (Jugador del evento).toggle_spectate == Falso;
+        (Jugador del evento).comp_done == Falso;
+    }
+    acciones {
+        Si(Conteo de(Global.A));
+            Resucitar(Jugador del evento);
+        Si no;
+            Reaparecer(Jugador del evento);
+        Fin;
+        Llamada a subrutina(CheckpointFailReset);
+        "rest is to prevent dead spamming from crashing server\\nbut doing waits only when needed without relying on a variable count"
+        Esperar hasta(Está vivo(Jugador del evento), Verdadero);
+        Esperar hasta(Está muerto(Jugador del evento), Verdadero);
+        Si(Y(Está muerto(Jugador del evento), No(O((Jugador del evento).toggle_spectate, (Jugador del evento).comp_done))));
+            Esperar(0.16, Ignorar condición);
+            Resucitar(Jugador del evento);
+            Llamada a subrutina(CheckpointFailReset);
+            Esperar hasta(Está vivo(Jugador del evento), Verdadero);
+            Esperar hasta(Está muerto(Jugador del evento), Verdadero);
+            Si(Y(Está muerto(Jugador del evento), No(O((Jugador del evento).toggle_spectate, (Jugador del evento).comp_done))));
+                Esperar(0.44, Ignorar condición);
+                Resucitar(Jugador del evento);
+                Llamada a subrutina(CheckpointFailReset);
+                Esperar hasta(Está vivo(Jugador del evento), Verdadero);
+                Esperar hasta(Está muerto(Jugador del evento), Verdadero);
+                Si(Y(Está muerto(Jugador del evento), No(O((Jugador del evento).toggle_spectate, (Jugador del evento).comp_done))));
+                    Esperar(0.64, Ignorar condición);
+                    Reaparecer(Jugador del evento);
+                    Llamada a subrutina(CheckpointFailReset);
+    }
+}
+
+regla ("Parkour | SUB Update Effect Cache") {
+    evento {
+        Subrutina;
+        UpdateCache;
+    }
+    acciones {
+        "note: if adding cp pos to cache, make sure to also adjust editor things like move and teleport"
+        Establecer variable de jugador(Jugador del evento, cache_bouncePosition, Matriz filtrada(Global.TQ, Comparar(Valor en la matriz(Global.pinballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current)));
+        "eventPlayer.cache_bounceLocks = [_ for _, i in BounceToggleLock if BouncePadCheckpoints[i] == eventPlayer.checkpoint_current and _]\\neventPlayer.cache_bounceMaxLocks = len([_ for _ in eventPlayer.cache_bounceLocks if _])"
+        Establecer variable de jugador(Jugador del evento, cache_bounceMaxLocks, Conteo de(Matriz filtrada(Global.BounceToggleLock, Y(Comparar(Valor en la matriz(Global.pinballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Elemento de matriz actual))));
+        Establecer variable de jugador(Jugador del evento, cache_killPosition, Matriz filtrada(Global.H, Comparar(Valor en la matriz(Global.killballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current)));
+        Establecer variable de jugador(Jugador del evento, cache_killRadii, Matriz filtrada(Global.I, Comparar(Valor en la matriz(Global.killballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current)));
+        Establecer variable de jugador(Jugador del evento, cache_portalStart, Matriz filtrada(Global.CustomPortalStart, O(Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), <, Nulo))));
+        Establecer variable de jugador(Jugador del evento, cache_portalEnd, Matriz filtrada(Global.CustomPortalEndpoint, O(Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), <, Nulo))));
+        Establecer variable de jugador(Jugador del evento, checkpoint_notLast, Y(Comparar((Jugador del evento).checkpoint_current, <, Restar(Conteo de(Global.A), Verdadero)), Comparar(Conteo de(Global.A), >, 1)));
+        Establecer variable de jugador(Jugador del evento, toggle_hints, Falso);
+        Establecer variable de jugador(Jugador del evento, banString, Matriz vacía);
+        Esperar(Falso, Ignorar condición);
+        Si((Jugador del evento).checkpoint_notLast);
+            Establecer variable de jugador(Jugador del evento, ban_multi, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Multiclimb - 封禁蹭留"), Falso, 1), La matriz contiene(Global.BanMulti, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_multi);
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("∞ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_create, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Createbhop - 封禁卡小"), Falso, 2), La matriz contiene(Global.BanCreate, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_create);
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("♂ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_standcreate, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban standcreate - 封禁站卡"), Falso, 3), La matriz contiene(Global.BanStand, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_standcreate);
+                "≥  √ ▼ ↓"
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("♠ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_dead, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Deathbhop - 封禁死小"), Falso, 4), La matriz contiene(Global.BanDead, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_dead);
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("X {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_emote, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Emote Savehop - 封禁表情留小"), Falso, 5), La matriz contiene(Global.BanEmote, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_emote);
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("♥ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_climb, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Wallclimb - 封禁爬墙"), Falso, 6), La matriz contiene(Global.BanClimb, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_climb);
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("↑ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_savedouble, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban save double - 封禁延二段跳"), Falso, 7), La matriz contiene(Global.BanSaveDouble, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_savedouble);
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("△ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_bhop, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("require bhop available - 留小跳进点 "), Falso, 8), La matriz contiene(Global.BanBhop, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_bhop);
+                "≥  √ ▼ ↓"
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("≥ {0}", (Jugador del evento).banString));
+            Fin;
+            Establecer variable de jugador(Jugador del evento, ban_djump, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("require djump available - 留二段跳 "), Falso, 9), La matriz contiene(Global.BanDjump, (Jugador del evento).checkpoint_current)));
+            Si((Jugador del evento).ban_djump);
+                "≥  √ ▼ ↓ ︽"
+                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("» {0}", (Jugador del evento).banString));
+            Fin;
+        Si no;
+            Establecer variable de jugador(Jugador del evento, ban_multi, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_create, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_standcreate, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_dead, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_emote, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_climb, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_savedouble, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_bhop, Falso);
+            Establecer variable de jugador(Jugador del evento, ban_djump, Falso);
+        Fin;
+        Esperar(Falso, Ignorar condición);
+        Comenzar regla(CheckUlt, Reiniciar regla);
+        Comenzar regla(CheckAbility1, Reiniciar regla);
+        Abortar si(O(Comparar(Jugador del evento, !=, Jugador anfitrión), No((Jugador del evento).editor_on)));
+        Llamada a subrutina(EditUpdateSelectedIds);
+        Destruir efecto((Jugador anfitrión).editor_hitboxEffect);
+        Crear efecto(If-Then-Else((Jugador anfitrión).editor_hitboxToggle, Jugador anfitrión, Nulo), Esfera, Color(Blanco), Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), 1.4, Visible para posición y radio);
+        Establecer variable de jugador(Jugador anfitrión, editor_hitboxEffect, Última entidad creada);
+        Crear efecto(If-Then-Else(Y((Jugador anfitrión).editor_hitboxToggle, (Jugador anfitrión).checkpoint_notLast), Jugador anfitrión, Nulo), Esfera, Color(Blanco), Valor en la matriz(Global.A, Agregar((Jugador anfitrión).checkpoint_current, Verdadero)), 1.4, Visible para posición y radio);
+        Modificar variable de jugador(Jugador anfitrión, editor_hitboxEffect, Anexar a la matriz, Última entidad creada);
+        Establecer variable de jugador(Jugador anfitrión, editor_bounceIndex, Matriz filtrada(Matriz mapeada(Global.pinballnumber, If-Then-Else(Comparar(Elemento de matriz actual, ==, (Jugador anfitrión).checkpoint_current), Índice de matriz actual, -1)), Comparar(Elemento de matriz actual, >=, Nulo)));
+        Establecer variable de jugador(Jugador anfitrión, editor_killIndex, Matriz filtrada(Matriz mapeada(Global.killballnumber, If-Then-Else(Comparar(Elemento de matriz actual, ==, (Jugador anfitrión).checkpoint_current), Índice de matriz actual, -1)), Comparar(Elemento de matriz actual, >=, Nulo)));
+        Si((Jugador anfitrión).checkpoint_moved);
+            Llamada a subrutina(EditorSelectLast);
+            Establecer variable de jugador(Jugador anfitrión, checkpoint_moved, Falso);
+        Fin;
+    }
+}
+
+regla ("Parkour | SUB Delete Save") {
+    evento {
+        Subrutina;
+        DeleteSave;
+    }
+    acciones {
+        Modificar variable global(SaveName, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
+        Modificar variable global(SaveCp, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
+        Modificar variable global(SaveTimer, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
+        Modificar variable global(SaveElapsed, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
+        "must always be last because its the index itself"
+        Modificar variable global(SaveEnt, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
+    }
+}
+
+regla ("Parkour | SUB Make Save") {
+    evento {
+        Subrutina;
+        MakeSave;
+    }
+    acciones {
+        Modificar variable global(SaveEnt, Anexar a la matriz, Jugador del evento);
+        Modificar variable global(SaveName, Anexar a la matriz, Separación de cadena(Primero de(Jugador del evento), Matriz vacía));
+        Modificar variable global(SaveCp, Anexar a la matriz, (Jugador del evento).checkpoint_current);
+        Modificar variable global(SaveTimer, Anexar a la matriz, (Jugador del evento).timer_normal);
+        Modificar variable global(SaveElapsed, Anexar a la matriz, Tiempo total transcurrido);
+    }
+}
+
+regla ("Parkour | SUB Timer Pause") {
+    evento {
+        Subrutina;
+        TimerPause;
+    }
+    acciones {
+        Detener seguimiento de variable de jugador(Jugador del evento, timer_normal);
+        Abortar si(No(La matriz contiene(Global.SaveEnt, Jugador del evento)));
+        Establecer variable global según el índice(SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), (Jugador del evento).timer_normal);
+        Establecer variable global según el índice(SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), Nulo);
+    }
+}
+
+regla ("Parkour | SUB Timer Resume") {
+    evento {
+        Subrutina;
+        TimerResume;
+    }
+    acciones {
+        Seguir variable de jugador según la tasa(Jugador del evento, timer_normal, 999999999999, Verdadero, Ninguno);
+        Establecer variable global según el índice(SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), Tiempo total transcurrido);
+    }
+}
+
+regla ("Parkour | SUB Leaderboard Update") {
+    evento {
+        Subrutina;
+        LeaderboardUpdate;
+    }
+    acciones {
+        "[[name, seconds, prettytime]]\\nyou already have a time"
+        Si(La matriz contiene(Matriz mapeada(Global.LeaderBoardFull, Primero de(Elemento de matriz actual)), Separación de cadena(Primero de(Jugador del evento), Matriz vacía)));
+            Abortar si(Comparar((Jugador del evento).timer_normal, >=, Valor en la matriz(Primero de(Matriz filtrada(Global.LeaderBoardFull, Comparar(Primero de(Elemento de matriz actual), ==, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)))), Verdadero)));
+            Establecer variable global(LeaderBoardFull, Matriz filtrada(Global.LeaderBoardFull, Comparar(Primero de(Elemento de matriz actual), !=, Separación de cadena(Primero de(Jugador del evento), Matriz vacía))));
+        Si no si(O(Comparar(Conteo de(Global.LeaderBoardFull), <, 25), Comparar((Jugador del evento).timer_normal, <, Último de(Valor en la matriz(Global.LeaderBoardFull, 19)))));
+            Modificar variable global(LeaderBoardFull, Eliminar de la matriz por índice, 24);
+        Si no;
+            "Full and time too slow"
+            Abortar;
+        Fin;
+        Modificar variable global(LeaderBoardFull, Anexar a la matriz, Matriz(Matriz(Separación de cadena(Primero de(Jugador del evento), Matriz vacía), (Jugador del evento).timer_normal, Cadena personalizada("{0} sec", (Jugador del evento).timer_normal))));
+        "CreateLeaderboard()"
+        Establecer variable global(LeaderBoardRemake, Verdadero);
+    }
+}
+
+regla ("Parkour | SUB Checkpoint Fail") {
+    evento {
+        Subrutina;
+        CheckpointFailReset;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, timer_split, If-Then-Else((Jugador del evento).toggle_practice, (Jugador del evento).timer_practice, (Jugador del evento).timer_normal));
+        Establecer variable de jugador(Jugador del evento, cache_collectedLocks, Matriz vacía);
+        Cancelar acción primaria(Jugador del evento);
+        Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
+        Si(No(O((Jugador del evento).checkpoint_current, (Jugador del evento).toggle_practice)));
+            Establecer variable de jugador(Jugador del evento, timer_normal, Nulo);
+            Establecer variable de jugador(Jugador del evento, timer_split, Nulo);
+        Fin;
+        Si(Conteo de(Global.A));
+            Si(Está utilizando la habilidad 1(Jugador del evento));
+                Comenzar a forzar la posición del jugador(Jugador del evento, Jugador del evento, Falso);
+                Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Verdadero);
+                Esperar(Falso, Ignorar condición);
+                Dejar de forzar la posición del jugador(Jugador del evento);
+            Fin;
+            Transportar(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current)));
+            "After teleport incase stopForcingPosition launches the player"
+            Aplicar impulso(Jugador del evento, Multiplicar(-1, Rapidez de(Jugador del evento)), 1.192093e-7, Al mundo, Cancelar movimiento contrario XYZ);
+            "old: disallow jump > 0.1 sec wait > allow jump, this method bugs with ult check disabling ultimate for some reason\\nif eventPlayer.ban_dead or eventPlayer.ban_emote and eventPlayer.isHoldingButton(Button.JUMP):"
+            Si((Jugador del evento).ban_dead);
+                Si(Botón presionado(Jugador del evento, Botón(Saltar)));
+                    Presionar botón(Jugador del evento, Botón(Saltar));
+                Fin;
+            Si no;
+                "Reset Hop"
+                Establecer estado(Jugador del evento, Nulo, Arraigado, 0.096);
+            Fin;
+            Si(Está usando la habilidad máxima(Jugador del evento));
+                Establecer daño recibido(Jugador del evento, 100);
+                Matar(Jugador del evento, Nulo);
+                Establecer daño recibido(Jugador del evento, 0);
+                Esperar(Falso, Ignorar condición);
+            Fin;
+        Fin;
+        Comenzar regla(CheckUlt, Reiniciar regla);
+        Comenzar regla(CheckAbility1, Reiniciar regla);
+        Llamada a subrutina(AddonCustomLoadAndReset);
+    }
+}
+
+regla ("Parkour | SUB Start Game") {
+    evento {
+        Subrutina;
+        StartGame;
+    }
+    acciones {
+        Si(Y(Global.CompMode, O(Comparar(Global.CompTime, <, 1), (Jugador del evento).comp_done)));
+            Establecer variable de jugador(Jugador del evento, toggle_leaderboard, Verdadero);
+            Establecer variable de jugador(Jugador del evento, comp_done, Verdadero);
+            "eventPlayer.disableRespawn()"
+            Establecer daño recibido(Jugador del evento, 100);
+            Matar(Jugador del evento, Nulo);
+            Establecer daño recibido(Jugador del evento, 0);
+            Abortar;
+        Fin;
+        Si(Conteo de(Global.A));
+            "load saved progres"
+            Si(La matriz contiene(Global.SaveName, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)));
+                Establecer variable global según el índice(SaveEnt, Índice del valor de la matriz(Global.SaveName, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)), Jugador del evento);
+                Establecer variable de jugador(Jugador del evento, checkpoint_current, Valor en la matriz(Global.SaveCp, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)));
+                Establecer variable de jugador(Jugador del evento, timer_normal, Valor en la matriz(Global.SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)));
+            Si no;
+                Establecer variable de jugador(Jugador del evento, checkpoint_current, Nulo);
+                Establecer variable de jugador(Jugador del evento, timer_normal, Nulo);
+                Llamada a subrutina(MakeSave);
+            Fin;
+            Llamada a subrutina(UpdateTitle);
+            Llamada a subrutina(UpdateCache);
+            Llamada a subrutina(CheckpointFailReset);
+            "FFA"
+            Esperar hasta(Partida en curso, 999999999999);
+            Llamada a subrutina(TimerResume);
+        Fin;
+        "eventPlayer.enableRespawn()"
+        Establecer variable de jugador(Jugador del evento, toggle_invincible, Falso);
+        Establecer variable de jugador(Jugador del evento, toggle_spectate, Falso);
+        Establecer variable de jugador(Jugador del evento, checkpoint_moved, Verdadero);
+    }
+}
+
+regla ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("Mechanic | All | Jump") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Está saltando(Jugador del evento) == Verdadero;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Verdadero);
+        Si((Jugador del evento).skill_usedHop);
+            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   小跳已用"), Cadena personalizada("   Bhop")));
+        Si no;
+            Establecer variable de jugador(Jugador del evento, skill_usedHop, Verdadero);
+    }
+}
+
+regla ("Mechanic | All | No Jump") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        (Jugador del evento).skill_usedHop == Nulo;
+        En el suelo(Jugador del evento) == Falso;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, skill_usedHop, Verdadero);
+    }
+}
+
+regla ("Mechanic | All | Bhop Reset") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        En el suelo(Jugador del evento) == Verdadero;
+        Botón presionado(Jugador del evento, Botón(Saltar)) == Falso;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Falso);
+    }
+}
+
+regla ("Mechanic | All | Emote") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Comunica un gesto(Jugador del evento) == Verdadero;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Falso);
+        Si((Jugador del evento).addon_toggle3rdPov);
+            Establecer variable de jugador(Jugador del evento, addon_toggle3rdPov, Falso);
+            Detener cámara(Jugador del evento);
+        Fin;
+        Si((Jugador del evento).ban_emote);
+            Esperar hasta(No(Comunica un gesto(Jugador del evento)), 999999999999);
+            Abortar si((Jugador del evento).toggle_invincible);
+            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   表情留小 ♥ 已禁用!"), Cadena personalizada("   Emote Savehop ♥ is banned!")));
+            Esperar(Falso, Ignorar condición);
+            Llamada a subrutina(CheckpointFailReset);
+    }
+}
+
+regla ("Mechanic | All | Ground Reset") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        En el suelo(Jugador del evento) == Verdadero;
+    }
+    acciones {
+        "All"
+        Establecer variable de jugador(Jugador del evento, skill_usedHop, Nulo);
+        Establecer variable de jugador(Jugador del evento, skill_countBhops, Nulo);
+        "$$ Climb"
+        Establecer variable de jugador(Jugador del evento, skill_usedClimb, Falso);
+        Establecer variable de jugador(Jugador del evento, skill_countMulti, Nulo);
+        Establecer variable de jugador(Jugador del evento, skill_countCreates, Nulo);
+        "$$ Genji"
+        Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
     }
 }
 
@@ -325,7 +1083,7 @@ regla ("Editor | Clear Excess Data to Save Map") {
         Establecer variable global(Name, Nulo);
         Establecer variable global(Code, Nulo);
         Comenzar regla(AddonCheckMap, Hacer nada);
-        Crear texto del HUD(Jugador anfitrión, Cadena personalizada("­"), Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", Cadena personalizada(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", Cadena personalizada("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", Cadena personalizada("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), Cadena personalizada("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", Cadena personalizada("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", Cadena personalizada(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", Cadena personalizada("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", Cadena personalizada("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", Cadena personalizada("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), Arriba, -185, Color(Verde lima), Nulo, Color(Verde lima), Cadena, Visibilidad predeterminada);
+        Crear texto del HUD(Jugador anfitrión, Cadena personalizada("­"), Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", Cadena personalizada(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", Cadena personalizada("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", Cadena personalizada("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), Cadena personalizada("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", Cadena personalizada("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", Cadena personalizada(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", Cadena personalizada("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", Cadena personalizada("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", Cadena personalizada("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), Arriba, -185, Nulo, Nulo, Color(Verde lima), Cadena, Visibilidad predeterminada);
         Establecer variable de jugador según el índice(Jugador anfitrión, editor_saveCache, 2, ID de texto anterior);
         Crear texto del HUD(Jugador anfitrión, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("    > 按互动键关闭当前窗口 <    "), Cadena personalizada("    > Press Interact to close this window <    ")), Nulo, Nulo, Arriba, -183, Color(Verde lima), Nulo, Nulo, Cadena, Visibilidad predeterminada);
         Establecer variable de jugador según el índice(Jugador anfitrión, editor_saveCache, 3, ID de texto anterior);
@@ -383,14 +1141,13 @@ regla ("Editor | Hud and Effects") {
             Crear texto del HUD(If-Then-Else((Jugador anfitrión).toggle_guide, Jugador anfitrión, Nulo), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("球体/传送门上限: {0}/193 ", Agregar(Agregar(Conteo de(Global.TQ), Conteo de(Global.H)), Conteo de(Global.CustomPortalStart))), Cadena personalizada("orb/portal limit: {0}/193 ", Agregar(Agregar(Conteo de(Global.TQ), Conteo de(Global.H)), Conteo de(Global.CustomPortalStart)))), Nulo, Cadena personalizada("                                                                                                                                "), Izquierda, -191, Color(Azul), Nulo, Nulo, Visible para y cadena, Visibilidad predeterminada);
             "display selected cc/orb info"
             Crear texto del HUD(If-Then-Else((Jugador anfitrión).toggle_guide, Jugador anfitrión, Nulo), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), If-Then-Else(Y(No((Jugador anfitrión).editor_modeSelect), Conteo de(Global.A)), Cadena personalizada("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), If-Then-Else(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), <, 2), Matriz vacía, Cadena personalizada("\\n 传送点: {0}", Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero)))), If-Then-Else(Y(Comparar((Jugador anfitrión).editor_modeSelect, ==, 1), Conteo de((Jugador anfitrión).editor_killIndex)), Cadena personalizada("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", Valor en la matriz(Global.H, Global.EditSelected), Valor en la matriz(Global.I, Global.EditSelected)), If-Then-Else(Y(Comparar((Jugador anfitrión).editor_modeSelect, ==, 2), Conteo de((Jugador anfitrión).editor_bounceIndex)), Cadena personalizada("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", Valor en la matriz(Global.TQ, Global.EditSelected), Valor en la matriz(Global.EditMode, Global.EditSelected), Global.EditSelected), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 3), Cadena personalizada("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", If-Then-Else(La matriz contiene(Global.BanMulti, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanCreate, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), Cadena personalizada("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", If-Then-Else(La matriz contiene(Global.BanStand, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanClimb, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), Cadena personalizada("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", If-Then-Else(La matriz contiene(Global.BanDead, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanEmote, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), Cadena personalizada("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", If-Then-Else(La matriz contiene(Global.BanSaveDouble, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanBhop, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía))))), If-Then-Else(Y(Y(Comparar((Jugador anfitrión).editor_modeSelect, ==, 4), La matriz contiene(Matriz((Jugador anfitrión).checkpoint_current, -1), Valor en la matriz(Global.CustomPortalCP, Global.EditSelected))), Conteo de(Global.CustomPortalCP)), Cadena personalizada("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", Valor en la matriz(Global.CustomPortalStart, Global.EditSelected), Valor en la matriz(Global.CustomPortalEndpoint, Global.EditSelected), If-Then-Else(Comparar(Valor en la matriz(Global.CustomPortalCP, Global.EditSelected), <, Nulo), Cadena personalizada("所有"), (Jugador anfitrión).checkpoint_current)), Cadena personalizada("\\n   当前无数据选中   \\n")))))), If-Then-Else(Y(No((Jugador anfitrión).editor_modeSelect), Conteo de(Global.A)), Cadena personalizada("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), If-Then-Else(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), <, 2), Matriz vacía, Cadena personalizada("\\n Teleport: {0}", Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero)))), If-Then-Else(Y(Comparar((Jugador anfitrión).editor_modeSelect, ==, 1), Conteo de((Jugador anfitrión).editor_killIndex)), Cadena personalizada("\\n Selected boundary sphere\\n Vector: {0}\\n radius: {1}\\n  + keep out\\n  - stay in\\n", Valor en la matriz(Global.H, Global.EditSelected), Valor en la matriz(Global.I, Global.EditSelected)), If-Then-Else(Y(Comparar((Jugador anfitrión).editor_modeSelect, ==, 2), Conteo de((Jugador anfitrión).editor_bounceIndex)), Cadena personalizada("\\n Selected Bounce Orb\\n Vector: {0}\\n strength: {1} \\n ID: {2}\\n", Valor en la matriz(Global.TQ, Global.EditSelected), Valor en la matriz(Global.EditMode, Global.EditSelected), Global.EditSelected), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 3), Cadena personalizada("\\n skill bans\\n――――――――――――\\n {0} multi-climb ∞\\n {1} create ♂\\n {2}", If-Then-Else(La matriz contiene(Global.BanMulti, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanCreate, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), Cadena personalizada("{0} stand ♠\\n {1} climb ↑\\n {2}", If-Then-Else(La matriz contiene(Global.BanStand, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanClimb, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), Cadena personalizada("{0} dead X\\n {1} emote ♥\\n {2}", If-Then-Else(La matriz contiene(Global.BanDead, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanEmote, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), Cadena personalizada("{0} save double △\\n――――――――――――\\n {1} require bhop ≥\\n", If-Then-Else(La matriz contiene(Global.BanSaveDouble, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía), If-Then-Else(La matriz contiene(Global.BanBhop, (Jugador anfitrión).checkpoint_current), Cadena personalizada("√"), Matriz vacía))))), If-Then-Else(Y(Y(Comparar((Jugador anfitrión).editor_modeSelect, ==, 4), La matriz contiene(Matriz((Jugador anfitrión).checkpoint_current, -1), Valor en la matriz(Global.CustomPortalCP, Global.EditSelected))), Conteo de(Global.CustomPortalCP)), Cadena personalizada("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", Valor en la matriz(Global.CustomPortalStart, Global.EditSelected), Valor en la matriz(Global.CustomPortalEndpoint, Global.EditSelected), If-Then-Else(Comparar(Valor en la matriz(Global.CustomPortalCP, Global.EditSelected), <, Nulo), Cadena personalizada("All"), (Jugador anfitrión).checkpoint_current)), Cadena personalizada("\\n   No data selected   \\n"))))))), Nulo, Cadena personalizada("                                                                                                                                "), Izquierda, -190, Color(Blanco), Nulo, Color(Naranja), Visible para y cadena, Visibilidad predeterminada);
-            Esperar(Verdadero, Ignorar condición);
             "effects =========================================================================================================================================================================="
             Crear texto dentro del mundo(If-Then-Else(Conteo de(Global.EditSelectIdArray), Verdadero, Nulo), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("选中的实体"), Cadena personalizada("selected")), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 1), Valor en la matriz(Global.H, Global.EditSelected), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 2), Valor en la matriz(Global.TQ, Global.EditSelected), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 4), Valor en la matriz(Global.CustomPortalStart, Global.EditSelected), Nulo))), 1.2, No atravesar, Visible para y posición, Color(Naranja), Visibilidad predeterminada);
             Crear ícono(If-Then-Else(Conteo de(Global.EditSelectIdArray), Verdadero, Nulo), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 1), Valor en la matriz(Global.H, Global.EditSelected), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 2), Valor en la matriz(Global.TQ, Global.EditSelected), If-Then-Else(Comparar((Jugador anfitrión).editor_modeSelect, ==, 4), Valor en la matriz(Global.CustomPortalStart, Global.EditSelected), Nulo))), Flecha: Hacia abajo, Visible para y posición, Color(Blanco), Verdadero);
             "Purple sphere for teleport location"
-            Crear efecto(If-Then-Else(Y(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), >, 1), No((Jugador anfitrión).editor_modeSelect)), Verdadero, Nulo), Esfera, Color(Morado), Restar(Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero), Multiplicar(0.1, Arriba)), 0.2, Visible para posición y radio);
+            Crear efecto(If-Then-Else(Y(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), >, 1), No((Jugador anfitrión).editor_modeSelect)), Jugador anfitrión, Nulo), Esfera, Color(Morado), Restar(Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero), Multiplicar(0.1, Arriba)), 0.2, Visible para posición y radio);
             "Teleport text"
-            Crear texto dentro del mundo(If-Then-Else(Y(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), >, 1), No((Jugador anfitrión).editor_modeSelect)), Verdadero, Nulo), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("传送点位置"), Cadena personalizada("teleporter location")), Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero), 1.6, No atravesar, Visible para posición y cadena, Color(Azul cielo), Visibilidad predeterminada);
+            Crear texto dentro del mundo(If-Then-Else(Y(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), >, 1), No((Jugador anfitrión).editor_modeSelect)), Jugador anfitrión, Nulo), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("传送点位置"), Cadena personalizada("teleporter location")), Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero), 1.6, No atravesar, Visible para posición y cadena, Color(Azul cielo), Visibilidad predeterminada);
             "normal cp if teleport"
             Crear efecto(If-Then-Else(Y(Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero), No((Jugador anfitrión).editor_modeSelect)), Jugador anfitrión, Nulo), Anillo, Color(Naranja), Primero de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), Verdadero, Visible para posición y radio);
             Crear texto dentro del mundo(If-Then-Else(Y(Valor en la matriz(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), Verdadero), No((Jugador anfitrión).editor_modeSelect)), Jugador anfitrión, Nulo), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("检查点位置"), Cadena personalizada("level location")), Primero de(Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current)), 1.6, No atravesar, Visible para posición y cadena, Color(Azul cielo), Visibilidad predeterminada);
@@ -1334,7 +2091,8 @@ regla ("Command | Restart Run (Crouch + Interact + Deflect)") {
         Esperar(Global.CompMode, Ignorar condición);
         "eventPlayer.allowButton(Button.ABILITY_1)"
         Establecer variable de jugador(Jugador del evento, lockState, Falso);
-        Esperar(0.032, Ignorar condición);
+        "Anti spam"
+        Esperar(0.096, Ignorar condición);
     }
 }
 
@@ -1403,7 +2161,7 @@ regla ("Command | Toggle Invincible Mode (Melee + Reload)") {
             Llamada a subrutina(TimerPause);
             Detener seguimiento de variable de jugador(Jugador del evento, timer_practice);
             Comenzar regla(CheckUlt, Reiniciar regla);
-            Comenzar regla(CheckDash, Reiniciar regla);
+            Comenzar regla(CheckAbility1, Reiniciar regla);
         Si no;
             Si((Jugador del evento).toggle_practice);
                 Mensaje grande(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("练习模式"), Cadena personalizada("Practice mode")));
@@ -1416,7 +2174,8 @@ regla ("Command | Toggle Invincible Mode (Melee + Reload)") {
             Fin;
         Fin;
         Establecer variable de jugador(Jugador del evento, lockState, Falso);
-        Esperar(0.032, Ignorar condición);
+        "Anti spam"
+        Esperar(0.096, Ignorar condición);
     }
 }
 
@@ -1462,7 +2221,8 @@ regla ("Command | Toggle Practice Mode (Melee + Ultimate)") {
             Fin;
         Fin;
         Establecer variable de jugador(Jugador del evento, lockState, Falso);
-        Esperar(0.032, Ignorar condición);
+        "Anti spam"
+        Esperar(0.096, Ignorar condición);
     }
 }
 
@@ -1525,7 +2285,8 @@ regla ("Command | Skip (Crouch + Primary-Next | Secondary-Previous)") {
         Establecer variable de jugador(Jugador del evento, checkpoint_moved, Verdadero);
         Llamada a subrutina(UpdateCache);
         Llamada a subrutina(CheckpointFailReset);
-        Esperar(Falso, Ignorar condición);
+        "Anti spam"
+        Esperar(0.064, Ignorar condición);
         "faster if you spam button"
         Esperar hasta(Comparar(Botón presionado(Jugador del evento, Botón(Disparo principal)), ==, Botón presionado(Jugador del evento, Botón(Disparo secundario))), 0.256);
         Repetir si la condición es verdadera;
@@ -1571,7 +2332,7 @@ regla ("Command | Toggle Hud (Hold Secondary)") {
         Y(Y((Jugador del evento).editor_on, Comparar(Jugador del evento, ==, Jugador anfitrión)), Botón presionado(Jugador del evento, Botón(Melé))) == Falso;
         Botón presionado(Jugador del evento, Botón(Disparo secundario)) == Verdadero;
         Botón presionado(Jugador del evento, Botón(Disparo principal)) == Falso;
-        "don't trigger during skipping"
+        "don't activate during skipping"
         Botón presionado(Jugador del evento, Botón(Agacharse)) == Falso;
     }
     acciones {
@@ -1621,680 +2382,6 @@ regla ("Command | Toggle 3rd Person Camera (Hold Crouch + Jump)") {
     }
 }
 
-regla ("<tx0C00000000001344> General <tx0C00000000001344>") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("General | SUB Update Effect Cache") {
-    evento {
-        Subrutina;
-        UpdateCache;
-    }
-    acciones {
-        "note: if adding cp pos to cache, make sure to also adjust editor things like move and teleport"
-        Establecer variable de jugador(Jugador del evento, cache_bouncePosition, Matriz filtrada(Global.TQ, Comparar(Valor en la matriz(Global.pinballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current)));
-        "eventPlayer.cache_bounceLocks = [_ for _, i in BounceToggleLock if BouncePadCheckpoints[i] == eventPlayer.checkpoint_current and _]\\neventPlayer.cache_bounceMaxLocks = len([_ for _ in eventPlayer.cache_bounceLocks if _])"
-        Establecer variable de jugador(Jugador del evento, cache_bounceMaxLocks, Conteo de(Matriz filtrada(Global.BounceToggleLock, Y(Comparar(Valor en la matriz(Global.pinballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Elemento de matriz actual))));
-        Establecer variable de jugador(Jugador del evento, cache_killPosition, Matriz filtrada(Global.H, Comparar(Valor en la matriz(Global.killballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current)));
-        Establecer variable de jugador(Jugador del evento, cache_killRadii, Matriz filtrada(Global.I, Comparar(Valor en la matriz(Global.killballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current)));
-        Establecer variable de jugador(Jugador del evento, cache_portalStart, Matriz filtrada(Global.CustomPortalStart, O(Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), <, Nulo))));
-        Establecer variable de jugador(Jugador del evento, cache_portalEnd, Matriz filtrada(Global.CustomPortalEndpoint, O(Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Valor en la matriz(Global.CustomPortalCP, Índice de matriz actual), <, Nulo))));
-        Establecer variable de jugador(Jugador del evento, checkpoint_notLast, Y(Comparar((Jugador del evento).checkpoint_current, <, Restar(Conteo de(Global.A), Verdadero)), Comparar(Conteo de(Global.A), >, 1)));
-        Establecer variable de jugador(Jugador del evento, toggle_hints, Falso);
-        Establecer variable de jugador(Jugador del evento, banString, Matriz vacía);
-        Esperar(Falso, Ignorar condición);
-        Si((Jugador del evento).checkpoint_notLast);
-            Establecer variable de jugador(Jugador del evento, ban_multi, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Multiclimb - 封禁蹭留"), Falso, 1), La matriz contiene(Global.BanMulti, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_multi);
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("∞ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_create, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Createbhop - 封禁卡小"), Falso, 2), La matriz contiene(Global.BanCreate, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_create);
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("♂ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_standcreate, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban standcreate - 封禁站卡"), Falso, 3), La matriz contiene(Global.BanStand, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_standcreate);
-                "≥  √ ▼ ↓"
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("♠ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_dead, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Deathbhop - 封禁死小"), Falso, 4), La matriz contiene(Global.BanDead, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_dead);
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("X {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_emote, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Emote Savehop - 封禁表情留小"), Falso, 5), La matriz contiene(Global.BanEmote, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_emote);
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("♥ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_climb, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban Wallclimb - 封禁爬墙"), Falso, 6), La matriz contiene(Global.BanClimb, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_climb);
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("↑ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_savedouble, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("ban save double - 封禁延二段跳"), Falso, 7), La matriz contiene(Global.BanSaveDouble, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_savedouble);
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("△ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_bhop, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("require bhop available - 留小跳进点 "), Falso, 8), La matriz contiene(Global.BanBhop, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_bhop);
-                "≥  √ ▼ ↓"
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("≥ {0}", (Jugador del evento).banString));
-            Fin;
-            Establecer variable de jugador(Jugador del evento, ban_djump, O(Alternado de configuración del Workshop(Cadena personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), Cadena personalizada("require djump available - 留二段跳 "), Falso, 9), La matriz contiene(Global.BanDjump, (Jugador del evento).checkpoint_current)));
-            Si((Jugador del evento).ban_djump);
-                "≥  √ ▼ ↓ ︽"
-                Establecer variable de jugador(Jugador del evento, banString, Cadena personalizada("» {0}", (Jugador del evento).banString));
-            Fin;
-        Si no;
-            Establecer variable de jugador(Jugador del evento, ban_multi, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_create, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_standcreate, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_dead, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_emote, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_climb, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_savedouble, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_bhop, Falso);
-            Establecer variable de jugador(Jugador del evento, ban_djump, Falso);
-        Fin;
-        Esperar(Falso, Ignorar condición);
-        Comenzar regla(CheckUlt, Reiniciar regla);
-        Comenzar regla(CheckDash, Reiniciar regla);
-        Abortar si(O(Comparar(Jugador del evento, !=, Jugador anfitrión), No((Jugador del evento).editor_on)));
-        Llamada a subrutina(EditUpdateSelectedIds);
-        Destruir efecto((Jugador anfitrión).editor_hitboxEffect);
-        Crear efecto(If-Then-Else((Jugador anfitrión).editor_hitboxToggle, Jugador anfitrión, Nulo), Esfera, Color(Blanco), Valor en la matriz(Global.A, (Jugador anfitrión).checkpoint_current), 1.4, Visible para posición y radio);
-        Establecer variable de jugador(Jugador anfitrión, editor_hitboxEffect, Última entidad creada);
-        Crear efecto(If-Then-Else(Y((Jugador anfitrión).editor_hitboxToggle, (Jugador anfitrión).checkpoint_notLast), Jugador anfitrión, Nulo), Esfera, Color(Blanco), Valor en la matriz(Global.A, Agregar((Jugador anfitrión).checkpoint_current, Verdadero)), 1.4, Visible para posición y radio);
-        Modificar variable de jugador(Jugador anfitrión, editor_hitboxEffect, Anexar a la matriz, Última entidad creada);
-        Establecer variable de jugador(Jugador anfitrión, editor_bounceIndex, Matriz filtrada(Matriz mapeada(Global.pinballnumber, If-Then-Else(Comparar(Elemento de matriz actual, ==, (Jugador anfitrión).checkpoint_current), Índice de matriz actual, -1)), Comparar(Elemento de matriz actual, >=, Nulo)));
-        Establecer variable de jugador(Jugador anfitrión, editor_killIndex, Matriz filtrada(Matriz mapeada(Global.killballnumber, If-Then-Else(Comparar(Elemento de matriz actual, ==, (Jugador anfitrión).checkpoint_current), Índice de matriz actual, -1)), Comparar(Elemento de matriz actual, >=, Nulo)));
-        Si((Jugador anfitrión).checkpoint_moved);
-            Llamada a subrutina(EditorSelectLast);
-            Establecer variable de jugador(Jugador anfitrión, checkpoint_moved, Falso);
-        Fin;
-    }
-}
-
-regla ("General | SUB Delete Save") {
-    evento {
-        Subrutina;
-        DeleteSave;
-    }
-    acciones {
-        Modificar variable global(SaveName, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
-        Modificar variable global(SaveCp, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
-        Modificar variable global(SaveTimer, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
-        Modificar variable global(SaveElapsed, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
-        "must always be last because its the index itself"
-        Modificar variable global(SaveEnt, Eliminar de la matriz por índice, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento));
-    }
-}
-
-regla ("General | SUB Make Save") {
-    evento {
-        Subrutina;
-        MakeSave;
-    }
-    acciones {
-        Modificar variable global(SaveEnt, Anexar a la matriz, Jugador del evento);
-        Modificar variable global(SaveName, Anexar a la matriz, Separación de cadena(Primero de(Jugador del evento), Matriz vacía));
-        Modificar variable global(SaveCp, Anexar a la matriz, (Jugador del evento).checkpoint_current);
-        Modificar variable global(SaveTimer, Anexar a la matriz, (Jugador del evento).timer_normal);
-        Modificar variable global(SaveElapsed, Anexar a la matriz, Tiempo total transcurrido);
-    }
-}
-
-regla ("General | SUB Timer Pause") {
-    evento {
-        Subrutina;
-        TimerPause;
-    }
-    acciones {
-        Detener seguimiento de variable de jugador(Jugador del evento, timer_normal);
-        Abortar si(No(La matriz contiene(Global.SaveEnt, Jugador del evento)));
-        Establecer variable global según el índice(SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), (Jugador del evento).timer_normal);
-        Establecer variable global según el índice(SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), Nulo);
-    }
-}
-
-regla ("General | SUB Timer Resume") {
-    evento {
-        Subrutina;
-        TimerResume;
-    }
-    acciones {
-        Seguir variable de jugador según la tasa(Jugador del evento, timer_normal, 999999999999, Verdadero, Ninguno);
-        Establecer variable global según el índice(SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), Tiempo total transcurrido);
-    }
-}
-
-regla ("General | SUB Leaderboard Update") {
-    evento {
-        Subrutina;
-        LeaderboardUpdate;
-    }
-    acciones {
-        "[[name, seconds, prettytime]]\\nyou already have a time"
-        Si(La matriz contiene(Matriz mapeada(Global.LeaderBoardFull, Primero de(Elemento de matriz actual)), Separación de cadena(Primero de(Jugador del evento), Matriz vacía)));
-            Abortar si(Comparar((Jugador del evento).timer_normal, >=, Valor en la matriz(Primero de(Matriz filtrada(Global.LeaderBoardFull, Comparar(Primero de(Elemento de matriz actual), ==, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)))), Verdadero)));
-            Establecer variable global(LeaderBoardFull, Matriz filtrada(Global.LeaderBoardFull, Comparar(Primero de(Elemento de matriz actual), !=, Separación de cadena(Primero de(Jugador del evento), Matriz vacía))));
-        Si no si(O(Comparar(Conteo de(Global.LeaderBoardFull), <, 25), Comparar((Jugador del evento).timer_normal, <, Último de(Valor en la matriz(Global.LeaderBoardFull, 19)))));
-            Modificar variable global(LeaderBoardFull, Eliminar de la matriz por índice, 24);
-        Si no;
-            "Full and time too slow"
-            Abortar;
-        Fin;
-        Modificar variable global(LeaderBoardFull, Anexar a la matriz, Matriz(Matriz(Separación de cadena(Primero de(Jugador del evento), Matriz vacía), (Jugador del evento).timer_normal, Cadena personalizada("{0} sec", (Jugador del evento).timer_normal))));
-        "CreateLeaderboard()"
-        Establecer variable global(LeaderBoardRemake, Verdadero);
-    }
-}
-
-regla ("General | SUB Checkpoint Fail") {
-    evento {
-        Subrutina;
-        CheckpointFailReset;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, timer_split, If-Then-Else((Jugador del evento).toggle_practice, (Jugador del evento).timer_practice, (Jugador del evento).timer_normal));
-        Establecer variable de jugador(Jugador del evento, cache_collectedLocks, Matriz vacía);
-        Cancelar acción primaria(Jugador del evento);
-        Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
-        Si(No(O((Jugador del evento).checkpoint_current, (Jugador del evento).toggle_practice)));
-            Establecer variable de jugador(Jugador del evento, timer_normal, Nulo);
-            Establecer variable de jugador(Jugador del evento, timer_split, Nulo);
-        Fin;
-        Si(Conteo de(Global.A));
-            Si(Y(Está utilizando la habilidad 1(Jugador del evento), Global.DashExploitToggle));
-                "smallMessage(eventPlayer,\\"   0关卡Shift已禁用!\\" checkCN \\"   Dash Start is banned!\\")"
-                Comenzar a forzar la posición del jugador(Jugador del evento, Jugador del evento, Falso);
-                Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Global.DashExploitToggle);
-                Dejar de forzar la posición del jugador(Jugador del evento);
-            Fin;
-            Transportar(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current)));
-            "After teleport incase stopForcingPosition launches the player"
-            Aplicar impulso(Jugador del evento, Multiplicar(-1, Rapidez de(Jugador del evento)), 1.192093e-7, Al mundo, Cancelar movimiento contrario XYZ);
-            "old: disallow jump > 0.1 sec wait > allow jump, this method bugs with ult check disabling ultimate for some reason\\nif eventPlayer.ban_dead or eventPlayer.ban_emote and eventPlayer.isHoldingButton(Button.JUMP):"
-            Si((Jugador del evento).ban_dead);
-                Si(Botón presionado(Jugador del evento, Botón(Saltar)));
-                    Presionar botón(Jugador del evento, Botón(Saltar));
-                Fin;
-            Si no;
-                "Reset Hop"
-                Establecer estado(Jugador del evento, Nulo, Arraigado, 0.096);
-            Fin;
-            Si(Está usando la habilidad máxima(Jugador del evento));
-                Establecer daño recibido(Jugador del evento, 100);
-                Matar(Jugador del evento, Nulo);
-                Establecer daño recibido(Jugador del evento, 0);
-                Esperar(Falso, Ignorar condición);
-            Fin;
-        Fin;
-        Comenzar regla(CheckUlt, Reiniciar regla);
-        Comenzar regla(CheckDash, Reiniciar regla);
-        Llamada a subrutina(AddonCustomLoadAndReset);
-    }
-}
-
-regla ("General | SUB Start Game") {
-    evento {
-        Subrutina;
-        StartGame;
-    }
-    acciones {
-        Si(Y(Global.CompMode, O(Comparar(Global.CompTime, <, 1), (Jugador del evento).comp_done)));
-            Establecer variable de jugador(Jugador del evento, toggle_leaderboard, Verdadero);
-            Establecer variable de jugador(Jugador del evento, comp_done, Verdadero);
-            "eventPlayer.disableRespawn()"
-            Establecer daño recibido(Jugador del evento, 100);
-            Matar(Jugador del evento, Nulo);
-            Establecer daño recibido(Jugador del evento, 0);
-            Abortar;
-        Fin;
-        Si(Conteo de(Global.A));
-            "load saved progres"
-            Si(La matriz contiene(Global.SaveName, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)));
-                Establecer variable global según el índice(SaveEnt, Índice del valor de la matriz(Global.SaveName, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)), Jugador del evento);
-                Establecer variable de jugador(Jugador del evento, checkpoint_current, Valor en la matriz(Global.SaveCp, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)));
-                Establecer variable de jugador(Jugador del evento, timer_normal, Valor en la matriz(Global.SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)));
-            Si no;
-                Establecer variable de jugador(Jugador del evento, checkpoint_current, Nulo);
-                Establecer variable de jugador(Jugador del evento, timer_normal, Nulo);
-                Llamada a subrutina(MakeSave);
-            Fin;
-            Llamada a subrutina(UpdateTitle);
-            Llamada a subrutina(UpdateCache);
-            Llamada a subrutina(CheckpointFailReset);
-            "FFA"
-            Esperar hasta(Partida en curso, 999999999999);
-            Llamada a subrutina(TimerResume);
-        Fin;
-        "eventPlayer.enableRespawn()"
-        Establecer variable de jugador(Jugador del evento, toggle_invincible, Falso);
-        Establecer variable de jugador(Jugador del evento, toggle_spectate, Falso);
-        Establecer variable de jugador(Jugador del evento, checkpoint_moved, Verdadero);
-    }
-}
-
-regla ("General | Setup & Variables") {
-    evento {
-        En curso - Global;
-    }
-    acciones {
-        Desactivar registro de Inspector;
-        Deshabilitar la finalización integrada del modo de juego;
-        Deshabilitar el sistema de puntuación integrado del modo de juego;
-        Deshabilitar la música integrada del modo de juego;
-        Deshabilitar el presentador integrado del modo de juego;
-        Comenzar a forzar cuarto de reaparición(Todos los equipos, Falso);
-        Comenzar a forzar cuarto de reaparición(Todos los equipos, 1);
-        Comenzar a forzar cuarto de reaparición(Todos los equipos, 2);
-        "wait for map data rule"
-        Esperar(0.24, Ignorar condición);
-        "fix team because of naming"
-        Si(Comparar(Valor en la matriz(Global.ColorConfig, 16), ==, Color(Equipo 1)));
-            Establecer variable global según el índice(ColorConfig, 16, Color(Azul));
-        Si no si(Comparar(Valor en la matriz(Global.ColorConfig, 16), ==, Color(Equipo 2)));
-            Establecer variable global según el índice(ColorConfig, 16, Color(Rojo));
-        Fin;
-        "prevent same color lock orbs"
-        Si(Comparar(Valor en la matriz(Global.ColorConfig, 15), ==, Valor en la matriz(Global.ColorConfig, 16)));
-            Establecer variable global según el índice(ColorConfig, 16, If-Then-Else(Comparar(Valor en la matriz(Global.ColorConfig, 15), ==, Color(Naranja)), Color(Verde), Color(Naranja)));
-        Fin;
-        "prevent same color bhop/climb used/unused"
-        Si(Comparar(Valor en la matriz(Global.ColorConfig, 7), ==, Valor en la matriz(Global.ColorConfig, 8)));
-            Establecer variable global según el índice(ColorConfig, 8, If-Then-Else(Comparar(Valor en la matriz(Global.ColorConfig, 7), ==, Color(Rojo)), Color(Naranja), Color(Rojo)));
-        Fin;
-        Establecer variable global(SaveName, Matriz vacía);
-        Establecer variable global(SaveCp, Matriz vacía);
-        Establecer variable global(SaveTimer, Matriz vacía);
-        Establecer variable global(SaveEnt, Matriz vacía);
-        "SavePauseTime = []\\nSavePauseEnabled = []"
-        Establecer variable global(SaveElapsed, Matriz vacía);
-        Establecer variable global(Dao, If-Then-Else(Conteo de(Global.Dao), Matriz filtrada(Global.Dao, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(SHIFT, If-Then-Else(Conteo de(Global.SHIFT), Matriz filtrada(Global.SHIFT, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(pinballnumber, If-Then-Else(Conteo de(Global.pinballnumber), Global.pinballnumber, Matriz vacía));
-        Establecer variable global(A, If-Then-Else(Conteo de(Global.A), Global.A, Matriz vacía));
-        Establecer variable global(A, If-Then-Else(Conteo de(Global.A), Global.A, Matriz vacía));
-        Establecer variable global(killballnumber, If-Then-Else(Conteo de(Global.killballnumber), Global.killballnumber, Matriz vacía));
-        Establecer variable global(H, If-Then-Else(Conteo de(Global.H), Global.H, Matriz vacía));
-        Establecer variable global(I, If-Then-Else(Conteo de(Global.I), Global.I, Matriz vacía));
-        Establecer variable global(K, If-Then-Else(Conteo de(Global.K), Global.K, Matriz vacía));
-        Establecer variable global(TQ, If-Then-Else(Conteo de(Global.TQ), Global.TQ, Matriz vacía));
-        Establecer variable global(TQ2, If-Then-Else(Conteo de(Global.TQ2), Global.TQ2, Matriz vacía));
-        Establecer variable global(EditMode, If-Then-Else(Conteo de(Global.EditMode), Global.EditMode, Matriz vacía));
-        Establecer variable global(TQ5, If-Then-Else(Conteo de(Global.TQ5), Global.TQ5, Matriz vacía));
-        Establecer variable global(TQ6, If-Then-Else(Conteo de(Global.TQ6), Global.TQ6, Matriz vacía));
-        Establecer variable global(BounceToggleLock, If-Then-Else(Conteo de(Global.BounceToggleLock), Global.BounceToggleLock, Matriz vacía));
-        Establecer variable global(CustomPortalStart, If-Then-Else(Conteo de(Global.CustomPortalStart), Global.CustomPortalStart, Matriz vacía));
-        Establecer variable global(CustomPortalEndpoint, If-Then-Else(Conteo de(Global.CustomPortalEndpoint), Global.CustomPortalEndpoint, Matriz vacía));
-        Establecer variable global(CustomPortalCP, If-Then-Else(Conteo de(Global.CustomPortalCP), Global.CustomPortalCP, Matriz vacía));
-        Establecer variable global(LeaderBoardFull, Matriz vacía);
-        Establecer variable global(TitleData, Nulo);
-        Establecer variable global(HintCp, Matriz vacía);
-        Establecer variable global(HintText, Matriz vacía);
-        "clean out -1's after the ban has loaded"
-        Establecer variable global(BanBhop, If-Then-Else(Conteo de(Global.BanBhop), Matriz filtrada(Global.BanBhop, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(BanClimb, If-Then-Else(Conteo de(Global.BanClimb), Matriz filtrada(Global.BanClimb, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(BanEmote, If-Then-Else(Conteo de(Global.BanEmote), Matriz filtrada(Global.BanEmote, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(BanDead, If-Then-Else(Conteo de(Global.BanDead), Matriz filtrada(Global.BanDead, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(BanCreate, If-Then-Else(Conteo de(Global.BanCreate), Matriz filtrada(Global.BanCreate, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(BanMulti, If-Then-Else(Conteo de(Global.BanMulti), Matriz filtrada(Global.BanMulti, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        "BanTriple = [i for i in BanTriple if i + false >= 0] if len(BanTriple) else [] # legacy code, now auto sets it to null to save space"
-        Establecer variable global(BanStand, If-Then-Else(Conteo de(Global.BanStand), Matriz filtrada(Global.BanStand, Comparar(Agregar(Elemento de matriz actual, Falso), >=, Nulo)), Matriz vacía));
-        Establecer variable global(BanSaveDouble, If-Then-Else(Conteo de(Global.BanSaveDouble), Global.BanSaveDouble, Matriz vacía));
-        Establecer variable global(BanDjump, If-Then-Else(Conteo de(Global.BanDjump), Global.BanDjump, Matriz vacía));
-        "Check if old map forces ban off"
-        Si(Conteo de(Global.DashExploitToggle));
-            "DashExploitToggle = createWorkshopSetting(bool, \\"Ban (applies to all levels)\\\\n封禁(应用于所有关卡)\\", \\"ban Dash Start - 0关卡Shift\\", true, 2)"
-            Establecer variable global(DashExploitToggle, Nulo);
-        Fin;
-        Si(Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("Basic Map Validator - 验证地图"), Verdadero, 3));
-            Comenzar regla(AddonCheckMap, Hacer nada);
-        Fin;
-        Establecer variable global(PortalOn, Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), Verdadero, 4));
-        Establecer variable global(CompMode, Alternado de configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("Turn on competitive mode - 开启竞赛模式"), Falso, 100));
-        Si(Global.CompMode);
-            "-! comp minutes !-\\n5-240"
-            Establecer variable global(CompTime, Número entero de la configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
-            "-! comp attempt count !-"
-            Establecer variable global(CompAtmpNum, Número entero de la configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("attempt count - 尝试次数"), 5, 0, 500, 102));
-            "-! comp restartlimiter !-"
-            Establecer variable global(CompRestartLimit, Alternado de configuración del Workshop(Cadena personalizada("Competitive mode\\n竞赛模式"), Cadena personalizada("disable restart during run - 竞赛中禁用重新开始"), Falso, 103));
-        Si no;
-            Establecer variable global(instructiontext, Nulo);
-    }
-}
-
-regla ("General | Match time") {
-    evento {
-        En curso - Global;
-    }
-    acciones {
-        Si(Comparar(Modo de juego actual, !=, Modo de juego(Escaramuza)));
-            "0.25"
-            Esperar(Falso, Ignorar condición);
-            "1"
-            Establecer tiempo de la partida(Falso);
-            "1.1"
-            Esperar(Falso, Ignorar condición);
-            "1"
-            Establecer tiempo de la partida(Falso);
-            "1.1"
-            Esperar(Falso, Ignorar condición);
-        Fin;
-        Establecer tiempo de la partida(70);
-        Pausar tiempo de la partida;
-        Esperar(Falso, Ignorar condición);
-        Establecer variable global(TimeRemaining, 265);
-        Mientras(O(Global.TimeRemaining, (Jugador anfitrión).editor_on));
-            Esperar(60, Ignorar condición);
-            Modificar variable global(TimeRemaining, Restar, Verdadero);
-            Si(Global.CompMode);
-                Modificar variable global(CompTime, Restar, Verdadero);
-                Si(No(Global.CompTime));
-                    Mensaje grande(Primero de(Verdadero), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("时间到了"), Cadena personalizada("time's up")));
-                    Establecer variable de jugador(Todos los jugadores(Todos los equipos), comp_done, Verdadero);
-                    Detener seguimiento de variable de jugador(Todos los jugadores(Todos los equipos), timer_normal);
-                    "getAllPlayers().disableRespawn()"
-                    Establecer daño recibido(Todos los jugadores(Todos los equipos), 100);
-                    Matar(Todos los jugadores(Todos los equipos), Nulo);
-                Fin;
-            Fin;
-        Fin;
-        Mensaje grande(Primero de(Verdadero), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("房间已达最大持续时间, 即将重启"), Cadena personalizada("maximum lobby time elapsed, restarting")));
-        Esperar(5, Ignorar condición);
-        "Prevent crash during POTG and closing lobby"
-        Establecer variable de jugador(Todos los jugadores(Todos los equipos), lockState, Verdadero);
-        Declarar victoria del jugador(Jugador anfitrión);
-        Declarar la victoria del equipo(Equipo de(Jugador anfitrión));
-    }
-}
-
-regla ("General | Player Initialize") {
-    evento {
-        El jugador se unió a la partida;
-        Todos;
-        Todos;
-    }
-    acciones {
-        "Turn Editor On"
-        Establecer variable de jugador(Jugador del evento, editor_on, Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("Editor mode - 作图模式"), Falso, -1));
-        Deshabilitar HUD del modo de juego(Jugador del evento);
-        Deshabilitar colisión de movimiento con jugadores(Jugador del evento);
-        Establecer daño recibido(Jugador del evento, 0);
-        Establecer variable de jugador(Jugador del evento, lockState, Verdadero);
-        Abortar si(Robot de entrenamiento(Jugador del evento));
-        Habilitar la observación de todos los jugadores como espectador muerto(Jugador del evento);
-        Habilitar la observación del HUD objetivo como espectador muerto(Jugador del evento);
-        Deshabilitar la reaparición integrada del modo de juego(Jugador del evento);
-        Precargar héroe(Jugador del evento, Héroe(Genji));
-        Establecer variable de jugador(Jugador del evento, editor_lock, Verdadero);
-        Establecer variable de jugador(Jugador del evento, toggle_guide, Verdadero);
-        Establecer variable de jugador(Jugador del evento, cache_bounceTouched, -1);
-        "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
-        Esperar(Verdadero, Ignorar condición);
-        Crear efecto(Jugador del evento, Anillo, Valor en la matriz(Global.ColorConfig, 9), Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current)), Verdadero, Posición y radio);
-        Crear efecto(If-Then-Else((Jugador del evento).checkpoint_notLast, Jugador del evento, Nulo), Anillo, Valor en la matriz(Global.ColorConfig, 10), Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero)), Verdadero, Visible para posición y radio);
-        Crear efecto(If-Then-Else((Jugador del evento).checkpoint_notLast, Jugador del evento, Nulo), Haz de luz, Valor en la matriz(Global.ColorConfig, 11), Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero)), Verdadero, Visible para posición y radio);
-        Crear ícono(If-Then-Else((Jugador del evento).checkpoint_notLast, Jugador del evento, Nulo), Agregar(Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero)), Arriba), Flecha: Hacia abajo, Visible para y posición, Valor en la matriz(Global.ColorConfig, 12), Verdadero);
-        Esperar hasta(Ha aparecido(Jugador del evento), 999999999999);
-        Establecer variable de jugador(Jugador del evento, editor_lock, Falso);
-        Si(Global.CompMode);
-            Establecer invisibilidad(Jugador del evento, Todos);
-            Si(La matriz contiene(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)));
-                Establecer variable de jugador(Jugador del evento, comp_countAttempts, Valor en la matriz(Global.CompAtmpSaveCount, Índice del valor de la matriz(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía))));
-            "instructions and settings for comp start"
-            Si no;
-                Establecer variable de jugador(Jugador del evento, comp_instructionHud, Verdadero);
-                Modificar variable global(CompAtmpSaveNames, Anexar a la matriz, Separación de cadena(Primero de(Jugador del evento), Matriz vacía));
-                Modificar variable global(CompAtmpSaveCount, Anexar a la matriz, 1);
-                Establecer variable de jugador(Jugador del evento, comp_countAttempts, 1);
-                Establecer velocidad de movimiento(Jugador del evento, Falso);
-                Establecer habilidad 1 habilitada(Jugador del evento, Falso);
-                Establecer habilidad máxima habilitada(Jugador del evento, Falso);
-                Esperar hasta(No(Botón presionado(Jugador del evento, Botón(Interactuar))), Verdadero);
-                Esperar hasta(O(Botón presionado(Jugador del evento, Botón(Interactuar)), Comparar(Global.CompTime, <, 1)), 999999999999);
-                Establecer velocidad de movimiento(Jugador del evento, 100);
-                Establecer variable de jugador(Jugador del evento, comp_instructionHud, Falso);
-            Fin;
-            Si(O(Comparar((Jugador del evento).comp_countAttempts, <, Nulo), Comparar(Global.CompTime, <, 1)));
-                Establecer variable de jugador(Jugador del evento, comp_done, Verdadero);
-            Fin;
-        Fin;
-        Esperar(Falso, Ignorar condición);
-        "initialization of the game"
-        Llamada a subrutina(StartGame);
-        Establecer variable de jugador(Jugador del evento, lockState, Falso);
-    }
-}
-
-regla ("General | Player Leaves") {
-    evento {
-        El jugador abandonó la partida;
-        Todos;
-        Todos;
-    }
-    acciones {
-        Si(Valor en la matriz(Global.SaveCp, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)));
-            Si(Y(Comparar(Valor en la matriz(Global.SaveCp, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento)), <, Restar(Conteo de(Global.A), Verdadero)), Valor en la matriz(Global.SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento))));
-                Establecer variable global según el índice(SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento), Agregar(Restar(Tiempo total transcurrido, Valor en la matriz(Global.SaveElapsed, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento))), Valor en la matriz(Global.SaveTimer, Índice del valor de la matriz(Global.SaveEnt, Jugador del evento))));
-            Fin;
-        "delete if player didnt do first cp"
-        Si no;
-            Llamada a subrutina(DeleteSave);
-    }
-}
-
-regla ("General | Ground: Traces, Arrive, & Reset") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        (Jugador del evento).lockState == Falso;
-        En el suelo(Jugador del evento) == Verdadero;
-        Está vivo(Jugador del evento) == Verdadero;
-    }
-    acciones {
-        Si(No((Jugador del evento).checkpoint_notLast));
-            Si(Y(En movimiento(Jugador del evento), No(O(O(O((Jugador del evento).toggle_practice, (Jugador del evento).toggle_invisible), (Jugador del evento).editor_on), Global.CompMode))));
-                "traces ----------------------------------------------------------------------------------------------------"
-                Establecer variable de jugador(Jugador del evento, cache_rainbow, Valor en la matriz(Matriz(Color(Rojo), Color(Naranja), Color(Amarillo), Color(Verde lima), Color(Verde), Color(Turquesa), Color(Azul), Color(Morado), Color(Violeta), Color(Rosa)), Módulo(Redondear a número entero(Multiplicar(Tiempo total transcurrido, 2), Abajo), 10)));
-                "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
-                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 0.4);
-                Esperar(0.048, Ignorar condición);
-                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 0.6);
-                Esperar(0.048, Ignorar condición);
-                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 0.8);
-                Esperar(0.048, Ignorar condición);
-                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 1);
-                Esperar(0.048, Ignorar condición);
-                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 1.2);
-                Esperar(0.048, Ignorar condición);
-                Reproducir efecto(Primero de(Verdadero), Explosión en anillo, (Jugador del evento).cache_rainbow, Posición de(Jugador del evento), 1.4);
-                Esperar(0.048, Ignorar condición);
-            Fin;
-        "or eventPlayer.lockState:"
-        Si no si(O((Jugador del evento).toggle_invincible, Y(Global.CompMode, No(Global.CompTime))));
-        Si no si(Comparar(Distancia entre(Jugador del evento, Valor en la matriz(Global.A, Agregar((Jugador del evento).checkpoint_current, Verdadero))), <=, 1.4));
-            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
-            Si(Comparar(Conteo de((Jugador del evento).cache_collectedLocks), <, (Jugador del evento).cache_bounceMaxLocks));
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   ! 进点前需集齐所有收集球 !"), Cadena personalizada("   ! collect ALL {0} orbs to unlock !", Valor en la matriz(Global.ColorConfig, 16))));
-                "kill(eventPlayer, null)"
-                Llamada a subrutina(CheckpointFailReset);
-            Si no si(Y((Jugador del evento).ban_climb, (Jugador del evento).skill_usedClimb));
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   爬墙 ↑ 已禁用!"), Cadena personalizada("   Climb ↑ is banned!")));
-                Llamada a subrutina(CheckpointFailReset);
-            Si no si(Y((Jugador del evento).ban_bhop, (Jugador del evento).skill_usedBhop));
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   ≥ 留小跳进点!"), Cadena personalizada("   ≥ Must have a bhop to complete!")));
-                Llamada a subrutina(CheckpointFailReset);
-            Si no si(Y((Jugador del evento).ban_djump, (Jugador del evento).skill_usedDouble));
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   » 留二段跳!"), Cadena personalizada("   » Must have a double jump to complete!")));
-                Llamada a subrutina(CheckpointFailReset);
-            Si no;
-                Establecer variable de jugador(Jugador del evento, checkpoint_moved, Verdadero);
-                Modificar variable de jugador(Jugador del evento, checkpoint_current, Agregar, Verdadero);
-                Llamada a subrutina(UpdateCache);
-                "remove ult feature disabled for speedruning purposes\\nif eventPlayer.isUsingUltimate() and not eventPlayer.checkpoint_current in BladeEnabledCheckpoints:\\nCheckpointFailReset()\\nteleport cps"
-                Si(Comparar(Conteo de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current)), >, 1));
-                    Llamada a subrutina(CheckpointFailReset);
-                Fin;
-                Si(Comparar((Jugador del evento).timer_splitDisplay, >, -999999999999));
-                    Establecer variable de jugador(Jugador del evento, timer_splitDisplay, Restar(If-Then-Else((Jugador del evento).toggle_practice, (Jugador del evento).timer_practice, (Jugador del evento).timer_normal), (Jugador del evento).timer_split));
-                Fin;
-                Esperar(Falso, Ignorar condición);
-                Reproducir efecto(Jugador del evento, Sonido de explosión en anillo, Color(Blanco), Jugador del evento, 100);
-                Reproducir efecto(If-Then-Else(O(Global.CompMode, (Jugador del evento).toggle_invisible), Jugador del evento, Verdadero), Explosión en anillo, Color(Azul cielo), Agregar(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current), Multiplicar(1.5, Arriba)), 4);
-                "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\")   )"
-                Esperar(Falso, Ignorar condición);
-                Llamada a subrutina(AddonCustomLoadAndReset);
-                Si((Jugador del evento).toggle_practice);
-                    Establecer variable de jugador(Jugador del evento, timer_split, (Jugador del evento).timer_practice);
-                Si no;
-                    Llamada a subrutina(UpdateTitle);
-                    Establecer variable de jugador(Jugador del evento, timer_split, (Jugador del evento).timer_normal);
-                    Llamada a subrutina(DeleteSave);
-                    "complete lvl"
-                    Si(Y(Comparar((Jugador del evento).checkpoint_current, ==, Restar(Conteo de(Global.A), Verdadero)), No((Jugador del evento).editor_on)));
-                        Detener seguimiento de variable de jugador(Jugador del evento, timer_normal);
-                        Esperar(Falso, Ignorar condición);
-                        Mensaje grande(Primero de(Verdadero), Cadena personalizada("{0} {1} {2} sec", Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("已通关! 用时"), Cadena personalizada("Mission complete! Time")), (Jugador del evento).timer_normal));
-                        Llamada a subrutina(LeaderboardUpdate);
-                        Si(Y(Global.CompMode, Global.CompAtmpNum));
-                            Si(Comparar((Jugador del evento).comp_countAttempts, ==, Global.CompAtmpNum));
-                                Establecer variable global según el índice(CompAtmpSaveCount, Índice del valor de la matriz(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)), -1);
-                                Establecer variable de jugador(Jugador del evento, comp_countAttempts, -1);
-                                Establecer variable de jugador(Jugador del evento, comp_done, Verdadero);
-                                Establecer variable de jugador(Jugador del evento, toggle_leaderboard, Verdadero);
-                                "eventPlayer.disableRespawn()"
-                                Establecer daño recibido(Jugador del evento, 100);
-                                Matar(Jugador del evento, Nulo);
-                                Establecer daño recibido(Jugador del evento, 0);
-                            Si no;
-                                Establecer variable global según el índice(CompAtmpSaveCount, Índice del valor de la matriz(Global.CompAtmpSaveNames, Separación de cadena(Primero de(Jugador del evento), Matriz vacía)), Agregar((Jugador del evento).comp_countAttempts, Verdadero));
-                            Fin;
-                        Fin;
-                    "update save"
-                    Si no;
-                        Llamada a subrutina(MakeSave);
-                    Fin;
-                Fin;
-            Fin;
-        Si no si(Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), >, 1.4));
-            Llamada a subrutina(CheckpointFailReset);
-        Fin;
-        Establecer variable de jugador(Jugador del evento, cache_collectedLocks, Matriz vacía);
-        Esperar(0.048, Ignorar condición);
-        Repetir si la condición es verdadera;
-    }
-}
-
-regla ("General | Boundary Sphere") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        (Jugador del evento).cache_killPosition != Matriz vacía;
-        (Jugador del evento).toggle_invincible == Falso;
-        (Jugador del evento).checkpoint_notLast != Falso;
-        Es verdadero para cualquiera((Jugador del evento).cache_killRadii, Comparar(Multiplicar(Normalizar(Elemento de matriz actual), Distancia entre(Valor en la matriz((Jugador del evento).cache_killPosition, Índice de matriz actual), Jugador del evento)), <, Elemento de matriz actual)) == Verdadero;
-    }
-    acciones {
-        Llamada a subrutina(CheckpointFailReset);
-    }
-}
-
-regla ("General | Bounce Ball / Orb") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        (Jugador del evento).cache_bouncePosition != Matriz vacía;
-        "@Condition eventPlayer.checkpoint_notLast # disabled coz editor"
-        Es verdadero para cualquiera((Jugador del evento).cache_bouncePosition, Comparar(Distancia entre(Elemento de matriz actual, Agregar(Posición de(Jugador del evento), Multiplicar(0.7, Arriba))), <, 1.4)) == Verdadero;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, cache_bounceTouched, Índice del valor de la matriz(Global.TQ, Matriz filtrada(Global.TQ, Y(Y(Y(Comparar(Valor en la matriz(Global.pinballnumber, Índice de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Índice de matriz actual, !=, (Jugador del evento).cache_bounceTouched)), No(La matriz contiene((Jugador del evento).cache_collectedLocks, Índice de matriz actual))), Comparar(Distancia entre(Agregar(Jugador del evento, Multiplicar(0.7, Arriba)), Elemento de matriz actual), <, 1.4)))));
-        "prevent same one trigering twice in a row"
-        Si(Comparar((Jugador del evento).cache_bounceTouched, >=, Nulo));
-            Si(Valor en la matriz(Global.BounceToggleLock, (Jugador del evento).cache_bounceTouched));
-                Modificar variable de jugador(Jugador del evento, cache_collectedLocks, Anexar a la matriz, (Jugador del evento).cache_bounceTouched);
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   弹球已收集"), Cadena personalizada("   orb has been collected")));
-            Fin;
-            Si(Comparar(Valor en la matriz(Global.EditMode, (Jugador del evento).cache_bounceTouched), >, Nulo));
-                Aplicar impulso(Jugador del evento, Arriba, Valor en la matriz(Global.EditMode, (Jugador del evento).cache_bounceTouched), Al mundo, Cancelar movimiento contrario XYZ);
-            Si no si(Comparar(Valor en la matriz(Global.EditMode, (Jugador del evento).cache_bounceTouched), <, Nulo));
-                Cancelar acción primaria(Jugador del evento);
-                Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   二段跳已就绪"), Cadena personalizada("   Double Jump is ready")));
-            Fin;
-            Si(Valor en la matriz(Global.TQ5, (Jugador del evento).cache_bounceTouched));
-                Establecer habilidad máxima habilitada(Jugador del evento, Verdadero);
-                Establecer carga de habilidad máxima(Jugador del evento, 100);
-                Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1} ", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad máxima)), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("终极技能已就绪"), Cadena personalizada("Ultimate is ready"))));
-            Fin;
-            Si(Valor en la matriz(Global.TQ6, (Jugador del evento).cache_bounceTouched));
-                Si(Está utilizando la habilidad 1(Jugador del evento));
-                    Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Verdadero);
-                    Esperar(Falso, Ignorar condición);
-                Fin;
-                Establecer habilidad 1 habilitada(Jugador del evento, Verdadero);
-                Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1} ", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad 1)), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("技能1影已就绪"), Cadena personalizada("Dash is ready"))));
-            Fin;
-            Reproducir efecto(Jugador del evento, Sonido de explosión de potenciamiento, Color(Blanco), Jugador del evento, 75);
-        Fin;
-        Esperar(0.24, Ignorar condición);
-        Repetir si la condición es verdadera;
-        Establecer variable de jugador(Jugador del evento, cache_bounceTouched, -1);
-    }
-}
-
-regla ("General | Death Reset") {
-    evento {
-        El jugador murió;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        Robot de entrenamiento(Jugador del evento) == Falso;
-        (Jugador del evento).toggle_spectate == Falso;
-        (Jugador del evento).comp_done == Falso;
-    }
-    acciones {
-        Si(Conteo de(Global.A));
-            Resucitar(Jugador del evento);
-        Si no;
-            Reaparecer(Jugador del evento);
-        Fin;
-        Llamada a subrutina(CheckpointFailReset);
-        "rest is to prevent dead spamming from crashing server\\nbut doing waits only when needed without relying on a variable count"
-        Esperar hasta(Está vivo(Jugador del evento), Verdadero);
-        Esperar hasta(Está muerto(Jugador del evento), Verdadero);
-        Si(Y(Está muerto(Jugador del evento), No(O((Jugador del evento).toggle_spectate, (Jugador del evento).comp_done))));
-            Esperar(0.16, Ignorar condición);
-            Resucitar(Jugador del evento);
-            Llamada a subrutina(CheckpointFailReset);
-            Esperar hasta(Está vivo(Jugador del evento), Verdadero);
-            Esperar hasta(Está muerto(Jugador del evento), Verdadero);
-            Si(Y(Está muerto(Jugador del evento), No(O((Jugador del evento).toggle_spectate, (Jugador del evento).comp_done))));
-                Esperar(0.44, Ignorar condición);
-                Resucitar(Jugador del evento);
-                Llamada a subrutina(CheckpointFailReset);
-                Esperar hasta(Está vivo(Jugador del evento), Verdadero);
-                Esperar hasta(Está muerto(Jugador del evento), Verdadero);
-                Si(Y(Está muerto(Jugador del evento), No(O((Jugador del evento).toggle_spectate, (Jugador del evento).comp_done))));
-                    Esperar(0.64, Ignorar condición);
-                    Reaparecer(Jugador del evento);
-                    Llamada a subrutina(CheckpointFailReset);
-    }
-}
-
 regla ("<tx0C00000000001344> Huds <tx0C00000000001344>") {
     evento {
         En curso - Global;
@@ -2329,7 +2416,7 @@ regla ("Huds | Global Localplayer") {
         Crear texto del HUD(Primero de(Verdadero), Nulo, Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("代码: {0}                                                                                                ", Global.Code), Cadena personalizada("Map code: {0}                                                                                                ", Global.Code)), Izquierda, -199, Nulo, Nulo, Valor en la matriz(Global.ColorConfig, Verdadero), Visible para y cadena, Visibilidad predeterminada);
         Modificar variable global(HudStoreEdit, Anexar a la matriz, ID de texto anterior);
         "global huds"
-        Crear texto del HUD(Primero de(Verdadero), Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("房间将在 {0} 分钟后重启 - v1.10.3F{1}", Global.TimeRemaining, If-Then-Else(Comparar(Conteo de texto, >=, 128), Cadena personalizada("\\n错误: 已达到最大HUD数量上限"), Matriz vacía)), Cadena personalizada("Server Restart in {0} Min - v1.10.3F{1}", Global.TimeRemaining, If-Then-Else(Comparar(Conteo de texto, >=, 128), Cadena personalizada("\\nerror: max hud count reached"), Matriz vacía))), Nulo, Derecha, -162, Nulo, Valor en la matriz(Global.ColorConfig, 2), Nulo, Visible para y cadena, Siempre visible);
+        Crear texto del HUD(Primero de(Verdadero), Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("房间将在 {0} 分钟后重启 - v1.10.3G{1}", Global.TimeRemaining, If-Then-Else(Comparar(Conteo de texto, >=, 128), Cadena personalizada("\\n错误: 已达到最大HUD数量上限"), Matriz vacía)), Cadena personalizada("Server Restart in {0} Min - v1.10.3G{1}", Global.TimeRemaining, If-Then-Else(Comparar(Conteo de texto, >=, 128), Cadena personalizada("\\nerror: max hud count reached"), Matriz vacía))), Nulo, Derecha, -162, Nulo, Valor en la matriz(Global.ColorConfig, 2), Nulo, Visible para y cadena, Siempre visible);
         "padding for custom hud display"
         Crear texto del HUD(Primero de(Verdadero), Nulo, Nulo, Cadena personalizada("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nv"), Arriba, -164, Nulo, Nulo, Color(Naranja), Visible para, Visibilidad predeterminada);
         Crear texto del HUD((Jugador local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("{0} {1} | {2}快速回点", If-Then-Else((Jugador local).toggle_quickRestart, Matriz vacía, Cadena personalizada("长按")), Cadena de teclas de atajo(Botón(Recargar)), If-Then-Else((Jugador local).toggle_quickRestart, Matriz vacía, Cadena personalizada("启用"))), Cadena personalizada("{0} {1} |{2} quick reset", If-Then-Else((Jugador local).toggle_quickRestart, Matriz vacía, Cadena personalizada("Hold")), Cadena de teclas de atajo(Botón(Recargar)), If-Then-Else((Jugador local).toggle_quickRestart, Matriz vacía, Cadena personalizada(" Enable")))), Derecha, -157, Nulo, Nulo, Valor en la matriz(Global.ColorConfig, 5), Visible para y cadena, Visibilidad predeterminada);
@@ -2381,7 +2468,7 @@ regla ("Huds | Global Localplayer") {
         Establecer variable global(Difficultyhud, Matriz(Combinado de la configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("difficulty 󠀨display hud󠀩 - 难度 󠀨顶部hud󠀩"), 0, Matriz(Cadena personalizada("<fg27AAFFFF>playtest - 游戏测试"), Cadena personalizada("<fgA0E81BFF>easy-"), Cadena personalizada("<fgA0E81BFF>easy"), Cadena personalizada("<fgA0E81BFF>easy+"), Cadena personalizada("<fge0e000FF>medium-"), Cadena personalizada("<fge0e000FF>medium"), Cadena personalizada("<fge0e000FF>medium+"), Cadena personalizada("<fgEC9900FF>hard-"), Cadena personalizada("<fgEC9900FF>hard"), Cadena personalizada("<fgEC9900FF>hard+"), Cadena personalizada("<fgFF4500FF>very hard-"), Cadena personalizada("<fgFF4500FF>very hard"), Cadena personalizada("<fgFF4500FF>very hard+"), Cadena personalizada("<fgC80013FF>extreme-"), Cadena personalizada("<fgC80013FF>extreme"), Cadena personalizada("<fgC80013FF>extreme+"), Cadena personalizada("<fg960000FF>hell"), Cadena personalizada("don't display - 不显示")), 0), Alternado de configuración del Workshop(Cadena personalizada("map settings \\n地图设置"), Cadena personalizada("Playtest display - 游戏测试"), Falso, 1)));
         "display\\n17th entry is 'dont display'"
         Si(Comparar(Primero de(Global.Difficultyhud), !=, 17));
-            Crear texto del HUD(If-Then-Else(Y((Jugador local).toggle_guide, No((Jugador local).toggle_leaderboard)), Jugador local, Nulo), If-Then-Else(Último de(Global.Difficultyhud), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("游戏测试"), Cadena personalizada("Playtest")), Matriz vacía), Valor en la matriz(Matriz(Cadena personalizada("playtest"), Cadena personalizada("easy -"), Cadena personalizada("easy"), Cadena personalizada("easy +"), Cadena personalizada("medium -"), Cadena personalizada("medium"), Cadena personalizada("medium +"), Cadena personalizada("hard -"), Cadena personalizada("hard"), Cadena personalizada("hard +"), Cadena personalizada("very hard -"), Cadena personalizada("very hard"), Cadena personalizada("very hard +"), Cadena personalizada("extreme -"), Cadena personalizada("extreme"), Cadena personalizada("extreme +"), Cadena personalizada("hell"), Nulo), Primero de(Global.Difficultyhud)), Nulo, Arriba, -173, Color(Azul), Valor en la matriz(Matriz(Color(Azul), Color(Verde lima), Color(Verde lima), Color(Verde lima), Color(Amarillo), Color(Amarillo), Color(Amarillo), Color(Naranja), Color(Naranja), Color(Naranja), Color personalizado(255, 69, 0, 255), Color personalizado(255, 69, 0, 255), Color personalizado(255, 69, 0, 255), Color(Rojo), Color(Rojo), Color(Rojo), Color personalizado(150, 0, 0, 255), Nulo), Primero de(Global.Difficultyhud)), Nulo, Visible para y cadena, Visibilidad predeterminada);
+            Crear texto del HUD(Primero de(Y((Jugador local).toggle_guide, No((Jugador local).toggle_leaderboard))), If-Then-Else(Último de(Global.Difficultyhud), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("游戏测试"), Cadena personalizada("Playtest")), Matriz vacía), Valor en la matriz(Matriz(Cadena personalizada("playtest"), Cadena personalizada("easy -"), Cadena personalizada("easy"), Cadena personalizada("easy +"), Cadena personalizada("medium -"), Cadena personalizada("medium"), Cadena personalizada("medium +"), Cadena personalizada("hard -"), Cadena personalizada("hard"), Cadena personalizada("hard +"), Cadena personalizada("very hard -"), Cadena personalizada("very hard"), Cadena personalizada("very hard +"), Cadena personalizada("extreme -"), Cadena personalizada("extreme"), Cadena personalizada("extreme +"), Cadena personalizada("hell"), Nulo), Primero de(Global.Difficultyhud)), Nulo, Arriba, -173, Color(Azul), Valor en la matriz(Matriz(Color(Azul), Color(Verde lima), Color(Verde lima), Color(Verde lima), Color(Amarillo), Color(Amarillo), Color(Amarillo), Color(Naranja), Color(Naranja), Color(Naranja), Color personalizado(255, 69, 0, 255), Color personalizado(255, 69, 0, 255), Color personalizado(255, 69, 0, 255), Color(Rojo), Color(Rojo), Color(Rojo), Color personalizado(150, 0, 0, 255), Nulo), Primero de(Global.Difficultyhud)), Nulo, Visible para y cadena, Visibilidad predeterminada);
             Modificar variable global(HudStoreEdit, Anexar a la matriz, ID de texto anterior);
         Fin;
         "restart + leaderboard\\nthis is remade in editor to not include leaderboard"
@@ -2417,19 +2504,19 @@ regla ("Huds | Leaderboard") {
         "if LeaderBoardFull[0]:"
         Crear texto del HUD((Jugador local).toggle_guide, Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada(" \\n{0} 排名前5 {0}", Cadena de ícono(Bandera)), Cadena personalizada(" \\n{0} Top 5 {0}", Cadena de ícono(Bandera))), Nulo, Derecha, -141, Nulo, Color(Blanco), Nulo, Visible para y cadena, Siempre visible);
         Establecer variable global(LeaderBoardHuds, ID de texto anterior);
-        Crear texto del HUD((Jugador local).toggle_guide, Cadena de ícono de héroe(Héroe(Genji)), Primero de(Primero de(Global.LeaderBoardFull)), Último de(Primero de(Global.LeaderBoardFull)), Derecha, -140, Color(Rojo), Color(Rojo), Color(Rojo), Visible para, Siempre visible);
+        Crear texto del HUD(Primero de(Verdadero), Cadena de ícono de héroe(Héroe(Genji)), Primero de(Primero de(Global.LeaderBoardFull)), Último de(Primero de(Global.LeaderBoardFull)), Derecha, -140, Color(Rojo), Color(Rojo), Color(Rojo), Visible para, Siempre visible);
         Modificar variable global(LeaderBoardHuds, Anexar a la matriz, ID de texto anterior);
         Si(Valor en la matriz(Global.LeaderBoardFull, Verdadero));
-            Crear texto del HUD((Jugador local).toggle_guide, Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, Verdadero)), Último de(Valor en la matriz(Global.LeaderBoardFull, Verdadero)), Derecha, -139, Color(Naranja), Color(Naranja), Color(Naranja), Visible para, Siempre visible);
+            Crear texto del HUD(Primero de(Verdadero), Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, Verdadero)), Último de(Valor en la matriz(Global.LeaderBoardFull, Verdadero)), Derecha, -139, Color(Naranja), Color(Naranja), Color(Naranja), Visible para, Siempre visible);
             Modificar variable global(LeaderBoardHuds, Anexar a la matriz, ID de texto anterior);
             Si(Valor en la matriz(Global.LeaderBoardFull, 2));
-                Crear texto del HUD((Jugador local).toggle_guide, Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, 2)), Último de(Valor en la matriz(Global.LeaderBoardFull, 2)), Derecha, -138, Color(Amarillo), Color(Amarillo), Color(Amarillo), Visible para, Siempre visible);
+                Crear texto del HUD(Primero de(Verdadero), Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, 2)), Último de(Valor en la matriz(Global.LeaderBoardFull, 2)), Derecha, -138, Color(Amarillo), Color(Amarillo), Color(Amarillo), Visible para, Siempre visible);
                 Modificar variable global(LeaderBoardHuds, Anexar a la matriz, ID de texto anterior);
                 Si(Valor en la matriz(Global.LeaderBoardFull, 3));
-                    Crear texto del HUD((Jugador local).toggle_guide, Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, 3)), Último de(Valor en la matriz(Global.LeaderBoardFull, 3)), Derecha, -137, Color(Verde lima), Color(Verde lima), Color(Verde lima), Visible para, Siempre visible);
+                    Crear texto del HUD(Primero de(Verdadero), Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, 3)), Último de(Valor en la matriz(Global.LeaderBoardFull, 3)), Derecha, -137, Color(Verde lima), Color(Verde lima), Color(Verde lima), Visible para, Siempre visible);
                     Modificar variable global(LeaderBoardHuds, Anexar a la matriz, ID de texto anterior);
                     Si(Valor en la matriz(Global.LeaderBoardFull, 4));
-                        Crear texto del HUD((Jugador local).toggle_guide, Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, 4)), Último de(Valor en la matriz(Global.LeaderBoardFull, 4)), Derecha, -136, Color(Verde), Color(Verde), Color(Verde), Visible para, Siempre visible);
+                        Crear texto del HUD(Primero de(Verdadero), Cadena de ícono de héroe(Héroe(Genji)), Primero de(Valor en la matriz(Global.LeaderBoardFull, 4)), Último de(Valor en la matriz(Global.LeaderBoardFull, 4)), Derecha, -136, Color(Verde), Color(Verde), Color(Verde), Visible para, Siempre visible);
                         Modificar variable global(LeaderBoardHuds, Anexar a la matriz, ID de texto anterior);
                     Fin;
                 Fin;
@@ -2482,7 +2569,8 @@ regla ("Huds | Addons") {
         En curso - Global;
     }
     acciones {
-        Esperar hasta(Comparar(Cantidad de jugadores(Todos los equipos), >, Nulo), 999999999999);
+        Esperar(0.8, Ignorar condición);
+        Esperar hasta(La entidad existe(Todos los jugadores(Todos los equipos)), 999999999999);
         Esperar(Falso, Ignorar condición);
         Si(Comparar((Todos los jugadores(Todos los equipos)).addon_toggle3rdPov, <=, Verdadero));
             Crear texto del HUD((Jugador local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("长按 {0} + {1} | 第三人称{2}", Cadena de teclas de atajo(Botón(Agacharse)), Cadena de teclas de atajo(Botón(Saltar)), If-Then-Else((Jugador local).addon_toggle3rdPov, Cadena personalizada(" | 启用"), Matriz vacía)), Cadena personalizada("Hold {0} + {1} | 3rd Person{2}", Cadena de teclas de atajo(Botón(Agacharse)), Cadena de teclas de atajo(Botón(Saltar)), If-Then-Else((Jugador local).addon_toggle3rdPov, Cadena personalizada(" | ON"), Matriz vacía))), Derecha, -159, Nulo, Nulo, If-Then-Else((Jugador local).addon_toggle3rdPov, Evaluar una vez(Valor en la matriz(Global.ColorConfig, 6)), Evaluar una vez(Valor en la matriz(Global.ColorConfig, 5))), Visible para cadena y color, Visibilidad predeterminada);
@@ -2509,8 +2597,8 @@ regla ("Effects | Setup Effects") {
                 Crear texto dentro del mundo(Matriz filtrada(Todos los jugadores(Todos los equipos), O((Elemento de matriz actual).toggle_invincible, No((Elemento de matriz actual).checkpoint_notLast))), Valor en la matriz(Global.PortalNames, Global.NANBA), Agregar(Valor en la matriz(Global.PortalLoc, Global.NANBA), Arriba), Verdadero, Atravesar las superficies, Visible para, Color(Blanco), Visibilidad predeterminada);
             Fin;
         Fin;
-        Esperar(Falso, Ignorar condición);
         Esperar hasta(La entidad existe(Todos los jugadores(Todos los equipos)), 999999999999);
+        Esperar(Falso, Ignorar condición);
         Si((Todos los jugadores(Todos los equipos)).editor_on);
             Llamada a subrutina(RebuildKillOrbs);
             Llamada a subrutina(RebuildBounceOrbs);
@@ -2595,375 +2683,6 @@ regla ("Effects | SUB Rebuild Portals") {
                 Fin;
             Fin;
         Fin;
-    }
-}
-
-regla ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("Mechanic | SUB Check Ultimate") {
-    evento {
-        Subrutina;
-        CheckUlt;
-    }
-    acciones {
-        Si((Jugador del evento).lockState);
-            "for dash start etc you can be away from cp so the keep charge triggers"
-            Establecer carga de habilidad máxima(Jugador del evento, Falso);
-        Fin;
-        "make sure the button cant be pressed until the entire rule ends even if it restarts"
-        Deshabilitar botón(Jugador del evento, Botón(Habilidad máxima));
-        "global cooldown that works even when rule is reset"
-        Si(Comparar((Jugador del evento).skill_ultCd, >, Tiempo total transcurrido));
-            Esperar(Restar((Jugador del evento).skill_ultCd, Tiempo total transcurrido), Ignorar condición);
-        Si no;
-            "Set cooldown"
-            Establecer variable de jugador(Jugador del evento, skill_ultCd, Agregar(Tiempo total transcurrido, 0.36));
-        Fin;
-        Si(Está usando la habilidad máxima(Jugador del evento));
-            Esperar hasta(No(Está usando la habilidad máxima(Jugador del evento)), 2);
-            Esperar(Falso, Ignorar condición);
-        Fin;
-        "incase spamming the button"
-        Si(Botón presionado(Jugador del evento, Botón(Habilidad máxima)));
-            Esperar(Falso, Ignorar condición);
-        Fin;
-        Si(O(O((Jugador del evento).toggle_invincible, Y(Comparar(Jugador del evento, ==, Jugador anfitrión), (Jugador del evento).editor_on)), No((Jugador del evento).checkpoint_notLast)));
-            "skip msg if these"
-            Omitir(2);
-        Si no si(Y(La matriz contiene(Global.Dao, (Jugador del evento).checkpoint_current), Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), <=, 1.4)));
-            Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1} ", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad máxima)), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("终极技能已就绪"), Cadena personalizada("Ultimate is ready"))));
-            //lbl_a:
-            Esperar(Falso, Ignorar condición);
-            Establecer habilidad máxima habilitada(Jugador del evento, Verdadero);
-            Establecer carga de habilidad máxima(Jugador del evento, 100);
-        "used to be just else, but have to deal with multi ult orbs"
-        Si no si(O(Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), <=, 2), Comparar(Porcentaje de carga de la habilidad máxima(Jugador del evento), <, 100)));
-            Establecer habilidad máxima habilitada(Jugador del evento, Falso);
-            Establecer carga de habilidad máxima(Jugador del evento, Falso);
-        Fin;
-        Habilitar botón(Jugador del evento, Botón(Habilidad máxima));
-    }
-}
-
-regla ("Mechanic | SUB Check Dash") {
-    evento {
-        Subrutina;
-        CheckDash;
-    }
-    acciones {
-        Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Verdadero);
-        Si(O(O((Jugador del evento).toggle_invincible, Y(Comparar(Jugador del evento, ==, Jugador anfitrión), (Jugador del evento).editor_on)), No((Jugador del evento).checkpoint_notLast)));
-            "skip msg if these"
-            Omitir(2);
-        Si no si(Y(La matriz contiene(Global.SHIFT, (Jugador del evento).checkpoint_current), Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), <=, 1.4)));
-            Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1}", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad 1)), If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("技能1影已就绪"), Cadena personalizada("Dash is ready"))));
-            //lbl_a:
-            Esperar(Falso, Ignorar condición);
-            Establecer habilidad 1 habilitada(Jugador del evento, Verdadero);
-        Si no;
-            Establecer habilidad 1 habilitada(Jugador del evento, Falso);
-        Fin;
-    }
-}
-
-regla ("Mechanic | Ultimate") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        Está usando la habilidad máxima(Jugador del evento) == Verdadero;
-    }
-    acciones {
-        Esperar(1.8, Cancelar cuando es falso);
-        Si(Y((Jugador del evento).checkpoint_notLast, No((Jugador del evento).toggle_invincible)));
-            "disable primary fire because of slash exploit"
-            Deshabilitar botón(Jugador del evento, Botón(Disparo principal));
-        Fin;
-        Esperar hasta(No(Está usando la habilidad máxima(Jugador del evento)), 2);
-        Esperar(Falso, Ignorar condición);
-        Habilitar botón(Jugador del evento, Botón(Disparo principal));
-        "sets ult charge back if done with map etc"
-        Comenzar regla(CheckUlt, Reiniciar regla);
-    }
-}
-
-regla ("Mechanic | Dash") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        Está utilizando la habilidad 1(Jugador del evento) == Verdadero;
-    }
-    acciones {
-        Comenzar regla(CheckDash, Reiniciar regla);
-    }
-}
-
-regla ("Mechanic | On Wall") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        "This rule is also linked to the determination of wall climbing, please do not close/delete"
-        En el muro(Jugador del evento) == Verdadero;
-        Botón presionado(Jugador del evento, Botón(Saltar)) == Verdadero;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedClimb, Verdadero);
-    }
-}
-
-regla ("Mechanic | Emote") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        Comunica un gesto(Jugador del evento) == Verdadero;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Falso);
-        Si((Jugador del evento).addon_toggle3rdPov);
-            Establecer variable de jugador(Jugador del evento, addon_toggle3rdPov, Falso);
-            Detener cámara(Jugador del evento);
-        Fin;
-        Si((Jugador del evento).ban_emote);
-            Esperar hasta(No(Comunica un gesto(Jugador del evento)), 999999999999);
-            Abortar si((Jugador del evento).toggle_invincible);
-            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   表情留小 ♥ 已禁用!"), Cadena personalizada("   Emote Savehop ♥ is banned!")));
-            Esperar(Falso, Ignorar condición);
-            Llamada a subrutina(CheckpointFailReset);
-    }
-}
-
-regla ("Mechanic | Jump") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        "@Condition eventPlayer.skill_usedBhop == false"
-        Está saltando(Jugador del evento) == Verdadero;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Verdadero);
-        "Bhop"
-        Si((Jugador del evento).skill_usedHop);
-            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   小跳已用"), Cadena personalizada("   Bhop")));
-        "Hop"
-        Si no;
-            Establecer variable de jugador(Jugador del evento, skill_usedHop, Verdadero);
-    }
-}
-
-regla ("Mechanic | No Jump") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        (Jugador del evento).skill_usedHop == Nulo;
-        En el suelo(Jugador del evento) == Falso;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedHop, Verdadero);
-    }
-}
-
-regla ("Mechanic | Bhop count for stand ban") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        Está saltando(Jugador del evento) == Verdadero;
-        (Jugador del evento).ban_standcreate != Falso;
-    }
-    acciones {
-        Modificar variable de jugador(Jugador del evento, skill_countBhops, Agregar, Verdadero);
-        Si(Y(Comparar((Jugador del evento).skill_countBhops, >, 1), No((Jugador del evento).toggle_invincible)));
-            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   站卡 ♠ 已禁用!"), Cadena personalizada("   Stand createBhop ♠ is banned!")));
-            Llamada a subrutina(CheckpointFailReset);
-    }
-}
-
-regla ("Mechanic | Create Bhop") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        Botón presionado(Jugador del evento, Botón(Agacharse)) == Verdadero;
-        Agachado(Jugador del evento) == Verdadero;
-        En el aire(Jugador del evento) == Verdadero;
-        Botón presionado(Jugador del evento, Botón(Saltar)) == Falso;
-        Está saltando(Jugador del evento) == Falso;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Falso);
-        "prevent restart from giving messsage, but stil allow it to become green"
-        Abortar si((Jugador del evento).lockState);
-        Si(Y((Jugador del evento).ban_create, No((Jugador del evento).toggle_invincible)));
-            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   卡小 ♂ 已禁用!"), Cadena personalizada("   Create Bhop ♂ is banned!")));
-            Llamada a subrutina(CheckpointFailReset);
-        Si no;
-            Si(Y((Jugador del evento).ban_standcreate, Comparar((Jugador del evento).skill_countBhops, >, Nulo)));
-                Modificar variable de jugador(Jugador del evento, skill_countBhops, Restar, Verdadero);
-            Fin;
-            Modificar variable de jugador(Jugador del evento, skill_countCreates, Agregar, Verdadero);
-            Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   success!"), Cadena personalizada("   Bhop has been created!")));
-    }
-}
-
-regla ("Mechanic | Ground Reset") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        En el suelo(Jugador del evento) == Verdadero;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedHop, Nulo);
-        Establecer variable de jugador(Jugador del evento, skill_usedClimb, Falso);
-        Establecer variable de jugador(Jugador del evento, skill_countMulti, Nulo);
-        Establecer variable de jugador(Jugador del evento, skill_countCreates, Nulo);
-        Establecer variable de jugador(Jugador del evento, skill_countBhops, Nulo);
-        Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
-    }
-}
-
-regla ("Mechanic | Bhop Reset") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        En el suelo(Jugador del evento) == Verdadero;
-        Botón presionado(Jugador del evento, Botón(Saltar)) == Falso;
-    }
-    acciones {
-        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Falso);
-    }
-}
-
-regla ("Mechanic | Double Jump") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Genji;
-    }
-    condiciones {
-        Está vivo(Jugador del evento) == Verdadero;
-        En el suelo(Jugador del evento) == Falso;
-        O(O((Jugador del evento).ban_djump, (Jugador del evento).ban_savedouble), (Jugador del evento).addon_enableDoubleChecks) == Verdadero;
-    }
-    acciones {
-        "Save drop"
-        Esperar hasta(O(O(En el suelo(Jugador del evento), Está saltando(Jugador del evento)), Botón presionado(Jugador del evento, Botón(Saltar))), 0.096);
-        Abortar si la condición es falsa;
-        Mientras(Verdadero);
-            "Released Jump"
-            Esperar hasta(O(En el suelo(Jugador del evento), No(Botón presionado(Jugador del evento, Botón(Saltar)))), 999999999999);
-            Abortar si la condición es falsa;
-            "Double Jumped"
-            Esperar hasta(O(En el suelo(Jugador del evento), Botón presionado(Jugador del evento, Botón(Saltar))), 999999999999);
-            Abortar si la condición es falsa;
-            Establecer variable de jugador(Jugador del evento, skill_usedDouble, Verdadero);
-            "Reset"
-            Esperar hasta(O(En el suelo(Jugador del evento), No((Jugador del evento).skill_usedDouble)), 999999999999);
-            Abortar si la condición es falsa;
-        Fin;
-    }
-}
-
-regla ("Mechanic | Multiclimb") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        En el muro(Jugador del evento) == Verdadero;
-        Botón presionado(Jugador del evento, Botón(Saltar)) == Falso;
-        (Jugador del evento).skill_usedClimb == Falso;
-    }
-    acciones {
-        Esperar(Falso, Ignorar condición);
-        Si(Y(En el muro(Jugador del evento), No(Botón presionado(Jugador del evento, Botón(Saltar)))));
-            "AutoClimb used"
-            Establecer variable de jugador(Jugador del evento, skill_usedClimb, Verdadero);
-        Si no;
-            Si(Y(Y((Jugador del evento).ban_multi, (Jugador del evento).checkpoint_notLast), No((Jugador del evento).toggle_invincible)));
-                Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   蹭留 ∞ 已禁用!"), Cadena personalizada("   Multiclimb ∞ is banned!")));
-                Llamada a subrutina(CheckpointFailReset);
-            Si no;
-                Modificar variable de jugador(Jugador del evento, skill_countMulti, Agregar, Verdadero);
-    }
-}
-
-regla ("Mechanic | Ban Wallclimb - Message") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Todos;
-    }
-    condiciones {
-        (Jugador del evento).ban_climb != Falso;
-        (Jugador del evento).toggle_invincible == Falso;
-        (Jugador del evento).skill_usedClimb != Falso;
-    }
-    acciones {
-        "CheckpointFailReset()\\neventPlayer.setStatusEffect(null,Status.BURNING, 0.1)"
-        Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   爬墙 ↑ 已禁用!"), Cadena personalizada("   Climb ↑ is banned!")));
-    }
-}
-
-regla ("Mechanic | Ban Save Double - 封禁二段跳") {
-    evento {
-        En curso - Cada jugador;
-        Todos;
-        Genji;
-    }
-    condiciones {
-        (Jugador del evento).ban_savedouble != Falso;
-        (Jugador del evento).toggle_invincible == Falso;
-        En el suelo(Jugador del evento) == Falso;
-        (Jugador del evento).skill_usedDouble == Falso;
-        Botón presionado(Jugador del evento, Botón(Saltar)) == Verdadero;
-    }
-    acciones {
-        Esperar hasta(O(O(Comparar(Componente Z de(Aceleración de(Jugador del evento)), >, Nulo), En el suelo(Jugador del evento)), No(Botón presionado(Jugador del evento, Botón(Saltar)))), 999999999999);
-        Abortar si la condición es falsa;
-        Esperar hasta(O(O(Comparar(Componente Z de(Aceleración de(Jugador del evento)), <=, Nulo), En el suelo(Jugador del evento)), No(Botón presionado(Jugador del evento, Botón(Saltar)))), 999999999999);
-        Abortar si la condición es falsa;
-        "Prevent false positives\\nDefault climb speed is 7.8 and small slowdown upon mantling"
-        Repetir si(Comparar(Velocidad vertical de(Jugador del evento), <, 6));
-        Si((Jugador del evento).skill_usedBhop);
-            Esperar(0.8, Cancelar cuando es falso);
-        Si no;
-            Esperar(0.8, Cancelar cuando es falso);
-            Abortar si((Jugador del evento).skill_usedBhop);
-        Fin;
-        Mensaje pequeño(Jugador del evento, If-Then-Else(Comparar(Cadena("Uff"), ==, Cadena personalizada("噢")), Cadena personalizada("   延二段跳已禁用!"), Cadena personalizada("   save double banned!")));
-        Llamada a subrutina(CheckpointFailReset);
     }
 }
 
@@ -3187,6 +2906,78 @@ regla ("Addon | SUB 3rd Person Camera") {
         Si no;
             Detener cámara(Jugador del evento);
         Fin;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
+    }
+}
+
+regla ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    evento {
+        En curso - Global;
     }
 }
 
@@ -3520,28 +3311,19 @@ deshabilitado regla ("Addon | Fake Ledge Dash - 超级跳") {
         Todos;
     }
     condiciones {
+        "Version 2"
         Está utilizando la habilidad 1(Jugador del evento) == Verdadero;
+        Velocidad de(Jugador del evento) < 45;
+        Componente Z de(Aceleración de(Jugador del evento)) > Nulo;
+        Valor absoluto(Restar(Velocidad vertical de(Jugador del evento), 7)) < 0.8;
     }
     acciones {
-        "climb / ledge > hold jump > hands on the ledge > dash  > wait for launch > release jump\\n爬墙/扒 > 长按跳 > 抓住窗台 > SHIFT > 等待发射 > 释放跳跃"
-        Establecer variable de jugador según el índice(Jugador del evento, addon_ledgeDash, Falso, Nulo);
-        Esperar hasta(Comparar(Velocidad de(Jugador del evento), >=, 45), 0.4);
-        "stop storing, we keep this speed/direction"
-        Mientras(Y(Está utilizando la habilidad 1(Jugador del evento), Comparar(Primero de((Jugador del evento).addon_ledgeDash), <, 12)));
-            Omitir si(Comparar(Velocidad de(Jugador del evento), <, 45), 9);
-            Modificar variable de jugador según el índice(Jugador del evento, addon_ledgeDash, Falso, Agregar, Verdadero);
-            Establecer variable de jugador según el índice(Jugador del evento, addon_ledgeDash, Verdadero, Dirección de orientación de(Jugador del evento));
-            Establecer variable de jugador según el índice(Jugador del evento, addon_ledgeDash, 2, Velocidad de(Jugador del evento));
-            Esperar(Falso, Ignorar condición);
-        Fin;
-        "wait for dash to finish to execute"
-        Esperar hasta(Comparar(Velocidad de(Jugador del evento), <, 40), 0.4);
-        "and eventPlayer.addon_ledgeDash[0] <= 12: # ledge dash execute"
-        Si(Comparar(Primero de((Jugador del evento).addon_ledgeDash), >=, 5));
-            Aplicar impulso(Jugador del evento, Valor en la matriz((Jugador del evento).addon_ledgeDash, Verdadero), Último de((Jugador del evento).addon_ledgeDash), Al mundo, Cancelar movimiento contrario XYZ);
-        Fin;
-        //lbl_a:
-        Establecer variable de jugador(Jugador del evento, addon_ledgeDash, Nulo);
+        "Dash into a wall/edge\\nRelease wall/edge before dash ends"
+        Establecer variable de jugador(Jugador del evento, addon_ledgeDash, Dirección de orientación de(Jugador del evento));
+        "25 * 0.016"
+        Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Verdadero);
+        Si(En el aire(Jugador del evento));
+            Aplicar impulso(Jugador del evento, (Jugador del evento).addon_ledgeDash, 50, Al mundo, Cancelar movimiento contrario XYZ);
     }
 }
 
@@ -3606,7 +3388,7 @@ deshabilitado regla ("Addon | Custom checkpoint loading or resetting") {
         AddonCustomLoadAndReset;
     }
     acciones {
-        "This subroutine triggers on failing, arriving, resetting, skipping etc\\nexample: reset gravity and movespeed after being changed by custom orbs"
+        "This subroutine activates on failing, arriving, resetting, skipping etc\\nexample: reset gravity and movespeed after being changed by custom orbs"
         Establecer gravedad(Jugador del evento, 100);
         Establecer velocidad de movimiento(Jugador del evento, 100);
     }
@@ -3619,30 +3401,30 @@ deshabilitado regla ("Addon | Custom Orb Script") {
         Todos;
     }
     condiciones {
-        "don't edit this condition !!!!!!!!!!!!!!!!!"
-        (Jugador del evento).cache_bounceTouched > -1;
+        "Do not edit this condition !!!!!!!!!!!!!!!!!"
+        (Jugador del evento).cache_bounceTouched >= Nulo;
     }
     acciones {
-        "Enable this rule and find the ID number of the bounce orbs via the editor display.\\nNote that the ID can change if you place or delete orbs infront of that orb.\\nDo NOT edit the next 2 actions."
-        Establecer variable de jugador(Jugador del evento, addon_bounceId, Primero de(Matriz filtrada(Matriz mapeada(Global.pinballnumber, Índice de matriz actual), Y(Comparar(Valor en la matriz(Global.pinballnumber, Elemento de matriz actual), ==, (Jugador del evento).checkpoint_current), Comparar(Valor en la matriz(Global.TQ, Elemento de matriz actual), ==, Valor en la matriz((Jugador del evento).cache_bouncePosition, (Jugador del evento).cache_bounceTouched))))));
-        "Add the desired ID numbers for the bounces in the array\\nadd the script after it\\nyou can use the trigger sub above this rule to reset the effects"
-        Si(Comparar((Jugador del evento).addon_bounceId, ==, 2));
-            "example gravity (should be reset to 100 in trigger on fail)"
+        "Note that the ID can change if you place or delete orbs infront of that orb.\\nAdd the desired ID numbers for the orb in the array\\nadd the script after it\\nyou can use the activateed sub above this rule to reset the effects"
+        Si(La matriz contiene(Matriz(1, 2), (Jugador del evento).cache_bounceTouched));
+            "example gravity (should be reset to 100 in AddonCustomLoadAndReset)"
             Establecer gravedad(Jugador del evento, 25);
             Mensaje pequeño(Jugador del evento, Cadena personalizada(" you feel light"));
             Esperar(2, Ignorar condición);
             Establecer gravedad(Jugador del evento, 100);
         Fin;
-        Si(La matriz contiene(Matriz(2, 3), (Jugador del evento).addon_bounceId));
+        Si(La matriz contiene(Matriz(3, 4), (Jugador del evento).cache_bounceTouched));
             "example canceling primary makes double jump recover"
             Cancelar acción primaria(Jugador del evento);
             Establecer variable de jugador(Jugador del evento, skill_usedDouble, Nulo);
             Mensaje pequeño(Jugador del evento, Cadena personalizada(" double jump recovered"));
         Fin;
-        Si(Comparar((Jugador del evento).addon_bounceId, ==, 4));
+        Si(La matriz contiene(Matriz(5, 6), (Jugador del evento).cache_bounceTouched));
             "example move speed"
             Establecer velocidad de movimiento(Jugador del evento, 250);
             Mensaje pequeño(Jugador del evento, Cadena personalizada(" zooom"));
+            Esperar(2, Ignorar condición);
+            Establecer velocidad de movimiento(Jugador del evento, 100);
     }
 }
 
@@ -3657,7 +3439,7 @@ deshabilitado regla ("Addon | Fake Triple Jump - 假三段跳") {
         En el suelo(Jugador del evento) == Falso;
         "Double cannot be used already"
         (Jugador del evento).skill_usedDouble == Falso;
-        "Don't trigger on reset"
+        "Don't activate on reset"
         Botón presionado(Jugador del evento, Botón(Recargar)) == Falso;
     }
     acciones {

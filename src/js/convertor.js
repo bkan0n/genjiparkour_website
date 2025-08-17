@@ -625,60 +625,139 @@ async function inlineIncludes(src, rawBase) {
   return out + src.slice(last);
 }
 
-function cleanSource(src) {
+function normalizeNewlines(s) {
+  return s.replace(/\r\n?/g, '\n');
+}
+
+function cleanSourceG(src) {
+  src = normalizeNewlines(src);
+
   return src
-    .replace(/^[ \t]*#!include.*$/gm, "")
-    .replace(/^[ \t]*#!define\s+editortoggle.*$/gm, "")
-    .replace(/^[ \t]*editortoggle\(.*\).*$/gm, "")
-    .replace(/\beditoron\b/g, "false")
-    .replace(/^[ \t]*(testData|selectedmap)\s*$/gm, "");
+    .replace(/^[ \t]*#!include[^\n]*\n?/gm, '')
+    .replace(/^[ \t]*#!define\s+editortoggle[^\n]*\n?/gm, '')
+    .replace(/^[ \t]*editortoggle\([^\n]*\)\s*\n?/gm, '')
+    .replace(/^[ \t]*#!define\s+importHero\([^)]+\)\s+__script__\([^)]+\)[^\n]*\n?/gm, '')
+    .replace(/^[ \t]*importHero\([^\n]*\)\s*\n?/gm, '')
+    .replace(/^[ \t]*__script__\([^)]+\)[ \t]*;?[ \t]*\n/gm, '')
+    .replace(/\beditoron\b/g, 'false');
+}
+
+function addMapPolyfills(src) {
+  const polyfills = [
+    '#!define skirmishMap []',
+    '#!define tdmMap []',
+    '#!define controlMap []',
+    '#!define escortMap []',
+    '#!define hybridMap []',
+    '#!define pushMap []',
+    '#!define flashpointMap []',
+  ].join('\n') + '\n';
+  return polyfills + src.replace(/\r\n?/g, '\n');
+}
+
+function findFirstBraceUnderflow(src) {
+  const lines = normalizeNewlines(src).split('\n');
+  let paren = 0, brace = 0;
+  const strip = s =>
+    s.replace(/\/\/.*$/,'')
+     .replace(/\/\*[\s\S]*?\*\//g, '')
+     .replace(/"([^"\\]|\\.)*"/g, '""')
+     .replace(/'([^'\\]|\\.)*'/g, "''");
+  for (let i = 0; i < lines.length; i++) {
+    const s = strip(lines[i]);
+    for (const ch of s) {
+      if (ch === '(') paren++;
+      else if (ch === ')') paren--;
+      else if (ch === '{') brace++;
+      else if (ch === '}') brace--;
+      if (paren < 0 || brace < 0) return { line: i + 1, raw: lines[i] };
+    }
+  }
+  return null;
+}
+
+function patchTestDataStub(src) {
+  const hasDefine = /^[ \t]*#!define\s+testData\b/m.test(src);
+  if (hasDefine) return src;
+
+  return src.replace(
+    /^[ \t]*testData[ \t]*$/m,
+    'rule "TestData (stub)":\n    return'
+  );
 }
 
 async function loadTemplate(lang) {
-  const cacheUrl = getCacheURL(lang);
+  const cacheUrl = new URL(`framework-templates/framework-template_${lang}.js`, import.meta.url).href;
 
-  if (await cacheExists(lang)) {
+  async function cacheExists(url) {
+    try {
+      const res = await fetch(url, { method: 'GET' });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  if (await cacheExists(cacheUrl)) {
     debug(`Loading from cache for ${lang}`);
     const mod = await import(cacheUrl);
     return mod.frameworkTemplate;
   }
 
   debug(`Compiling new template for ${lang}`);
-  const overpy = getOverpy();
-  if (!overpy) throw new Error("OverPy UMD not found");
+  const overpy = (window.window || window.OverPy || window.Overpy);
+  if (!overpy) throw new Error('OverPy UMD not found');
   await overpy.readyPromise;
 
-  const rawBase   = "https://cdn.jsdelivr.net/gh/tylovejoy/genji-framework@1.10.3F/";
-  const entryFile = "framework.opy";
+  const rawBase   = 'https://cdn.jsdelivr.net/gh/tylovejoy/genji-framework@1.10.3G/';
+  const entryFile = 'framework.opy';
   const resp      = await fetch(rawBase + entryFile);
   if (!resp.ok) throw new Error(`HTTP ${resp.status} on ${entryFile}`);
   let src = await resp.text();
 
   src = await inlineIncludes(src, rawBase);
-  src = cleanSource(src);
+  src = cleanSourceG(src);
+  src = patchTestDataStub(src);
+  src = addMapPolyfills(src);
 
-  if (lang === "zh-CN") {
-    src = src.replace(/^[ \t]*#!define\s+enableInvisCommand.*$/gm, "");
-    src = "#!define enableInvisCommand false\n" + src;
-    debug("Désactivation de enableInvisCommand pour zh-CN");
+  if (lang === 'zh-CN') {
+    src = src.replace(/^[ \t]*#!define\s+enableInvisCommand[^\n]*\n?/gm, '');
+    src = '#!define enableInvisCommand false\n' + src;
+    debug('Désactivation de enableInvisCommand pour zh-CN');
   }
+
+  const underflow = findFirstBraceUnderflow(src);
+  if (underflow) {
+    const lines = src.split('\n');
+    const center = underflow.line;
+    const from = Math.max(0, center - 15);
+    const to   = Math.min(lines.length, center + 15);
+    console.debug(
+      '[FIRST UNDERFLOW at line ' + center + ']\n' +
+      lines.slice(from, to)
+           .map((l,i)=>String(from+i+1).padStart(3,' ')+' '+l)
+           .join('\n')
+    );
+  }
+  console.debug(
+    '[SRC HEAD]\n' +
+    src.split('\n').slice(0, 60).map((l,i)=>String(i+1).padStart(3,' ')+ ' ' + l).join('\n')
+  );
 
   const { result } = await overpy.compile(src, lang, rawBase, entryFile);
   const tpl = result;
 
-  const esc = tpl.replace(/\\/g, "\\\\").replace(/`/g, "\\`");
+  const esc = tpl.replace(/\\/g, '\\\\').replace(/`/g, '\\`');
   const moduleText =
     `// framework-template_${lang}.js (auto)\n` +
     `export const frameworkTemplate = \`${esc}\n\`;\n`;
 
-  await fetch(
-    new URL(`compile.php?file=framework-templates/framework-template_${lang}.js`, import.meta.url).href,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ module: moduleText })
-    }
-  );
+  await fetch(new URL(`compile.php?file=framework-templates/framework-template_${lang}.js`, import.meta.url).href, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ module: moduleText })
+  });
+
   debug(`Cache saved as framework-template_${lang}.js`);
   return tpl;
 }
