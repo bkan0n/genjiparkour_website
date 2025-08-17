@@ -3,8 +3,8 @@ export const frameworkTemplate = `设置
 {
 	主程序
 	{
-		模式名称: "Genji Parkour - 源氏跑酷 - v1.10.3F"
-		描述: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3F"
+		模式名称: "Genji Parkour - 源氏跑酷 - v1.10.3G"
+		描述: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3G"
 	}
 	大厅
 	{
@@ -116,7 +116,6 @@ export const frameworkTemplate = `设置
         34: LeaderBoardRemake
         35: kaxiaotiao
         38: NANBA
-        39: DashExploitToggle
         40: PortalNames
         41: PortalLoc
         42: PortalDest
@@ -231,8 +230,7 @@ export const frameworkTemplate = `设置
         62: comp_instructionHud
         63: addon_toggle3rdPov
         64: addon_ledgeDash
-        65: addon_bounceId
-        66: addon_enableDoubleChecks
+        65: addon_enableDoubleChecks
 }
 子程序 {
     0: StartGame
@@ -241,7 +239,7 @@ export const frameworkTemplate = `设置
     3: UpdateTitle
     4: DashUltGive
     5: CheckUlt
-    6: CheckDash
+    6: CheckAbility1
     7: UpdateCache
     8: DeleteSave
     9: MakeSave
@@ -257,13 +255,773 @@ export const frameworkTemplate = `设置
     19: RebuildBounceOrbs
 }
 //Optimize for size enabled
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页    </fg>v1.10.3F") {
+规则 ("<tx0C00000000001344> Parkour v1.10.3G <tx0C00000000001344>") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("Parkour | Setup & Variables") {
     事件 {
         持续 - 全局;
     }
     动作 {
         "◀ The Official Genji Parkour Editor ▶\\nDiscord: dsc.gg/genjiparkour\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula"
-        中止;
+        禁用查看器录制;
+        关闭游戏预设完成条件;
+        关闭游戏预设计分模式;
+        关闭游戏预设音乐模式;
+        关闭游戏预设通告模式;
+        开始强制重生室(所有队伍, 假);
+        开始强制重生室(所有队伍, 1);
+        开始强制重生室(所有队伍, 2);
+        "wait for map data rule"
+        等待(0.24, 无视条件);
+        "fix team because of naming"
+        If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍1)));
+            在索引处设置全局变量(ColorConfig, 16, 颜色(蓝色));
+        Else If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍2)));
+            在索引处设置全局变量(ColorConfig, 16, 颜色(红色));
+        End;
+        "prevent same color lock orbs"
+        If(比较(数组中的值(全局.ColorConfig, 15), ==, 数组中的值(全局.ColorConfig, 16)));
+            在索引处设置全局变量(ColorConfig, 16, If-Then-Else(比较(数组中的值(全局.ColorConfig, 15), ==, 颜色(橙色)), 颜色(绿色), 颜色(橙色)));
+        End;
+        "prevent same color bhop/climb used/unused"
+        If(比较(数组中的值(全局.ColorConfig, 7), ==, 数组中的值(全局.ColorConfig, 8)));
+            在索引处设置全局变量(ColorConfig, 8, If-Then-Else(比较(数组中的值(全局.ColorConfig, 7), ==, 颜色(红色)), 颜色(橙色), 颜色(红色)));
+        End;
+        设置全局变量(SaveName, 空数组);
+        设置全局变量(SaveCp, 空数组);
+        设置全局变量(SaveTimer, 空数组);
+        设置全局变量(SaveEnt, 空数组);
+        "SavePauseTime = []\\nSavePauseEnabled = []"
+        设置全局变量(SaveElapsed, 空数组);
+        设置全局变量(Dao, If-Then-Else(数量(全局.Dao), 已过滤的数组(全局.Dao, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(SHIFT, If-Then-Else(数量(全局.SHIFT), 已过滤的数组(全局.SHIFT, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(pinballnumber, If-Then-Else(数量(全局.pinballnumber), 全局.pinballnumber, 空数组));
+        设置全局变量(A, If-Then-Else(数量(全局.A), 全局.A, 空数组));
+        设置全局变量(A, If-Then-Else(数量(全局.A), 全局.A, 空数组));
+        设置全局变量(killballnumber, If-Then-Else(数量(全局.killballnumber), 全局.killballnumber, 空数组));
+        设置全局变量(H, If-Then-Else(数量(全局.H), 全局.H, 空数组));
+        设置全局变量(I, If-Then-Else(数量(全局.I), 全局.I, 空数组));
+        设置全局变量(K, If-Then-Else(数量(全局.K), 全局.K, 空数组));
+        设置全局变量(TQ, If-Then-Else(数量(全局.TQ), 全局.TQ, 空数组));
+        设置全局变量(TQ2, If-Then-Else(数量(全局.TQ2), 全局.TQ2, 空数组));
+        设置全局变量(EditMode, If-Then-Else(数量(全局.EditMode), 全局.EditMode, 空数组));
+        设置全局变量(TQ5, If-Then-Else(数量(全局.TQ5), 全局.TQ5, 空数组));
+        设置全局变量(TQ6, If-Then-Else(数量(全局.TQ6), 全局.TQ6, 空数组));
+        设置全局变量(BounceToggleLock, If-Then-Else(数量(全局.BounceToggleLock), 全局.BounceToggleLock, 空数组));
+        设置全局变量(CustomPortalStart, If-Then-Else(数量(全局.CustomPortalStart), 全局.CustomPortalStart, 空数组));
+        设置全局变量(CustomPortalEndpoint, If-Then-Else(数量(全局.CustomPortalEndpoint), 全局.CustomPortalEndpoint, 空数组));
+        设置全局变量(CustomPortalCP, If-Then-Else(数量(全局.CustomPortalCP), 全局.CustomPortalCP, 空数组));
+        设置全局变量(LeaderBoardFull, 空数组);
+        设置全局变量(TitleData, 空);
+        设置全局变量(HintCp, 空数组);
+        设置全局变量(HintText, 空数组);
+        "clean out -1's after the ban has loaded"
+        设置全局变量(BanBhop, If-Then-Else(数量(全局.BanBhop), 已过滤的数组(全局.BanBhop, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(BanClimb, If-Then-Else(数量(全局.BanClimb), 已过滤的数组(全局.BanClimb, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(BanEmote, If-Then-Else(数量(全局.BanEmote), 已过滤的数组(全局.BanEmote, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(BanDead, If-Then-Else(数量(全局.BanDead), 已过滤的数组(全局.BanDead, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(BanCreate, If-Then-Else(数量(全局.BanCreate), 已过滤的数组(全局.BanCreate, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(BanMulti, If-Then-Else(数量(全局.BanMulti), 已过滤的数组(全局.BanMulti, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        "BanTriple = [i for i in BanTriple if i + false >= 0] if len(BanTriple) else [] # legacy code, now auto sets it to null to save space"
+        设置全局变量(BanStand, If-Then-Else(数量(全局.BanStand), 已过滤的数组(全局.BanStand, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
+        设置全局变量(BanSaveDouble, If-Then-Else(数量(全局.BanSaveDouble), 全局.BanSaveDouble, 空数组));
+        设置全局变量(BanDjump, If-Then-Else(数量(全局.BanDjump), 全局.BanDjump, 空数组));
+        If(地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Basic Map Validator - 验证地图"), 真, 3));
+            开始规则(AddonCheckMap, 无动作);
+        End;
+        设置全局变量(PortalOn, 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), 真, 4));
+        设置全局变量(CompMode, 地图工坊设置开关(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("Turn on competitive mode - 开启竞赛模式"), 假, 100));
+        If(全局.CompMode);
+            "-! comp minutes !-\\n5-240"
+            设置全局变量(CompTime, 地图工坊设置整数(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
+            "-! comp attempt count !-"
+            设置全局变量(CompAtmpNum, 地图工坊设置整数(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("attempt count - 尝试次数"), 5, 0, 500, 102));
+            "-! comp restartlimiter !-"
+            设置全局变量(CompRestartLimit, 地图工坊设置开关(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("disable restart during run - 竞赛中禁用重新开始"), 假, 103));
+        Else;
+            设置全局变量(instructiontext, 空);
+    }
+}
+
+规则 ("Parkour | Match time") {
+    事件 {
+        持续 - 全局;
+    }
+    动作 {
+        If(比较(当前游戏模式, !=, 游戏模式(突击模式)));
+            "0.25"
+            等待(假, 无视条件);
+            "1"
+            设置比赛时间(假);
+            "1.1"
+            等待(假, 无视条件);
+            "1"
+            设置比赛时间(假);
+            "1.1"
+            等待(假, 无视条件);
+        End;
+        设置比赛时间(70);
+        比赛时间暂停;
+        等待(假, 无视条件);
+        设置全局变量(TimeRemaining, 265);
+        While(或(全局.TimeRemaining, (主机玩家).editor_on));
+            等待(60, 无视条件);
+            修改全局变量(TimeRemaining, 减, 真);
+            If(全局.CompMode);
+                修改全局变量(CompTime, 减, 真);
+                If(非(全局.CompTime));
+                    大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("时间到了"), 自定义字符串("time's up")));
+                    设置玩家变量(所有玩家(所有队伍), comp_done, 真);
+                    停止追踪玩家变量(所有玩家(所有队伍), timer_normal);
+                    "getAllPlayers().disableRespawn()"
+                    设置受到伤害(所有玩家(所有队伍), 100);
+                    击杀(所有玩家(所有队伍), 空);
+                End;
+            End;
+        End;
+        大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("房间已达最大持续时间, 即将重启"), 自定义字符串("maximum lobby time elapsed, restarting")));
+        等待(5, 无视条件);
+        "Prevent crash during POTG and closing lobby"
+        设置玩家变量(所有玩家(所有队伍), lockState, 真);
+        宣告玩家胜利(主机玩家);
+        宣告队伍胜利(所在队伍(主机玩家));
+    }
+}
+
+规则 ("Parkour | Player Initialize") {
+    事件 {
+        玩家加入比赛;
+        双方;
+        全部;
+    }
+    动作 {
+        "Turn Editor On"
+        设置玩家变量(事件玩家, editor_on, 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Editor mode - 作图模式"), 假, -1));
+        隐藏游戏模式HUD(事件玩家);
+        取消与玩家的移动碰撞(事件玩家);
+        设置受到伤害(事件玩家, 0);
+        设置玩家变量(事件玩家, lockState, 真);
+        根据条件中止(是否是机器人(事件玩家));
+        对所有玩家启用死亡回放(事件玩家);
+        启用死亡回放时目标的HUD(事件玩家);
+        关闭游戏预设复生模式(事件玩家);
+        预加载英雄(事件玩家, 英雄(源氏));
+        设置玩家变量(事件玩家, editor_lock, 真);
+        设置玩家变量(事件玩家, toggle_guide, 真);
+        设置玩家变量(事件玩家, cache_bounceTouched, -1);
+        "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
+        等待(真, 无视条件);
+        创建效果(事件玩家, 环, 数组中的值(全局.ColorConfig, 9), 最后(数组中的值(全局.A, (事件玩家).checkpoint_current)), 真, 位置和半径);
+        创建效果(If-Then-Else((事件玩家).checkpoint_notLast, 事件玩家, 空), 环, 数组中的值(全局.ColorConfig, 10), 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 真, 可见，位置和半径);
+        创建效果(If-Then-Else((事件玩家).checkpoint_notLast, 事件玩家, 空), 光柱, 数组中的值(全局.ColorConfig, 11), 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 真, 可见，位置和半径);
+        创建图标(If-Then-Else((事件玩家).checkpoint_notLast, 事件玩家, 空), 加(数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 上), 箭头：向下, 可见和位置, 数组中的值(全局.ColorConfig, 12), 真);
+        等待直到 (已重生(事件玩家), 999999999999);
+        设置玩家变量(事件玩家, editor_lock, 假);
+        If(全局.CompMode);
+            设置不可见(事件玩家, 全部);
+            If(数组包含(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)));
+                设置玩家变量(事件玩家, comp_countAttempts, 数组中的值(全局.CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组))));
+            "instructions and settings for comp start"
+            Else;
+                设置玩家变量(事件玩家, comp_instructionHud, 真);
+                修改全局变量(CompAtmpSaveNames, 添加至数组, 字符串分割(首个(事件玩家), 空数组));
+                修改全局变量(CompAtmpSaveCount, 添加至数组, 1);
+                设置玩家变量(事件玩家, comp_countAttempts, 1);
+                设置移动速度(事件玩家, 假);
+                设置启用技能 1(事件玩家, 假);
+                设置启用终极技能(事件玩家, 假);
+                等待直到 (非(按钮被按下(事件玩家, 按钮(互动))), 真);
+                等待直到 (或(按钮被按下(事件玩家, 按钮(互动)), 比较(全局.CompTime, <, 1)), 999999999999);
+                设置移动速度(事件玩家, 100);
+                设置玩家变量(事件玩家, comp_instructionHud, 假);
+            End;
+            If(或(比较((事件玩家).comp_countAttempts, <, 空), 比较(全局.CompTime, <, 1)));
+                设置玩家变量(事件玩家, comp_done, 真);
+            End;
+        End;
+        等待(假, 无视条件);
+        "initialization of the game"
+        调用子程序(StartGame);
+        设置玩家变量(事件玩家, lockState, 假);
+    }
+}
+
+规则 ("Parkour | Player Leaves") {
+    事件 {
+        玩家离开比赛;
+        双方;
+        全部;
+    }
+    动作 {
+        If(数组中的值(全局.SaveCp, 数组值的索引(全局.SaveEnt, 事件玩家)));
+            If(与(比较(数组中的值(全局.SaveCp, 数组值的索引(全局.SaveEnt, 事件玩家)), <, 减(数量(全局.A), 真)), 数组中的值(全局.SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家))));
+                在索引处设置全局变量(SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家), 加(减(总计消耗时间, 数组中的值(全局.SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家))), 数组中的值(全局.SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家))));
+            End;
+        "delete if player didnt do first cp"
+        Else;
+            调用子程序(DeleteSave);
+    }
+}
+
+规则 ("Parkour | Ground: Traces, Arrive, & Reset") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        (事件玩家).lockState == 假;
+        在地面上(事件玩家) == 真;
+        存活(事件玩家) == 真;
+    }
+    动作 {
+        If(非((事件玩家).checkpoint_notLast));
+            If(与(正在移动(事件玩家), 非(或(或(或((事件玩家).toggle_practice, (事件玩家).toggle_invisible), (事件玩家).editor_on), 全局.CompMode))));
+                "traces ----------------------------------------------------------------------------------------------------"
+                设置玩家变量(事件玩家, cache_rainbow, 数组中的值(数组(颜色(红色), 颜色(橙色), 颜色(黄色), 颜色(灰绿色), 颜色(绿色), 颜色(青绿色), 颜色(蓝色), 颜色(亮紫色), 颜色(紫色), 颜色(玫红)), 余数(取整(乘(总计消耗时间, 2), 下), 10)));
+                "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
+                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 0.4);
+                等待(0.048, 无视条件);
+                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 0.6);
+                等待(0.048, 无视条件);
+                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 0.8);
+                等待(0.048, 无视条件);
+                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 1);
+                等待(0.048, 无视条件);
+                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 1.2);
+                等待(0.048, 无视条件);
+                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 1.4);
+                等待(0.048, 无视条件);
+            End;
+        "or eventPlayer.lockState:"
+        Else If(或((事件玩家).toggle_invincible, 与(全局.CompMode, 非(全局.CompTime))));
+        Else If(比较(相距距离(事件玩家, 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真))), <=, 1.4));
+            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
+            If(比较(数量((事件玩家).cache_collectedLocks), <, (事件玩家).cache_bounceMaxLocks));
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   ! 进点前需集齐所有收集球 !"), 自定义字符串("   ! collect ALL {0} orbs to unlock !", 数组中的值(全局.ColorConfig, 16))));
+                "kill(eventPlayer, null)"
+                调用子程序(CheckpointFailReset);
+            Else If(与((事件玩家).ban_climb, (事件玩家).skill_usedClimb));
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   爬墙 ↑ 已禁用!"), 自定义字符串("   Climb ↑ is banned!")));
+                调用子程序(CheckpointFailReset);
+            Else If(与((事件玩家).ban_bhop, (事件玩家).skill_usedBhop));
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   ≥ 留小跳进点!"), 自定义字符串("   ≥ Must have a bhop to complete!")));
+                调用子程序(CheckpointFailReset);
+            Else If(与((事件玩家).ban_djump, (事件玩家).skill_usedDouble));
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   » 留二段跳!"), 自定义字符串("   » Must have a double jump to complete!")));
+                调用子程序(CheckpointFailReset);
+            Else;
+                设置玩家变量(事件玩家, checkpoint_moved, 真);
+                修改玩家变量(事件玩家, checkpoint_current, 加, 真);
+                If(比较((事件玩家).timer_splitDisplay, >, -999999999999));
+                    设置玩家变量(事件玩家, timer_splitDisplay, 减(If-Then-Else((事件玩家).toggle_practice, (事件玩家).timer_practice, (事件玩家).timer_normal), (事件玩家).timer_split));
+                End;
+                If((事件玩家).toggle_practice);
+                    设置玩家变量(事件玩家, timer_split, (事件玩家).timer_practice);
+                Else;
+                    设置玩家变量(事件玩家, timer_split, (事件玩家).timer_normal);
+                    调用子程序(DeleteSave);
+                    "complete lvl"
+                    If(与(比较((事件玩家).checkpoint_current, ==, 减(数量(全局.A), 真)), 非((事件玩家).editor_on)));
+                        停止追踪玩家变量(事件玩家, timer_normal);
+                        调用子程序(LeaderboardUpdate);
+                        If(与(全局.CompMode, 全局.CompAtmpNum));
+                            If(比较((事件玩家).comp_countAttempts, ==, 全局.CompAtmpNum));
+                                在索引处设置全局变量(CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)), -1);
+                                设置玩家变量(事件玩家, comp_countAttempts, -1);
+                                设置玩家变量(事件玩家, comp_done, 真);
+                                设置玩家变量(事件玩家, toggle_leaderboard, 真);
+                                "eventPlayer.disableRespawn()"
+                                设置受到伤害(事件玩家, 100);
+                                击杀(事件玩家, 空);
+                                设置受到伤害(事件玩家, 0);
+                            Else;
+                                在索引处设置全局变量(CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)), 加((事件玩家).comp_countAttempts, 真));
+                            End;
+                        End;
+                        大字体信息(首个(真), 自定义字符串("{0} {1} {2} sec", 事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("已通关! 用时"), 自定义字符串("Mission complete! Time")), (事件玩家).timer_normal));
+                        等待(假, 无视条件);
+                    "update save"
+                    Else;
+                        调用子程序(MakeSave);
+                    End;
+                    调用子程序(UpdateTitle);
+                End;
+                调用子程序(UpdateCache);
+                "teleport cps"
+                If(比较(数量(数组中的值(全局.A, (事件玩家).checkpoint_current)), >, 1));
+                    调用子程序(CheckpointFailReset);
+                Else;
+                    调用子程序(AddonCustomLoadAndReset);
+                End;
+                等待(假, 无视条件);
+                "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\"))"
+                播放效果(事件玩家, 环状爆炸声音, 颜色(白色), 事件玩家, 100);
+                播放效果(If-Then-Else(或(全局.CompMode, (事件玩家).toggle_invisible), 事件玩家, 真), 环状爆炸, 颜色(天蓝色), 加(数组中的值(全局.A, (事件玩家).checkpoint_current), 乘(1.5, 上)), 4);
+            End;
+        Else If(比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), >, 1.4));
+            调用子程序(CheckpointFailReset);
+        End;
+        设置玩家变量(事件玩家, cache_collectedLocks, 空数组);
+        等待(0.048, 无视条件);
+        如条件为“真”则循环;
+    }
+}
+
+规则 ("Parkour | Boundary Sphere") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        (事件玩家).cache_killPosition != 空数组;
+        (事件玩家).toggle_invincible == 假;
+        (事件玩家).checkpoint_notLast != 假;
+        对任意为“真”((事件玩家).cache_killRadii, 比较(乘(归一化(当前数组元素), 相距距离(数组中的值((事件玩家).cache_killPosition, 当前数组索引), 事件玩家)), <, 当前数组元素)) == 真;
+    }
+    动作 {
+        调用子程序(CheckpointFailReset);
+    }
+}
+
+规则 ("Parkour | Bounce Ball / Orb") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        (事件玩家).cache_bouncePosition != 空数组;
+        "@Condition eventPlayer.checkpoint_notLast # disabled coz editor"
+        对任意为“真”((事件玩家).cache_bouncePosition, 比较(相距距离(当前数组元素, 加(所选位置(事件玩家), 乘(0.7, 上))), <, 1.4)) == 真;
+    }
+    动作 {
+        设置玩家变量(事件玩家, cache_bounceTouched, 数组值的索引(全局.TQ, 已过滤的数组(全局.TQ, 与(与(与(比较(数组中的值(全局.pinballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current), 比较(当前数组索引, !=, (事件玩家).cache_bounceTouched)), 非(数组包含((事件玩家).cache_collectedLocks, 当前数组索引))), 比较(相距距离(加(事件玩家, 乘(0.7, 上)), 当前数组元素), <, 1.4)))));
+        "prevent same one activating twice in a row"
+        If(比较((事件玩家).cache_bounceTouched, >=, 空));
+            If(数组中的值(全局.BounceToggleLock, (事件玩家).cache_bounceTouched));
+                修改玩家变量(事件玩家, cache_collectedLocks, 添加至数组, (事件玩家).cache_bounceTouched);
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   弹球已收集"), 自定义字符串("   orb has been collected")));
+            End;
+            If(比较(数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), >, 空));
+                施加推力(事件玩家, 上, 数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), 至地图, 取消相反运动XYZ);
+            Else If(比较(数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), <, 空));
+                取消主要动作(事件玩家);
+                设置玩家变量(事件玩家, skill_usedDouble, 空);
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   二段跳已就绪"), 自定义字符串("   Double Jump is ready")));
+            End;
+            If(数组中的值(全局.TQ5, (事件玩家).cache_bounceTouched));
+                设置启用终极技能(事件玩家, 真);
+                设置终极技能充能(事件玩家, 100);
+                小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("终极技能已就绪"), 自定义字符串("Ultimate is ready"))));
+            End;
+            If(数组中的值(全局.TQ6, (事件玩家).cache_bounceTouched));
+                If(正在使用技能 1(事件玩家));
+                    等待直到 (非(正在使用技能 1(事件玩家)), 真);
+                    等待(假, 无视条件);
+                End;
+                设置启用技能 1(事件玩家, 真);
+                小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("技能1影已就绪"), 自定义字符串("Dash is ready"))));
+            End;
+            播放效果(事件玩家, 状态爆炸声音, 颜色(白色), 事件玩家, 75);
+        End;
+        等待(0.24, 无视条件);
+        如条件为“真”则循环;
+        设置玩家变量(事件玩家, cache_bounceTouched, -1);
+    }
+}
+
+规则 ("Parkour | Death Reset") {
+    事件 {
+        玩家阵亡;
+        双方;
+        全部;
+    }
+    条件 {
+        是否是机器人(事件玩家) == 假;
+        (事件玩家).toggle_spectate == 假;
+        (事件玩家).comp_done == 假;
+    }
+    动作 {
+        If(数量(全局.A));
+            复活(事件玩家);
+        Else;
+            复生(事件玩家);
+        End;
+        调用子程序(CheckpointFailReset);
+        "rest is to prevent dead spamming from crashing server\\nbut doing waits only when needed without relying on a variable count"
+        等待直到 (存活(事件玩家), 真);
+        等待直到 (死亡(事件玩家), 真);
+        If(与(死亡(事件玩家), 非(或((事件玩家).toggle_spectate, (事件玩家).comp_done))));
+            等待(0.16, 无视条件);
+            复活(事件玩家);
+            调用子程序(CheckpointFailReset);
+            等待直到 (存活(事件玩家), 真);
+            等待直到 (死亡(事件玩家), 真);
+            If(与(死亡(事件玩家), 非(或((事件玩家).toggle_spectate, (事件玩家).comp_done))));
+                等待(0.44, 无视条件);
+                复活(事件玩家);
+                调用子程序(CheckpointFailReset);
+                等待直到 (存活(事件玩家), 真);
+                等待直到 (死亡(事件玩家), 真);
+                If(与(死亡(事件玩家), 非(或((事件玩家).toggle_spectate, (事件玩家).comp_done))));
+                    等待(0.64, 无视条件);
+                    复生(事件玩家);
+                    调用子程序(CheckpointFailReset);
+    }
+}
+
+规则 ("Parkour | SUB Update Effect Cache") {
+    事件 {
+        子程序;
+        UpdateCache;
+    }
+    动作 {
+        "note: if adding cp pos to cache, make sure to also adjust editor things like move and teleport"
+        设置玩家变量(事件玩家, cache_bouncePosition, 已过滤的数组(全局.TQ, 比较(数组中的值(全局.pinballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current)));
+        "eventPlayer.cache_bounceLocks = [_ for _, i in BounceToggleLock if BouncePadCheckpoints[i] == eventPlayer.checkpoint_current and _]\\neventPlayer.cache_bounceMaxLocks = len([_ for _ in eventPlayer.cache_bounceLocks if _])"
+        设置玩家变量(事件玩家, cache_bounceMaxLocks, 数量(已过滤的数组(全局.BounceToggleLock, 与(比较(数组中的值(全局.pinballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current), 当前数组元素))));
+        设置玩家变量(事件玩家, cache_killPosition, 已过滤的数组(全局.H, 比较(数组中的值(全局.killballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current)));
+        设置玩家变量(事件玩家, cache_killRadii, 已过滤的数组(全局.I, 比较(数组中的值(全局.killballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current)));
+        设置玩家变量(事件玩家, cache_portalStart, 已过滤的数组(全局.CustomPortalStart, 或(比较(数组中的值(全局.CustomPortalCP, 当前数组索引), ==, (事件玩家).checkpoint_current), 比较(数组中的值(全局.CustomPortalCP, 当前数组索引), <, 空))));
+        设置玩家变量(事件玩家, cache_portalEnd, 已过滤的数组(全局.CustomPortalEndpoint, 或(比较(数组中的值(全局.CustomPortalCP, 当前数组索引), ==, (事件玩家).checkpoint_current), 比较(数组中的值(全局.CustomPortalCP, 当前数组索引), <, 空))));
+        设置玩家变量(事件玩家, checkpoint_notLast, 与(比较((事件玩家).checkpoint_current, <, 减(数量(全局.A), 真)), 比较(数量(全局.A), >, 1)));
+        设置玩家变量(事件玩家, toggle_hints, 假);
+        设置玩家变量(事件玩家, banString, 空数组);
+        等待(假, 无视条件);
+        If((事件玩家).checkpoint_notLast);
+            设置玩家变量(事件玩家, ban_multi, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Multiclimb - 封禁蹭留"), 假, 1), 数组包含(全局.BanMulti, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_multi);
+                设置玩家变量(事件玩家, banString, 自定义字符串("∞ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_create, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Createbhop - 封禁卡小"), 假, 2), 数组包含(全局.BanCreate, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_create);
+                设置玩家变量(事件玩家, banString, 自定义字符串("♂ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_standcreate, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban standcreate - 封禁站卡"), 假, 3), 数组包含(全局.BanStand, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_standcreate);
+                "≥  √ ▼ ↓"
+                设置玩家变量(事件玩家, banString, 自定义字符串("♠ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_dead, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Deathbhop - 封禁死小"), 假, 4), 数组包含(全局.BanDead, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_dead);
+                设置玩家变量(事件玩家, banString, 自定义字符串("X {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_emote, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Emote Savehop - 封禁表情留小"), 假, 5), 数组包含(全局.BanEmote, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_emote);
+                设置玩家变量(事件玩家, banString, 自定义字符串("♥ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_climb, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Wallclimb - 封禁爬墙"), 假, 6), 数组包含(全局.BanClimb, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_climb);
+                设置玩家变量(事件玩家, banString, 自定义字符串("↑ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_savedouble, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban save double - 封禁延二段跳"), 假, 7), 数组包含(全局.BanSaveDouble, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_savedouble);
+                设置玩家变量(事件玩家, banString, 自定义字符串("△ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_bhop, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("require bhop available - 留小跳进点 "), 假, 8), 数组包含(全局.BanBhop, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_bhop);
+                "≥  √ ▼ ↓"
+                设置玩家变量(事件玩家, banString, 自定义字符串("≥ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_djump, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("require djump available - 留二段跳 "), 假, 9), 数组包含(全局.BanDjump, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_djump);
+                "≥  √ ▼ ↓ ︽"
+                设置玩家变量(事件玩家, banString, 自定义字符串("» {0}", (事件玩家).banString));
+            End;
+        Else;
+            设置玩家变量(事件玩家, ban_multi, 假);
+            设置玩家变量(事件玩家, ban_create, 假);
+            设置玩家变量(事件玩家, ban_standcreate, 假);
+            设置玩家变量(事件玩家, ban_dead, 假);
+            设置玩家变量(事件玩家, ban_emote, 假);
+            设置玩家变量(事件玩家, ban_climb, 假);
+            设置玩家变量(事件玩家, ban_savedouble, 假);
+            设置玩家变量(事件玩家, ban_bhop, 假);
+            设置玩家变量(事件玩家, ban_djump, 假);
+        End;
+        等待(假, 无视条件);
+        开始规则(CheckUlt, 重新开始规则);
+        开始规则(CheckAbility1, 重新开始规则);
+        根据条件中止(或(比较(事件玩家, !=, 主机玩家), 非((事件玩家).editor_on)));
+        调用子程序(EditUpdateSelectedIds);
+        消除效果((主机玩家).editor_hitboxEffect);
+        创建效果(If-Then-Else((主机玩家).editor_hitboxToggle, 主机玩家, 空), 球体, 颜色(白色), 数组中的值(全局.A, (主机玩家).checkpoint_current), 1.4, 可见，位置和半径);
+        设置玩家变量(主机玩家, editor_hitboxEffect, 最后创建的实体);
+        创建效果(If-Then-Else(与((主机玩家).editor_hitboxToggle, (主机玩家).checkpoint_notLast), 主机玩家, 空), 球体, 颜色(白色), 数组中的值(全局.A, 加((主机玩家).checkpoint_current, 真)), 1.4, 可见，位置和半径);
+        修改玩家变量(主机玩家, editor_hitboxEffect, 添加至数组, 最后创建的实体);
+        设置玩家变量(主机玩家, editor_bounceIndex, 已过滤的数组(映射的数组(全局.pinballnumber, If-Then-Else(比较(当前数组元素, ==, (主机玩家).checkpoint_current), 当前数组索引, -1)), 比较(当前数组元素, >=, 空)));
+        设置玩家变量(主机玩家, editor_killIndex, 已过滤的数组(映射的数组(全局.killballnumber, If-Then-Else(比较(当前数组元素, ==, (主机玩家).checkpoint_current), 当前数组索引, -1)), 比较(当前数组元素, >=, 空)));
+        If((主机玩家).checkpoint_moved);
+            调用子程序(EditorSelectLast);
+            设置玩家变量(主机玩家, checkpoint_moved, 假);
+        End;
+    }
+}
+
+规则 ("Parkour | SUB Delete Save") {
+    事件 {
+        子程序;
+        DeleteSave;
+    }
+    动作 {
+        修改全局变量(SaveName, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
+        修改全局变量(SaveCp, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
+        修改全局变量(SaveTimer, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
+        修改全局变量(SaveElapsed, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
+        "must always be last because its the index itself"
+        修改全局变量(SaveEnt, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
+    }
+}
+
+规则 ("Parkour | SUB Make Save") {
+    事件 {
+        子程序;
+        MakeSave;
+    }
+    动作 {
+        修改全局变量(SaveEnt, 添加至数组, 事件玩家);
+        修改全局变量(SaveName, 添加至数组, 字符串分割(首个(事件玩家), 空数组));
+        修改全局变量(SaveCp, 添加至数组, (事件玩家).checkpoint_current);
+        修改全局变量(SaveTimer, 添加至数组, (事件玩家).timer_normal);
+        修改全局变量(SaveElapsed, 添加至数组, 总计消耗时间);
+    }
+}
+
+规则 ("Parkour | SUB Timer Pause") {
+    事件 {
+        子程序;
+        TimerPause;
+    }
+    动作 {
+        停止追踪玩家变量(事件玩家, timer_normal);
+        根据条件中止(非(数组包含(全局.SaveEnt, 事件玩家)));
+        在索引处设置全局变量(SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家), (事件玩家).timer_normal);
+        在索引处设置全局变量(SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家), 空);
+    }
+}
+
+规则 ("Parkour | SUB Timer Resume") {
+    事件 {
+        子程序;
+        TimerResume;
+    }
+    动作 {
+        追踪玩家变量频率(事件玩家, timer_normal, 999999999999, 真, 全部禁用);
+        在索引处设置全局变量(SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家), 总计消耗时间);
+    }
+}
+
+规则 ("Parkour | SUB Leaderboard Update") {
+    事件 {
+        子程序;
+        LeaderboardUpdate;
+    }
+    动作 {
+        "[[name, seconds, prettytime]]\\nyou already have a time"
+        If(数组包含(映射的数组(全局.LeaderBoardFull, 首个(当前数组元素)), 字符串分割(首个(事件玩家), 空数组)));
+            根据条件中止(比较((事件玩家).timer_normal, >=, 数组中的值(首个(已过滤的数组(全局.LeaderBoardFull, 比较(首个(当前数组元素), ==, 字符串分割(首个(事件玩家), 空数组)))), 真)));
+            设置全局变量(LeaderBoardFull, 已过滤的数组(全局.LeaderBoardFull, 比较(首个(当前数组元素), !=, 字符串分割(首个(事件玩家), 空数组))));
+        Else If(或(比较(数量(全局.LeaderBoardFull), <, 25), 比较((事件玩家).timer_normal, <, 最后(数组中的值(全局.LeaderBoardFull, 19)))));
+            修改全局变量(LeaderBoardFull, 根据索引从数组中移除, 24);
+        Else;
+            "Full and time too slow"
+            中止;
+        End;
+        修改全局变量(LeaderBoardFull, 添加至数组, 数组(数组(字符串分割(首个(事件玩家), 空数组), (事件玩家).timer_normal, 自定义字符串("{0} sec", (事件玩家).timer_normal))));
+        "CreateLeaderboard()"
+        设置全局变量(LeaderBoardRemake, 真);
+    }
+}
+
+规则 ("Parkour | SUB Checkpoint Fail") {
+    事件 {
+        子程序;
+        CheckpointFailReset;
+    }
+    动作 {
+        设置玩家变量(事件玩家, timer_split, If-Then-Else((事件玩家).toggle_practice, (事件玩家).timer_practice, (事件玩家).timer_normal));
+        设置玩家变量(事件玩家, cache_collectedLocks, 空数组);
+        取消主要动作(事件玩家);
+        设置玩家变量(事件玩家, skill_usedDouble, 空);
+        If(非(或((事件玩家).checkpoint_current, (事件玩家).toggle_practice)));
+            设置玩家变量(事件玩家, timer_normal, 空);
+            设置玩家变量(事件玩家, timer_split, 空);
+        End;
+        If(数量(全局.A));
+            If(正在使用技能 1(事件玩家));
+                开始强制设置玩家位置(事件玩家, 事件玩家, 假);
+                等待直到 (非(正在使用技能 1(事件玩家)), 真);
+                等待(假, 无视条件);
+                停止强制设置玩家位置(事件玩家);
+            End;
+            传送(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current)));
+            "After teleport incase stopForcingPosition launches the player"
+            施加推力(事件玩家, 乘(-1, 速率(事件玩家)), 1.192093e-7, 至地图, 取消相反运动XYZ);
+            "old: disallow jump > 0.1 sec wait > allow jump, this method bugs with ult check disabling ultimate for some reason\\nif eventPlayer.ban_dead or eventPlayer.ban_emote and eventPlayer.isHoldingButton(Button.JUMP):"
+            If((事件玩家).ban_dead);
+                If(按钮被按下(事件玩家, 按钮(跳跃)));
+                    按下按键(事件玩家, 按钮(跳跃));
+                End;
+            Else;
+                "Reset Hop"
+                设置状态(事件玩家, 空, 定身, 0.096);
+            End;
+            If(正在使用终极技能(事件玩家));
+                设置受到伤害(事件玩家, 100);
+                击杀(事件玩家, 空);
+                设置受到伤害(事件玩家, 0);
+                等待(假, 无视条件);
+            End;
+        End;
+        开始规则(CheckUlt, 重新开始规则);
+        开始规则(CheckAbility1, 重新开始规则);
+        调用子程序(AddonCustomLoadAndReset);
+    }
+}
+
+规则 ("Parkour | SUB Start Game") {
+    事件 {
+        子程序;
+        StartGame;
+    }
+    动作 {
+        If(与(全局.CompMode, 或(比较(全局.CompTime, <, 1), (事件玩家).comp_done)));
+            设置玩家变量(事件玩家, toggle_leaderboard, 真);
+            设置玩家变量(事件玩家, comp_done, 真);
+            "eventPlayer.disableRespawn()"
+            设置受到伤害(事件玩家, 100);
+            击杀(事件玩家, 空);
+            设置受到伤害(事件玩家, 0);
+            中止;
+        End;
+        If(数量(全局.A));
+            "load saved progres"
+            If(数组包含(全局.SaveName, 字符串分割(首个(事件玩家), 空数组)));
+                在索引处设置全局变量(SaveEnt, 数组值的索引(全局.SaveName, 字符串分割(首个(事件玩家), 空数组)), 事件玩家);
+                设置玩家变量(事件玩家, checkpoint_current, 数组中的值(全局.SaveCp, 数组值的索引(全局.SaveEnt, 事件玩家)));
+                设置玩家变量(事件玩家, timer_normal, 数组中的值(全局.SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家)));
+            Else;
+                设置玩家变量(事件玩家, checkpoint_current, 空);
+                设置玩家变量(事件玩家, timer_normal, 空);
+                调用子程序(MakeSave);
+            End;
+            调用子程序(UpdateTitle);
+            调用子程序(UpdateCache);
+            调用子程序(CheckpointFailReset);
+            "FFA"
+            等待直到 (游戏正在进行中, 999999999999);
+            调用子程序(TimerResume);
+        End;
+        "eventPlayer.enableRespawn()"
+        设置玩家变量(事件玩家, toggle_invincible, 假);
+        设置玩家变量(事件玩家, toggle_spectate, 假);
+        设置玩家变量(事件玩家, checkpoint_moved, 真);
+    }
+}
+
+规则 ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("Mechanic | All | Jump") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        正在跳跃(事件玩家) == 真;
+    }
+    动作 {
+        设置玩家变量(事件玩家, skill_usedBhop, 真);
+        If((事件玩家).skill_usedHop);
+            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   小跳已用"), 自定义字符串("   Bhop")));
+        Else;
+            设置玩家变量(事件玩家, skill_usedHop, 真);
+    }
+}
+
+规则 ("Mechanic | All | No Jump") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        (事件玩家).skill_usedHop == 空;
+        在地面上(事件玩家) == 假;
+    }
+    动作 {
+        设置玩家变量(事件玩家, skill_usedHop, 真);
+    }
+}
+
+规则 ("Mechanic | All | Bhop Reset") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        在地面上(事件玩家) == 真;
+        按钮被按下(事件玩家, 按钮(跳跃)) == 假;
+    }
+    动作 {
+        设置玩家变量(事件玩家, skill_usedBhop, 假);
+    }
+}
+
+规则 ("Mechanic | All | Emote") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        正在使用表情交流(事件玩家) == 真;
+    }
+    动作 {
+        设置玩家变量(事件玩家, skill_usedBhop, 假);
+        If((事件玩家).addon_toggle3rdPov);
+            设置玩家变量(事件玩家, addon_toggle3rdPov, 假);
+            停止镜头(事件玩家);
+        End;
+        If((事件玩家).ban_emote);
+            等待直到 (非(正在使用表情交流(事件玩家)), 999999999999);
+            根据条件中止((事件玩家).toggle_invincible);
+            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   表情留小 ♥ 已禁用!"), 自定义字符串("   Emote Savehop ♥ is banned!")));
+            等待(假, 无视条件);
+            调用子程序(CheckpointFailReset);
+    }
+}
+
+规则 ("Mechanic | All | Ground Reset") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        在地面上(事件玩家) == 真;
+    }
+    动作 {
+        "All"
+        设置玩家变量(事件玩家, skill_usedHop, 空);
+        设置玩家变量(事件玩家, skill_countBhops, 空);
+        "$$ Climb"
+        设置玩家变量(事件玩家, skill_usedClimb, 假);
+        设置玩家变量(事件玩家, skill_countMulti, 空);
+        设置玩家变量(事件玩家, skill_countCreates, 空);
+        "$$ Genji"
+        设置玩家变量(事件玩家, skill_usedDouble, 空);
     }
 }
 
@@ -325,7 +1083,7 @@ export const frameworkTemplate = `设置
         设置全局变量(Name, 空);
         设置全局变量(Code, 空);
         开始规则(AddonCheckMap, 无动作);
-        创建HUD文本(主机玩家, 自定义字符串("­"), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", 自定义字符串(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", 自定义字符串("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", 自定义字符串("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), 自定义字符串("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", 自定义字符串("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", 自定义字符串(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", 自定义字符串("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", 自定义字符串("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", 自定义字符串("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), 顶部, -185, 颜色(灰绿色), 空, 颜色(灰绿色), 字符串, 默认可见度);
+        创建HUD文本(主机玩家, 自定义字符串("­"), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", 自定义字符串(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", 自定义字符串("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", 自定义字符串("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), 自定义字符串("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", 自定义字符串("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", 自定义字符串(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", 自定义字符串("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", 自定义字符串("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", 自定义字符串("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), 顶部, -185, 空, 空, 颜色(灰绿色), 字符串, 默认可见度);
         在索引处设置玩家变量(主机玩家, editor_saveCache, 2, 上一个文本ID);
         创建HUD文本(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("    > 按互动键关闭当前窗口 <    "), 自定义字符串("    > Press Interact to close this window <    ")), 空, 空, 顶部, -183, 颜色(灰绿色), 空, 空, 字符串, 默认可见度);
         在索引处设置玩家变量(主机玩家, editor_saveCache, 3, 上一个文本ID);
@@ -383,14 +1141,13 @@ export const frameworkTemplate = `设置
             创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("球体/传送门上限: {0}/193 ", 加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart))), 自定义字符串("orb/portal limit: {0}/193 ", 加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart)))), 空, 自定义字符串("                                                                                                                                "), 左边, -191, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
             "display selected cc/orb info"
             创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(与(非((主机玩家).editor_modeSelect), 数量(全局.A)), 自定义字符串("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", 数组中的值(全局.A, (主机玩家).checkpoint_current), If-Then-Else(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), <, 2), 空数组, 自定义字符串("\\n 传送点: {0}", 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真)))), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量((主机玩家).editor_killIndex)), 自定义字符串("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", 数组中的值(全局.H, 全局.EditSelected), 数组中的值(全局.I, 全局.EditSelected)), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)), 自定义字符串("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", 数组中的值(全局.TQ, 全局.EditSelected), 数组中的值(全局.EditMode, 全局.EditSelected), 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 自定义字符串("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", If-Then-Else(数组包含(全局.BanMulti, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanCreate, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", If-Then-Else(数组包含(全局.BanStand, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanClimb, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", If-Then-Else(数组包含(全局.BanDead, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanEmote, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", If-Then-Else(数组包含(全局.BanSaveDouble, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanBhop, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组))))), If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 4), 数组包含(数组((主机玩家).checkpoint_current, -1), 数组中的值(全局.CustomPortalCP, 全局.EditSelected))), 数量(全局.CustomPortalCP)), 自定义字符串("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), If-Then-Else(比较(数组中的值(全局.CustomPortalCP, 全局.EditSelected), <, 空), 自定义字符串("所有"), (主机玩家).checkpoint_current)), 自定义字符串("\\n   当前无数据选中   \\n")))))), If-Then-Else(与(非((主机玩家).editor_modeSelect), 数量(全局.A)), 自定义字符串("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", 数组中的值(全局.A, (主机玩家).checkpoint_current), If-Then-Else(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), <, 2), 空数组, 自定义字符串("\\n Teleport: {0}", 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真)))), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量((主机玩家).editor_killIndex)), 自定义字符串("\\n Selected boundary sphere\\n Vector: {0}\\n radius: {1}\\n  + keep out\\n  - stay in\\n", 数组中的值(全局.H, 全局.EditSelected), 数组中的值(全局.I, 全局.EditSelected)), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)), 自定义字符串("\\n Selected Bounce Orb\\n Vector: {0}\\n strength: {1} \\n ID: {2}\\n", 数组中的值(全局.TQ, 全局.EditSelected), 数组中的值(全局.EditMode, 全局.EditSelected), 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 自定义字符串("\\n skill bans\\n――――――――――――\\n {0} multi-climb ∞\\n {1} create ♂\\n {2}", If-Then-Else(数组包含(全局.BanMulti, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanCreate, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} stand ♠\\n {1} climb ↑\\n {2}", If-Then-Else(数组包含(全局.BanStand, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanClimb, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} dead X\\n {1} emote ♥\\n {2}", If-Then-Else(数组包含(全局.BanDead, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanEmote, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} save double △\\n――――――――――――\\n {1} require bhop ≥\\n", If-Then-Else(数组包含(全局.BanSaveDouble, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanBhop, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组))))), If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 4), 数组包含(数组((主机玩家).checkpoint_current, -1), 数组中的值(全局.CustomPortalCP, 全局.EditSelected))), 数量(全局.CustomPortalCP)), 自定义字符串("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), If-Then-Else(比较(数组中的值(全局.CustomPortalCP, 全局.EditSelected), <, 空), 自定义字符串("All"), (主机玩家).checkpoint_current)), 自定义字符串("\\n   No data selected   \\n"))))))), 空, 自定义字符串("                                                                                                                                "), 左边, -190, 颜色(白色), 空, 颜色(橙色), 可见和字符串, 默认可见度);
-            等待(真, 无视条件);
             "effects =========================================================================================================================================================================="
             创建地图文本(If-Then-Else(数量(全局.EditSelectIdArray), 真, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("选中的实体"), 自定义字符串("selected")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 数组中的值(全局.H, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 空))), 1.2, 不要截取, 可见和位置, 颜色(橙色), 默认可见度);
             创建图标(If-Then-Else(数量(全局.EditSelectIdArray), 真, 空), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 数组中的值(全局.H, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 空))), 箭头：向下, 可见和位置, 颜色(白色), 真);
             "Purple sphere for teleport location"
-            创建效果(If-Then-Else(与(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), >, 1), 非((主机玩家).editor_modeSelect)), 真, 空), 球体, 颜色(亮紫色), 减(数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 乘(0.1, 上)), 0.2, 可见，位置和半径);
+            创建效果(If-Then-Else(与(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), >, 1), 非((主机玩家).editor_modeSelect)), 主机玩家, 空), 球体, 颜色(亮紫色), 减(数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 乘(0.1, 上)), 0.2, 可见，位置和半径);
             "Teleport text"
-            创建地图文本(If-Then-Else(与(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), >, 1), 非((主机玩家).editor_modeSelect)), 真, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("传送点位置"), 自定义字符串("teleporter location")), 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 1.6, 不要截取, 可见，位置和字符串, 颜色(天蓝色), 默认可见度);
+            创建地图文本(If-Then-Else(与(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), >, 1), 非((主机玩家).editor_modeSelect)), 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("传送点位置"), 自定义字符串("teleporter location")), 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 1.6, 不要截取, 可见，位置和字符串, 颜色(天蓝色), 默认可见度);
             "normal cp if teleport"
             创建效果(If-Then-Else(与(数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 非((主机玩家).editor_modeSelect)), 主机玩家, 空), 环, 颜色(橙色), 首个(数组中的值(全局.A, (主机玩家).checkpoint_current)), 真, 可见，位置和半径);
             创建地图文本(If-Then-Else(与(数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 非((主机玩家).editor_modeSelect)), 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("检查点位置"), 自定义字符串("level location")), 首个(数组中的值(全局.A, (主机玩家).checkpoint_current)), 1.6, 不要截取, 可见，位置和字符串, 颜色(天蓝色), 默认可见度);
@@ -1188,6 +1945,29 @@ export const frameworkTemplate = `设置
     }
 }
 
+规则 ("Command | Toggle Invisible (Hold Deflect)") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        按钮被按下(事件玩家, 按钮(技能2)) == 真;
+        (事件玩家).editor_on == 假;
+        全局.CompMode == 假;
+    }
+    动作 {
+        等待(真, 当为“假”时中止);
+        设置玩家变量(事件玩家, toggle_invisible, 非((事件玩家).toggle_invisible));
+        设置不可见(事件玩家, 无);
+        If((事件玩家).toggle_invisible);
+            设置不可见(事件玩家, 全部);
+        End;
+        小字体信息(事件玩家, 自定义字符串("   {0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("隐身模式"), 自定义字符串("Invisible")), If-Then-Else((事件玩家).toggle_invisible, 自定义字符串("on"), 自定义字符串("off"))));
+        播放效果(事件玩家, 负面状态施加声音, 空, 事件玩家, 100);
+    }
+}
+
 规则 ("Command | Preview Orbs & Portals (Hold Primary + Secondary)") {
     事件 {
         持续 - 每名玩家;
@@ -1311,7 +2091,8 @@ export const frameworkTemplate = `设置
         等待(全局.CompMode, 无视条件);
         "eventPlayer.allowButton(Button.ABILITY_1)"
         设置玩家变量(事件玩家, lockState, 假);
-        等待(0.032, 无视条件);
+        "Anti spam"
+        等待(0.096, 无视条件);
     }
 }
 
@@ -1380,7 +2161,7 @@ export const frameworkTemplate = `设置
             调用子程序(TimerPause);
             停止追踪玩家变量(事件玩家, timer_practice);
             开始规则(CheckUlt, 重新开始规则);
-            开始规则(CheckDash, 重新开始规则);
+            开始规则(CheckAbility1, 重新开始规则);
         Else;
             If((事件玩家).toggle_practice);
                 大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("练习模式"), 自定义字符串("Practice mode")));
@@ -1393,7 +2174,8 @@ export const frameworkTemplate = `设置
             End;
         End;
         设置玩家变量(事件玩家, lockState, 假);
-        等待(0.032, 无视条件);
+        "Anti spam"
+        等待(0.096, 无视条件);
     }
 }
 
@@ -1439,7 +2221,8 @@ export const frameworkTemplate = `设置
             End;
         End;
         设置玩家变量(事件玩家, lockState, 假);
-        等待(0.032, 无视条件);
+        "Anti spam"
+        等待(0.096, 无视条件);
     }
 }
 
@@ -1502,7 +2285,8 @@ export const frameworkTemplate = `设置
         设置玩家变量(事件玩家, checkpoint_moved, 真);
         调用子程序(UpdateCache);
         调用子程序(CheckpointFailReset);
-        等待(假, 无视条件);
+        "Anti spam"
+        等待(0.064, 无视条件);
         "faster if you spam button"
         等待直到 (比较(按钮被按下(事件玩家, 按钮(主要攻击模式)), ==, 按钮被按下(事件玩家, 按钮(辅助攻击模式))), 0.256);
         如条件为“真”则循环;
@@ -1548,7 +2332,7 @@ export const frameworkTemplate = `设置
         与(与((事件玩家).editor_on, 比较(事件玩家, ==, 主机玩家)), 按钮被按下(事件玩家, 按钮(近身攻击))) == 假;
         按钮被按下(事件玩家, 按钮(辅助攻击模式)) == 真;
         按钮被按下(事件玩家, 按钮(主要攻击模式)) == 假;
-        "don't trigger during skipping"
+        "don't activate during skipping"
         按钮被按下(事件玩家, 按钮(蹲下)) == 假;
     }
     动作 {
@@ -1598,680 +2382,6 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> General <tx0C00000000001344>") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("General | SUB Update Effect Cache") {
-    事件 {
-        子程序;
-        UpdateCache;
-    }
-    动作 {
-        "note: if adding cp pos to cache, make sure to also adjust editor things like move and teleport"
-        设置玩家变量(事件玩家, cache_bouncePosition, 已过滤的数组(全局.TQ, 比较(数组中的值(全局.pinballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current)));
-        "eventPlayer.cache_bounceLocks = [_ for _, i in BounceToggleLock if BouncePadCheckpoints[i] == eventPlayer.checkpoint_current and _]\\neventPlayer.cache_bounceMaxLocks = len([_ for _ in eventPlayer.cache_bounceLocks if _])"
-        设置玩家变量(事件玩家, cache_bounceMaxLocks, 数量(已过滤的数组(全局.BounceToggleLock, 与(比较(数组中的值(全局.pinballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current), 当前数组元素))));
-        设置玩家变量(事件玩家, cache_killPosition, 已过滤的数组(全局.H, 比较(数组中的值(全局.killballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current)));
-        设置玩家变量(事件玩家, cache_killRadii, 已过滤的数组(全局.I, 比较(数组中的值(全局.killballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current)));
-        设置玩家变量(事件玩家, cache_portalStart, 已过滤的数组(全局.CustomPortalStart, 或(比较(数组中的值(全局.CustomPortalCP, 当前数组索引), ==, (事件玩家).checkpoint_current), 比较(数组中的值(全局.CustomPortalCP, 当前数组索引), <, 空))));
-        设置玩家变量(事件玩家, cache_portalEnd, 已过滤的数组(全局.CustomPortalEndpoint, 或(比较(数组中的值(全局.CustomPortalCP, 当前数组索引), ==, (事件玩家).checkpoint_current), 比较(数组中的值(全局.CustomPortalCP, 当前数组索引), <, 空))));
-        设置玩家变量(事件玩家, checkpoint_notLast, 与(比较((事件玩家).checkpoint_current, <, 减(数量(全局.A), 真)), 比较(数量(全局.A), >, 1)));
-        设置玩家变量(事件玩家, toggle_hints, 假);
-        设置玩家变量(事件玩家, banString, 空数组);
-        等待(假, 无视条件);
-        If((事件玩家).checkpoint_notLast);
-            设置玩家变量(事件玩家, ban_multi, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Multiclimb - 封禁蹭留"), 假, 1), 数组包含(全局.BanMulti, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_multi);
-                设置玩家变量(事件玩家, banString, 自定义字符串("∞ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_create, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Createbhop - 封禁卡小"), 假, 2), 数组包含(全局.BanCreate, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_create);
-                设置玩家变量(事件玩家, banString, 自定义字符串("♂ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_standcreate, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban standcreate - 封禁站卡"), 假, 3), 数组包含(全局.BanStand, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_standcreate);
-                "≥  √ ▼ ↓"
-                设置玩家变量(事件玩家, banString, 自定义字符串("♠ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_dead, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Deathbhop - 封禁死小"), 假, 4), 数组包含(全局.BanDead, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_dead);
-                设置玩家变量(事件玩家, banString, 自定义字符串("X {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_emote, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Emote Savehop - 封禁表情留小"), 假, 5), 数组包含(全局.BanEmote, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_emote);
-                设置玩家变量(事件玩家, banString, 自定义字符串("♥ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_climb, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Wallclimb - 封禁爬墙"), 假, 6), 数组包含(全局.BanClimb, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_climb);
-                设置玩家变量(事件玩家, banString, 自定义字符串("↑ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_savedouble, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban save double - 封禁延二段跳"), 假, 7), 数组包含(全局.BanSaveDouble, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_savedouble);
-                设置玩家变量(事件玩家, banString, 自定义字符串("△ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_bhop, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("require bhop available - 留小跳进点 "), 假, 8), 数组包含(全局.BanBhop, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_bhop);
-                "≥  √ ▼ ↓"
-                设置玩家变量(事件玩家, banString, 自定义字符串("≥ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_djump, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("require djump available - 留二段跳 "), 假, 9), 数组包含(全局.BanDjump, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_djump);
-                "≥  √ ▼ ↓ ︽"
-                设置玩家变量(事件玩家, banString, 自定义字符串("» {0}", (事件玩家).banString));
-            End;
-        Else;
-            设置玩家变量(事件玩家, ban_multi, 假);
-            设置玩家变量(事件玩家, ban_create, 假);
-            设置玩家变量(事件玩家, ban_standcreate, 假);
-            设置玩家变量(事件玩家, ban_dead, 假);
-            设置玩家变量(事件玩家, ban_emote, 假);
-            设置玩家变量(事件玩家, ban_climb, 假);
-            设置玩家变量(事件玩家, ban_savedouble, 假);
-            设置玩家变量(事件玩家, ban_bhop, 假);
-            设置玩家变量(事件玩家, ban_djump, 假);
-        End;
-        等待(假, 无视条件);
-        开始规则(CheckUlt, 重新开始规则);
-        开始规则(CheckDash, 重新开始规则);
-        根据条件中止(或(比较(事件玩家, !=, 主机玩家), 非((事件玩家).editor_on)));
-        调用子程序(EditUpdateSelectedIds);
-        消除效果((主机玩家).editor_hitboxEffect);
-        创建效果(If-Then-Else((主机玩家).editor_hitboxToggle, 主机玩家, 空), 球体, 颜色(白色), 数组中的值(全局.A, (主机玩家).checkpoint_current), 1.4, 可见，位置和半径);
-        设置玩家变量(主机玩家, editor_hitboxEffect, 最后创建的实体);
-        创建效果(If-Then-Else(与((主机玩家).editor_hitboxToggle, (主机玩家).checkpoint_notLast), 主机玩家, 空), 球体, 颜色(白色), 数组中的值(全局.A, 加((主机玩家).checkpoint_current, 真)), 1.4, 可见，位置和半径);
-        修改玩家变量(主机玩家, editor_hitboxEffect, 添加至数组, 最后创建的实体);
-        设置玩家变量(主机玩家, editor_bounceIndex, 已过滤的数组(映射的数组(全局.pinballnumber, If-Then-Else(比较(当前数组元素, ==, (主机玩家).checkpoint_current), 当前数组索引, -1)), 比较(当前数组元素, >=, 空)));
-        设置玩家变量(主机玩家, editor_killIndex, 已过滤的数组(映射的数组(全局.killballnumber, If-Then-Else(比较(当前数组元素, ==, (主机玩家).checkpoint_current), 当前数组索引, -1)), 比较(当前数组元素, >=, 空)));
-        If((主机玩家).checkpoint_moved);
-            调用子程序(EditorSelectLast);
-            设置玩家变量(主机玩家, checkpoint_moved, 假);
-        End;
-    }
-}
-
-规则 ("General | SUB Delete Save") {
-    事件 {
-        子程序;
-        DeleteSave;
-    }
-    动作 {
-        修改全局变量(SaveName, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
-        修改全局变量(SaveCp, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
-        修改全局变量(SaveTimer, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
-        修改全局变量(SaveElapsed, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
-        "must always be last because its the index itself"
-        修改全局变量(SaveEnt, 根据索引从数组中移除, 数组值的索引(全局.SaveEnt, 事件玩家));
-    }
-}
-
-规则 ("General | SUB Make Save") {
-    事件 {
-        子程序;
-        MakeSave;
-    }
-    动作 {
-        修改全局变量(SaveEnt, 添加至数组, 事件玩家);
-        修改全局变量(SaveName, 添加至数组, 字符串分割(首个(事件玩家), 空数组));
-        修改全局变量(SaveCp, 添加至数组, (事件玩家).checkpoint_current);
-        修改全局变量(SaveTimer, 添加至数组, (事件玩家).timer_normal);
-        修改全局变量(SaveElapsed, 添加至数组, 总计消耗时间);
-    }
-}
-
-规则 ("General | SUB Timer Pause") {
-    事件 {
-        子程序;
-        TimerPause;
-    }
-    动作 {
-        停止追踪玩家变量(事件玩家, timer_normal);
-        根据条件中止(非(数组包含(全局.SaveEnt, 事件玩家)));
-        在索引处设置全局变量(SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家), (事件玩家).timer_normal);
-        在索引处设置全局变量(SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家), 空);
-    }
-}
-
-规则 ("General | SUB Timer Resume") {
-    事件 {
-        子程序;
-        TimerResume;
-    }
-    动作 {
-        追踪玩家变量频率(事件玩家, timer_normal, 999999999999, 真, 全部禁用);
-        在索引处设置全局变量(SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家), 总计消耗时间);
-    }
-}
-
-规则 ("General | SUB Leaderboard Update") {
-    事件 {
-        子程序;
-        LeaderboardUpdate;
-    }
-    动作 {
-        "[[name, seconds, prettytime]]\\nyou already have a time"
-        If(数组包含(映射的数组(全局.LeaderBoardFull, 首个(当前数组元素)), 字符串分割(首个(事件玩家), 空数组)));
-            根据条件中止(比较((事件玩家).timer_normal, >=, 数组中的值(首个(已过滤的数组(全局.LeaderBoardFull, 比较(首个(当前数组元素), ==, 字符串分割(首个(事件玩家), 空数组)))), 真)));
-            设置全局变量(LeaderBoardFull, 已过滤的数组(全局.LeaderBoardFull, 比较(首个(当前数组元素), !=, 字符串分割(首个(事件玩家), 空数组))));
-        Else If(或(比较(数量(全局.LeaderBoardFull), <, 25), 比较((事件玩家).timer_normal, <, 最后(数组中的值(全局.LeaderBoardFull, 19)))));
-            修改全局变量(LeaderBoardFull, 根据索引从数组中移除, 24);
-        Else;
-            "Full and time too slow"
-            中止;
-        End;
-        修改全局变量(LeaderBoardFull, 添加至数组, 数组(数组(字符串分割(首个(事件玩家), 空数组), (事件玩家).timer_normal, 自定义字符串("{0} sec", (事件玩家).timer_normal))));
-        "CreateLeaderboard()"
-        设置全局变量(LeaderBoardRemake, 真);
-    }
-}
-
-规则 ("General | SUB Checkpoint Fail") {
-    事件 {
-        子程序;
-        CheckpointFailReset;
-    }
-    动作 {
-        设置玩家变量(事件玩家, timer_split, If-Then-Else((事件玩家).toggle_practice, (事件玩家).timer_practice, (事件玩家).timer_normal));
-        设置玩家变量(事件玩家, cache_collectedLocks, 空数组);
-        取消主要动作(事件玩家);
-        设置玩家变量(事件玩家, skill_usedDouble, 空);
-        If(非(或((事件玩家).checkpoint_current, (事件玩家).toggle_practice)));
-            设置玩家变量(事件玩家, timer_normal, 空);
-            设置玩家变量(事件玩家, timer_split, 空);
-        End;
-        If(数量(全局.A));
-            If(与(正在使用技能 1(事件玩家), 全局.DashExploitToggle));
-                "smallMessage(eventPlayer,\\"   0关卡Shift已禁用!\\" checkCN \\"   Dash Start is banned!\\")"
-                开始强制设置玩家位置(事件玩家, 事件玩家, 假);
-                等待直到 (非(正在使用技能 1(事件玩家)), 全局.DashExploitToggle);
-                停止强制设置玩家位置(事件玩家);
-            End;
-            传送(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current)));
-            "After teleport incase stopForcingPosition launches the player"
-            施加推力(事件玩家, 乘(-1, 速率(事件玩家)), 1.192093e-7, 至地图, 取消相反运动XYZ);
-            "old: disallow jump > 0.1 sec wait > allow jump, this method bugs with ult check disabling ultimate for some reason\\nif eventPlayer.ban_dead or eventPlayer.ban_emote and eventPlayer.isHoldingButton(Button.JUMP):"
-            If((事件玩家).ban_dead);
-                If(按钮被按下(事件玩家, 按钮(跳跃)));
-                    按下按键(事件玩家, 按钮(跳跃));
-                End;
-            Else;
-                "Reset Hop"
-                设置状态(事件玩家, 空, 定身, 0.096);
-            End;
-            If(正在使用终极技能(事件玩家));
-                设置受到伤害(事件玩家, 100);
-                击杀(事件玩家, 空);
-                设置受到伤害(事件玩家, 0);
-                等待(假, 无视条件);
-            End;
-        End;
-        开始规则(CheckUlt, 重新开始规则);
-        开始规则(CheckDash, 重新开始规则);
-        调用子程序(AddonCustomLoadAndReset);
-    }
-}
-
-规则 ("General | SUB Start Game") {
-    事件 {
-        子程序;
-        StartGame;
-    }
-    动作 {
-        If(与(全局.CompMode, 或(比较(全局.CompTime, <, 1), (事件玩家).comp_done)));
-            设置玩家变量(事件玩家, toggle_leaderboard, 真);
-            设置玩家变量(事件玩家, comp_done, 真);
-            "eventPlayer.disableRespawn()"
-            设置受到伤害(事件玩家, 100);
-            击杀(事件玩家, 空);
-            设置受到伤害(事件玩家, 0);
-            中止;
-        End;
-        If(数量(全局.A));
-            "load saved progres"
-            If(数组包含(全局.SaveName, 字符串分割(首个(事件玩家), 空数组)));
-                在索引处设置全局变量(SaveEnt, 数组值的索引(全局.SaveName, 字符串分割(首个(事件玩家), 空数组)), 事件玩家);
-                设置玩家变量(事件玩家, checkpoint_current, 数组中的值(全局.SaveCp, 数组值的索引(全局.SaveEnt, 事件玩家)));
-                设置玩家变量(事件玩家, timer_normal, 数组中的值(全局.SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家)));
-            Else;
-                设置玩家变量(事件玩家, checkpoint_current, 空);
-                设置玩家变量(事件玩家, timer_normal, 空);
-                调用子程序(MakeSave);
-            End;
-            调用子程序(UpdateTitle);
-            调用子程序(UpdateCache);
-            调用子程序(CheckpointFailReset);
-            "FFA"
-            等待直到 (游戏正在进行中, 999999999999);
-            调用子程序(TimerResume);
-        End;
-        "eventPlayer.enableRespawn()"
-        设置玩家变量(事件玩家, toggle_invincible, 假);
-        设置玩家变量(事件玩家, toggle_spectate, 假);
-        设置玩家变量(事件玩家, checkpoint_moved, 真);
-    }
-}
-
-规则 ("General | Setup & Variables") {
-    事件 {
-        持续 - 全局;
-    }
-    动作 {
-        禁用查看器录制;
-        关闭游戏预设完成条件;
-        关闭游戏预设计分模式;
-        关闭游戏预设音乐模式;
-        关闭游戏预设通告模式;
-        开始强制重生室(所有队伍, 假);
-        开始强制重生室(所有队伍, 1);
-        开始强制重生室(所有队伍, 2);
-        "wait for map data rule"
-        等待(0.24, 无视条件);
-        "fix team because of naming"
-        If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍1)));
-            在索引处设置全局变量(ColorConfig, 16, 颜色(蓝色));
-        Else If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍2)));
-            在索引处设置全局变量(ColorConfig, 16, 颜色(红色));
-        End;
-        "prevent same color lock orbs"
-        If(比较(数组中的值(全局.ColorConfig, 15), ==, 数组中的值(全局.ColorConfig, 16)));
-            在索引处设置全局变量(ColorConfig, 16, If-Then-Else(比较(数组中的值(全局.ColorConfig, 15), ==, 颜色(橙色)), 颜色(绿色), 颜色(橙色)));
-        End;
-        "prevent same color bhop/climb used/unused"
-        If(比较(数组中的值(全局.ColorConfig, 7), ==, 数组中的值(全局.ColorConfig, 8)));
-            在索引处设置全局变量(ColorConfig, 8, If-Then-Else(比较(数组中的值(全局.ColorConfig, 7), ==, 颜色(红色)), 颜色(橙色), 颜色(红色)));
-        End;
-        设置全局变量(SaveName, 空数组);
-        设置全局变量(SaveCp, 空数组);
-        设置全局变量(SaveTimer, 空数组);
-        设置全局变量(SaveEnt, 空数组);
-        "SavePauseTime = []\\nSavePauseEnabled = []"
-        设置全局变量(SaveElapsed, 空数组);
-        设置全局变量(Dao, If-Then-Else(数量(全局.Dao), 已过滤的数组(全局.Dao, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(SHIFT, If-Then-Else(数量(全局.SHIFT), 已过滤的数组(全局.SHIFT, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(pinballnumber, If-Then-Else(数量(全局.pinballnumber), 全局.pinballnumber, 空数组));
-        设置全局变量(A, If-Then-Else(数量(全局.A), 全局.A, 空数组));
-        设置全局变量(A, If-Then-Else(数量(全局.A), 全局.A, 空数组));
-        设置全局变量(killballnumber, If-Then-Else(数量(全局.killballnumber), 全局.killballnumber, 空数组));
-        设置全局变量(H, If-Then-Else(数量(全局.H), 全局.H, 空数组));
-        设置全局变量(I, If-Then-Else(数量(全局.I), 全局.I, 空数组));
-        设置全局变量(K, If-Then-Else(数量(全局.K), 全局.K, 空数组));
-        设置全局变量(TQ, If-Then-Else(数量(全局.TQ), 全局.TQ, 空数组));
-        设置全局变量(TQ2, If-Then-Else(数量(全局.TQ2), 全局.TQ2, 空数组));
-        设置全局变量(EditMode, If-Then-Else(数量(全局.EditMode), 全局.EditMode, 空数组));
-        设置全局变量(TQ5, If-Then-Else(数量(全局.TQ5), 全局.TQ5, 空数组));
-        设置全局变量(TQ6, If-Then-Else(数量(全局.TQ6), 全局.TQ6, 空数组));
-        设置全局变量(BounceToggleLock, If-Then-Else(数量(全局.BounceToggleLock), 全局.BounceToggleLock, 空数组));
-        设置全局变量(CustomPortalStart, If-Then-Else(数量(全局.CustomPortalStart), 全局.CustomPortalStart, 空数组));
-        设置全局变量(CustomPortalEndpoint, If-Then-Else(数量(全局.CustomPortalEndpoint), 全局.CustomPortalEndpoint, 空数组));
-        设置全局变量(CustomPortalCP, If-Then-Else(数量(全局.CustomPortalCP), 全局.CustomPortalCP, 空数组));
-        设置全局变量(LeaderBoardFull, 空数组);
-        设置全局变量(TitleData, 空);
-        设置全局变量(HintCp, 空数组);
-        设置全局变量(HintText, 空数组);
-        "clean out -1's after the ban has loaded"
-        设置全局变量(BanBhop, If-Then-Else(数量(全局.BanBhop), 已过滤的数组(全局.BanBhop, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(BanClimb, If-Then-Else(数量(全局.BanClimb), 已过滤的数组(全局.BanClimb, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(BanEmote, If-Then-Else(数量(全局.BanEmote), 已过滤的数组(全局.BanEmote, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(BanDead, If-Then-Else(数量(全局.BanDead), 已过滤的数组(全局.BanDead, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(BanCreate, If-Then-Else(数量(全局.BanCreate), 已过滤的数组(全局.BanCreate, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(BanMulti, If-Then-Else(数量(全局.BanMulti), 已过滤的数组(全局.BanMulti, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        "BanTriple = [i for i in BanTriple if i + false >= 0] if len(BanTriple) else [] # legacy code, now auto sets it to null to save space"
-        设置全局变量(BanStand, If-Then-Else(数量(全局.BanStand), 已过滤的数组(全局.BanStand, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
-        设置全局变量(BanSaveDouble, If-Then-Else(数量(全局.BanSaveDouble), 全局.BanSaveDouble, 空数组));
-        设置全局变量(BanDjump, If-Then-Else(数量(全局.BanDjump), 全局.BanDjump, 空数组));
-        "Check if old map forces ban off"
-        If(数量(全局.DashExploitToggle));
-            "DashExploitToggle = createWorkshopSetting(bool, \\"Ban (applies to all levels)\\\\n封禁(应用于所有关卡)\\", \\"ban Dash Start - 0关卡Shift\\", true, 2)"
-            设置全局变量(DashExploitToggle, 空);
-        End;
-        If(地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Basic Map Validator - 验证地图"), 真, 3));
-            开始规则(AddonCheckMap, 无动作);
-        End;
-        设置全局变量(PortalOn, 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), 真, 4));
-        设置全局变量(CompMode, 地图工坊设置开关(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("Turn on competitive mode - 开启竞赛模式"), 假, 100));
-        If(全局.CompMode);
-            "-! comp minutes !-\\n5-240"
-            设置全局变量(CompTime, 地图工坊设置整数(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
-            "-! comp attempt count !-"
-            设置全局变量(CompAtmpNum, 地图工坊设置整数(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("attempt count - 尝试次数"), 5, 0, 500, 102));
-            "-! comp restartlimiter !-"
-            设置全局变量(CompRestartLimit, 地图工坊设置开关(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("disable restart during run - 竞赛中禁用重新开始"), 假, 103));
-        Else;
-            设置全局变量(instructiontext, 空);
-    }
-}
-
-规则 ("General | Match time") {
-    事件 {
-        持续 - 全局;
-    }
-    动作 {
-        If(比较(当前游戏模式, !=, 游戏模式(突击模式)));
-            "0.25"
-            等待(假, 无视条件);
-            "1"
-            设置比赛时间(假);
-            "1.1"
-            等待(假, 无视条件);
-            "1"
-            设置比赛时间(假);
-            "1.1"
-            等待(假, 无视条件);
-        End;
-        设置比赛时间(70);
-        比赛时间暂停;
-        等待(假, 无视条件);
-        设置全局变量(TimeRemaining, 265);
-        While(或(全局.TimeRemaining, (主机玩家).editor_on));
-            等待(60, 无视条件);
-            修改全局变量(TimeRemaining, 减, 真);
-            If(全局.CompMode);
-                修改全局变量(CompTime, 减, 真);
-                If(非(全局.CompTime));
-                    大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("时间到了"), 自定义字符串("time's up")));
-                    设置玩家变量(所有玩家(所有队伍), comp_done, 真);
-                    停止追踪玩家变量(所有玩家(所有队伍), timer_normal);
-                    "getAllPlayers().disableRespawn()"
-                    设置受到伤害(所有玩家(所有队伍), 100);
-                    击杀(所有玩家(所有队伍), 空);
-                End;
-            End;
-        End;
-        大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("房间已达最大持续时间, 即将重启"), 自定义字符串("maximum lobby time elapsed, restarting")));
-        等待(5, 无视条件);
-        "Prevent crash during POTG and closing lobby"
-        设置玩家变量(所有玩家(所有队伍), lockState, 真);
-        宣告玩家胜利(主机玩家);
-        宣告队伍胜利(所在队伍(主机玩家));
-    }
-}
-
-规则 ("General | Player Initialize") {
-    事件 {
-        玩家加入比赛;
-        双方;
-        全部;
-    }
-    动作 {
-        "Turn Editor On"
-        设置玩家变量(事件玩家, editor_on, 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Editor mode - 作图模式"), 假, -1));
-        隐藏游戏模式HUD(事件玩家);
-        取消与玩家的移动碰撞(事件玩家);
-        设置受到伤害(事件玩家, 0);
-        设置玩家变量(事件玩家, lockState, 真);
-        根据条件中止(是否是机器人(事件玩家));
-        对所有玩家启用死亡回放(事件玩家);
-        启用死亡回放时目标的HUD(事件玩家);
-        关闭游戏预设复生模式(事件玩家);
-        预加载英雄(事件玩家, 英雄(源氏));
-        设置玩家变量(事件玩家, editor_lock, 真);
-        设置玩家变量(事件玩家, toggle_guide, 真);
-        设置玩家变量(事件玩家, cache_bounceTouched, -1);
-        "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
-        等待(真, 无视条件);
-        创建效果(事件玩家, 环, 数组中的值(全局.ColorConfig, 9), 最后(数组中的值(全局.A, (事件玩家).checkpoint_current)), 真, 位置和半径);
-        创建效果(If-Then-Else((事件玩家).checkpoint_notLast, 事件玩家, 空), 环, 数组中的值(全局.ColorConfig, 10), 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 真, 可见，位置和半径);
-        创建效果(If-Then-Else((事件玩家).checkpoint_notLast, 事件玩家, 空), 光柱, 数组中的值(全局.ColorConfig, 11), 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 真, 可见，位置和半径);
-        创建图标(If-Then-Else((事件玩家).checkpoint_notLast, 事件玩家, 空), 加(数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 上), 箭头：向下, 可见和位置, 数组中的值(全局.ColorConfig, 12), 真);
-        等待直到 (已重生(事件玩家), 999999999999);
-        设置玩家变量(事件玩家, editor_lock, 假);
-        If(全局.CompMode);
-            设置不可见(事件玩家, 全部);
-            If(数组包含(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)));
-                设置玩家变量(事件玩家, comp_countAttempts, 数组中的值(全局.CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组))));
-            "instructions and settings for comp start"
-            Else;
-                设置玩家变量(事件玩家, comp_instructionHud, 真);
-                修改全局变量(CompAtmpSaveNames, 添加至数组, 字符串分割(首个(事件玩家), 空数组));
-                修改全局变量(CompAtmpSaveCount, 添加至数组, 1);
-                设置玩家变量(事件玩家, comp_countAttempts, 1);
-                设置移动速度(事件玩家, 假);
-                设置启用技能 1(事件玩家, 假);
-                设置启用终极技能(事件玩家, 假);
-                等待直到 (非(按钮被按下(事件玩家, 按钮(互动))), 真);
-                等待直到 (或(按钮被按下(事件玩家, 按钮(互动)), 比较(全局.CompTime, <, 1)), 999999999999);
-                设置移动速度(事件玩家, 100);
-                设置玩家变量(事件玩家, comp_instructionHud, 假);
-            End;
-            If(或(比较((事件玩家).comp_countAttempts, <, 空), 比较(全局.CompTime, <, 1)));
-                设置玩家变量(事件玩家, comp_done, 真);
-            End;
-        End;
-        等待(假, 无视条件);
-        "initialization of the game"
-        调用子程序(StartGame);
-        设置玩家变量(事件玩家, lockState, 假);
-    }
-}
-
-规则 ("General | Player Leaves") {
-    事件 {
-        玩家离开比赛;
-        双方;
-        全部;
-    }
-    动作 {
-        If(数组中的值(全局.SaveCp, 数组值的索引(全局.SaveEnt, 事件玩家)));
-            If(与(比较(数组中的值(全局.SaveCp, 数组值的索引(全局.SaveEnt, 事件玩家)), <, 减(数量(全局.A), 真)), 数组中的值(全局.SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家))));
-                在索引处设置全局变量(SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家), 加(减(总计消耗时间, 数组中的值(全局.SaveElapsed, 数组值的索引(全局.SaveEnt, 事件玩家))), 数组中的值(全局.SaveTimer, 数组值的索引(全局.SaveEnt, 事件玩家))));
-            End;
-        "delete if player didnt do first cp"
-        Else;
-            调用子程序(DeleteSave);
-    }
-}
-
-规则 ("General | Ground: Traces, Arrive, & Reset") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        (事件玩家).lockState == 假;
-        在地面上(事件玩家) == 真;
-        存活(事件玩家) == 真;
-    }
-    动作 {
-        If(非((事件玩家).checkpoint_notLast));
-            If(与(正在移动(事件玩家), 非(或(或(或((事件玩家).toggle_practice, (事件玩家).toggle_invisible), (事件玩家).editor_on), 全局.CompMode))));
-                "traces ----------------------------------------------------------------------------------------------------"
-                设置玩家变量(事件玩家, cache_rainbow, 数组中的值(数组(颜色(红色), 颜色(橙色), 颜色(黄色), 颜色(灰绿色), 颜色(绿色), 颜色(青绿色), 颜色(蓝色), 颜色(亮紫色), 颜色(紫色), 颜色(玫红)), 余数(取整(乘(总计消耗时间, 2), 下), 10)));
-                "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
-                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 0.4);
-                等待(0.048, 无视条件);
-                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 0.6);
-                等待(0.048, 无视条件);
-                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 0.8);
-                等待(0.048, 无视条件);
-                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 1);
-                等待(0.048, 无视条件);
-                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 1.2);
-                等待(0.048, 无视条件);
-                播放效果(首个(真), 环状爆炸, (事件玩家).cache_rainbow, 所选位置(事件玩家), 1.4);
-                等待(0.048, 无视条件);
-            End;
-        "or eventPlayer.lockState:"
-        Else If(或((事件玩家).toggle_invincible, 与(全局.CompMode, 非(全局.CompTime))));
-        Else If(比较(相距距离(事件玩家, 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真))), <=, 1.4));
-            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
-            If(比较(数量((事件玩家).cache_collectedLocks), <, (事件玩家).cache_bounceMaxLocks));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   ! 进点前需集齐所有收集球 !"), 自定义字符串("   ! collect ALL {0} orbs to unlock !", 数组中的值(全局.ColorConfig, 16))));
-                "kill(eventPlayer, null)"
-                调用子程序(CheckpointFailReset);
-            Else If(与((事件玩家).ban_climb, (事件玩家).skill_usedClimb));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   爬墙 ↑ 已禁用!"), 自定义字符串("   Climb ↑ is banned!")));
-                调用子程序(CheckpointFailReset);
-            Else If(与((事件玩家).ban_bhop, (事件玩家).skill_usedBhop));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   ≥ 留小跳进点!"), 自定义字符串("   ≥ Must have a bhop to complete!")));
-                调用子程序(CheckpointFailReset);
-            Else If(与((事件玩家).ban_djump, (事件玩家).skill_usedDouble));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   » 留二段跳!"), 自定义字符串("   » Must have a double jump to complete!")));
-                调用子程序(CheckpointFailReset);
-            Else;
-                设置玩家变量(事件玩家, checkpoint_moved, 真);
-                修改玩家变量(事件玩家, checkpoint_current, 加, 真);
-                调用子程序(UpdateCache);
-                "remove ult feature disabled for speedruning purposes\\nif eventPlayer.isUsingUltimate() and not eventPlayer.checkpoint_current in BladeEnabledCheckpoints:\\nCheckpointFailReset()\\nteleport cps"
-                If(比较(数量(数组中的值(全局.A, (事件玩家).checkpoint_current)), >, 1));
-                    调用子程序(CheckpointFailReset);
-                End;
-                If(比较((事件玩家).timer_splitDisplay, >, -999999999999));
-                    设置玩家变量(事件玩家, timer_splitDisplay, 减(If-Then-Else((事件玩家).toggle_practice, (事件玩家).timer_practice, (事件玩家).timer_normal), (事件玩家).timer_split));
-                End;
-                等待(假, 无视条件);
-                播放效果(事件玩家, 环状爆炸声音, 颜色(白色), 事件玩家, 100);
-                播放效果(If-Then-Else(或(全局.CompMode, (事件玩家).toggle_invisible), 事件玩家, 真), 环状爆炸, 颜色(天蓝色), 加(数组中的值(全局.A, (事件玩家).checkpoint_current), 乘(1.5, 上)), 4);
-                "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\")   )"
-                等待(假, 无视条件);
-                调用子程序(AddonCustomLoadAndReset);
-                If((事件玩家).toggle_practice);
-                    设置玩家变量(事件玩家, timer_split, (事件玩家).timer_practice);
-                Else;
-                    调用子程序(UpdateTitle);
-                    设置玩家变量(事件玩家, timer_split, (事件玩家).timer_normal);
-                    调用子程序(DeleteSave);
-                    "complete lvl"
-                    If(与(比较((事件玩家).checkpoint_current, ==, 减(数量(全局.A), 真)), 非((事件玩家).editor_on)));
-                        停止追踪玩家变量(事件玩家, timer_normal);
-                        等待(假, 无视条件);
-                        大字体信息(首个(真), 自定义字符串("{0} {1} {2} sec", 事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("已通关! 用时"), 自定义字符串("Mission complete! Time")), (事件玩家).timer_normal));
-                        调用子程序(LeaderboardUpdate);
-                        If(与(全局.CompMode, 全局.CompAtmpNum));
-                            If(比较((事件玩家).comp_countAttempts, ==, 全局.CompAtmpNum));
-                                在索引处设置全局变量(CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)), -1);
-                                设置玩家变量(事件玩家, comp_countAttempts, -1);
-                                设置玩家变量(事件玩家, comp_done, 真);
-                                设置玩家变量(事件玩家, toggle_leaderboard, 真);
-                                "eventPlayer.disableRespawn()"
-                                设置受到伤害(事件玩家, 100);
-                                击杀(事件玩家, 空);
-                                设置受到伤害(事件玩家, 0);
-                            Else;
-                                在索引处设置全局变量(CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)), 加((事件玩家).comp_countAttempts, 真));
-                            End;
-                        End;
-                    "update save"
-                    Else;
-                        调用子程序(MakeSave);
-                    End;
-                End;
-            End;
-        Else If(比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), >, 1.4));
-            调用子程序(CheckpointFailReset);
-        End;
-        设置玩家变量(事件玩家, cache_collectedLocks, 空数组);
-        等待(0.048, 无视条件);
-        如条件为“真”则循环;
-    }
-}
-
-规则 ("General | Boundary Sphere") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        (事件玩家).cache_killPosition != 空数组;
-        (事件玩家).toggle_invincible == 假;
-        (事件玩家).checkpoint_notLast != 假;
-        对任意为“真”((事件玩家).cache_killRadii, 比较(乘(归一化(当前数组元素), 相距距离(数组中的值((事件玩家).cache_killPosition, 当前数组索引), 事件玩家)), <, 当前数组元素)) == 真;
-    }
-    动作 {
-        调用子程序(CheckpointFailReset);
-    }
-}
-
-规则 ("General | Bounce Ball / Orb") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        (事件玩家).cache_bouncePosition != 空数组;
-        "@Condition eventPlayer.checkpoint_notLast # disabled coz editor"
-        对任意为“真”((事件玩家).cache_bouncePosition, 比较(相距距离(当前数组元素, 加(所选位置(事件玩家), 乘(0.7, 上))), <, 1.4)) == 真;
-    }
-    动作 {
-        设置玩家变量(事件玩家, cache_bounceTouched, 数组值的索引(全局.TQ, 已过滤的数组(全局.TQ, 与(与(与(比较(数组中的值(全局.pinballnumber, 当前数组索引), ==, (事件玩家).checkpoint_current), 比较(当前数组索引, !=, (事件玩家).cache_bounceTouched)), 非(数组包含((事件玩家).cache_collectedLocks, 当前数组索引))), 比较(相距距离(加(事件玩家, 乘(0.7, 上)), 当前数组元素), <, 1.4)))));
-        "prevent same one trigering twice in a row"
-        If(比较((事件玩家).cache_bounceTouched, >=, 空));
-            If(数组中的值(全局.BounceToggleLock, (事件玩家).cache_bounceTouched));
-                修改玩家变量(事件玩家, cache_collectedLocks, 添加至数组, (事件玩家).cache_bounceTouched);
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   弹球已收集"), 自定义字符串("   orb has been collected")));
-            End;
-            If(比较(数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), >, 空));
-                施加推力(事件玩家, 上, 数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), 至地图, 取消相反运动XYZ);
-            Else If(比较(数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), <, 空));
-                取消主要动作(事件玩家);
-                设置玩家变量(事件玩家, skill_usedDouble, 空);
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   二段跳已就绪"), 自定义字符串("   Double Jump is ready")));
-            End;
-            If(数组中的值(全局.TQ5, (事件玩家).cache_bounceTouched));
-                设置启用终极技能(事件玩家, 真);
-                设置终极技能充能(事件玩家, 100);
-                小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("终极技能已就绪"), 自定义字符串("Ultimate is ready"))));
-            End;
-            If(数组中的值(全局.TQ6, (事件玩家).cache_bounceTouched));
-                If(正在使用技能 1(事件玩家));
-                    等待直到 (非(正在使用技能 1(事件玩家)), 真);
-                    等待(假, 无视条件);
-                End;
-                设置启用技能 1(事件玩家, 真);
-                小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("技能1影已就绪"), 自定义字符串("Dash is ready"))));
-            End;
-            播放效果(事件玩家, 状态爆炸声音, 颜色(白色), 事件玩家, 75);
-        End;
-        等待(0.24, 无视条件);
-        如条件为“真”则循环;
-        设置玩家变量(事件玩家, cache_bounceTouched, -1);
-    }
-}
-
-规则 ("General | Death Reset") {
-    事件 {
-        玩家阵亡;
-        双方;
-        全部;
-    }
-    条件 {
-        是否是机器人(事件玩家) == 假;
-        (事件玩家).toggle_spectate == 假;
-        (事件玩家).comp_done == 假;
-    }
-    动作 {
-        If(数量(全局.A));
-            复活(事件玩家);
-        Else;
-            复生(事件玩家);
-        End;
-        调用子程序(CheckpointFailReset);
-        "rest is to prevent dead spamming from crashing server\\nbut doing waits only when needed without relying on a variable count"
-        等待直到 (存活(事件玩家), 真);
-        等待直到 (死亡(事件玩家), 真);
-        If(与(死亡(事件玩家), 非(或((事件玩家).toggle_spectate, (事件玩家).comp_done))));
-            等待(0.16, 无视条件);
-            复活(事件玩家);
-            调用子程序(CheckpointFailReset);
-            等待直到 (存活(事件玩家), 真);
-            等待直到 (死亡(事件玩家), 真);
-            If(与(死亡(事件玩家), 非(或((事件玩家).toggle_spectate, (事件玩家).comp_done))));
-                等待(0.44, 无视条件);
-                复活(事件玩家);
-                调用子程序(CheckpointFailReset);
-                等待直到 (存活(事件玩家), 真);
-                等待直到 (死亡(事件玩家), 真);
-                If(与(死亡(事件玩家), 非(或((事件玩家).toggle_spectate, (事件玩家).comp_done))));
-                    等待(0.64, 无视条件);
-                    复生(事件玩家);
-                    调用子程序(CheckpointFailReset);
-    }
-}
-
 规则 ("<tx0C00000000001344> Huds <tx0C00000000001344>") {
     事件 {
         持续 - 全局;
@@ -2306,7 +2416,7 @@ export const frameworkTemplate = `设置
         创建HUD文本(首个(真), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("代码: {0}                                                                                                ", 全局.Code), 自定义字符串("Map code: {0}                                                                                                ", 全局.Code)), 左边, -199, 空, 空, 数组中的值(全局.ColorConfig, 真), 可见和字符串, 默认可见度);
         修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
         "global huds"
-        创建HUD文本(首个(真), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("房间将在 {0} 分钟后重启 - v1.10.3F{1}", 全局.TimeRemaining, If-Then-Else(比较(文本数量, >=, 128), 自定义字符串("\\n错误: 已达到最大HUD数量上限"), 空数组)), 自定义字符串("Server Restart in {0} Min - v1.10.3F{1}", 全局.TimeRemaining, If-Then-Else(比较(文本数量, >=, 128), 自定义字符串("\\nerror: max hud count reached"), 空数组))), 空, 右边, -162, 空, 数组中的值(全局.ColorConfig, 2), 空, 可见和字符串, 始终可见);
+        创建HUD文本(首个(真), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("房间将在 {0} 分钟后重启 - v1.10.3G{1}", 全局.TimeRemaining, If-Then-Else(比较(文本数量, >=, 128), 自定义字符串("\\n错误: 已达到最大HUD数量上限"), 空数组)), 自定义字符串("Server Restart in {0} Min - v1.10.3G{1}", 全局.TimeRemaining, If-Then-Else(比较(文本数量, >=, 128), 自定义字符串("\\nerror: max hud count reached"), 空数组))), 空, 右边, -162, 空, 数组中的值(全局.ColorConfig, 2), 空, 可见和字符串, 始终可见);
         "padding for custom hud display"
         创建HUD文本(首个(真), 空, 空, 自定义字符串("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nv"), 顶部, -164, 空, 空, 颜色(橙色), 可见, 默认可见度);
         创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} {1} | {2}快速回点", If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串("长按")), 输入绑定字符串(按钮(装填)), If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串("启用"))), 自定义字符串("{0} {1} |{2} quick reset", If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串("Hold")), 输入绑定字符串(按钮(装填)), If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串(" Enable")))), 右边, -157, 空, 空, 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
@@ -2358,7 +2468,7 @@ export const frameworkTemplate = `设置
         设置全局变量(Difficultyhud, 数组(地图工坊设置组合(自定义字符串("map settings \\n地图设置"), 自定义字符串("difficulty 󠀨display hud󠀩 - 难度 󠀨顶部hud󠀩"), 0, 数组(自定义字符串("<fg27AAFFFF>playtest - 游戏测试"), 自定义字符串("<fgA0E81BFF>easy-"), 自定义字符串("<fgA0E81BFF>easy"), 自定义字符串("<fgA0E81BFF>easy+"), 自定义字符串("<fge0e000FF>medium-"), 自定义字符串("<fge0e000FF>medium"), 自定义字符串("<fge0e000FF>medium+"), 自定义字符串("<fgEC9900FF>hard-"), 自定义字符串("<fgEC9900FF>hard"), 自定义字符串("<fgEC9900FF>hard+"), 自定义字符串("<fgFF4500FF>very hard-"), 自定义字符串("<fgFF4500FF>very hard"), 自定义字符串("<fgFF4500FF>very hard+"), 自定义字符串("<fgC80013FF>extreme-"), 自定义字符串("<fgC80013FF>extreme"), 自定义字符串("<fgC80013FF>extreme+"), 自定义字符串("<fg960000FF>hell"), 自定义字符串("don't display - 不显示")), 0), 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Playtest display - 游戏测试"), 假, 1)));
         "display\\n17th entry is 'dont display'"
         If(比较(首个(全局.Difficultyhud), !=, 17));
-            创建HUD文本(If-Then-Else(与((本地玩家).toggle_guide, 非((本地玩家).toggle_leaderboard)), 本地玩家, 空), If-Then-Else(最后(全局.Difficultyhud), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("游戏测试"), 自定义字符串("Playtest")), 空数组), 数组中的值(数组(自定义字符串("playtest"), 自定义字符串("easy -"), 自定义字符串("easy"), 自定义字符串("easy +"), 自定义字符串("medium -"), 自定义字符串("medium"), 自定义字符串("medium +"), 自定义字符串("hard -"), 自定义字符串("hard"), 自定义字符串("hard +"), 自定义字符串("very hard -"), 自定义字符串("very hard"), 自定义字符串("very hard +"), 自定义字符串("extreme -"), 自定义字符串("extreme"), 自定义字符串("extreme +"), 自定义字符串("hell"), 空), 首个(全局.Difficultyhud)), 空, 顶部, -173, 颜色(蓝色), 数组中的值(数组(颜色(蓝色), 颜色(灰绿色), 颜色(灰绿色), 颜色(灰绿色), 颜色(黄色), 颜色(黄色), 颜色(黄色), 颜色(橙色), 颜色(橙色), 颜色(橙色), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 颜色(红色), 颜色(红色), 颜色(红色), 自定义颜色(150, 0, 0, 255), 空), 首个(全局.Difficultyhud)), 空, 可见和字符串, 默认可见度);
+            创建HUD文本(首个(与((本地玩家).toggle_guide, 非((本地玩家).toggle_leaderboard))), If-Then-Else(最后(全局.Difficultyhud), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("游戏测试"), 自定义字符串("Playtest")), 空数组), 数组中的值(数组(自定义字符串("playtest"), 自定义字符串("easy -"), 自定义字符串("easy"), 自定义字符串("easy +"), 自定义字符串("medium -"), 自定义字符串("medium"), 自定义字符串("medium +"), 自定义字符串("hard -"), 自定义字符串("hard"), 自定义字符串("hard +"), 自定义字符串("very hard -"), 自定义字符串("very hard"), 自定义字符串("very hard +"), 自定义字符串("extreme -"), 自定义字符串("extreme"), 自定义字符串("extreme +"), 自定义字符串("hell"), 空), 首个(全局.Difficultyhud)), 空, 顶部, -173, 颜色(蓝色), 数组中的值(数组(颜色(蓝色), 颜色(灰绿色), 颜色(灰绿色), 颜色(灰绿色), 颜色(黄色), 颜色(黄色), 颜色(黄色), 颜色(橙色), 颜色(橙色), 颜色(橙色), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 颜色(红色), 颜色(红色), 颜色(红色), 自定义颜色(150, 0, 0, 255), 空), 首个(全局.Difficultyhud)), 空, 可见和字符串, 默认可见度);
             修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
         End;
         "restart + leaderboard\\nthis is remade in editor to not include leaderboard"
@@ -2394,19 +2504,19 @@ export const frameworkTemplate = `设置
         "if LeaderBoardFull[0]:"
         创建HUD文本((本地玩家).toggle_guide, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串(" \\n{0} 排名前5 {0}", 图标字符串(旗帜)), 自定义字符串(" \\n{0} Top 5 {0}", 图标字符串(旗帜))), 空, 右边, -141, 空, 颜色(白色), 空, 可见和字符串, 始终可见);
         设置全局变量(LeaderBoardHuds, 上一个文本ID);
-        创建HUD文本((本地玩家).toggle_guide, 英雄图标字符串(英雄(源氏)), 首个(首个(全局.LeaderBoardFull)), 最后(首个(全局.LeaderBoardFull)), 右边, -140, 颜色(红色), 颜色(红色), 颜色(红色), 可见, 始终可见);
+        创建HUD文本(首个(真), 英雄图标字符串(英雄(源氏)), 首个(首个(全局.LeaderBoardFull)), 最后(首个(全局.LeaderBoardFull)), 右边, -140, 颜色(红色), 颜色(红色), 颜色(红色), 可见, 始终可见);
         修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
         If(数组中的值(全局.LeaderBoardFull, 真));
-            创建HUD文本((本地玩家).toggle_guide, 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 真)), 最后(数组中的值(全局.LeaderBoardFull, 真)), 右边, -139, 颜色(橙色), 颜色(橙色), 颜色(橙色), 可见, 始终可见);
+            创建HUD文本(首个(真), 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 真)), 最后(数组中的值(全局.LeaderBoardFull, 真)), 右边, -139, 颜色(橙色), 颜色(橙色), 颜色(橙色), 可见, 始终可见);
             修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
             If(数组中的值(全局.LeaderBoardFull, 2));
-                创建HUD文本((本地玩家).toggle_guide, 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 2)), 最后(数组中的值(全局.LeaderBoardFull, 2)), 右边, -138, 颜色(黄色), 颜色(黄色), 颜色(黄色), 可见, 始终可见);
+                创建HUD文本(首个(真), 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 2)), 最后(数组中的值(全局.LeaderBoardFull, 2)), 右边, -138, 颜色(黄色), 颜色(黄色), 颜色(黄色), 可见, 始终可见);
                 修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
                 If(数组中的值(全局.LeaderBoardFull, 3));
-                    创建HUD文本((本地玩家).toggle_guide, 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 3)), 最后(数组中的值(全局.LeaderBoardFull, 3)), 右边, -137, 颜色(灰绿色), 颜色(灰绿色), 颜色(灰绿色), 可见, 始终可见);
+                    创建HUD文本(首个(真), 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 3)), 最后(数组中的值(全局.LeaderBoardFull, 3)), 右边, -137, 颜色(灰绿色), 颜色(灰绿色), 颜色(灰绿色), 可见, 始终可见);
                     修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
                     If(数组中的值(全局.LeaderBoardFull, 4));
-                        创建HUD文本((本地玩家).toggle_guide, 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 4)), 最后(数组中的值(全局.LeaderBoardFull, 4)), 右边, -136, 颜色(绿色), 颜色(绿色), 颜色(绿色), 可见, 始终可见);
+                        创建HUD文本(首个(真), 英雄图标字符串(英雄(源氏)), 首个(数组中的值(全局.LeaderBoardFull, 4)), 最后(数组中的值(全局.LeaderBoardFull, 4)), 右边, -136, 颜色(绿色), 颜色(绿色), 颜色(绿色), 可见, 始终可见);
                         修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
                     End;
                 End;
@@ -2459,7 +2569,8 @@ export const frameworkTemplate = `设置
         持续 - 全局;
     }
     动作 {
-        等待直到 (比较(玩家数量(所有队伍), >, 空), 999999999999);
+        等待(0.8, 无视条件);
+        等待直到 (实体存在(所有玩家(所有队伍)), 999999999999);
         等待(假, 无视条件);
         If(比较((所有玩家(所有队伍)).addon_toggle3rdPov, <=, 真));
             创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("长按 {0} + {1} | 第三人称{2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃)), If-Then-Else((本地玩家).addon_toggle3rdPov, 自定义字符串(" | 启用"), 空数组)), 自定义字符串("Hold {0} + {1} | 3rd Person{2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃)), If-Then-Else((本地玩家).addon_toggle3rdPov, 自定义字符串(" | ON"), 空数组))), 右边, -159, 空, 空, If-Then-Else((本地玩家).addon_toggle3rdPov, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
@@ -2486,8 +2597,8 @@ export const frameworkTemplate = `设置
                 创建地图文本(已过滤的数组(所有玩家(所有队伍), 或((当前数组元素).toggle_invincible, 非((当前数组元素).checkpoint_notLast))), 数组中的值(全局.PortalNames, 全局.NANBA), 加(数组中的值(全局.PortalLoc, 全局.NANBA), 上), 真, 根据表面截取, 可见, 颜色(白色), 默认可见度);
             End;
         End;
-        等待(假, 无视条件);
         等待直到 (实体存在(所有玩家(所有队伍)), 999999999999);
+        等待(假, 无视条件);
         If((所有玩家(所有队伍)).editor_on);
             调用子程序(RebuildKillOrbs);
             调用子程序(RebuildBounceOrbs);
@@ -2572,375 +2683,6 @@ export const frameworkTemplate = `设置
                 End;
             End;
         End;
-    }
-}
-
-规则 ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("Mechanic | SUB Check Ultimate") {
-    事件 {
-        子程序;
-        CheckUlt;
-    }
-    动作 {
-        If((事件玩家).lockState);
-            "for dash start etc you can be away from cp so the keep charge triggers"
-            设置终极技能充能(事件玩家, 假);
-        End;
-        "make sure the button cant be pressed until the entire rule ends even if it restarts"
-        禁用按钮(事件玩家, 按钮(终极技能));
-        "global cooldown that works even when rule is reset"
-        If(比较((事件玩家).skill_ultCd, >, 总计消耗时间));
-            等待(减((事件玩家).skill_ultCd, 总计消耗时间), 无视条件);
-        Else;
-            "Set cooldown"
-            设置玩家变量(事件玩家, skill_ultCd, 加(总计消耗时间, 0.36));
-        End;
-        If(正在使用终极技能(事件玩家));
-            等待直到 (非(正在使用终极技能(事件玩家)), 2);
-            等待(假, 无视条件);
-        End;
-        "incase spamming the button"
-        If(按钮被按下(事件玩家, 按钮(终极技能)));
-            等待(假, 无视条件);
-        End;
-        If(或(或((事件玩家).toggle_invincible, 与(比较(事件玩家, ==, 主机玩家), (事件玩家).editor_on)), 非((事件玩家).checkpoint_notLast)));
-            "skip msg if these"
-            跳过(2);
-        Else If(与(数组包含(全局.Dao, (事件玩家).checkpoint_current), 比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), <=, 1.4)));
-            小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("终极技能已就绪"), 自定义字符串("Ultimate is ready"))));
-            //lbl_a:
-            等待(假, 无视条件);
-            设置启用终极技能(事件玩家, 真);
-            设置终极技能充能(事件玩家, 100);
-        "used to be just else, but have to deal with multi ult orbs"
-        Else If(或(比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), <=, 2), 比较(终极技能充能百分比(事件玩家), <, 100)));
-            设置启用终极技能(事件玩家, 假);
-            设置终极技能充能(事件玩家, 假);
-        End;
-        可用按钮(事件玩家, 按钮(终极技能));
-    }
-}
-
-规则 ("Mechanic | SUB Check Dash") {
-    事件 {
-        子程序;
-        CheckDash;
-    }
-    动作 {
-        等待直到 (非(正在使用技能 1(事件玩家)), 真);
-        If(或(或((事件玩家).toggle_invincible, 与(比较(事件玩家, ==, 主机玩家), (事件玩家).editor_on)), 非((事件玩家).checkpoint_notLast)));
-            "skip msg if these"
-            跳过(2);
-        Else If(与(数组包含(全局.SHIFT, (事件玩家).checkpoint_current), 比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), <=, 1.4)));
-            小字体信息(事件玩家, 自定义字符串("   {0} {1}", 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("技能1影已就绪"), 自定义字符串("Dash is ready"))));
-            //lbl_a:
-            等待(假, 无视条件);
-            设置启用技能 1(事件玩家, 真);
-        Else;
-            设置启用技能 1(事件玩家, 假);
-        End;
-    }
-}
-
-规则 ("Mechanic | Ultimate") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        正在使用终极技能(事件玩家) == 真;
-    }
-    动作 {
-        等待(1.8, 当为“假”时中止);
-        If(与((事件玩家).checkpoint_notLast, 非((事件玩家).toggle_invincible)));
-            "disable primary fire because of slash exploit"
-            禁用按钮(事件玩家, 按钮(主要攻击模式));
-        End;
-        等待直到 (非(正在使用终极技能(事件玩家)), 2);
-        等待(假, 无视条件);
-        可用按钮(事件玩家, 按钮(主要攻击模式));
-        "sets ult charge back if done with map etc"
-        开始规则(CheckUlt, 重新开始规则);
-    }
-}
-
-规则 ("Mechanic | Dash") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        正在使用技能 1(事件玩家) == 真;
-    }
-    动作 {
-        开始规则(CheckDash, 重新开始规则);
-    }
-}
-
-规则 ("Mechanic | On Wall") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        "This rule is also linked to the determination of wall climbing, please do not close/delete"
-        在墙上(事件玩家) == 真;
-        按钮被按下(事件玩家, 按钮(跳跃)) == 真;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedClimb, 真);
-    }
-}
-
-规则 ("Mechanic | Emote") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        正在使用表情交流(事件玩家) == 真;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedBhop, 假);
-        If((事件玩家).addon_toggle3rdPov);
-            设置玩家变量(事件玩家, addon_toggle3rdPov, 假);
-            停止镜头(事件玩家);
-        End;
-        If((事件玩家).ban_emote);
-            等待直到 (非(正在使用表情交流(事件玩家)), 999999999999);
-            根据条件中止((事件玩家).toggle_invincible);
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   表情留小 ♥ 已禁用!"), 自定义字符串("   Emote Savehop ♥ is banned!")));
-            等待(假, 无视条件);
-            调用子程序(CheckpointFailReset);
-    }
-}
-
-规则 ("Mechanic | Jump") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        "@Condition eventPlayer.skill_usedBhop == false"
-        正在跳跃(事件玩家) == 真;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedBhop, 真);
-        "Bhop"
-        If((事件玩家).skill_usedHop);
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   小跳已用"), 自定义字符串("   Bhop")));
-        "Hop"
-        Else;
-            设置玩家变量(事件玩家, skill_usedHop, 真);
-    }
-}
-
-规则 ("Mechanic | No Jump") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        (事件玩家).skill_usedHop == 空;
-        在地面上(事件玩家) == 假;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedHop, 真);
-    }
-}
-
-规则 ("Mechanic | Bhop count for stand ban") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        正在跳跃(事件玩家) == 真;
-        (事件玩家).ban_standcreate != 假;
-    }
-    动作 {
-        修改玩家变量(事件玩家, skill_countBhops, 加, 真);
-        If(与(比较((事件玩家).skill_countBhops, >, 1), 非((事件玩家).toggle_invincible)));
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   站卡 ♠ 已禁用!"), 自定义字符串("   Stand createBhop ♠ is banned!")));
-            调用子程序(CheckpointFailReset);
-    }
-}
-
-规则 ("Mechanic | Create Bhop") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        按钮被按下(事件玩家, 按钮(蹲下)) == 真;
-        正在蹲下(事件玩家) == 真;
-        正在空中(事件玩家) == 真;
-        按钮被按下(事件玩家, 按钮(跳跃)) == 假;
-        正在跳跃(事件玩家) == 假;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedBhop, 假);
-        "prevent restart from giving messsage, but stil allow it to become green"
-        根据条件中止((事件玩家).lockState);
-        If(与((事件玩家).ban_create, 非((事件玩家).toggle_invincible)));
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   卡小 ♂ 已禁用!"), 自定义字符串("   Create Bhop ♂ is banned!")));
-            调用子程序(CheckpointFailReset);
-        Else;
-            If(与((事件玩家).ban_standcreate, 比较((事件玩家).skill_countBhops, >, 空)));
-                修改玩家变量(事件玩家, skill_countBhops, 减, 真);
-            End;
-            修改玩家变量(事件玩家, skill_countCreates, 加, 真);
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   success!"), 自定义字符串("   Bhop has been created!")));
-    }
-}
-
-规则 ("Mechanic | Ground Reset") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        在地面上(事件玩家) == 真;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedHop, 空);
-        设置玩家变量(事件玩家, skill_usedClimb, 假);
-        设置玩家变量(事件玩家, skill_countMulti, 空);
-        设置玩家变量(事件玩家, skill_countCreates, 空);
-        设置玩家变量(事件玩家, skill_countBhops, 空);
-        设置玩家变量(事件玩家, skill_usedDouble, 空);
-    }
-}
-
-规则 ("Mechanic | Bhop Reset") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        在地面上(事件玩家) == 真;
-        按钮被按下(事件玩家, 按钮(跳跃)) == 假;
-    }
-    动作 {
-        设置玩家变量(事件玩家, skill_usedBhop, 假);
-    }
-}
-
-规则 ("Mechanic | Double Jump") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        源氏;
-    }
-    条件 {
-        存活(事件玩家) == 真;
-        在地面上(事件玩家) == 假;
-        或(或((事件玩家).ban_djump, (事件玩家).ban_savedouble), (事件玩家).addon_enableDoubleChecks) == 真;
-    }
-    动作 {
-        "Save drop"
-        等待直到 (或(或(在地面上(事件玩家), 正在跳跃(事件玩家)), 按钮被按下(事件玩家, 按钮(跳跃))), 0.096);
-        如条件为“假”则中止;
-        While(真);
-            "Released Jump"
-            等待直到 (或(在地面上(事件玩家), 非(按钮被按下(事件玩家, 按钮(跳跃)))), 999999999999);
-            如条件为“假”则中止;
-            "Double Jumped"
-            等待直到 (或(在地面上(事件玩家), 按钮被按下(事件玩家, 按钮(跳跃))), 999999999999);
-            如条件为“假”则中止;
-            设置玩家变量(事件玩家, skill_usedDouble, 真);
-            "Reset"
-            等待直到 (或(在地面上(事件玩家), 非((事件玩家).skill_usedDouble)), 999999999999);
-            如条件为“假”则中止;
-        End;
-    }
-}
-
-规则 ("Mechanic | Multiclimb") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        在墙上(事件玩家) == 真;
-        按钮被按下(事件玩家, 按钮(跳跃)) == 假;
-        (事件玩家).skill_usedClimb == 假;
-    }
-    动作 {
-        等待(假, 无视条件);
-        If(与(在墙上(事件玩家), 非(按钮被按下(事件玩家, 按钮(跳跃)))));
-            "AutoClimb used"
-            设置玩家变量(事件玩家, skill_usedClimb, 真);
-        Else;
-            If(与(与((事件玩家).ban_multi, (事件玩家).checkpoint_notLast), 非((事件玩家).toggle_invincible)));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   蹭留 ∞ 已禁用!"), 自定义字符串("   Multiclimb ∞ is banned!")));
-                调用子程序(CheckpointFailReset);
-            Else;
-                修改玩家变量(事件玩家, skill_countMulti, 加, 真);
-    }
-}
-
-规则 ("Mechanic | Ban Wallclimb - Message") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        全部;
-    }
-    条件 {
-        (事件玩家).ban_climb != 假;
-        (事件玩家).toggle_invincible == 假;
-        (事件玩家).skill_usedClimb != 假;
-    }
-    动作 {
-        "CheckpointFailReset()\\neventPlayer.setStatusEffect(null,Status.BURNING, 0.1)"
-        小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   爬墙 ↑ 已禁用!"), 自定义字符串("   Climb ↑ is banned!")));
-    }
-}
-
-规则 ("Mechanic | Ban Save Double - 封禁二段跳") {
-    事件 {
-        持续 - 每名玩家;
-        双方;
-        源氏;
-    }
-    条件 {
-        (事件玩家).ban_savedouble != 假;
-        (事件玩家).toggle_invincible == 假;
-        在地面上(事件玩家) == 假;
-        (事件玩家).skill_usedDouble == 假;
-        按钮被按下(事件玩家, 按钮(跳跃)) == 真;
-    }
-    动作 {
-        等待直到 (或(或(比较(Z方向分量(阈值(事件玩家)), >, 空), 在地面上(事件玩家)), 非(按钮被按下(事件玩家, 按钮(跳跃)))), 999999999999);
-        如条件为“假”则中止;
-        等待直到 (或(或(比较(Z方向分量(阈值(事件玩家)), <=, 空), 在地面上(事件玩家)), 非(按钮被按下(事件玩家, 按钮(跳跃)))), 999999999999);
-        如条件为“假”则中止;
-        "Prevent false positives\\nDefault climb speed is 7.8 and small slowdown upon mantling"
-        根据条件循环(比较(垂直速度(事件玩家), <, 6));
-        If((事件玩家).skill_usedBhop);
-            等待(0.8, 当为“假”时中止);
-        Else;
-            等待(0.8, 当为“假”时中止);
-            根据条件中止((事件玩家).skill_usedBhop);
-        End;
-        小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   延二段跳已禁用!"), 自定义字符串("   save double banned!")));
-        调用子程序(CheckpointFailReset);
     }
 }
 
@@ -3164,6 +2906,72 @@ export const frameworkTemplate = `设置
         Else;
             停止镜头(事件玩家);
         End;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
+    }
+}
+
+规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+    事件 {
+        持续 - 全局;
     }
 }
 
@@ -3503,28 +3311,19 @@ export const frameworkTemplate = `设置
         全部;
     }
     条件 {
+        "Version 2"
         正在使用技能 1(事件玩家) == 真;
+        速度(事件玩家) < 45;
+        Z方向分量(阈值(事件玩家)) > 空;
+        绝对值(减(垂直速度(事件玩家), 7)) < 0.8;
     }
     动作 {
-        "climb / ledge > hold jump > hands on the ledge > dash  > wait for launch > release jump\\n爬墙/扒 > 长按跳 > 抓住窗台 > SHIFT > 等待发射 > 释放跳跃"
-        在索引处设置玩家变量(事件玩家, addon_ledgeDash, 假, 空);
-        等待直到 (比较(速度(事件玩家), >=, 45), 0.4);
-        "stop storing, we keep this speed/direction"
-        While(与(正在使用技能 1(事件玩家), 比较(首个((事件玩家).addon_ledgeDash), <, 12)));
-            根据条件跳过(比较(速度(事件玩家), <, 45), 9);
-            在索引处修改玩家变量(事件玩家, addon_ledgeDash, 假, 加, 真);
-            在索引处设置玩家变量(事件玩家, addon_ledgeDash, 真, 面朝方向(事件玩家));
-            在索引处设置玩家变量(事件玩家, addon_ledgeDash, 2, 速度(事件玩家));
-            等待(假, 无视条件);
-        End;
-        "wait for dash to finish to execute"
-        等待直到 (比较(速度(事件玩家), <, 40), 0.4);
-        "and eventPlayer.addon_ledgeDash[0] <= 12: # ledge dash execute"
-        If(比较(首个((事件玩家).addon_ledgeDash), >=, 5));
-            施加推力(事件玩家, 数组中的值((事件玩家).addon_ledgeDash, 真), 最后((事件玩家).addon_ledgeDash), 至地图, 取消相反运动XYZ);
-        End;
-        //lbl_a:
-        设置玩家变量(事件玩家, addon_ledgeDash, 空);
+        "Dash into a wall/edge\\nRelease wall/edge before dash ends"
+        设置玩家变量(事件玩家, addon_ledgeDash, 面朝方向(事件玩家));
+        "25 * 0.016"
+        等待直到 (非(正在使用技能 1(事件玩家)), 真);
+        If(正在空中(事件玩家));
+            施加推力(事件玩家, (事件玩家).addon_ledgeDash, 50, 至地图, 取消相反运动XYZ);
     }
 }
 
@@ -3589,7 +3388,7 @@ export const frameworkTemplate = `设置
         AddonCustomLoadAndReset;
     }
     动作 {
-        "This subroutine triggers on failing, arriving, resetting, skipping etc\\nexample: reset gravity and movespeed after being changed by custom orbs"
+        "This subroutine activates on failing, arriving, resetting, skipping etc\\nexample: reset gravity and movespeed after being changed by custom orbs"
         设置引力(事件玩家, 100);
         设置移动速度(事件玩家, 100);
     }
@@ -3602,30 +3401,30 @@ export const frameworkTemplate = `设置
         全部;
     }
     条件 {
-        "don't edit this condition !!!!!!!!!!!!!!!!!"
-        (事件玩家).cache_bounceTouched > -1;
+        "Do not edit this condition !!!!!!!!!!!!!!!!!"
+        (事件玩家).cache_bounceTouched >= 空;
     }
     动作 {
-        "Enable this rule and find the ID number of the bounce orbs via the editor display.\\nNote that the ID can change if you place or delete orbs infront of that orb.\\nDo NOT edit the next 2 actions."
-        设置玩家变量(事件玩家, addon_bounceId, 首个(已过滤的数组(映射的数组(全局.pinballnumber, 当前数组索引), 与(比较(数组中的值(全局.pinballnumber, 当前数组元素), ==, (事件玩家).checkpoint_current), 比较(数组中的值(全局.TQ, 当前数组元素), ==, 数组中的值((事件玩家).cache_bouncePosition, (事件玩家).cache_bounceTouched))))));
-        "Add the desired ID numbers for the bounces in the array\\nadd the script after it\\nyou can use the trigger sub above this rule to reset the effects"
-        If(比较((事件玩家).addon_bounceId, ==, 2));
-            "example gravity (should be reset to 100 in trigger on fail)"
+        "Note that the ID can change if you place or delete orbs infront of that orb.\\nAdd the desired ID numbers for the orb in the array\\nadd the script after it\\nyou can use the activateed sub above this rule to reset the effects"
+        If(数组包含(数组(1, 2), (事件玩家).cache_bounceTouched));
+            "example gravity (should be reset to 100 in AddonCustomLoadAndReset)"
             设置引力(事件玩家, 25);
             小字体信息(事件玩家, 自定义字符串(" you feel light"));
             等待(2, 无视条件);
             设置引力(事件玩家, 100);
         End;
-        If(数组包含(数组(2, 3), (事件玩家).addon_bounceId));
+        If(数组包含(数组(3, 4), (事件玩家).cache_bounceTouched));
             "example canceling primary makes double jump recover"
             取消主要动作(事件玩家);
             设置玩家变量(事件玩家, skill_usedDouble, 空);
             小字体信息(事件玩家, 自定义字符串(" double jump recovered"));
         End;
-        If(比较((事件玩家).addon_bounceId, ==, 4));
+        If(数组包含(数组(5, 6), (事件玩家).cache_bounceTouched));
             "example move speed"
             设置移动速度(事件玩家, 250);
             小字体信息(事件玩家, 自定义字符串(" zooom"));
+            等待(2, 无视条件);
+            设置移动速度(事件玩家, 100);
     }
 }
 
@@ -3640,7 +3439,7 @@ export const frameworkTemplate = `设置
         在地面上(事件玩家) == 假;
         "Double cannot be used already"
         (事件玩家).skill_usedDouble == 假;
-        "Don't trigger on reset"
+        "Don't activate on reset"
         按钮被按下(事件玩家, 按钮(装填)) == 假;
     }
     动作 {
