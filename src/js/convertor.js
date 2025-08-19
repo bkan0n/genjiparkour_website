@@ -83,6 +83,13 @@ const ADDON_RULE_TITLES = [
   'Addon | Fake Triple Jump - 假三段跳'
 ];
 
+const HERO_FILE_MAP = {
+  GENJI:  "mechanics/Genji.opy",
+  HANZO:  "mechanics/Hanzo.opy",
+  KIRIKO: "mechanics/Kiriko.opy",
+  HAZARD: "mechanics/Hazard.opy"
+};
+
 /*----- Multilang ------*/
 async function loadTranslations() {
     try {
@@ -528,21 +535,31 @@ function getOverpy() {
   return window.window || window.OverPy || window.Overpy;
 }
 
-async function inlineIncludes(src, rawBase) {
-  const re = /^[ \t]*#!include\s+"([^"]+)"[^\n]*$/gm;
+async function inlineIncludes(src, baseHref) {
+  const re = /^[ \t]*#!include\s+"([^"]+)"[ \t]*;?[^\n]*$/gm;
+
   let out = "", last = 0, m;
   while ((m = re.exec(src))) {
     out += src.slice(last, m.index);
-    const file = m[1], url = rawBase + file;
-    debug(`Including ${file}`);
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`HTTP ${r.status} fetching ${file}`);
+
+    const relPath = m[1].trim();
+    const fileUrl  = new URL(relPath, baseHref);
+    const childDir = fileUrl.href.replace(/[^/]+$/, "");
+
+    debug(`Including ${relPath} → ${fileUrl.href}`);
+    const r = await fetch(fileUrl.href);
+    if (!r.ok) throw new Error(`HTTP ${r.status} fetching ${relPath}`);
+
     const txt = await r.text();
-    out += await inlineIncludes(txt, rawBase);
+    const expanded = await inlineIncludes(txt, childDir);
+
+    out += expanded;
     last = re.lastIndex;
   }
+
   return out + src.slice(last);
 }
+
 
 function normalizeNewlines(s) {
   return s.replace(/\r\n?/g, '\n');
@@ -552,11 +569,8 @@ function cleanSourceG(src) {
   src = normalizeNewlines(src);
 
   return src
-    .replace(/^[ \t]*#!include[^\n]*\n?/gm, '')
     .replace(/^[ \t]*#!define\s+editortoggle[^\n]*\n?/gm, '')
     .replace(/^[ \t]*editortoggle\([^\n]*\)\s*\n?/gm, '')
-    .replace(/^[ \t]*#!define\s+importHero\([^)]+\)\s+__script__\([^)]+\)[^\n]*\n?/gm, '')
-    .replace(/^[ \t]*importHero\([^\n]*\)\s*\n?/gm, '')
     .replace(/^[ \t]*__script__\([^)]+\)[ \t]*;?[ \t]*\n/gm, '')
     .replace(/\beditoron\b/g, 'false');
 }
@@ -617,6 +631,36 @@ function patchEditorDefaultOn(src) {
   return def + src;
 }
 
+function expandImportHeroToInclude(src) {
+  src = normalizeNewlines(src);
+
+  src = src.replace(
+    /^[ \t]*#!define\s+importHero\s*\(\s*Hero\s*\)\s*__script__\([^)]+\)[^\n]*\n?/mi,
+    ""
+  );
+
+  src = src.replace(
+    /^[ \t]*importHero\s*\(([\s\S]*?)\)\s*$/gmi,
+    (full, arg) => {
+      const m = /"(GENJI|HANZO|KIRIKO|HAZARD)"/i.exec(arg);
+      if (!m) {
+        debug(`[compile] importHero: héros introuvable dans: ${arg}`);
+        return "";
+      }
+      const heroKey = m[1].toUpperCase();
+      const file    = HERO_FILE_MAP[heroKey];
+      if (!file) {
+        debug(`[compile] importHero: mapping manquant pour ${heroKey}`);
+        return "";
+      }
+      debug(`[compile] importHero → #!include "${file}"`);
+      return `#!include "${file}"`;
+    }
+  );
+
+  return src;
+}
+
 async function loadTemplate(lang) {
   const cacheUrl = new URL(`framework-templates/framework-template_${lang}.js`, import.meta.url).href;
 
@@ -646,6 +690,7 @@ async function loadTemplate(lang) {
   if (!resp.ok) throw new Error(`HTTP ${resp.status} on ${entryFile}`);
   let src = await resp.text();
 
+  src = expandImportHeroToInclude(src);
   src = await inlineIncludes(src, rawBase);
   src = cleanSourceG(src);
   src = patchTestDataStub(src);

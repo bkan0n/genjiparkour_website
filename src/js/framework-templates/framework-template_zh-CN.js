@@ -1048,6 +1048,272 @@ export const frameworkTemplate = `设置
     }
 }
 
+规则 ("Mechanic | Climbers | On Wall") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        "This rule is also linked to the determination of wall climbing, please do not close/delete"
+        在墙上(事件玩家) == 真;
+        按钮被按下(事件玩家, 按钮(跳跃)) == 真;
+    }
+    动作 {
+        设置玩家变量(事件玩家, skill_usedClimb, 真);
+    }
+}
+
+规则 ("Mechanic | Climbers | Bhop count for stand ban") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        正在跳跃(事件玩家) == 真;
+        (事件玩家).ban_standcreate != 假;
+    }
+    动作 {
+        修改玩家变量(事件玩家, skill_countBhops, 加, 真);
+        If(与(比较((事件玩家).skill_countBhops, >, 1), 非((事件玩家).toggle_invincible)));
+            "\\"   站卡 ♠ 已禁用!\\" checkCN \\"   Stand createBhop ♠ is banned!\\""
+            小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+            调用子程序(CheckpointFailReset);
+    }
+}
+
+规则 ("Mechanic | Climbers | Create Bhop") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        按钮被按下(事件玩家, 按钮(蹲下)) == 真;
+        正在蹲下(事件玩家) == 真;
+        正在空中(事件玩家) == 真;
+        按钮被按下(事件玩家, 按钮(跳跃)) == 假;
+        正在跳跃(事件玩家) == 假;
+    }
+    动作 {
+        设置玩家变量(事件玩家, skill_usedBhop, 假);
+        "prevent restart from giving messsage, but stil allow it to become green"
+        根据条件中止((事件玩家).lockState);
+        If(与((事件玩家).ban_create, 非((事件玩家).toggle_invincible)));
+            "\\"   卡小 ♂ 已禁用!\\" checkCN \\"   Create Bhop ♂ is banned!\\""
+            小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+            调用子程序(CheckpointFailReset);
+        Else;
+            If(与((事件玩家).ban_standcreate, 比较((事件玩家).skill_countBhops, >, 空)));
+                修改玩家变量(事件玩家, skill_countBhops, 减, 真);
+            End;
+            修改玩家变量(事件玩家, skill_countCreates, 加, 真);
+            "\\"   success!\\" checkCN \\"   Bhop has been created!\\""
+            小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Bhop Created!   Bhop Created!   Bhop Created!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+    }
+}
+
+规则 ("Mechanic | Climbers | Multiclimb") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        在墙上(事件玩家) == 真;
+        按钮被按下(事件玩家, 按钮(跳跃)) == 假;
+        (事件玩家).skill_usedClimb == 假;
+    }
+    动作 {
+        等待(假, 无视条件);
+        If(与(在墙上(事件玩家), 非(按钮被按下(事件玩家, 按钮(跳跃)))));
+            "AutoClimb used"
+            设置玩家变量(事件玩家, skill_usedClimb, 真);
+        Else;
+            If(与(与((事件玩家).ban_multi, (事件玩家).checkpoint_notLast), 非((事件玩家).toggle_invincible)));
+                "\\"   蹭留 ∞ 已禁用!\\" checkCN \\"   Multiclimb ∞ is banned!\\""
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+                调用子程序(CheckpointFailReset);
+            Else;
+                修改玩家变量(事件玩家, skill_countMulti, 加, 真);
+    }
+}
+
+规则 ("Mechanic | Climbers | Ban Wallclimb - Message") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        (事件玩家).ban_climb != 假;
+        (事件玩家).toggle_invincible == 假;
+        (事件玩家).skill_usedClimb != 假;
+    }
+    动作 {
+        "CheckpointFailReset()\\n\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\""
+        小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+    }
+}
+
+规则 ("Mechanic | Genji | SUB Check Ultimate") {
+    事件 {
+        子程序;
+        CheckUlt;
+    }
+    动作 {
+        If((事件玩家).lockState);
+            "for dash start etc you can be away from cp so the keep charge activators"
+            设置终极技能充能(事件玩家, 假);
+        End;
+        If(正在使用终极技能(事件玩家));
+            等待直到 (非(正在使用终极技能(事件玩家)), 2);
+            等待(假, 无视条件);
+        End;
+        "incase spamming the button"
+        If(按钮被按下(事件玩家, 按钮(终极技能)));
+            等待(假, 无视条件);
+        End;
+        If(或(或((事件玩家).toggle_invincible, 与(比较(事件玩家, ==, 主机玩家), 全局.EditorOn)), 非((事件玩家).checkpoint_notLast)));
+            "skip msg if these"
+            跳过(2);
+        Else If(与(数组包含(全局.Dao, (事件玩家).checkpoint_current), 比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), <=, 1.4)));
+            "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+            小字体信息(事件玩家, 自定义字符串("   {0} {1}", 技能图标字符串(英雄(源氏), 按钮(终极技能)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))));
+            //lbl_a:
+            等待(假, 无视条件);
+            设置启用终极技能(事件玩家, 真);
+            设置终极技能充能(事件玩家, 100);
+        "used to be just else, but have to deal with multi ult orbs"
+        Else If(或(比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), <=, 2), 比较(终极技能充能百分比(事件玩家), <, 100)));
+            设置启用终极技能(事件玩家, 假);
+            设置终极技能充能(事件玩家, 假);
+        End;
+        等待(0.36, 无视条件);
+    }
+}
+
+规则 ("Mechanic | Genji | SUB Check Dash") {
+    事件 {
+        子程序;
+        CheckAbility1;
+    }
+    动作 {
+        等待直到 (非(正在使用技能 1(事件玩家)), 真);
+        If(或(或((事件玩家).toggle_invincible, 与(比较(事件玩家, ==, 主机玩家), 全局.EditorOn)), 非((事件玩家).checkpoint_notLast)));
+            "skip msg if these"
+            跳过(2);
+        Else If(与(数组包含(全局.SHIFT, (事件玩家).checkpoint_current), 比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), <=, 1.4)));
+            "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+            小字体信息(事件玩家, 自定义字符串("   {0} {1}", 技能图标字符串(英雄(源氏), 按钮(技能1)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))));
+            //lbl_a:
+            设置启用技能 1(事件玩家, 真);
+        Else;
+            设置启用技能 1(事件玩家, 假);
+        End;
+    }
+}
+
+规则 ("Mechanic | Genji | Ultimate") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        正在使用终极技能(事件玩家) == 真;
+    }
+    动作 {
+        等待(1.8, 当为“假”时中止);
+        If(与((事件玩家).checkpoint_notLast, 非((事件玩家).toggle_invincible)));
+            "disable primary fire because of slash exploit"
+            禁用按钮(事件玩家, 按钮(主要攻击模式));
+        End;
+        等待直到 (非(正在使用终极技能(事件玩家)), 2);
+        等待(假, 无视条件);
+        可用按钮(事件玩家, 按钮(主要攻击模式));
+        "sets ult charge back if done with map etc"
+        开始规则(CheckUlt, 无动作);
+    }
+}
+
+规则 ("Mechanic | Genji | Dash") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        正在使用技能 1(事件玩家) == 真;
+    }
+    动作 {
+        "async(CheckAbility1(), AsyncBehavior.NOOP)"
+        调用子程序(CheckAbility1);
+    }
+}
+
+规则 ("Mechanic | Genji | Double Jump") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        存活(事件玩家) == 真;
+        正在空中(事件玩家) == 真;
+        或(或((事件玩家).ban_djump, (事件玩家).ban_savedouble), (事件玩家).addon_enableDoubleChecks) == 真;
+    }
+    动作 {
+        "Save drop"
+        等待直到 (或(或(在地面上(事件玩家), 正在跳跃(事件玩家)), 按钮被按下(事件玩家, 按钮(跳跃))), 0.096);
+        如条件为“假”则中止;
+        While(真);
+            "Released Jump"
+            等待直到 (或(在地面上(事件玩家), 非(按钮被按下(事件玩家, 按钮(跳跃)))), 999999999999);
+            如条件为“假”则中止;
+            "Double Jumped"
+            等待直到 (或(在地面上(事件玩家), 按钮被按下(事件玩家, 按钮(跳跃))), 999999999999);
+            如条件为“假”则中止;
+            设置玩家变量(事件玩家, skill_usedDouble, 真);
+            "Reset"
+            等待直到 (或(在地面上(事件玩家), 非((事件玩家).skill_usedDouble)), 999999999999);
+            如条件为“假”则中止;
+        End;
+    }
+}
+
+规则 ("Mechanic | Genji | Ban Save Double - 封禁二段跳") {
+    事件 {
+        持续 - 每名玩家;
+        双方;
+        全部;
+    }
+    条件 {
+        (事件玩家).ban_savedouble != 假;
+        (事件玩家).toggle_invincible == 假;
+        正在空中(事件玩家) == 真;
+        (事件玩家).skill_usedDouble == 假;
+    }
+    动作 {
+        等待直到 (或(或(比较(Z方向分量(阈值(事件玩家)), >, 空), 非(正在空中(事件玩家))), (事件玩家).skill_usedDouble), 999999999999);
+        如条件为“假”则中止;
+        等待直到 (或(或(比较(Z方向分量(阈值(事件玩家)), <=, 空), 非(正在空中(事件玩家))), (事件玩家).skill_usedDouble), 999999999999);
+        如条件为“假”则中止;
+        "Prevent false positives\\nDefault climb speed is 7.8 and small slowdown upon mantling"
+        根据条件循环(比较(垂直速度(事件玩家), <, 6));
+        If((事件玩家).skill_usedBhop);
+            等待(0.8, 当为“假”时中止);
+        Else;
+            等待(0.8, 当为“假”时中止);
+            根据条件中止((事件玩家).skill_usedBhop);
+        End;
+        "\\"   延二段跳已禁用!\\" checkCN \\"   save double banned!\\""
+        小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Save Double Banned!   Save Double Banned!   Save Double Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+        调用子程序(CheckpointFailReset);
+    }
+}
+
 规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
@@ -2913,72 +3179,6 @@ export const frameworkTemplate = `设置
         Else;
             停止镜头(事件玩家);
         End;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    事件 {
-        持续 - 全局;
     }
 }
 
