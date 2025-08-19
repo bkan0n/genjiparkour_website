@@ -1048,6 +1048,272 @@ regla ("Mechanic | All | Ground Reset") {
     }
 }
 
+regla ("Mechanic | Climbers | On Wall") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        "This rule is also linked to the determination of wall climbing, please do not close/delete"
+        En el muro(Jugador del evento) == Verdadero;
+        Botón presionado(Jugador del evento, Botón(Saltar)) == Verdadero;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, skill_usedClimb, Verdadero);
+    }
+}
+
+regla ("Mechanic | Climbers | Bhop count for stand ban") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Está saltando(Jugador del evento) == Verdadero;
+        (Jugador del evento).ban_standcreate != Falso;
+    }
+    acciones {
+        Modificar variable de jugador(Jugador del evento, skill_countBhops, Agregar, Verdadero);
+        Si(Y(Comparar((Jugador del evento).skill_countBhops, >, 1), No((Jugador del evento).toggle_invincible)));
+            "\\"   站卡 ♠ 已禁用!\\" checkCN \\"   Stand createBhop ♠ is banned!\\""
+            Mensaje pequeño(Jugador del evento, Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒ   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía)))));
+            Llamada a subrutina(CheckpointFailReset);
+    }
+}
+
+regla ("Mechanic | Climbers | Create Bhop") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Botón presionado(Jugador del evento, Botón(Agacharse)) == Verdadero;
+        Agachado(Jugador del evento) == Verdadero;
+        En el aire(Jugador del evento) == Verdadero;
+        Botón presionado(Jugador del evento, Botón(Saltar)) == Falso;
+        Está saltando(Jugador del evento) == Falso;
+    }
+    acciones {
+        Establecer variable de jugador(Jugador del evento, skill_usedBhop, Falso);
+        "prevent restart from giving messsage, but stil allow it to become green"
+        Abortar si((Jugador del evento).lockState);
+        Si(Y((Jugador del evento).ban_create, No((Jugador del evento).toggle_invincible)));
+            "\\"   卡小 ♂ 已禁用!\\" checkCN \\"   Create Bhop ♂ is banned!\\""
+            Mensaje pequeño(Jugador del evento, Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒ   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía)))));
+            Llamada a subrutina(CheckpointFailReset);
+        Si no;
+            Si(Y((Jugador del evento).ban_standcreate, Comparar((Jugador del evento).skill_countBhops, >, Nulo)));
+                Modificar variable de jugador(Jugador del evento, skill_countBhops, Restar, Verdadero);
+            Fin;
+            Modificar variable de jugador(Jugador del evento, skill_countCreates, Agregar, Verdadero);
+            "\\"   success!\\" checkCN \\"   Bhop has been created!\\""
+            Mensaje pequeño(Jugador del evento, Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒ   Bhop Created!   Bhop Created!   Bhop Created!"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía)))));
+    }
+}
+
+regla ("Mechanic | Climbers | Multiclimb") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        En el muro(Jugador del evento) == Verdadero;
+        Botón presionado(Jugador del evento, Botón(Saltar)) == Falso;
+        (Jugador del evento).skill_usedClimb == Falso;
+    }
+    acciones {
+        Esperar(Falso, Ignorar condición);
+        Si(Y(En el muro(Jugador del evento), No(Botón presionado(Jugador del evento, Botón(Saltar)))));
+            "AutoClimb used"
+            Establecer variable de jugador(Jugador del evento, skill_usedClimb, Verdadero);
+        Si no;
+            Si(Y(Y((Jugador del evento).ban_multi, (Jugador del evento).checkpoint_notLast), No((Jugador del evento).toggle_invincible)));
+                "\\"   蹭留 ∞ 已禁用!\\" checkCN \\"   Multiclimb ∞ is banned!\\""
+                Mensaje pequeño(Jugador del evento, Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒ   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía)))));
+                Llamada a subrutina(CheckpointFailReset);
+            Si no;
+                Modificar variable de jugador(Jugador del evento, skill_countMulti, Agregar, Verdadero);
+    }
+}
+
+regla ("Mechanic | Climbers | Ban Wallclimb - Message") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        (Jugador del evento).ban_climb != Falso;
+        (Jugador del evento).toggle_invincible == Falso;
+        (Jugador del evento).skill_usedClimb != Falso;
+    }
+    acciones {
+        "CheckpointFailReset()\\n\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\""
+        Mensaje pequeño(Jugador del evento, Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía)))));
+    }
+}
+
+regla ("Mechanic | Genji | SUB Check Ultimate") {
+    evento {
+        Subrutina;
+        CheckUlt;
+    }
+    acciones {
+        Si((Jugador del evento).lockState);
+            "for dash start etc you can be away from cp so the keep charge activators"
+            Establecer carga de habilidad máxima(Jugador del evento, Falso);
+        Fin;
+        Si(Está usando la habilidad máxima(Jugador del evento));
+            Esperar hasta(No(Está usando la habilidad máxima(Jugador del evento)), 2);
+            Esperar(Falso, Ignorar condición);
+        Fin;
+        "incase spamming the button"
+        Si(Botón presionado(Jugador del evento, Botón(Habilidad máxima)));
+            Esperar(Falso, Ignorar condición);
+        Fin;
+        Si(O(O((Jugador del evento).toggle_invincible, Y(Comparar(Jugador del evento, ==, Jugador anfitrión), Global.EditorOn)), No((Jugador del evento).checkpoint_notLast)));
+            "skip msg if these"
+            Omitir(2);
+        Si no si(Y(La matriz contiene(Global.Dao, (Jugador del evento).checkpoint_current), Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), <=, 1.4)));
+            "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+            Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1}", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad máxima)), Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía))))));
+            //lbl_a:
+            Esperar(Falso, Ignorar condición);
+            Establecer habilidad máxima habilitada(Jugador del evento, Verdadero);
+            Establecer carga de habilidad máxima(Jugador del evento, 100);
+        "used to be just else, but have to deal with multi ult orbs"
+        Si no si(O(Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), <=, 2), Comparar(Porcentaje de carga de la habilidad máxima(Jugador del evento), <, 100)));
+            Establecer habilidad máxima habilitada(Jugador del evento, Falso);
+            Establecer carga de habilidad máxima(Jugador del evento, Falso);
+        Fin;
+        Esperar(0.36, Ignorar condición);
+    }
+}
+
+regla ("Mechanic | Genji | SUB Check Dash") {
+    evento {
+        Subrutina;
+        CheckAbility1;
+    }
+    acciones {
+        Esperar hasta(No(Está utilizando la habilidad 1(Jugador del evento)), Verdadero);
+        Si(O(O((Jugador del evento).toggle_invincible, Y(Comparar(Jugador del evento, ==, Jugador anfitrión), Global.EditorOn)), No((Jugador del evento).checkpoint_notLast)));
+            "skip msg if these"
+            Omitir(2);
+        Si no si(Y(La matriz contiene(Global.SHIFT, (Jugador del evento).checkpoint_current), Comparar(Distancia entre(Jugador del evento, Último de(Valor en la matriz(Global.A, (Jugador del evento).checkpoint_current))), <=, 1.4)));
+            "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+            Mensaje pequeño(Jugador del evento, Cadena personalizada("   {0} {1}", Cadena de ícono de habilidad(Héroe(Genji), Botón(Habilidad 1)), Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía))))));
+            //lbl_a:
+            Establecer habilidad 1 habilitada(Jugador del evento, Verdadero);
+        Si no;
+            Establecer habilidad 1 habilitada(Jugador del evento, Falso);
+        Fin;
+    }
+}
+
+regla ("Mechanic | Genji | Ultimate") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Está usando la habilidad máxima(Jugador del evento) == Verdadero;
+    }
+    acciones {
+        Esperar(1.8, Cancelar cuando es falso);
+        Si(Y((Jugador del evento).checkpoint_notLast, No((Jugador del evento).toggle_invincible)));
+            "disable primary fire because of slash exploit"
+            Deshabilitar botón(Jugador del evento, Botón(Disparo principal));
+        Fin;
+        Esperar hasta(No(Está usando la habilidad máxima(Jugador del evento)), 2);
+        Esperar(Falso, Ignorar condición);
+        Habilitar botón(Jugador del evento, Botón(Disparo principal));
+        "sets ult charge back if done with map etc"
+        Comenzar regla(CheckUlt, Hacer nada);
+    }
+}
+
+regla ("Mechanic | Genji | Dash") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Está utilizando la habilidad 1(Jugador del evento) == Verdadero;
+    }
+    acciones {
+        "async(CheckAbility1(), AsyncBehavior.NOOP)"
+        Llamada a subrutina(CheckAbility1);
+    }
+}
+
+regla ("Mechanic | Genji | Double Jump") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        Está vivo(Jugador del evento) == Verdadero;
+        En el aire(Jugador del evento) == Verdadero;
+        O(O((Jugador del evento).ban_djump, (Jugador del evento).ban_savedouble), (Jugador del evento).addon_enableDoubleChecks) == Verdadero;
+    }
+    acciones {
+        "Save drop"
+        Esperar hasta(O(O(En el suelo(Jugador del evento), Está saltando(Jugador del evento)), Botón presionado(Jugador del evento, Botón(Saltar))), 0.096);
+        Abortar si la condición es falsa;
+        Mientras(Verdadero);
+            "Released Jump"
+            Esperar hasta(O(En el suelo(Jugador del evento), No(Botón presionado(Jugador del evento, Botón(Saltar)))), 999999999999);
+            Abortar si la condición es falsa;
+            "Double Jumped"
+            Esperar hasta(O(En el suelo(Jugador del evento), Botón presionado(Jugador del evento, Botón(Saltar))), 999999999999);
+            Abortar si la condición es falsa;
+            Establecer variable de jugador(Jugador del evento, skill_usedDouble, Verdadero);
+            "Reset"
+            Esperar hasta(O(En el suelo(Jugador del evento), No((Jugador del evento).skill_usedDouble)), 999999999999);
+            Abortar si la condición es falsa;
+        Fin;
+    }
+}
+
+regla ("Mechanic | Genji | Ban Save Double - 封禁二段跳") {
+    evento {
+        En curso - Cada jugador;
+        Todos;
+        Todos;
+    }
+    condiciones {
+        (Jugador del evento).ban_savedouble != Falso;
+        (Jugador del evento).toggle_invincible == Falso;
+        En el aire(Jugador del evento) == Verdadero;
+        (Jugador del evento).skill_usedDouble == Falso;
+    }
+    acciones {
+        Esperar hasta(O(O(Comparar(Componente Z de(Aceleración de(Jugador del evento)), >, Nulo), No(En el aire(Jugador del evento))), (Jugador del evento).skill_usedDouble), 999999999999);
+        Abortar si la condición es falsa;
+        Esperar hasta(O(O(Comparar(Componente Z de(Aceleración de(Jugador del evento)), <=, Nulo), No(En el aire(Jugador del evento))), (Jugador del evento).skill_usedDouble), 999999999999);
+        Abortar si la condición es falsa;
+        "Prevent false positives\\nDefault climb speed is 7.8 and small slowdown upon mantling"
+        Repetir si(Comparar(Velocidad vertical de(Jugador del evento), <, 6));
+        Si((Jugador del evento).skill_usedBhop);
+            Esperar(0.8, Cancelar cuando es falso);
+        Si no;
+            Esperar(0.8, Cancelar cuando es falso);
+            Abortar si((Jugador del evento).skill_usedBhop);
+        Fin;
+        "\\"   延二段跳已禁用!\\" checkCN \\"   save double banned!\\""
+        Mensaje pequeño(Jugador del evento, Valor en la matriz(Separación de cadena(Cadena personalizada("ＴＬＥｒｒ   Save Double Banned!   Save Double Banned!   Save Double Banned!"), Global.__overpyTranslationHelper__), Valor absoluto(Índice del valor de la matriz(Global.__overpyTranslationHelper__, Separación de cadena(Color(Blanco), Matriz vacía)))));
+        Llamada a subrutina(CheckpointFailReset);
+    }
+}
+
 regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         En curso - Global;
@@ -2913,72 +3179,6 @@ regla ("Addon | SUB 3rd Person Camera") {
         Si no;
             Detener cámara(Jugador del evento);
         Fin;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
-    }
-}
-
-regla ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    evento {
-        En curso - Global;
     }
 }
 

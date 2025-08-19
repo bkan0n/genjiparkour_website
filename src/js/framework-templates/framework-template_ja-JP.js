@@ -1048,6 +1048,272 @@ export const frameworkTemplate = `設定
     }
 }
 
+ルール ("Mechanic | Climbers | On Wall") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        "This rule is also linked to the determination of wall climbing, please do not close/delete"
+        壁の上にいる(イベント・プレイヤー) == True;
+        ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ)) == True;
+    }
+    アクション {
+        プレイヤー変数を設定(イベント・プレイヤー, skill_usedClimb, True);
+    }
+}
+
+ルール ("Mechanic | Climbers | Bhop count for stand ban") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        ジャンプ中(イベント・プレイヤー) == True;
+        (イベント・プレイヤー).ban_standcreate != False;
+    }
+    アクション {
+        (イベント・プレイヤー).skill_countBhops += True;
+        IF(AND(COMPARE((イベント・プレイヤー).skill_countBhops, >, 1), NOT((イベント・プレイヤー).toggle_invincible)));
+            "\\"   站卡 ♠ 已禁用!\\" checkCN \\"   Stand createBhop ♠ is banned!\\""
+            小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+            サブルーチンの呼び出し(CheckpointFailReset);
+    }
+}
+
+ルール ("Mechanic | Climbers | Create Bhop") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        ボタンが長押しされている(イベント・プレイヤー, ボタン(しゃがみ)) == True;
+        しゃがんでいる(イベント・プレイヤー) == True;
+        空中にいる(イベント・プレイヤー) == True;
+        ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ)) == False;
+        ジャンプ中(イベント・プレイヤー) == False;
+    }
+    アクション {
+        プレイヤー変数を設定(イベント・プレイヤー, skill_usedBhop, False);
+        "prevent restart from giving messsage, but stil allow it to become green"
+        中止する条件((イベント・プレイヤー).lockState);
+        IF(AND((イベント・プレイヤー).ban_create, NOT((イベント・プレイヤー).toggle_invincible)));
+            "\\"   卡小 ♂ 已禁用!\\" checkCN \\"   Create Bhop ♂ is banned!\\""
+            小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+            サブルーチンの呼び出し(CheckpointFailReset);
+        ELSE;
+            IF(AND((イベント・プレイヤー).ban_standcreate, COMPARE((イベント・プレイヤー).skill_countBhops, >, NULL)));
+                プレイヤー変数を変更(イベント・プレイヤー, skill_countBhops, 引く, True);
+            END;
+            (イベント・プレイヤー).skill_countCreates += True;
+            "\\"   success!\\" checkCN \\"   Bhop has been created!\\""
+            小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Bhop Created!   Bhop Created!   Bhop Created!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+    }
+}
+
+ルール ("Mechanic | Climbers | Multiclimb") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        壁の上にいる(イベント・プレイヤー) == True;
+        ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ)) == False;
+        (イベント・プレイヤー).skill_usedClimb == False;
+    }
+    アクション {
+        待機(False, 条件無視);
+        IF(AND(壁の上にいる(イベント・プレイヤー), NOT(ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ)))));
+            "AutoClimb used"
+            プレイヤー変数を設定(イベント・プレイヤー, skill_usedClimb, True);
+        ELSE;
+            IF(AND(AND((イベント・プレイヤー).ban_multi, (イベント・プレイヤー).checkpoint_notLast), NOT((イベント・プレイヤー).toggle_invincible)));
+                "\\"   蹭留 ∞ 已禁用!\\" checkCN \\"   Multiclimb ∞ is banned!\\""
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+                サブルーチンの呼び出し(CheckpointFailReset);
+            ELSE;
+                (イベント・プレイヤー).skill_countMulti += True;
+    }
+}
+
+ルール ("Mechanic | Climbers | Ban Wallclimb - Message") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        (イベント・プレイヤー).ban_climb != False;
+        (イベント・プレイヤー).toggle_invincible == False;
+        (イベント・プレイヤー).skill_usedClimb != False;
+    }
+    アクション {
+        "CheckpointFailReset()\\n\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\""
+        小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+    }
+}
+
+ルール ("Mechanic | Genji | SUB Check Ultimate") {
+    イベント {
+        サブルーチン;
+        CheckUlt;
+    }
+    アクション {
+        IF((イベント・プレイヤー).lockState);
+            "for dash start etc you can be away from cp so the keep charge activators"
+            アルティメット・チャージを設定(イベント・プレイヤー, False);
+        END;
+        IF(アルティメットを使用している(イベント・プレイヤー));
+            条件待機(NOT(アルティメットを使用している(イベント・プレイヤー)), 2);
+            待機(False, 条件無視);
+        END;
+        "incase spamming the button"
+        IF(ボタンが長押しされている(イベント・プレイヤー, ボタン(アルティメット)));
+            待機(False, 条件無視);
+        END;
+        IF(OR(OR((イベント・プレイヤー).toggle_invincible, AND(COMPARE(イベント・プレイヤー, ==, ホスト・プレイヤー), グローバル.EditorOn)), NOT((イベント・プレイヤー).checkpoint_notLast)));
+            "skip msg if these"
+            スキップ(2);
+        ELSE IF(AND(含む配列(グローバル.Dao, (イベント・プレイヤー).checkpoint_current), COMPARE(二点間の距離(イベント・プレイヤー, 最後の値(配列内の値(グローバル.A, (イベント・プレイヤー).checkpoint_current))), <=, 1.4)));
+            "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+            小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1}", アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))));
+            //lbl_a:
+            待機(False, 条件無視);
+            アルティメット・アビリティを有効化(イベント・プレイヤー, True);
+            アルティメット・チャージを設定(イベント・プレイヤー, 100);
+        "used to be just else, but have to deal with multi ult orbs"
+        ELSE IF(OR(COMPARE(二点間の距離(イベント・プレイヤー, 最後の値(配列内の値(グローバル.A, (イベント・プレイヤー).checkpoint_current))), <=, 2), COMPARE(アルティメット・チャージのパーセンテージ(イベント・プレイヤー), <, 100)));
+            アルティメット・アビリティを有効化(イベント・プレイヤー, False);
+            アルティメット・チャージを設定(イベント・プレイヤー, False);
+        END;
+        待機(0.36, 条件無視);
+    }
+}
+
+ルール ("Mechanic | Genji | SUB Check Dash") {
+    イベント {
+        サブルーチン;
+        CheckAbility1;
+    }
+    アクション {
+        条件待機(NOT(アビリティ1を使用(イベント・プレイヤー)), True);
+        IF(OR(OR((イベント・プレイヤー).toggle_invincible, AND(COMPARE(イベント・プレイヤー, ==, ホスト・プレイヤー), グローバル.EditorOn)), NOT((イベント・プレイヤー).checkpoint_notLast)));
+            "skip msg if these"
+            スキップ(2);
+        ELSE IF(AND(含む配列(グローバル.SHIFT, (イベント・プレイヤー).checkpoint_current), COMPARE(二点間の距離(イベント・プレイヤー, 最後の値(配列内の値(グローバル.A, (イベント・プレイヤー).checkpoint_current))), <=, 1.4)));
+            "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+            小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1}", アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))));
+            //lbl_a:
+            アビリティ1を有効化(イベント・プレイヤー, True);
+        ELSE;
+            アビリティ1を有効化(イベント・プレイヤー, False);
+        END;
+    }
+}
+
+ルール ("Mechanic | Genji | Ultimate") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        アルティメットを使用している(イベント・プレイヤー) == True;
+    }
+    アクション {
+        待機(1.8, 「FALSE」の場合中止);
+        IF(AND((イベント・プレイヤー).checkpoint_notLast, NOT((イベント・プレイヤー).toggle_invincible)));
+            "disable primary fire because of slash exploit"
+            ボタンを無効化(イベント・プレイヤー, ボタン(メイン攻撃));
+        END;
+        条件待機(NOT(アルティメットを使用している(イベント・プレイヤー)), 2);
+        待機(False, 条件無視);
+        ボタンを有効化(イベント・プレイヤー, ボタン(メイン攻撃));
+        "sets ult charge back if done with map etc"
+        ルールを開始(CheckUlt, 何もしない);
+    }
+}
+
+ルール ("Mechanic | Genji | Dash") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        アビリティ1を使用(イベント・プレイヤー) == True;
+    }
+    アクション {
+        "async(CheckAbility1(), AsyncBehavior.NOOP)"
+        サブルーチンの呼び出し(CheckAbility1);
+    }
+}
+
+ルール ("Mechanic | Genji | Double Jump") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        生存している(イベント・プレイヤー) == True;
+        空中にいる(イベント・プレイヤー) == True;
+        OR(OR((イベント・プレイヤー).ban_djump, (イベント・プレイヤー).ban_savedouble), (イベント・プレイヤー).addon_enableDoubleChecks) == True;
+    }
+    アクション {
+        "Save drop"
+        条件待機(OR(OR(地上にいる(イベント・プレイヤー), ジャンプ中(イベント・プレイヤー)), ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ))), 0.096);
+        条件が「FALSE」の場合中止;
+        WHILE(True);
+            "Released Jump"
+            条件待機(OR(地上にいる(イベント・プレイヤー), NOT(ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ)))), 999999999999);
+            条件が「FALSE」の場合中止;
+            "Double Jumped"
+            条件待機(OR(地上にいる(イベント・プレイヤー), ボタンが長押しされている(イベント・プレイヤー, ボタン(ジャンプ))), 999999999999);
+            条件が「FALSE」の場合中止;
+            プレイヤー変数を設定(イベント・プレイヤー, skill_usedDouble, True);
+            "Reset"
+            条件待機(OR(地上にいる(イベント・プレイヤー), NOT((イベント・プレイヤー).skill_usedDouble)), 999999999999);
+            条件が「FALSE」の場合中止;
+        END;
+    }
+}
+
+ルール ("Mechanic | Genji | Ban Save Double - 封禁二段跳") {
+    イベント {
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
+    }
+    条件 {
+        (イベント・プレイヤー).ban_savedouble != False;
+        (イベント・プレイヤー).toggle_invincible == False;
+        空中にいる(イベント・プレイヤー) == True;
+        (イベント・プレイヤー).skill_usedDouble == False;
+    }
+    アクション {
+        条件待機(OR(OR(COMPARE(Z成分: (スロットル: (イベント・プレイヤー)), >, NULL), NOT(空中にいる(イベント・プレイヤー))), (イベント・プレイヤー).skill_usedDouble), 999999999999);
+        条件が「FALSE」の場合中止;
+        条件待機(OR(OR(COMPARE(Z成分: (スロットル: (イベント・プレイヤー)), <=, NULL), NOT(空中にいる(イベント・プレイヤー))), (イベント・プレイヤー).skill_usedDouble), 999999999999);
+        条件が「FALSE」の場合中止;
+        "Prevent false positives\\nDefault climb speed is 7.8 and small slowdown upon mantling"
+        ループする条件(COMPARE(垂直速度: (イベント・プレイヤー), <, 6));
+        IF((イベント・プレイヤー).skill_usedBhop);
+            待機(0.8, 「FALSE」の場合中止);
+        ELSE;
+            待機(0.8, 「FALSE」の場合中止);
+            中止する条件((イベント・プレイヤー).skill_usedBhop);
+        END;
+        "\\"   延二段跳已禁用!\\" checkCN \\"   save double banned!\\""
+        小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Save Double Banned!   Save Double Banned!   Save Double Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+        サブルーチンの呼び出し(CheckpointFailReset);
+    }
+}
+
 ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
@@ -2913,72 +3179,6 @@ export const frameworkTemplate = `設定
         ELSE;
             カメラの停止(イベント・プレイヤー);
         END;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    イベント {
-        進行中 - グローバル;
     }
 }
 

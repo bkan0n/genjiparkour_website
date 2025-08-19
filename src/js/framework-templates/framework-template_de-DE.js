@@ -1048,6 +1048,272 @@ regel ("Mechanic | All | Ground Reset") {
     }
 }
 
+regel ("Mechanic | Climbers | On Wall") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        "This rule is also linked to the determination of wall climbing, please do not close/delete"
+        Is On Wall(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+    }
+    aktionen {
+        Set Player Variable(Event Player, skill_usedClimb, True);
+    }
+}
+
+regel ("Mechanic | Climbers | Bhop count for stand ban") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        Is Jumping(Event Player) == True;
+        (Event Player).ban_standcreate != False;
+    }
+    aktionen {
+        Modify Player Variable(Event Player, skill_countBhops, Add, True);
+        If(And(Compare((Event Player).skill_countBhops, >, 1), Not((Event Player).toggle_invincible)));
+            "\\"   站卡 ♠ 已禁用!\\" checkCN \\"   Stand createBhop ♠ is banned!\\""
+            Small Message(Event Player, Value In Array(String Split(Custom String("ＴＬＥｒｒ   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!   Stand Createbhop ♠ Is Banned!"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array)))));
+            Call Subroutine(CheckpointFailReset);
+    }
+}
+
+regel ("Mechanic | Climbers | Create Bhop") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        Is Button Held(Event Player, Button(Crouch)) == True;
+        Is Crouching(Event Player) == True;
+        Is In Air(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == False;
+        Is Jumping(Event Player) == False;
+    }
+    aktionen {
+        Set Player Variable(Event Player, skill_usedBhop, False);
+        "prevent restart from giving messsage, but stil allow it to become green"
+        Abort If((Event Player).lockState);
+        If(And((Event Player).ban_create, Not((Event Player).toggle_invincible)));
+            "\\"   卡小 ♂ 已禁用!\\" checkCN \\"   Create Bhop ♂ is banned!\\""
+            Small Message(Event Player, Value In Array(String Split(Custom String("ＴＬＥｒｒ   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!   Create Bhop ♂ Is Banned!"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array)))));
+            Call Subroutine(CheckpointFailReset);
+        Else;
+            If(And((Event Player).ban_standcreate, Compare((Event Player).skill_countBhops, >, Null)));
+                Modify Player Variable(Event Player, skill_countBhops, Subtract, True);
+            End;
+            Modify Player Variable(Event Player, skill_countCreates, Add, True);
+            "\\"   success!\\" checkCN \\"   Bhop has been created!\\""
+            Small Message(Event Player, Value In Array(String Split(Custom String("ＴＬＥｒｒ   Bhop Created!   Bhop Created!   Bhop Created!"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array)))));
+    }
+}
+
+regel ("Mechanic | Climbers | Multiclimb") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        Is On Wall(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == False;
+        (Event Player).skill_usedClimb == False;
+    }
+    aktionen {
+        Wait(False, Ignore Condition);
+        If(And(Is On Wall(Event Player), Not(Is Button Held(Event Player, Button(Jump)))));
+            "AutoClimb used"
+            Set Player Variable(Event Player, skill_usedClimb, True);
+        Else;
+            If(And(And((Event Player).ban_multi, (Event Player).checkpoint_notLast), Not((Event Player).toggle_invincible)));
+                "\\"   蹭留 ∞ 已禁用!\\" checkCN \\"   Multiclimb ∞ is banned!\\""
+                Small Message(Event Player, Value In Array(String Split(Custom String("ＴＬＥｒｒ   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!   Multiclimb ∞ Is Banned!"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array)))));
+                Call Subroutine(CheckpointFailReset);
+            Else;
+                Modify Player Variable(Event Player, skill_countMulti, Add, True);
+    }
+}
+
+regel ("Mechanic | Climbers | Ban Wallclimb - Message") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        (Event Player).ban_climb != False;
+        (Event Player).toggle_invincible == False;
+        (Event Player).skill_usedClimb != False;
+    }
+    aktionen {
+        "CheckpointFailReset()\\n\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\""
+        Small Message(Event Player, Value In Array(String Split(Custom String("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array)))));
+    }
+}
+
+regel ("Mechanic | Genji | SUB Check Ultimate") {
+    event {
+        Subroutine;
+        CheckUlt;
+    }
+    aktionen {
+        If((Event Player).lockState);
+            "for dash start etc you can be away from cp so the keep charge activators"
+            Set Ultimate Charge(Event Player, False);
+        End;
+        If(Is Using Ultimate(Event Player));
+            Wait Until(Not(Is Using Ultimate(Event Player)), 2);
+            Wait(False, Ignore Condition);
+        End;
+        "incase spamming the button"
+        If(Is Button Held(Event Player, Button(Ultimate)));
+            Wait(False, Ignore Condition);
+        End;
+        If(Or(Or((Event Player).toggle_invincible, And(Compare(Event Player, ==, Host Player), Global.EditorOn)), Not((Event Player).checkpoint_notLast)));
+            "skip msg if these"
+            Skip(2);
+        Else If(And(Array Contains(Global.Dao, (Event Player).checkpoint_current), Compare(Distance Between(Event Player, Last Of(Value In Array(Global.A, (Event Player).checkpoint_current))), <=, 1.4)));
+            "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+            Small Message(Event Player, Custom String("   {0} {1}", Ability Icon String(Hero(Genji), Button(Ultimate)), Value In Array(String Split(Custom String("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array))))));
+            //lbl_a:
+            Wait(False, Ignore Condition);
+            Set Ultimate Ability Enabled(Event Player, True);
+            Set Ultimate Charge(Event Player, 100);
+        "used to be just else, but have to deal with multi ult orbs"
+        Else If(Or(Compare(Distance Between(Event Player, Last Of(Value In Array(Global.A, (Event Player).checkpoint_current))), <=, 2), Compare(Ultimate Charge Percent(Event Player), <, 100)));
+            Set Ultimate Ability Enabled(Event Player, False);
+            Set Ultimate Charge(Event Player, False);
+        End;
+        Wait(0.36, Ignore Condition);
+    }
+}
+
+regel ("Mechanic | Genji | SUB Check Dash") {
+    event {
+        Subroutine;
+        CheckAbility1;
+    }
+    aktionen {
+        Wait Until(Not(Is Using Ability 1(Event Player)), True);
+        If(Or(Or((Event Player).toggle_invincible, And(Compare(Event Player, ==, Host Player), Global.EditorOn)), Not((Event Player).checkpoint_notLast)));
+            "skip msg if these"
+            Skip(2);
+        Else If(And(Array Contains(Global.SHIFT, (Event Player).checkpoint_current), Compare(Distance Between(Event Player, Last Of(Value In Array(Global.A, (Event Player).checkpoint_current))), <=, 1.4)));
+            "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+            Small Message(Event Player, Custom String("   {0} {1}", Ability Icon String(Hero(Genji), Button(Ability 1)), Value In Array(String Split(Custom String("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array))))));
+            //lbl_a:
+            Set Ability 1 Enabled(Event Player, True);
+        Else;
+            Set Ability 1 Enabled(Event Player, False);
+        End;
+    }
+}
+
+regel ("Mechanic | Genji | Ultimate") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        Is Using Ultimate(Event Player) == True;
+    }
+    aktionen {
+        Wait(1.8, Abort When False);
+        If(And((Event Player).checkpoint_notLast, Not((Event Player).toggle_invincible)));
+            "disable primary fire because of slash exploit"
+            Disallow Button(Event Player, Button(Primary Fire));
+        End;
+        Wait Until(Not(Is Using Ultimate(Event Player)), 2);
+        Wait(False, Ignore Condition);
+        Allow Button(Event Player, Button(Primary Fire));
+        "sets ult charge back if done with map etc"
+        Start Rule(CheckUlt, Do Nothing);
+    }
+}
+
+regel ("Mechanic | Genji | Dash") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        Is Using Ability 1(Event Player) == True;
+    }
+    aktionen {
+        "async(CheckAbility1(), AsyncBehavior.NOOP)"
+        Call Subroutine(CheckAbility1);
+    }
+}
+
+regel ("Mechanic | Genji | Double Jump") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        Is Alive(Event Player) == True;
+        Is In Air(Event Player) == True;
+        Or(Or((Event Player).ban_djump, (Event Player).ban_savedouble), (Event Player).addon_enableDoubleChecks) == True;
+    }
+    aktionen {
+        "Save drop"
+        Wait Until(Or(Or(Is On Ground(Event Player), Is Jumping(Event Player)), Is Button Held(Event Player, Button(Jump))), 0.096);
+        Abort If Condition Is False;
+        While(True);
+            "Released Jump"
+            Wait Until(Or(Is On Ground(Event Player), Not(Is Button Held(Event Player, Button(Jump)))), 999999999999);
+            Abort If Condition Is False;
+            "Double Jumped"
+            Wait Until(Or(Is On Ground(Event Player), Is Button Held(Event Player, Button(Jump))), 999999999999);
+            Abort If Condition Is False;
+            Set Player Variable(Event Player, skill_usedDouble, True);
+            "Reset"
+            Wait Until(Or(Is On Ground(Event Player), Not((Event Player).skill_usedDouble)), 999999999999);
+            Abort If Condition Is False;
+        End;
+    }
+}
+
+regel ("Mechanic | Genji | Ban Save Double - 封禁二段跳") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    bedingungen {
+        (Event Player).ban_savedouble != False;
+        (Event Player).toggle_invincible == False;
+        Is In Air(Event Player) == True;
+        (Event Player).skill_usedDouble == False;
+    }
+    aktionen {
+        Wait Until(Or(Or(Compare(Z Component Of(Throttle Of(Event Player)), >, Null), Not(Is In Air(Event Player))), (Event Player).skill_usedDouble), 999999999999);
+        Abort If Condition Is False;
+        Wait Until(Or(Or(Compare(Z Component Of(Throttle Of(Event Player)), <=, Null), Not(Is In Air(Event Player))), (Event Player).skill_usedDouble), 999999999999);
+        Abort If Condition Is False;
+        "Prevent false positives\\nDefault climb speed is 7.8 and small slowdown upon mantling"
+        Loop If(Compare(Vertical Speed Of(Event Player), <, 6));
+        If((Event Player).skill_usedBhop);
+            Wait(0.8, Abort When False);
+        Else;
+            Wait(0.8, Abort When False);
+            Abort If((Event Player).skill_usedBhop);
+        End;
+        "\\"   延二段跳已禁用!\\" checkCN \\"   save double banned!\\""
+        Small Message(Event Player, Value In Array(String Split(Custom String("ＴＬＥｒｒ   Save Double Banned!   Save Double Banned!   Save Double Banned!"), Global.__overpyTranslationHelper__), Absolute Value(Index Of Array Value(Global.__overpyTranslationHelper__, String Split(Color(Weiß), Empty Array)))));
+        Call Subroutine(CheckpointFailReset);
+    }
+}
+
 regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     event {
         Ongoing - Global;
@@ -2913,72 +3179,6 @@ regel ("Addon | SUB 3rd Person Camera") {
         Else;
             Stop Camera(Event Player);
         End;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
-    }
-}
-
-regel ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
-    event {
-        Ongoing - Global;
     }
 }
 
