@@ -1428,7 +1428,7 @@ function fillDifficultyFieldsFromValue(diffValue) {
     return;
   }
 
-  const maxIdx = Math.min(INDEX_TO_TOKEN.length - 1, Math.max(0, diffElem.options.length - 1));
+  const maxIdx = Math.min(DIFFICULTY_MAP.length - 1, Math.max(0, diffElem.options.length - 1));
   if (index > maxIdx) index = maxIdx;
   if (index < 0) index = 0;
 
@@ -1436,7 +1436,7 @@ function fillDifficultyFieldsFromValue(diffValue) {
     diffElem.selectedIndex = index;
   } catch (_) {}
 
-  const wantedToken = INDEX_TO_TOKEN[index];
+  const wantedToken = DIFFICULTY_MAP[index];
   if (diffElem.value !== wantedToken) {
     let matched = false;
     for (let i = 0; i < diffElem.options.length; i++) {
@@ -1462,7 +1462,7 @@ function fillDifficultyFieldsFromValue(diffValue) {
   }
 
   if (typeof logDiff === "function") {
-    logDiff("fillDifficultyFieldsFromValue: input =", diffValue, "=> index =", index, "token =", INDEX_TO_TOKEN[index]);
+    logDiff("fillDifficultyFieldsFromValue: input =", diffValue, "=> index =", index, "token =", DIFFICULTY_MAP[index]);
     const chosen = diffElem.options[diffElem.selectedIndex];
     logDiff("fillDifficultyFieldsFromValue: UI set to idx", diffElem.selectedIndex, "value", chosen && chosen.value, "text", chosen && chosen.text);
   }
