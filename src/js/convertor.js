@@ -12,7 +12,6 @@ let translations = {};
 let draggedCard = null;
 let draggedIndex = null;
 window.selectSection = selectSection;
-
 const Diff = window.Diff;
 const container = document.getElementById("mapSettings");
 
@@ -51,16 +50,20 @@ const DIFFICULTY_MAP = [
   /*17 */ "off"
 ];
 
+const KW_GLOBAL = '(?:Global|全局|グローバル)';
+const KW_ARRAY  = '(?:Array|数组|配列)';
+const KW_COMBO  = '(?:Workshop\\s*Setting\\s*Combo|地图工坊设置组合|ワークショップ設定コンボ)';
+
 const GLOBAL_BANS = [
-  "ban Multiclimb - 封禁蹿留",
-  "ban Createbhop - 封禁卡小",
-  "ban standcreate - 封禁站卡",
-  "ban Deathbhop - 封禁死小",
-  "ban Emote Savehop - 封禁表情留小",
-  "ban Wallclimb - 封禁爬墙",
-  "ban save double - 封禁延二段跳",
-  "require bhop available - 留小跳进点",
-  "require djump available - 留二段跳进点"
+  "Ban Multiclimb ■ 封禁蹭留 ■ 무한 벽타기 금지",
+  "Ban Deathbhop ■ 封禁死小 ■ 죽음 콩콩이 금지",
+  "Ban Standcreate ■ 封禁站卡 ■ 서서 콩콩이 생성 금지",
+  "Ban Deathbhop ■ 封禁死小 ■ 죽음 콩콩이 금지",
+  "Ban Emote Savehop ■ 封禁表情留小 ■ 감정표현 콩콩이 금지",
+  "Ban Wallclimb ■ 封禁爬墙 ■ 벽타기 금지",
+  "Ban Save Double ■ 封禁留二段跳 ■ 이단점프 킵 금지",
+  "Require Bhop Available ■ 留小跳进点 ■ 도착 시 콩콩이 필요",
+  "Require Djump Available ■ 留二段跳进点 ■ 도착 시 이단 점프 필요",
 ];
 
 const ADDON_RULE_TITLES = [
@@ -126,50 +129,41 @@ function debug(data) {
 }
 
 function selectSection(id) {
-  if (!id) {
-    console.warn("selectSection appelé sans id ; aucun changement effectué.");
-    return;
-  }
-
-  document.querySelectorAll("#mainTabs button").forEach((btn) => {
-    btn.classList.remove("active");
+  document.querySelectorAll('#mainTabs button').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.convert-map-layout').forEach(sec => {
+    if (sec) { sec.style.display = 'none'; sec.classList.remove('active'); }
   });
-  document.querySelectorAll(".convert-map-layout").forEach((sec) => {
-    sec.style.display = "none";
-    sec.classList.remove("active");
-  });
-  document.querySelectorAll(".content").forEach((sec) => {
-    sec.style.display = "none";
-    sec.classList.remove("active");
-  });
+  document.querySelectorAll('.content').forEach(c => { if (c) c.style.display = 'none'; });
 
   const section = document.getElementById(id);
-  const button  = document.getElementById(id + "Btn");
+  const button  = document.getElementById(id + 'Btn');
+
   if (!section || !button) {
-    console.warn(`selectSection : aucun élément trouvé pour id="${id}" ou id="${id}Btn"`);
+    console.warn('[selectSection] section/button introuvable:', { id, section, button });
     return;
   }
-  section.style.display = "flex";
-  section.classList.add("active");
-  button.classList.add("active");
-
-  if (id === "mapSettings") {
-    const editModeBtn = document.getElementById("editModeBtn");
-    if (editModeBtn && !editModeBtn.dataset.listenerInstalled) {
-      editModeBtn.dataset.listenerInstalled = "true";
-      editModeBtn.addEventListener("click", () => {
-        isEditMode = !isEditMode;
-        editModeBtn.textContent = isEditMode ? t("convertor.exit_edit") : t("convertor.edit_mode");
-        document.querySelectorAll(".checkpoint-card").forEach(card => {
-          card.classList.toggle("editable", isEditMode);
-          card.querySelectorAll(".move-controls button").forEach(btn => {
-            btn.disabled = !isEditMode;
-          });
-        });
-      });
-    }
-  }
+  section.style.display = 'block';
+  section.classList.add('active');
+  button.classList.add('active');
 }
+
+window.selectSection = (id) => {
+  try { return selectSection(id); }
+  catch (e) { console.error('[selectSection] failed:', e); }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const bind = (btnId, sectionId) => {
+    const btn = document.getElementById(btnId);
+    if (btn) btn.addEventListener('click', () => selectSection(sectionId));
+  };
+  bind('convertMapBtn', 'convertMap');
+  bind('helpBtn', 'help');
+  bind('mapSettingsBtn', 'mapSettings');
+
+  const defaultSection = document.getElementById('convertMap') ? 'convertMap' : null;
+  if (defaultSection) selectSection(defaultSection);
+});
 
 /* -------------- Boutons Convert & Copy -------------- */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -221,87 +215,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.classList.remove("editable")
     );
 
-    const clientLang  = langEl.value || "en-US";
-    const targetLang  = targetEl.value || "en-US";
-    const fullText    = textarea.value;
+    const clientLang = langEl.value || "en-US";
+    const targetLang = targetEl.value || "en-US";
+    const fullText   = textarea.value;
 
-    lastParsedWorkshopSettings = parseWorkshopSettings(fullText);
-
-    await loadKeywordTranslations();
-    await loadModesNames();
-    await loadMapNameTranslations();
-    await loadHeroesNames();
-    await loadIconTranslations();
-
-    let lobbyBlock = extractLobbyBlock(fullText, clientLang);
-    let mapDataBlock = extractMapDataBlock(fullText, clientLang);
-    const modeMapNames = extractModeMapNames(fullText);
-    let workshopSettingsBlock = extractWorkshopSettings(fullText);
-
-    let creditsBlock = "";
-    try { creditsBlock = extractMapCredits(fullText, clientLang); }
-    catch(e) {  }
-    lobbyBlock = translateLobbyBlock(lobbyBlock, clientLang, targetLang);
-    mapDataBlock = translateFromTo(mapDataBlock, clientLang, targetLang);
-    creditsBlock = translateFromTo(creditsBlock, clientLang, targetLang);
-    creditsBlock = translateHeroNames(creditsBlock, heroesNames, clientLang, targetLang);
-    workshopSettingsBlock = translateFromTo(workshopSettingsBlock, clientLang, targetLang);
-
-    let tpl = await loadTemplate(targetLang);
-
-    const newRule = buildRule(mapDataBlock, targetLang);
-    tpl = replaceMapData(tpl, newRule, targetLang);
-
-    for (const [modeNameLocalized, fullMapEntry] of Object.entries(modeMapNames)) {
-      const modeKey = findModeKey(modeNameLocalized, clientLang);
-      const targetModeName = getTargetModeName(modeKey, targetLang, modeNameLocalized);
-
-      const tokens = fullMapEntry.trim().split(/\s+/);
-      const mapId = tokens[tokens.length - 1];
-      const rawMapName = tokens.slice(0, tokens.length - 1).join(" ");
-
-      let translatedMapName = rawMapName;
-      let mapKey = Object.keys(mapNamesTranslations || {}).find(key => {
-        const dict = mapNamesTranslations[key];
-        return dict && dict[clientLang] === rawMapName;
-      });
-      if (mapKey && mapNamesTranslations[mapKey][targetLang]) {
-        translatedMapName = mapNamesTranslations[mapKey][targetLang];
-      } else {
-        translatedMapName = translateFromTo(rawMapName, clientLang, targetLang);
-      }
-
-      const newFullMapEntry = `${translatedMapName} ${mapId}`;
-
-      tpl = insertMapNameIntoTemplate(tpl, targetModeName, newFullMapEntry, targetLang);
-    }
-
-    if (creditsBlock) {
-      tpl = insertMapCreditsIntoTemplate(tpl, creditsBlock, targetLang);
-    }
-
-    //tpl = await injectTranslatedAddons(tpl, fullText, clientLang, targetLang);
-
-    const isValidator = parseBasicMapValidator(fullText);
-    tpl = insertBasicMapValidator(tpl, targetLang, !isValidator);
-
-    if (lobbyBlock) {
-      tpl = insertLobbyIntoTemplate(tpl, lobbyBlock, targetLang);
-    }
-
-    if (workshopSettingsBlock) {
-      tpl = insertWorkshopSettings(tpl, workshopSettingsBlock, targetLang);
-    }
-
-    const globalLocalplayerBlock = extractGlobalLocalplayerBlock(fullText);
-    if (globalLocalplayerBlock) {
-      let blockToInsert = globalLocalplayerBlock;
-      if (clientLang !== targetLang) {
-        blockToInsert = translateFromTo(blockToInsert, clientLang, targetLang);
-        blockToInsert = translateHeroNames(blockToInsert, heroesNames, clientLang, targetLang);
-      }
-      tpl = insertDifficultyHudBlock(tpl, blockToInsert, targetLang);
-    }
+    const tpl = await doTranslate(fullText, clientLang, targetLang);
 
     textarea.value = tpl;
     renderMapSettings(fullText);
@@ -687,6 +605,18 @@ function patchTestDataStub(src) {
   );
 }
 
+function patchEditorDefaultOn(src) {
+  const hasDefine = /^[ \t]*#!define\s+editorDefaultOn\b/m.test(src);
+  if (hasDefine) return src;
+
+  const usesCallSyntax = /\beditorDefaultOn\s*\(/.test(src);
+  const def = usesCallSyntax
+    ? '#!define editorDefaultOn() false\n'
+    : '#!define editorDefaultOn false\n';
+
+  return def + src;
+}
+
 async function loadTemplate(lang) {
   const cacheUrl = new URL(`framework-templates/framework-template_${lang}.js`, import.meta.url).href;
 
@@ -710,7 +640,7 @@ async function loadTemplate(lang) {
   if (!overpy) throw new Error('OverPy UMD not found');
   await overpy.readyPromise;
 
-  const rawBase   = 'https://cdn.jsdelivr.net/gh/tylovejoy/genji-framework@1.10.3G/';
+  const rawBase   = 'https://cdn.jsdelivr.net/gh/tylovejoy/genji-framework@1.10.4A/';
   const entryFile = 'framework.opy';
   const resp      = await fetch(rawBase + entryFile);
   if (!resp.ok) throw new Error(`HTTP ${resp.status} on ${entryFile}`);
@@ -720,6 +650,7 @@ async function loadTemplate(lang) {
   src = cleanSourceG(src);
   src = patchTestDataStub(src);
   src = addMapPolyfills(src);
+  src = patchEditorDefaultOn(src);
 
   if (lang === 'zh-CN') {
     src = src.replace(/^[ \t]*#!define\s+enableInvisCommand[^\n]*\n?/gm, '');
@@ -768,10 +699,11 @@ function buildRule(mapdata, lang) {
   const lines = mapdata.trim().split("\n");
   const indented = lines.map(l => "    " + l).join("\n");
 
-  let ruleText;
+  const NEW_TITLE = 'Ø Map Data - 数据录入 <---- INSERT HERE / 在这输入';
 
+  let ruleText;
   if (lang === "zh-CN") {
-    ruleText = `规则("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `规则("${NEW_TITLE}") {
     事件
     {
         持续 - 全局;
@@ -784,7 +716,7 @@ ${indented}
 }`;
   }
   else if (lang === "ko-KR") {
-    ruleText = `rule("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `rule("${NEW_TITLE}") {
     event
     {
         Ongoing - Global;
@@ -797,7 +729,7 @@ ${indented}
 }`;
   }
   else if (lang === "ja-JP") {
-    ruleText = `ルール("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `ルール("${NEW_TITLE}") {
     イベント
     {
         進行中 - グローバル;
@@ -810,7 +742,7 @@ ${indented}
 }`;
   }
   else if (lang === "ru-RU") {
-    ruleText = `rule ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `rule ("${NEW_TITLE}") {
     event
     {
         Ongoing - Global;
@@ -823,7 +755,7 @@ ${indented}
 }`;
   }
   else if (lang === "es-MX") {
-    ruleText = `regla ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `regla ("${NEW_TITLE}") {
     evento
     {
         En curso - Global;
@@ -836,7 +768,7 @@ ${indented}
 }`;
   }
   else if (lang === "pt-BR") {
-    ruleText = `regra ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `regra ("${NEW_TITLE}") {
     evento
     {
         Em andamento - Global;
@@ -849,7 +781,7 @@ ${indented}
 }`;
   }
   else if (lang === "de-DE") {
-    ruleText = `regel ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `regel ("${NEW_TITLE}") {
     event
     {
         Ongoing - Global;
@@ -862,7 +794,7 @@ ${indented}
 }`;
   }
   else {
-    ruleText = `rule ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
+    ruleText = `rule ("${NEW_TITLE}") {
     event
     {
         Ongoing - Global;
@@ -879,37 +811,24 @@ ${indented}
 }
 
 function replaceMapData(tpl, newRule, lang) {
-  let marker, startRule, endRule;
+  const markers = [
+    '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE',
+    'Ø Map Data - 数据录入 <---- INSERT HERE / 在这输入'
+  ];
 
-  marker = '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE';
+  let startRule;
+  if (lang === "zh-CN")      startRule = "规则";
+  else if (lang === "ja-JP") startRule = "ルール";
+  else if (lang === "es-MX") startRule = "regla";
+  else if (lang === "pt-BR") startRule = "regra";
+  else if (lang === "de-DE") startRule = "regel";
+  else                       startRule = "rule";
 
-  if (lang === "zh-CN") {
-    startRule = "规则";
-    endRule   = "事件";
-  } else if (lang === "ko-KR") {
-    startRule = "rule";
-    endRule   = "event";
-  } else if (lang === "ja-JP") {
-    startRule = "ルール";
-    endRule   = "イベント";
-  } else if (lang === "ru-RU") {
-    startRule = "rule";
-    endRule   = "event";
-  } else if (lang === "es-MX") {
-    startRule = "regla";
-    endRule   = "evento";
-  } else if (lang === "pt-BR") {
-    startRule = "regra";
-    endRule   = "evento";
-  } else if (lang === "de-DE") {
-    startRule = "regel";
-    endRule   = "event";
-  } else {
-    startRule = "rule";
-    endRule   = "event";
+  let markerIdx = -1, usedMarker = null;
+  for (const m of markers) {
+    const idx = tpl.indexOf(m);
+    if (idx >= 0) { markerIdx = idx; usedMarker = m; break; }
   }
-
-  const markerIdx = tpl.indexOf(marker);
   if (markerIdx < 0) {
     console.warn(`replaceMapData : marqueur non trouvé, on conserve le texte original.`);
     return tpl;
@@ -940,6 +859,7 @@ function replaceMapData(tpl, newRule, lang) {
 /* ------- Extract map data ------- */
 function extractMapDataBlock(fullText, lang) {
   const markers = [
+    'Ø Map Data - 数据录入 <---- INSERT HERE / 在这输入',
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入',
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这入力',
     '<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE',
@@ -952,10 +872,7 @@ function extractMapDataBlock(fullText, lang) {
   let headerIdx = -1;
   for (const m of markers) {
     const idx = fullText.indexOf(m);
-    if (idx >= 0) {
-      headerIdx = idx;
-      break;
-    }
+    if (idx >= 0) { headerIdx = idx; break; }
   }
   if (headerIdx < 0) {
     showErrorMessage("No map data rule found");
@@ -965,29 +882,19 @@ function extractMapDataBlock(fullText, lang) {
   const afterHeader = fullText.slice(headerIdx);
 
   let actionsRegex;
-  if (lang === "zh-CN") {
-    actionsRegex = /动作\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else if (lang === "ko-KR") {
-    actionsRegex = /action\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else if (lang === "ja-JP") {
-    actionsRegex = /アクション\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else if (lang === "ru-RU") {
-    actionsRegex = /actions\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else if (lang === "es-MX") {
-    actionsRegex = /acciones\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else if (lang === "pt-BR") {
-    actionsRegex = /ações\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else if (lang === "de-DE") {
-    actionsRegex = /aktionen\s*\{\s*([\s\S]*?)\s*\}/i;
-  } else {
-    actionsRegex = /actions\s*\{\s*([\s\S]*?)\s*\}/i;
-  }
+  if (lang === "zh-CN")       actionsRegex = /动作\s*\{\s*([\s\S]*?)\s*\}/i;
+  else if (lang === "ko-KR")  actionsRegex = /action\s*\{\s*([\s\S]*?)\s*\}/i;
+  else if (lang === "ja-JP")  actionsRegex = /アクション\s*\{\s*([\s\S]*?)\s*\}/i;
+  else if (lang === "ru-RU")  actionsRegex = /actions\s*\{\s*([\s\S]*?)\s*\}/i;
+  else if (lang === "es-MX")  actionsRegex = /acciones\s*\{\s*([\s\S]*?)\s*\}/i;
+  else if (lang === "pt-BR")  actionsRegex = /ações\s*\{\s*([\s\S]*?)\s*\}/i;
+  else if (lang === "de-DE")  actionsRegex = /aktionen\s*\{\s*([\s\S]*?)\s*\}/i;
+  else                        actionsRegex = /actions\s*\{\s*([\s\S]*?)\s*\}/i;
 
   const actionsMatch = afterHeader.match(actionsRegex);
   if (!actionsMatch || !actionsMatch[1]) {
     return "";
   }
-
   return actionsMatch[1].trim();
 }
 
@@ -1098,129 +1005,642 @@ function insertLobbyIntoTemplate(tpl, lobbyContent, lang) {
        + tpl.slice(endBrIdx);
 }
 
-/* ------- Extract & insert difficulty ------- */
-function extractGlobalLocalplayerBlock(fullText) {
-  const reHeader = /^[ \t]*(?:rule|规则|ルール)\s*\(\s*"Huds\s*\|\s*Global\s*Localplayer"\s*\)\s*\{/mi;
-  const m = fullText.match(reHeader);
-  if (!m) return "";
+function sanitizeMapDataAssignments(text) {
+  if (!text) return text;
 
-  const startIdx = m.index;
-  const braceOpen = fullText.indexOf("{", startIdx);
-  if (braceOpen < 0) return "";
+  const reSetGlobalVar = new RegExp(
+    String.raw`^[ \t]*Set\s+Global\s+Variable\s*\(\s*(?:DashExploitToggle|HudStoreEdit)\s*,[\s\S]*?\)\s*;?[ \t]*\r?\n?`,
+    "gmi"
+  );
+  text = text.replace(reSetGlobalVar, "");
 
-  let level = 1;
-  let i = braceOpen + 1;
-  for (; i < fullText.length; i++) {
-    if (fullText[i] === "{") level++;
-    else if (fullText[i] === "}") {
-      level--;
-      if (level === 0) break;
-    }
-  }
-  if (level !== 0) return "";
+  const reDotAssign = new RegExp(
+    String.raw`^[ \t]*Global\.(?:DashExploitToggle|HudStoreEdit)\s*=\s*[^\r\n;]+;?[ \t]*\r?\n?`,
+    "gmi"
+  );
+  text = text.replace(reDotAssign, "");
 
-  return fullText.slice(startIdx, i + 1);
+  return text;
 }
 
-function parseDifficultyIndex(fullText, lang) {
-  const hudBlock = extractDifficultyHudBlock(fullText, lang);
-  if (!hudBlock) return -1;
+/* ------- Extract & insert difficulty ------- */
+function logDiff(...args) {
+  //try { console.log("[DIFF]", ...args); } catch (_) {}
+}
 
-  let comboKeyword;
-  switch (lang) {
-    case "zh-CN":
-      comboKeyword = "地图工坊设置组合";
-      break;
-    case "ja-JP":
-      comboKeyword = "ワークショップ設定コンボ";
-      break;
-    case "es-MX":
-      comboKeyword = "Combinado de la configuración del Workshop";
-      break;
-    case "pt-BR":
-      comboKeyword = "Caixa de Combinação de Configurações do Workshop";
-      break;
-    default:
-      comboKeyword = "Workshop Setting Combo";
+function sliceAround(str, pos, radius = 120) {
+  const start = Math.max(0, pos - radius);
+  const end = Math.min(str.length, pos + radius);
+  return str.slice(start, end);
+}
+
+function normalizeSpaces(s) {
+  return String(s)
+    .replace(/\uFEFF/g, "")
+    .replace(/[\u200B\u200C\u200D]/g, "")
+    .replace(/[\u00A0\u2007\u202F\u2000-\u200A]/g, " ");
+}
+function normalizeBrackets(s) {
+  return String(s)
+    .replace(/[\uFF3B\u3010\u3016\u3014\u27E6\u2983\u2985\u301A]/g, "[")
+    .replace(/[\uFF3D\u3011\u3017\u3015\u27E7\u2984\u2986\u301B]/g, "]");
+}
+function normalizeDigits(s) {
+  return String(s).replace(/[\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9]/g, ch => {
+    const cp = ch.codePointAt(0);
+    if (cp >= 0xFF10 && cp <= 0xFF19) return String(cp - 0xFF10);
+    if (cp >= 0x0660 && cp <= 0x0669) return String(cp - 0x0660);
+    if (cp >= 0x06F0 && cp <= 0x06F9) return String(cp - 0x06F0);
+    return ch;
+  });
+}
+function normalizeLine(s) {
+  return normalizeDigits(normalizeBrackets(normalizeSpaces(s)));
+}
+
+/* ----------------- Utilitaires de parsing ----------------- */
+function findMatchingParen(text, openIdx) {
+  let depth = 1, inQ = false;
+  for (let i = openIdx + 1; i < text.length; i++) {
+    const ch = text[i], prev = text[i - 1];
+    if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+    if (inQ) continue;
+    if (ch === "(") depth++;
+    else if (ch === ")") { depth--; if (depth === 0) return i; }
+  }
+  return -1;
+}
+function findMatchingBrace(text, openIdx) {
+  let depth = 1, inQ = false;
+  for (let i = openIdx + 1; i < text.length; i++) {
+    const ch = text[i], prev = text[i - 1];
+    if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+    if (inQ) continue;
+    if (ch === "{") depth++;
+    else if (ch === "}") { depth--; if (depth === 0) return i; }
+  }
+  return -1;
+}
+function splitTopLevelArgs(argListStr) {
+  const args = [];
+  let cur = "", p = 0, b = 0, q = false;
+  for (let k = 0; k < argListStr.length; k++) {
+    const ch = argListStr[k], prev = argListStr[k - 1];
+    if (ch === '"' && prev !== "\\") q = !q;
+    if (!q) {
+      if (ch === "(") p++;
+      else if (ch === ")") p--;
+      else if (ch === "[") b++;
+      else if (ch === "]") b--;
+      if (ch === "," && p === 0 && b === 0) { args.push(cur.trim()); cur = ""; continue; }
+    }
+    cur += ch;
+  }
+  if (cur.trim()) args.push(cur.trim());
+  return args;
+}
+
+function isHudLine(lineNorm) {
+  const en = /difficulty\s*display\s*hud/i.test(lineNorm);
+  const zh = /难度/.test(lineNorm) && /顶部/.test(lineNorm) && /hud/i.test(lineNorm);
+  return en || zh;
+}
+
+function extractIndexFromHudLine(rawLine) {
+  if (!rawLine) return null;
+
+  const lineNorm = normalizeLine(rawLine);
+  if (!isHudLine(lineNorm)) return null;
+
+  let m;
+  const reBr = /\[\s*([0-9]+)\s*\]/g;
+  let last = null;
+  while ((m = reBr.exec(lineNorm))) last = m[1];
+  if (last !== null) {
+    const v = parseInt(last, 10);
+    if (Number.isFinite(v)) return v;
   }
 
-  const regex = new RegExp(
-    comboKeyword.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&") +
-    "\\s*\\([\\s\\S]*?,\\s*(\\d+)\\s*\\)",
+  m = /:\s*([0-9]+)\b/.exec(lineNorm);
+  if (m) {
+    const v = parseInt(m[1], 10);
+    if (Number.isFinite(v)) return v;
+  }
+
+  try {
+    const cps = Array.from(rawLine).map(c => c.codePointAt(0).toString(16));
+    logDiff("extractIndexFromHudLine: candidate non parsée (raw) =", rawLine);
+    logDiff("extractIndexFromHudLine: codepoints =", cps.join(" "));
+    logDiff("extractIndexFromHudLine: normalisé =", lineNorm);
+  } catch (_e) {}
+  return null;
+}
+
+function extractWorkshopHudIndex(fullText) {
+  const mKey = /(?:\bworkshop\b|地图工坊|ワークショップ)/i.exec(fullText);
+  if (!mKey) { logDiff("workshop: mot-clé introuvable"); return null; }
+
+  const afterKeyPos = mKey.index + mKey[0].length;
+  const openBrace = fullText.indexOf("{", afterKeyPos);
+  if (openBrace < 0) { logDiff("workshop: '{' introuvable après mot-clé"); return null; }
+
+  const closeBrace = findMatchingBrace(fullText, openBrace);
+  if (closeBrace < 0) { logDiff("workshop: '}' appariée introuvable"); return null; }
+
+  const body = fullText.slice(openBrace + 1, closeBrace);
+  const lines = body.split(/\r?\n/);
+
+  for (const rawLine of lines) {
+    const v = extractIndexFromHudLine(rawLine);
+    if (v !== null) {
+      logDiff("extractWorkshopHudIndex: ligne HUD capturée (raw) =", rawLine);
+      logDiff("extractWorkshopHudIndex: valeur =", v);
+      return v;
+    }
+  }
+
+  logDiff("extractWorkshopHudIndex: pas de ligne HUD trouvée dans workshop. Extrait:\n" + body);
+  return null;
+}
+
+function extractWorkshopHudIndexLoose(fullText) {
+  const lines = fullText.split(/\r?\n/);
+  for (const rawLine of lines) {
+    const v = extractIndexFromHudLine(rawLine);
+    if (v !== null) {
+      logDiff("extractWorkshopHudIndexLoose: ligne HUD capturée (raw) =", rawLine);
+      logDiff("extractWorkshopHudIndexLoose: valeur =", v);
+      return v;
+    }
+  }
+  logDiff("extractWorkshopHudIndexLoose: aucune ligne HUD trouvée dans tout le texte");
+  return null;
+}
+
+function extractIndexFromGlobalArray(fullText) {
+  const re = new RegExp(
+    `${KW_GLOBAL}\\.Difficultyhud\\s*=\\s*${KW_ARRAY}\\s*\\(\\s*${KW_COMBO}\\s*\\(`,
     "i"
   );
-  const m = hudBlock.match(regex);
-  return m && m[1] ? parseInt(m[1], 10) : -1;
-}
+  const m = re.exec(fullText);
+  if (!m) { logDiff("extractIndexFromGlobalArray: non trouvé"); return null; }
 
-function extractDifficultyHudBlock(fullText, lang) {
-  let pattern;
-  switch (lang) {
-    case "ja-JP":
-      pattern = /グローバル\.Difficultyhud\s*=\s*[\s\S]*?;\s*/;
-      break;
-    case "zh-CN":
-      pattern = /全局\.Difficultyhud\s*=\s*[\s\S]*?;\s*/;
-      break;
-    default:
-      pattern = /Global\.Difficultyhud\s*=\s*Array\([\s\S]*?;\s*/;
-      break;
+  const comboOpen = m.index + m[0].lastIndexOf("(");
+  const comboClose = findMatchingParen(fullText, comboOpen);
+  if (comboClose < 0) { logDiff("extractIndexFromGlobalArray: parenthèses non appariées"); return null; }
+
+  const inside = fullText.slice(comboOpen + 1, comboClose);
+  const args = splitTopLevelArgs(inside);
+
+  const raw = String(args[2] || "").trim();
+  const idx = parseInt(raw, 10);
+  if (Number.isFinite(idx)) {
+    logDiff("extractIndexFromGlobalArray: trouvé =", idx);
+    return idx;
   }
-  const m = fullText.match(pattern);
-  return m ? m[0] : "";
+  logDiff("extractIndexFromGlobalArray: 3e arg non-numérique =", args[2]);
+  return null;
 }
 
-function fillDifficultyFields(parsedIndex) {
-  const playElem = document.getElementById("playtestToggle");
-  const diffElem = document.getElementById("difficultyHUDSelect");
-
-  if (parsedIndex === 0) {
-    if (playElem) playElem.value = "on";
-    if (diffElem) diffElem.value = "off";
-  } 
-  else if (parsedIndex > 0 && parsedIndex < DIFFICULTY_MAP.length) {
-    if (playElem) playElem.value = "off";
-    if (diffElem) diffElem.value = DIFFICULTY_MAP[parsedIndex];
-  } 
-  else {
-    if (playElem) playElem.value = globalSettings.playtest;
-    if (diffElem) diffElem.value = globalSettings.difficultyHUD;
-  }
-}
-
-function insertDifficultyHudBlock(tpl, hudBlock, lang) {
-  const cleanedHud = hudBlock.trim();
-  const reHeader = new RegExp(
-    `^[ \\t]*(?:rule|规则|ルール)\\s*\\(\\s*"Huds\\s*\\|\\s*Global\\s*Localplayer"\\s*\\)\\s*\\{`,
-    "mi"
+function extractIndexFromSetGlobal(fullText) {
+  const reSet = new RegExp(
+    `(?:Set\\s+Global\\s+Variable|设置\\s*全局\\s*变量|グローバル変数を設定)\\s*\\(\\s*Difficultyhud\\s*,`,
+    "i"
   );
-  const m = tpl.match(reHeader);
-  if (!m) {
+  const mB = reSet.exec(fullText);
+  if (!mB) { logDiff("extractIndexFromSetGlobal: non trouvé"); return null; }
+
+  const openSet = fullText.indexOf("(", mB.index);
+  if (openSet < 0) return null;
+  const closeSet = findMatchingParen(fullText, openSet);
+  if (closeSet < 0) return null;
+
+  const setBody = fullText.slice(openSet + 1, closeSet);
+
+  const reCombo = new RegExp(`${KW_COMBO}\\s*\\(`, "i");
+  const relCombo = setBody.search(reCombo);
+  if (relCombo < 0) { logDiff("extractIndexFromSetGlobal: pas de Combo(...) dans Set"); return null; }
+
+  const openComboRel = setBody.indexOf("(", relCombo);
+  if (openComboRel < 0) return null;
+
+  let depth = 1, inQ = false, closeComboRel = -1;
+  for (let i = openComboRel + 1; i < setBody.length; i++) {
+    const ch = setBody[i], prev = setBody[i - 1];
+    if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+    if (inQ) continue;
+    if (ch === "(") depth++;
+    else if (ch === ")") { depth--; if (depth === 0) { closeComboRel = i; break; } }
+  }
+  if (closeComboRel < 0) return null;
+
+  const comboBody = setBody.slice(openComboRel + 1, closeComboRel);
+  const args = splitTopLevelArgs(comboBody);
+  const idx = parseInt(String(args[2] || "").trim(), 10);
+  if (Number.isFinite(idx)) {
+    logDiff("extractIndexFromSetGlobal: trouvé =", idx);
+    return idx;
+  }
+  logDiff("extractIndexFromSetGlobal: 3e arg non-numérique =", args[2]);
+  return null;
+}
+
+function extractDifficultyValue(fullText) {
+  let v = extractWorkshopHudIndex(fullText);
+  if (v === null) v = extractWorkshopHudIndexLoose(fullText);
+  if (v !== null) { logDiff("extractDifficultyValue: priorité workshop =", v); return v; }
+
+  const g = extractIndexFromGlobalArray(fullText);
+  if (g !== null) { logDiff("extractDifficultyValue: fallback global array =", g); return g; }
+
+  const s = extractIndexFromSetGlobal(fullText);
+  if (s !== null) { logDiff("extractDifficultyValue: fallback set global =", s); return s; }
+
+  logDiff("extractDifficultyValue: aucune valeur trouvée");
+  return null;
+}
+
+function applyDifficultyIndexToTemplate(tpl, wanted) {
+  const newIndex = parseInt(String(wanted).trim(), 10);
+  if (!Number.isFinite(newIndex)) { logDiff("applyDifficulty: wanted non-numérique =", wanted); return tpl; }
+
+  const m = /Set\s*Global\s*Variable\s*\(\s*Difficultyhud\s*,/i.exec(tpl);
+  if (!m) { logDiff("applyDifficulty: Set Global Variable(Difficultyhud, ...) introuvable"); return tpl; }
+
+  const openSet = tpl.indexOf("(", m.index);
+  if (openSet < 0) return tpl;
+  const closeSet = findMatchingParen(tpl, openSet);
+  if (closeSet < 0) return tpl;
+
+  const beforeSet = tpl.slice(0, openSet + 1);
+  const setBody   = tpl.slice(openSet + 1, closeSet);
+  const afterSet  = tpl.slice(closeSet);
+
+  const relCombo = setBody.search(/Workshop\s*Setting\s*Combo\s*\(/i);
+  if (relCombo < 0) { logDiff("applyDifficulty: Combo(...) introuvable dans Set"); return tpl; }
+
+  const openComboRel = setBody.indexOf("(", relCombo);
+  if (openComboRel < 0) return tpl;
+
+  let depth = 1, inQ = false, closeComboRel = -1;
+  for (let i = openComboRel + 1; i < setBody.length; i++) {
+    const ch = setBody[i], prev = setBody[i - 1];
+    if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+    if (inQ) continue;
+    if (ch === "(") depth++;
+    else if (ch === ")") { depth--; if (depth === 0) { closeComboRel = i; break; } }
+  }
+  if (closeComboRel < 0) { logDiff("applyDifficulty: fermeture Combo non trouvée"); return tpl; }
+
+  const beforeCombo = setBody.slice(0, openComboRel + 1);
+  const comboBody   = setBody.slice(openComboRel + 1, closeComboRel);
+  const afterCombo  = setBody.slice(closeComboRel);
+
+  const args = splitTopLevelArgs(comboBody);
+  if (args.length < 4) {
+    logDiff("applyDifficulty: args Combo insuffisants:", args.length, args);
     return tpl;
   }
 
-  const startIdx = m.index;
-  const braceOpenIdx = tpl.indexOf("{", startIdx);
-  if (braceOpenIdx < 0) {
-    return tpl;
+  logDiff("applyDifficulty: 3e arg (avant) =", args[2]);
+  args[2] = String(newIndex);
+  logDiff("applyDifficulty: 3e arg (après) =", args[2]);
+
+  const newComboBody = args.join(", ");
+  const newSetBody   = beforeCombo + newComboBody + afterCombo;
+  const out          = beforeSet + newSetBody + afterSet;
+
+  try {
+    const check = /Workshop\s*Setting\s*Combo\s*\(([^)]*)\)/i.exec(out);
+    if (check) {
+      const postArgs = splitTopLevelArgs(check[1]);
+      logDiff("applyDifficulty: vérif post-écriture 3e arg =", postArgs[2]);
+      const anchor = out.indexOf(check[0]);
+      logDiff("applyDifficulty: contexte autour de Combo():\n" + sliceAround(out, anchor, 180));
+    }
+  } catch (e) {
+    logDiff("applyDifficulty: vérif post-écriture erreur:", e && e.message);
   }
 
-  let level = 1;
-  let i = braceOpenIdx + 1;
-  for (; i < tpl.length; i++) {
-    if (tpl[i] === "{") level++;
-    else if (tpl[i] === "}") {
-      level--;
-      if (level === 0) break;
+  return out;
+}
+
+function fillDifficultyFieldsFromValue(diffValue) {
+  const diffElem = document.getElementById("difficultyHUDSelect");
+  if (!diffElem) {
+    if (typeof logDiff === "function") logDiff("fillDifficultyFieldsFromValue: #difficultyHUDSelect introuvable");
+    return;
+  }
+
+  const TOKEN_TO_INDEX = Object.fromEntries(DIFFICULTY_MAP.map((t, i) => [t, i]));
+
+  function normToken(s) {
+    if (s == null) return null;
+    s = String(s)
+      .replace(/<[^>]*>/g, "")
+      .toLowerCase()
+      .trim();
+
+    s = s
+      .replace(/\s+/g, " ")
+      .replace(/very\s*hard/g, "veryhard")
+      .replace(/do\s*not\s*display|don['’]?\s*t\s*display|不显示|표시\s*x/i, "off");
+
+    s = s.replace(/\s*\+\s*$/,"+").replace(/\s*-\s*$/,"-");
+
+    if (/^playtest/.test(s)) return "playtest";
+    if (/^easy\+$/.test(s)) return "easy+";
+    if (/^easy-$/.test(s)) return "easy-";
+    if (/^easy$/.test(s))  return "easy";
+    if (/^medium\+$/.test(s)) return "medium+";
+    if (/^medium-$/.test(s)) return "medium-";
+    if (/^medium$/.test(s))  return "medium";
+    if (/^hard\+$/.test(s)) return "hard+";
+    if (/^hard-$/.test(s)) return "hard-";
+    if (/^hard$/.test(s))  return "hard";
+    if (/^veryhard\+$/.test(s)) return "veryhard+";
+    if (/^veryhard-$/.test(s)) return "veryhard-";
+    if (/^veryhard$/.test(s))  return "veryhard";
+    if (/^extreme\+$/.test(s)) return "extreme+";
+    if (/^extreme-$/.test(s)) return "extreme-";
+    if (/^extreme$/.test(s))  return "extreme";
+    if (/^hell$/.test(s))     return "hell";
+    if (/^off$/.test(s))      return "off";
+
+    return s;
+  }
+
+  let index = null;
+  if (diffValue != null && /^\s*\d+\s*$/.test(String(diffValue))) {
+    index = parseInt(String(diffValue).trim(), 10);
+  } else if (diffValue != null) {
+    const tok = normToken(diffValue);
+    if (tok && TOKEN_TO_INDEX.hasOwnProperty(tok)) index = TOKEN_TO_INDEX[tok];
+  }
+
+  if (index == null || !Number.isFinite(index)) {
+    if (typeof logDiff === "function") logDiff("fillDifficultyFieldsFromValue: diffValue illisible =", diffValue);
+    return;
+  }
+
+  const maxIdx = Math.min(INDEX_TO_TOKEN.length - 1, Math.max(0, diffElem.options.length - 1));
+  if (index > maxIdx) index = maxIdx;
+  if (index < 0) index = 0;
+
+  try {
+    diffElem.selectedIndex = index;
+  } catch (_) {}
+
+  const wantedToken = INDEX_TO_TOKEN[index];
+  if (diffElem.value !== wantedToken) {
+    let matched = false;
+    for (let i = 0; i < diffElem.options.length; i++) {
+      const opt = diffElem.options[i];
+      if ((opt.value || "").toLowerCase() === wantedToken) {
+        diffElem.selectedIndex = i;
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      for (let i = 0; i < diffElem.options.length; i++) {
+        const opt = diffElem.options[i];
+        const label = String(opt.text || opt.label || "").toLowerCase();
+        if (label.includes(wantedToken.replace("+", " + ").replace("-", " - ").replace("veryhard","very hard"))) {
+          diffElem.selectedIndex = i;
+          matched = true;
+          break;
+        }
+      }
     }
   }
-  if (level !== 0) {
-    return tpl;
-  }
-  const braceCloseIdx = i;
 
-  return tpl.slice(0, startIdx) + cleanedHud + tpl.slice(braceCloseIdx + 1);
+  if (typeof logDiff === "function") {
+    logDiff("fillDifficultyFieldsFromValue: input =", diffValue, "=> index =", index, "token =", INDEX_TO_TOKEN[index]);
+    const chosen = diffElem.options[diffElem.selectedIndex];
+    logDiff("fillDifficultyFieldsFromValue: UI set to idx", diffElem.selectedIndex, "value", chosen && chosen.value, "text", chosen && chosen.text);
+  }
 }
+
+function applyDifficultyValue(fullText, lang, wanted) {
+  const log = (typeof logDiff === "function") ? logDiff : (...a) => { try { console.log("[DIFF]", ...a); } catch(_){} };
+
+  const _findMatchingParen = (typeof findMatchingParen === "function") ? findMatchingParen : function(text, openIdx) {
+    let depth = 1, inQ = false;
+    for (let i = openIdx + 1; i < text.length; i++) {
+      const ch = text[i], prev = text[i - 1];
+      if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+      if (inQ) continue;
+      if (ch === "(") depth++;
+      else if (ch === ")") { depth--; if (depth === 0) return i; }
+    }
+    return -1;
+  };
+
+  const _splitTopLevelArgs = (typeof splitTopLevelArgs === "function") ? splitTopLevelArgs : function(argListStr) {
+    const args = [];
+    let cur = "", p = 0, b = 0, q = false;
+    for (let k = 0; k < argListStr.length; k++) {
+      const ch = argListStr[k], prev = argListStr[k - 1];
+      if (ch === '"' && prev !== "\\") q = !q;
+      if (!q) {
+        if (ch === "(") p++;
+        else if (ch === ")") p--;
+        else if (ch === "[") b++;
+        else if (ch === "]") b--;
+        if (ch === "," && p === 0 && b === 0) { args.push(cur.trim()); cur = ""; continue; }
+      }
+      cur += ch;
+    }
+    if (cur.trim()) args.push(cur.trim());
+    return args;
+  };
+
+  function findMatchingBrace(text, openIdx) {
+    let depth = 1, inQ = false;
+    for (let i = openIdx + 1; i < text.length; i++) {
+      const ch = text[i], prev = text[i - 1];
+      if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+      if (inQ) continue;
+      if (ch === "{") depth++;
+      else if (ch === "}") { depth--; if (depth === 0) return i; }
+    }
+    return -1;
+  }
+
+  function normalizeSpaces(s) {
+    return String(s)
+      .replace(/\uFEFF/g, "")
+      .replace(/[\u200B\u200C\u200D]/g, "")
+      .replace(/[\u00A0\u2007\u202F\u2000-\u200A]/g, " ");
+  }
+  function normalizeBrackets(s) {
+    return String(s)
+      .replace(/[\uFF3B\u3010\u3016\u3014\u27E6\u2983\u2985\u301A]/g, "[")
+      .replace(/[\uFF3D\u3011\u3017\u3015\u27E7\u2984\u2986\u301B]/g, "]");
+  }
+  function normalizeDigits(s) {
+    return String(s).replace(/[\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9]/g, ch => {
+      const cp = ch.codePointAt(0);
+      if (cp >= 0xFF10 && cp <= 0xFF19) return String(cp - 0xFF10);
+      if (cp >= 0x0660 && cp <= 0x0669) return String(cp - 0x0660);
+      if (cp >= 0x06F0 && cp <= 0x06F9) return String(cp - 0x06F0);
+      return ch;
+    });
+  }
+  function normalizeLine(s) { return normalizeDigits(normalizeBrackets(normalizeSpaces(s))); }
+
+  const TOKEN_TO_IDX = Object.fromEntries(DIFFICULTY_MAP.map((t, i) => [t, i]));
+
+  function normToken(s) {
+    s = String(s || "").toLowerCase().replace(/<[^>]*>/g, "").trim();
+    s = s.replace(/\s+/g, " ");
+    s = s.replace(/very\s*hard/g, "veryhard");
+    if (/do\s*not\s*display|don['’]?\s*t\s*display|不显示|표시\s*x/.test(s)) s = "off";
+    s = s.replace(/\s*\+\s*$/,"+").replace(/\s*-\s*$/,"-");
+    if (s.startsWith("playtest")) return "playtest";
+    return s;
+  }
+
+  function computeIndex(w) {
+    if (w == null) return null;
+    const str = String(w).trim();
+    if (/^\d+$/.test(str)) {
+      let n = parseInt(str, 10);
+      if (!Number.isFinite(n)) return null;
+      n = Math.max(0, Math.min(17, n));
+      return n;
+    }
+    const tok = normToken(str);
+    if (TOKEN_TO_IDX.hasOwnProperty(tok)) return TOKEN_TO_IDX[tok];
+    return null;
+  }
+
+  const idx = computeIndex(wanted);
+  logDiff("applyDifficultyValue: wanted =", wanted, "=> idx =", idx);
+  if (idx == null) return fullText;
+
+  let text = fullText;
+
+  (function updateWorkshopBlock(){
+    const key = /(workshop|地图工坊|ワークショップ)\s*\{/i.exec(text);
+    if (!key) { log("applyDifficultyValue: workshop block introuvable (ok)"); return; }
+    const openBrace = text.indexOf("{", key.index + key[0].length);
+    if (openBrace < 0) { log("applyDifficultyValue: '{' après workshop introuvable"); return; }
+    const closeBrace = findMatchingBrace(text, openBrace);
+    if (closeBrace < 0) { log("applyDifficultyValue: '}' du workshop introuvable"); return; }
+
+    const head = text.slice(0, openBrace + 1);
+    const body = text.slice(openBrace + 1, closeBrace);
+    const tail = text.slice(closeBrace);
+
+    const lines = body.split(/\r?\n/);
+    let changed = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const raw = lines[i];
+      const norm = normalizeLine(raw);
+      const isHud = /difficulty\s*display\s*hud/i.test(norm) ||
+                    (/难度/.test(norm) && /顶部/.test(norm) && /hud/i.test(norm));
+      if (!isHud) continue;
+
+      const next = norm.replace(/\[\s*\d+\s*\]/g, `[${idx}]`)
+                       .replace(/:\s*\d+\b/g, `: ${idx}`);
+      if (next !== norm) {
+        lines[i] = next;
+        changed = true;
+        logDiff("applyDifficultyValue: workshop line modifiée ->", next);
+        break;
+      } else {
+        lines[i] = norm.replace(/(\S)\s*$/, `$1 [${idx}]`);
+        changed = true;
+        logDiff("applyDifficultyValue: workshop line: ajout [idx] ->", lines[i]);
+        break;
+      }
+    }
+
+    if (changed) {
+      text = head + lines.join("\n") + tail;
+    } else {
+      logDiff("applyDifficultyValue: workshop: aucune ligne HUD à modifier");
+    }
+  })();
+
+  (function updateSetGlobal(){
+    const re = /Set\s*Global\s*Variable\s*\(\s*Difficultyhud\s*,/ig;
+    let m, count = 0;
+
+    while ((m = re.exec(text))) {
+      const openSet = text.indexOf("(", m.index);
+      const closeSet = _findMatchingParen(text, openSet);
+      if (openSet < 0 || closeSet < 0) { re.lastIndex = m.index + m[0].length; continue; }
+
+      const setBody = text.slice(openSet + 1, closeSet);
+
+      const relCombo = setBody.search(/Workshop\s*Setting\s*Combo\s*\(/i);
+      if (relCombo < 0) { re.lastIndex = closeSet + 1; continue; }
+
+      const openComboRel = setBody.indexOf("(", relCombo);
+      let depth = 1, inQ = false, closeComboRel = -1;
+      for (let i = openComboRel + 1; i < setBody.length; i++) {
+        const ch = setBody[i], prev = setBody[i - 1];
+        if (ch === '"' && prev !== "\\") { inQ = !inQ; continue; }
+        if (inQ) continue;
+        if (ch === "(") depth++;
+        else if (ch === ")") { depth--; if (depth === 0) { closeComboRel = i; break; } }
+      }
+      if (closeComboRel < 0) { re.lastIndex = closeSet + 1; continue; }
+
+      const beforeCombo = setBody.slice(0, openComboRel + 1);
+      const comboBody   = setBody.slice(openComboRel + 1, closeComboRel);
+      const afterCombo  = setBody.slice(closeComboRel);
+
+      const args = _splitTopLevelArgs(comboBody);
+      if (args.length >= 3) {
+        logDiff("applyDifficultyValue:SetGlobal avant idx =", args[2]);
+        args[2] = String(idx);
+        const newComboBody = args.join(", ");
+        const newSetBody   = beforeCombo + newComboBody + afterCombo;
+        text = text.slice(0, openSet + 1) + newSetBody + text.slice(closeSet);
+        re.lastIndex = openSet + 1 + newSetBody.length; // reprendre après remplacement
+        count++;
+      } else {
+        re.lastIndex = closeSet + 1;
+      }
+    }
+    logDiff("applyDifficultyValue:SetGlobal remplacés =", count);
+  })();
+
+  (function updateGlobalArray(){
+    const re = /(?:Global|全局|グローバル)\.Difficultyhud\s*=\s*Array\s*\(\s*Workshop\s*Setting\s*Combo\s*\(/ig;
+    let m, count = 0;
+
+    while ((m = re.exec(text))) {
+      const comboOpen = m.index + m[0].lastIndexOf("(");
+      const comboClose = _findMatchingParen(text, comboOpen);
+      if (comboClose < 0) { re.lastIndex = m.index + m[0].length; continue; }
+
+      const inside = text.slice(comboOpen + 1, comboClose);
+      const args = _splitTopLevelArgs(inside);
+      if (args.length >= 3) {
+        logDiff("applyDifficultyValue:GlobalArray avant idx =", args[2]);
+        args[2] = String(idx);
+        const newInside = args.join(", ");
+        text = text.slice(0, comboOpen + 1) + newInside + text.slice(comboClose);
+        re.lastIndex = comboOpen + 1 + newInside.length;
+        count++;
+      } else {
+        re.lastIndex = comboClose + 1;
+      }
+    }
+    logDiff("applyDifficultyValue:GlobalArray remplacés =", count);
+  })();
+
+  logDiff("applyDifficultyValue: DONE (idx =", idx, ")");
+  return text;
+}
+
 
 /* ------- Extract map name ------- */
 function extractModeMapNames(fullText) {
@@ -1293,6 +1713,7 @@ function extractModeMapNames(fullText) {
 
   return result;
 }
+
 
 /* ------- Parse & Insert map name ------- */
 function findModeKey(localizedName, lang) {
@@ -1371,194 +1792,299 @@ function insertMapNameIntoTemplate(tpl, modeName, fullMapEntry, lang) {
 /* ------- Extract & Insert credits and colors ------- */
 function extractMapCredits(fullText, lang) {
   if (lang === "ja-JP") {
-    const ruleHeaderRegex = /ルール\("<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE \/ (在这入力|在这输入)"\)/;
-    const headerMatch = fullText.match(ruleHeaderRegex);
+    const jaHeaders = [
+      /ルール\("<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE \/ (在这入力|在这输入)"\)/,
+      /ルール\("☞ Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE \/ (在这入力|在这输入)"\)/
+    ];
+    let headerMatch = null;
+    for (const re of jaHeaders) {
+      const m = fullText.match(re);
+      if (m) { headerMatch = m; break; }
+    }
     if (!headerMatch) {
-      throw new Error('Impossible de trouver "ルール(…Credits and Colors…)" pour ja-JP.');
+      throw new Error('Impossible de trouver "ルール(…Credits and Colors…)" (ja-JP).');
     }
     const startIdx = fullText.indexOf(headerMatch[0]);
-
     const braceOpenIdx = fullText.indexOf("{", startIdx + headerMatch[0].length);
-    if (braceOpenIdx < 0) {
-      throw new Error('Accolade ouvrante introuvable après la ligne “ルール(…)”.');
-    }
+    if (braceOpenIdx < 0) throw new Error('Accolade ouvrante introuvable après “ルール(…)”.');
 
     let level = 1, i = braceOpenIdx + 1;
     for (; i < fullText.length; i++) {
       if (fullText[i] === "{") level++;
-      else if (fullText[i] === "}") {
-        level--;
-        if (level === 0) break;
-      }
+      else if (fullText[i] === "}") { level--; if (level === 0) break; }
     }
-    if (level !== 0) {
-      throw new Error('Accolade fermante introuvable pour la règle “ルール(…)” en ja-JP.');
-    }
-    const outerCloseIdx = i;
+    if (level !== 0) throw new Error('Accolade fermante introuvable pour la règle (ja-JP).');
 
+    const outerCloseIdx = i;
     const ruleBlock = fullText.slice(braceOpenIdx + 1, outerCloseIdx);
 
     const keyword = "アクション";
-    const actionRegex = new RegExp(`${keyword}\\s*\\{`);
-    const mAction = ruleBlock.match(actionRegex);
-    if (!mAction) {
-      throw new Error(`Bloc "${keyword} { … }" introuvable dans la règle ja-JP.`);
-    }
+    const mAction = ruleBlock.match(new RegExp(`${keyword}\\s*\\{`));
+    if (!mAction) throw new Error(`Bloc "${keyword} { … }" introuvable (ja-JP).`);
+
     const relActionOpen = ruleBlock.indexOf("{", mAction.index + mAction[0].lastIndexOf("{"));
-    if (relActionOpen < 0) {
-      throw new Error(`Accolade ouvrante introuvable pour "${keyword}" dans ja-JP.`);
-    }
+    if (relActionOpen < 0) throw new Error(`Accolade ouvrante introuvable pour "${keyword}" (ja-JP).`);
     const absoluteActionOpen = braceOpenIdx + 1 + relActionOpen;
 
     let level2 = 1, j = absoluteActionOpen + 1;
     for (; j < fullText.length; j++) {
       if (fullText[j] === "{") level2++;
-      else if (fullText[j] === "}") {
-        level2--;
-        if (level2 === 0) break;
-      }
+      else if (fullText[j] === "}") { level2--; if (level2 === 0) break; }
     }
-    if (level2 !== 0) {
-      throw new Error(`Accolade fermante introuvable pour "${keyword}" en ja-JP.`);
-    }
-    const actionClose = j;
+    if (level2 !== 0) throw new Error(`Accolade fermante introuvable pour "${keyword}" (ja-JP).`);
 
+    const actionClose = j;
     return fullText.slice(absoluteActionOpen + 1, actionClose).trim();
   }
 
-  let modern, keyword;
-  if (lang === "zh-CN") {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入';
-    keyword = "动作";
-  } else if (lang === "pt-BR") {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
-    keyword = "ações";
-  } else if (lang === "es-MX") {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
-    keyword = "acciones";
-  } else if (lang === "ko-KR") {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
-    keyword = "action";
-  } else if (lang === "ru-RU") {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
-    keyword = "actions";
-  } else if (lang === "de-DE") {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
-    keyword = "aktionen";
-  } else {
-    modern  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
-    keyword = "actions";
-  }
-  const legacy = 'Credits here - 作者名字 <---- INSERT HERE / 在这入力';
+  let keyword;
+  if (lang === "zh-CN")      keyword = "动作";
+  else if (lang === "pt-BR") keyword = "ações";
+  else if (lang === "es-MX") keyword = "acciones";
+  else if (lang === "de-DE") keyword = "aktionen";
+  else if (lang === "ko-KR") keyword = "action";
+  else if (lang === "ru-RU") keyword = "actions";
+  else                       keyword = "actions";
 
-  let idxMarker = fullText.indexOf(modern);
+  const markers = [
+    '☞ Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入',
+    '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入',
+    '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE',
+    'Credits here - 作者名字 <---- INSERT HERE / 在这输入 '
+  ];
+
+  let idxMarker = -1;
+  for (const mk of markers) {
+    idxMarker = fullText.indexOf(mk);
+    if (idxMarker >= 0) break;
+  }
+
   if (idxMarker < 0) {
     const legacyRegex = /Credits here\s*-\s*作者名字\s*<---- INSERT HERE \/ 在这入力/i;
     const mLegacy = fullText.match(legacyRegex);
     if (!mLegacy) {
-      throw new Error(`Marqueur "${legacy}" introuvable en zh-CN ou en mode legacy.`);
+      throw new Error(`Marqueur introuvable (nouveau "☞ …", anciens "<tx…>" ou legacy).`);
     }
     idxMarker = mLegacy.index;
   }
 
   const sliceAfter = fullText.slice(idxMarker);
   const relIdx = sliceAfter.search(new RegExp(`${keyword}\\s*\\{`, "i"));
-  if (relIdx < 0) {
-    throw new Error(`Bloc "${keyword} { … }" introuvable après le marqueur Credits.`);
-  }
+  if (relIdx < 0) throw new Error(`Bloc "${keyword} { … }" introuvable après le marqueur Credits.`);
+
   const braceOpenIdx2 = fullText.indexOf("{", idxMarker + relIdx);
-  if (braceOpenIdx2 < 0) {
-    throw new Error(`Accolade ouvrante introuvable pour "${keyword}".`);
-  }
+  if (braceOpenIdx2 < 0) throw new Error(`Accolade ouvrante introuvable pour "${keyword}".`);
 
   let level3 = 1, k = braceOpenIdx2 + 1;
   for (; k < fullText.length; k++) {
     if (fullText[k] === "{") level3++;
-    else if (fullText[k] === "}") {
-      level3--;
-      if (level3 === 0) break;
-    }
+    else if (fullText[k] === "}") { level3--; if (level3 === 0) break; }
   }
-  if (level3 !== 0) {
-    throw new Error(`Accolade fermante introuvable pour "${keyword}".`);
-  }
+  if (level3 !== 0) throw new Error(`Accolade fermante introuvable pour "${keyword}".`);
+
   const braceCloseIdx2 = k;
   return fullText.slice(braceOpenIdx2 + 1, braceCloseIdx2).trim();
 }
 
+function sanitizeRHS(rhsRaw) {
+  let rhs = (rhsRaw || "").trim();
+
+  rhs = rhs.replace(/[);\s]+$/, "");
+
+  const opens  = (rhs.match(/\(/g) || []).length;
+  const closes = (rhs.match(/\)/g) || []).length;
+
+  if (closes > opens) {
+    let extra = closes - opens;
+    while (extra > 0 && rhs.endsWith(")")) {
+      rhs = rhs.slice(0, -1);
+      extra--;
+    }
+  } else if (opens > closes) {
+    rhs += ")".repeat(opens - closes);
+  }
+
+  return rhs;
+}
+
+function _parseCreditsData(creditsActionsText) {
+  const mSetName  = creditsActionsText.match(/Set\s+Global\s+Variable\s*\(\s*Name\s*,\s*Custom String\(\s*"(.*?)"\s*\)\s*\)\s*;?/i);
+  const mDotName  = creditsActionsText.match(/Global\.Name\s*=\s*Custom String\(\s*"(.*?)"\s*\)\s*;?/i);
+  const name = mSetName ? mSetName[1] : (mDotName ? mDotName[1] : null);
+
+  const mSetCode  = creditsActionsText.match(/Set\s+Global\s+Variable\s*\(\s*Code\s*,\s*Custom String\(\s*"(.*?)"\s*\)\s*\)\s*;?/i);
+  const mDotCode  = creditsActionsText.match(/Global\.Code\s*=\s*Custom String\(\s*"(.*?)"\s*\)\s*;?/i);
+  const code = mSetCode ? mSetCode[1] : (mDotCode ? mDotCode[1] : null);
+
+  const colors = {};
+
+  const reSetIdx = /Set\s+Global\s+Variable\s+At\s+Index\s*\(\s*ColorConfig\s*,\s*([^\s,)[\]]+)\s*,\s*([^)]+)\)\s*;?/gi;
+  let m;
+  while ((m = reSetIdx.exec(creditsActionsText))) {
+    const idx = m[1].trim();
+    const rhs = sanitizeRHS(m[2]);
+    colors[idx] = rhs;
+  }
+
+  const reDotIdx = /Global\.ColorConfig\s*\[\s*([^\]\r\n]+?)\s*\]\s*=\s*([^\r\n;]+)\s*;?/gi;
+  while ((m = reDotIdx.exec(creditsActionsText))) {
+    const idx = m[1].trim();
+    const rhs = sanitizeRHS(m[2]);
+    colors[idx] = rhs;
+  }
+
+  return { name, code, colors };
+}
+
 function insertMapCreditsIntoTemplate(tpl, creditsBlock, lang) {
-  let uniqueMarker;
-  if (lang === "zh-CN") {
-    uniqueMarker =
-      '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入';
-  } else {
-    uniqueMarker =
-      '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
+  if (!creditsBlock || !creditsBlock.trim()) return tpl;
+
+  const src = _parseCreditsData(creditsBlock);
+
+  const NEW_TITLE = '☞ Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入';
+  const OLD_ZH    = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入';
+  const OLD_INTL  = '<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE';
+
+  const reRuleStart = new RegExp(
+    String.raw`^[ \t]*(?:rule|规则|ルール)\s*\(\s*"(?:` +
+    NEW_TITLE.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&") + "|" +
+    OLD_ZH.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&") + "|" +
+    OLD_INTL.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&") +
+    String.raw`|Credits here - 作者名字 <---- INSERT HERE \/ 在这入力[^"]*?)"\s*\)\s*\{`,
+    "mi"
+  );
+  const mRule = tpl.match(reRuleStart);
+  if (!mRule) return tpl;
+
+  const reTitleLine = new RegExp(
+    String.raw`^([ \t]*(?:rule|规则|ルール)\s*\(\s*")([^"]*)("\s*\)\s*\{)`,
+    "mi"
+  );
+  tpl = tpl.replace(reTitleLine, (_a, p1, _old, p3) => `${p1}${NEW_TITLE}${p3}`);
+
+  const headerOpenBrace = tpl.indexOf("{", mRule.index);
+  if (headerOpenBrace < 0) return tpl;
+
+  function _findActionsBlockBounds(tplStr, lg, fromIndex) {
+    let word;
+    switch (lg) {
+      case "ja-JP": word = "アクション"; break;
+      case "zh-CN": word = "动作";      break;
+      case "ko-KR": word = "action";    break;
+      case "ru-RU": word = "actions";   break;
+      case "es-MX": word = "acciones";  break;
+      case "pt-BR": word = "ções".normalize("NFKD").replace(/[\u0300-\u036f]/g,""); break;
+      case "de-DE": word = "aktionen";  break;
+      default:      word = "actions";   break;
+    }
+    if (lang === "pt-BR") word = "ações";
+
+    const rel = tplStr.slice(fromIndex).search(new RegExp(`${word}\\s*\\{`, "i"));
+    if (rel < 0) return null;
+
+    const actHdrIdx = fromIndex + rel;
+    const open = tplStr.indexOf("{", actHdrIdx);
+    if (open < 0) return null;
+
+    let level = 1, i = open + 1;
+    for (; i < tplStr.length; i++) {
+      const ch = tplStr[i];
+      if (ch === "{") level++;
+      else if (ch === "}") { level--; if (level === 0) break; }
+    }
+    if (level !== 0) return null;
+    return { start: open + 1, end: i };
   }
 
-  const idxMarker = tpl.indexOf(uniqueMarker);
-  if (idxMarker < 0) {
-    return tpl;
-  }
+  const bounds = _findActionsBlockBounds(tpl, lang, headerOpenBrace);
+  if (!bounds) return tpl;
 
-  const headerEnd = tpl.indexOf(")", idxMarker);
-  if (headerEnd < 0) {
-    return tpl;
-  }
+  let actions = tpl.slice(bounds.start, bounds.end);
 
-  let actionWord;
-  switch (lang) {
-    case "ja-JP": actionWord = "アクション"; break;
-    case "zh-CN": actionWord = "动作";    break;
-    case "ko-KR": actionWord = "action"; break;
-    case "ru-RU": actionWord = "actions";break;
-    case "es-MX": actionWord = "acciones";break;
-    case "pt-BR": actionWord = "ações";  break;
-    case "de-DE": actionWord = "aktionen";break;
-    default:      actionWord = "actions";break;
-  }
+  if (src.name != null) {
+    const reSetName = /Set\s+Global\s+Variable\s*\(\s*Name\s*,\s*Custom String\(\s*"(.*?)"\s*\)\s*\)\s*;?/i;
+    const reDotName = /Global\.Name\s*=\s*Custom String\(\s*"(.*?)"\s*\)\s*;?/i;
 
-  const actionIdx = tpl
-    .slice(headerEnd + 1)
-    .search(new RegExp(`${actionWord}\\s*\\{`, "i"));
-  if (actionIdx < 0) {
-    return tpl;
-  }
-
-  const globalActionIdx = headerEnd + 1 + actionIdx;
-
-  const braceOpenIdx = tpl.indexOf("{", globalActionIdx);
-  if (braceOpenIdx < 0) {
-    return tpl;
-  }
-
-  let level = 1;
-  let i2 = braceOpenIdx + 1;
-  for (; i2 < tpl.length; i2++) {
-    if (tpl[i2] === "{") level++;
-    else if (tpl[i2] === "}") {
-      level--;
-      if (level === 0) break;
+    if (reSetName.test(actions)) {
+      actions = actions.replace(reSetName, `Set Global Variable(Name, Custom String("${src.name}"));`);
+    } else if (reDotName.test(actions)) {
+      actions = actions.replace(reDotName, `Set Global Variable(Name, Custom String("${src.name}"));`);
+    } else {
+      actions = actions.replace(
+        /("Filling this[\s\S]*?")\s*[\r\n]+/,
+        `$1\n\t\tSet Global Variable(Name, Custom String("${src.name}"));\n`
+      );
     }
   }
-  if (level !== 0) {
-    return tpl;
+
+  if (src.code != null) {
+    const reSetCode = /Set\s+Global\s+Variable\s*\(\s*Code\s*,\s*Custom String\(\s*"(.*?)"\s*\)\s*\)\s*;?/i;
+    const reDotCode = /Global\.Code\s*=\s*Custom String\(\s*"(.*?)"\s*\)\s*;?/i;
+
+    if (reSetCode.test(actions)) {
+      actions = actions.replace(reSetCode, `Set Global Variable(Code, Custom String("${src.code}"));`);
+    } else if (reDotCode.test(actions)) {
+      actions = actions.replace(reDotCode, `Set Global Variable(Code, Custom String("${src.code}"));`);
+    } else {
+      const reAfterName = /Set\s+Global\s+Variable\s*\(\s*Name\s*,[^\r\n]*\)\s*;?[ \t]*\r?\n/;
+      if (reAfterName.test(actions)) {
+        actions = actions.replace(reAfterName, (m) => m + `\t\tSet Global Variable(Code, Custom String("${src.code}"));\n`);
+      } else {
+        actions = actions.replace(
+          /("Filling this[\s\S]*?")\s*[\r\n]+/,
+          `$1\n\t\tSet Global Variable(Code, Custom String("${src.code}"));\n`
+        );
+      }
+    }
   }
-  const braceCloseIdx = i2;
 
-  const lines = creditsBlock.split(/\r?\n/);
-  const indentedBlock = lines.map(line => "        " + line).join("\n");
+  for (const [idxRaw, rhsRaw] of Object.entries(src.colors)) {
+    const rhs = sanitizeRHS(rhsRaw);
 
-  const newActionsSection = 
-    `${actionWord}\n` +
-    `    {\n` +
-    `${indentedBlock}\n` +
-    `    }`;
+    const idxEsc = idxRaw.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
 
-  return tpl.slice(0, globalActionIdx)
-       + newActionsSection
-       + tpl.slice(braceCloseIdx + 1);
+    const reSetColorFull = new RegExp(
+      String.raw`Set\s+Global\s+Variable\s+At\s+Index\s*\(\s*ColorConfig\s*,\s*` +
+      idxEsc +
+      String.raw`\s*,\s*([\s\S]*?)\)\s*\)\s*;?`,
+      "i"
+    );
+
+    if (reSetColorFull.test(actions)) {
+      actions = actions.replace(
+        reSetColorFull,
+        `Set Global Variable At Index(ColorConfig, ${idxRaw}, ${rhs});`
+      );
+      continue;
+    }
+
+    const reDotColor = new RegExp(
+      String.raw`Global\.ColorConfig\s*\[\s*` + idxEsc + String.raw`\s*\]\s*=\s*([^\r\n;]+)\s*;?`,
+      "i"
+    );
+    if (reDotColor.test(actions)) {
+      actions = actions.replace(
+        reDotColor,
+        `Set Global Variable At Index(ColorConfig, ${idxRaw}, ${rhs});`
+      );
+      continue;
+    }
+
+    actions = actions.replace(
+      /\s*$/,
+      `\n\t\tSet Global Variable At Index(ColorConfig, ${idxRaw}, ${rhs});\n`
+    );
+  }
+
+  if (!/Wait\s*\(\s*False\s*,\s*Ignore Condition\s*\)\s*;?/i.test(actions)) {
+    actions = `\t\tWait(False, Ignore Condition);\n` + actions.replace(/^\s+/, s => s);
+  }
+
+  actions = actions.replace(/\)\s*;\s*\)\s*;/g, ');');
+
+  return tpl.slice(0, bounds.start) + actions + tpl.slice(bounds.end);
 }
+
 
 /* ------ Extract & Insert addons ------ */
 async function injectTranslatedAddons(tpl, fullText, sourceLang, targetLang) {
@@ -1697,20 +2223,71 @@ function removeAllBlocks(tplStr, title) {
 
 /* ------- Extract Workshop settings ------- */
 function parseGlobalWorkshopBans(fullText) {
-  const result = [];
-  const regexWorkshop = /(?:workshop|地图工坊|ワークショップ)\s*\{([\s\S]*?)\}/i;
-  const workshopMatch = fullText.match(regexWorkshop);
-  if (!workshopMatch) return result;
+  const set = new Set();
 
-  const block = workshopMatch[1];
-  block.split(/\r?\n/).forEach((line) => {
-    const m = line.match(/^\s*ban\s+([^:]+?)\s*:\s*(?:On|开启|활성화|Вкл\.|Activado|Ligado|Ein)\s*$/i);
-    if (m) {
-      result.push(m[1].trim());
+  const m = fullText.match(/(?:workshop|地图工坊|ワークショップ)\s*\{([\s\S]*?)\}/i);
+  if (!m) return [];
+
+  const block = m[1];
+  const lines = block.split(/\r?\n/);
+
+  const ON_OFF_WORD = "(?:on|off|开启|关闭|활성화|비활성화|вкл\\.|выкл\\.|activado|desactivado|ligado|desligado|ein|aus)";
+
+  for (const raw of lines) {
+    const line = String(raw).trim();
+    if (!line) continue;
+
+    const m2 = line.match(new RegExp(
+      String.raw`^\s*(ban|require)\s+([^:：]+?)\s*[:：]\s*${ON_OFF_WORD}\s*$`,
+      "i"
+    ));
+    if (!m2) continue;
+
+    const kind = m2[1].toLowerCase();
+    const name = m2[2].trim();
+
+    const label = (kind === "ban") ? `Ban ${name}` : `Require ${name}`;
+    set.add(label);
+  }
+
+  const byKey = new Map();
+  for (const lbl of set) byKey.set(normalizeBanKey(lbl), lbl);
+  return Array.from(byKey.values());
+}
+
+function normalizeBanKey(s) {
+  let x = String(s)
+    .replace(/\uFEFF/g, "")
+    .replace(/[\u00A0\u2000-\u200B]/g, " ")
+    .toLowerCase()
+    .trim();
+
+  x = x.replace(/^\s*(ban|require)\s+/, "");
+
+  x = x.split("■")[0];
+  x = x.split(":")[0];
+  x = x.split("：")[0];
+
+  x = x.replace(/\s*[-–—]\s*.*$/, "");
+
+  x = x.replace(/\s+/g, " ").trim();
+  return x;
+}
+
+function standardizeWorkshopBansForTemplate(fullText) {
+  const detected = parseGlobalWorkshopBans(fullText);
+  const activeKeys = new Set(detected.map(normalizeBanKey));
+
+  const out = [];
+  const seen = new Set();
+  for (const label of GLOBAL_BANS) {
+    const k = normalizeBanKey(label);
+    if (activeKeys.has(k) && !seen.has(k)) {
+      out.push(label);
+      seen.add(k);
     }
-  });
-
-  return result;
+  }
+  return out;
 }
 
 function extractWorkshopSettings(fullText) {
@@ -1824,7 +2401,6 @@ function insertWorkshopSettings(tpl, workshopSettingsBlock, lang) {
   return tpl;
 }
 
-/* ------- Extract Workshop settings------- */
 function parseWorkshopSettings(fullText) {
   const result = { editorMode: false, portals: false };
   const regexWorkshop = /(?:workshop|地图工坊|ワークショップ)\s*\{([\s\S]*?)\}/i;
@@ -2839,17 +3415,19 @@ function renderMapSettings(fullText) {
 
 /* ------- Convertor ------- */
 async function doConvert(fullText, lang) {
-  const lobbyBlock = extractLobbyBlock(fullText, lang);
-  const mapDataBlock = extractMapDataBlock(fullText, lang);
+  const lobbyBlock            = extractLobbyBlock(fullText, lang);
+  let mapDataBlock            = extractMapDataBlock(fullText, lang);
+  mapDataBlock                = sanitizeMapDataAssignments(mapDataBlock); 
   const workshopSettingsBlock = extractWorkshopSettings(fullText);
-  const isValidatorOn = parseBasicMapValidator(fullText);
+  const isValidatorOn         = parseBasicMapValidator(fullText);
   debug('Bloc "actions" de Map Data extrait.');
 
   let tpl = await loadTemplate(lang);
   debug("Template chargé.");
 
   const newRule = buildRule(mapDataBlock, lang);
-  tpl = replaceMapData(tpl, newRule, lang);
+  const safeRule = sanitizeMapDataAssignments(newRule);
+  tpl = replaceMapData(tpl, safeRule, lang);
 
   const modeMapNames = extractModeMapNames(fullText);
   debug("Modes & maps extraits : " + JSON.stringify(modeMapNames));
@@ -2873,14 +3451,107 @@ async function doConvert(fullText, lang) {
     tpl = insertWorkshopSettings(tpl, workshopSettingsBlock, lang);
   }
 
-  const globalLocalplayerBlock = extractGlobalLocalplayerBlock(fullText);
-  if (globalLocalplayerBlock) {
-    tpl = insertDifficultyHudBlock(tpl, globalLocalplayerBlock, lang);
+  const localized = getLocalizedOnOff(lang);
+  const canonicalBans = standardizeWorkshopBansForTemplate(fullText);
+  if (canonicalBans.length) {
+    tpl = applyWorkshopBansUpdate(tpl, lang, canonicalBans, localized);
   }
+
+  const sourceDiffValue = extractDifficultyValue(fullText);
+
+  tpl = applyDifficultyIndexToTemplate(tpl, sourceDiffValue);
 
   tpl = insertBasicMapValidator(tpl, lang, !isValidatorOn);
 
   return tpl;
+}
+
+async function doTranslate(fullText, clientLang, targetLang) {
+  try {
+    lastParsedWorkshopSettings = parseWorkshopSettings(fullText);
+
+    await loadKeywordTranslations();
+    await loadModesNames();
+    await loadMapNameTranslations();
+    await loadHeroesNames();
+    await loadIconTranslations();
+
+    let lobbyBlock            = extractLobbyBlock(fullText, clientLang);
+    let mapDataBlock          = extractMapDataBlock(fullText, clientLang);
+    const modeMapNames        = extractModeMapNames(fullText);
+    let workshopSettingsBlock = extractWorkshopSettings(fullText);
+    const sourceDiffValue     = extractDifficultyValue(fullText, clientLang);
+
+    let creditsBlock = "";
+    try { creditsBlock = extractMapCredits(fullText, clientLang); } catch (_) {}
+    lobbyBlock            = translateLobbyBlock(lobbyBlock, clientLang, targetLang);
+    mapDataBlock          = translateFromTo(mapDataBlock,     clientLang, targetLang);
+    mapDataBlock          = sanitizeMapDataAssignments(mapDataBlock);
+    creditsBlock          = translateFromTo(creditsBlock,     clientLang, targetLang);
+    creditsBlock          = translateHeroNames(creditsBlock,  heroesNames, clientLang, targetLang);
+    workshopSettingsBlock = translateFromTo(workshopSettingsBlock, clientLang, targetLang);
+
+    let tpl = await loadTemplate(targetLang);
+
+    const newRule = buildRule(mapDataBlock, targetLang);
+    tpl = replaceMapData(tpl, newRule, targetLang);
+
+    for (const [modeNameLocalized, fullMapEntry] of Object.entries(modeMapNames)) {
+      const modeKey         = findModeKey(modeNameLocalized, clientLang);
+      const targetModeName  = getTargetModeName(modeKey, targetLang, modeNameLocalized);
+
+      const tokens     = fullMapEntry.trim().split(/\s+/);
+      const mapId      = tokens[tokens.length - 1];
+      const rawMapName = tokens.slice(0, tokens.length - 1).join(" ");
+
+      let translatedMapName = rawMapName;
+      const mapKey = Object.keys(mapNamesTranslations || {}).find(key => {
+        const dict = mapNamesTranslations[key];
+        return dict && dict[clientLang] === rawMapName;
+      });
+      if (mapKey && mapNamesTranslations[mapKey][targetLang]) {
+        translatedMapName = mapNamesTranslations[mapKey][targetLang];
+      } else {
+        translatedMapName = translateFromTo(rawMapName, clientLang, targetLang);
+      }
+
+      const newFullMapEntry = `${translatedMapName} ${mapId}`;
+      tpl = insertMapNameIntoTemplate(tpl, targetModeName, newFullMapEntry, targetLang);
+    }
+
+    if (creditsBlock) {
+      tpl = insertMapCreditsIntoTemplate(tpl, creditsBlock, targetLang);
+    }
+
+    const isValidator = parseBasicMapValidator(fullText);
+    tpl = insertBasicMapValidator(tpl, targetLang, !isValidator);
+
+    if (lobbyBlock) {
+      tpl = insertLobbyIntoTemplate(tpl, lobbyBlock, targetLang);
+    }
+
+    if (workshopSettingsBlock) {
+      tpl = insertWorkshopSettings(tpl, workshopSettingsBlock, targetLang);
+    }
+
+    if (sourceDiffValue != null) {
+      tpl = applyDifficultyValue(tpl, targetLang, String(sourceDiffValue));
+    }
+
+    {
+      const localized      = getLocalizedOnOff(targetLang);
+      const canonicalBans  = standardizeWorkshopBansForTemplate(fullText);
+      if (canonicalBans.length) {
+        tpl = applyWorkshopBansUpdate(tpl, targetLang, canonicalBans, localized);
+      }
+    }
+
+
+    return tpl;
+  } catch (e) {
+    console.error("[doTranslate] error:", e);
+    return fullText;
+  }
 }
 
 /* ------- Modal Global Settings ------- */
@@ -3161,8 +3832,8 @@ async function openGlobalSettingsModal() {
   }
 
   const validatorOn    = parseBasicMapValidator(lastFullText || "");
-  const activeBansRaw  = parseGlobalWorkshopBans(lastFullText || "");
-  const activeBansNorm = activeBansRaw.map(b => b.trim().toLowerCase());
+  const activeBansRaw = parseGlobalWorkshopBans(lastFullText || "");
+  const activeKeys    = new Set(activeBansRaw.map(normalizeBanKey));
 
   const globalBansContainer = document.getElementById("globalBansContainer");
   globalBansContainer.innerHTML = "";
@@ -3170,7 +3841,6 @@ async function openGlobalSettingsModal() {
   globalBansContainer.style.gridTemplateColumns = "repeat(auto-fill, minmax(220px, 1fr))";
   globalBansContainer.style.gap                = "8px";
   GLOBAL_BANS.forEach(fullBanName => {
-    const bareBanName = fullBanName.replace(/^\s*BAN\s+/i, "").trim();
     const label = document.createElement("label");
     label.classList.add("ban-label");
     Object.assign(label.style, {
@@ -3189,7 +3859,8 @@ async function openGlobalSettingsModal() {
     checkbox.type = "checkbox";
     checkbox.classList.add("global-ban-checkbox");
     checkbox.style.marginRight = "6px";
-    if (activeBansNorm.includes(bareBanName.toLowerCase())) {
+    const key = normalizeBanKey(fullBanName);
+    if (activeKeys.has(key)) {
       checkbox.checked = true;
     }
 
@@ -3203,9 +3874,9 @@ async function openGlobalSettingsModal() {
     globalBansContainer.appendChild(label);
   });
 
-  const lang        = document.getElementById("lang").value || "en-US";
-  const parsedIndex = parseDifficultyIndex(lastFullText || "", lang);
-  fillDifficultyFields(parsedIndex);
+  const lang = document.getElementById("lang").value || "en-US";
+  const diffValue = extractDifficultyValue(lastFullText || "", lang);
+  fillDifficultyFieldsFromValue(diffValue);
 
   document.getElementById("editorModeToggle").value = lastParsedWorkshopSettings.editorMode ? "on" : "off";
   document.getElementById("validatorToggle").value  = validatorOn ? "on" : "off";
@@ -3289,18 +3960,73 @@ function getLocalizedOnOff(clientLang) {
 }
 
 function applyOnOffReplacements(text, localized, settings) {
-  text = text.replace(
-    /(Editor mode\s*-\s*作图模式\s*:\s*)(On|Off)/i,
-    `$1${settings.editorMode ? localized.on : localized.off}`
+  const editorVal   = settings.editorMode ? localized.on : localized.off;
+  const playtestVal = settings.playtest === "on" ? localized.on : localized.off;
+  const portalsVal  = settings.portals === "on" ? localized.on : localized.off;
+
+  const RULES = [
+    { label: "Editor mode - 作图模式", value: editorVal },
+    { label: "Playtest display - 游戏测试", value: playtestVal },
+    { label: "enable portals control maps - 启用传送门 占点地图", value: portalsVal },
+  ];
+
+  const ON_OFF_WORD = "(?:on|off|开启|关闭|활성화|비활성화|вкл\\.|выкл\\.|activado|desactivado|ligado|desligado|ein|aus)";
+
+  const reBlock = new RegExp(
+    String.raw`(^[ \t]*(?:workshop|地图工坊|ワークショップ)\s*\{)([\s\S]*?)(^\s*\})`,
+    "mi"
   );
-  text = text.replace(
-    /(Playtest display\s*-\s*游戏测试\s*:\s*)(On|Off)/i,
-    `$1${settings.playtest === "on" ? localized.on : localized.off}`
-  );
-  text = text.replace(
-    /(enable portals control maps\s*-\s*启用传送门\s*占点地图\s*:\s*)(On|Off)/i,
-    `$1${settings.portals === "on" ? localized.on : localized.off}`
-  );
+  const m = reBlock.exec(text);
+
+  const esc = s => s.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  if (m) {
+    const pOpen  = m[1];
+    let   inner  = m[2];
+    const pClose = m[3];
+
+    const missingLines = [];
+    for (const { label, value } of RULES) {
+      const labelPat = esc(label).replace(/\s+/g, "\\s*");
+      const reLine   = new RegExp(String.raw`^([ \t]*)(${labelPat})\s*[:：]\s*${ON_OFF_WORD}\s*$`, "mi");
+
+      if (reLine.test(inner)) {
+        inner = inner.replace(reLine, (full, indent, foundLabel) => `${indent}${foundLabel} : ${value}`);
+      } else {
+        missingLines.push({ label, value });
+      }
+    }
+
+    if (missingLines.length === 0) {
+      return text.slice(0, m.index) + pOpen + inner + pClose + text.slice(m.index + m[0].length);
+    }
+
+    let indent = "    ";
+    const lines = inner.split(/\r?\n/);
+    for (let i = lines.length - 1; i >= 0; i--) {
+      if (lines[i].trim() !== "") {
+        const mm = lines[i].match(/^([ \t]*)/);
+        if (mm && mm[1] != null) indent = mm[1];
+        break;
+      }
+    }
+
+    let newInner = inner;
+    if (!/\n$/.test(newInner)) newInner += "\n";
+    for (const { label, value } of missingLines) {
+      newInner += `${indent}${label} : ${value}\n`;
+    }
+
+    return text.slice(0, m.index) + pOpen + newInner + pClose + text.slice(m.index + m[0].length);
+  }
+
+  const missingAtAll = RULES;
+  if (missingAtAll.length > 0) {
+    const lines = missingAtAll.map(({ label, value }) => `    ${label} : ${value}`).join("\n");
+    const block = `workshop {\n${lines}\n}\n\n`;
+    return block + text;
+  }
+
   return text;
 }
 
@@ -3411,19 +4137,46 @@ function applyMapEntryUpdate(text, resolution) {
 
 function applyWorkshopBansUpdate(text, clientLang, newActiveBans, localized) {
   const banOnValue = localized.on;
-  return text.replace(
-    new RegExp(`(^[ \\t]*(?:workshop|地图工坊|ワークショップ)\\s*\\{)([\\s\\S]*?)(\\})`, "mi"),
-    (match, pOpen, inner, pClose) => {
-      const lines     = inner.split("\n");
-      const filtered  = lines.filter(line => !/^\s*ban\s+[^:]+:\s*(On|开启|활성화|Вкл\.|Activado|Ligado|Ein)\s*$/i.test(line));
-      const indent    = (filtered[0]?.match(/^([ \t]*)/) || ["", "    "])[1];
-      const bansText  = newActiveBans.map(n => `${indent} ${n} : ${banOnValue}`).join("\n");
-      const rebuilt   = filtered.join("\n").trim();
-      const withBans  = bansText + (rebuilt ? "\n" + rebuilt + "\n" : "\n");
-      return `${pOpen}\n${withBans}${pClose}`;
-    }
+  const ON_OFF_WORD = "(?:on|off|开启|关闭|활성화|비활성화|вкл\\.|выкл\\.|activado|desactivado|ligado|desligado|ein|aus)";
+
+  const reBlock = new RegExp(
+    String.raw`(^[ \t]*(?:workshop|地图工坊|ワークショップ)\s*\{)([\s\S]*?)(^\s*\})`,
+    "mi"
   );
+
+  return text.replace(reBlock, (match, pOpen, inner, pClose) => {
+    const lines = inner.split(/\r?\n/);
+
+    const reBanRequire = new RegExp(
+      String.raw`^\s*(?:ban|require)\s+[^:：]+[:：]\s*${ON_OFF_WORD}\s*$`,
+      "i"
+    );
+    const kept = lines.filter(line => !reBanRequire.test(line));
+
+    let indent = "    ";
+    const mIndent = inner.match(/^[ \t]+/m);
+    if (mIndent && mIndent[0]) indent = mIndent[0];
+
+    const bansText = (newActiveBans && newActiveBans.length)
+      ? newActiveBans.map(n => `${indent}${n}: ${banOnValue}`).join("\n")
+      : "";
+
+    const keptTrimmed = kept.join("\n").trim();
+    let rebuilt = "";
+    if (bansText && keptTrimmed) {
+      rebuilt = `\n${bansText}\n${keptTrimmed}\n`;
+    } else if (bansText) {
+      rebuilt = `\n${bansText}\n`;
+    } else if (keptTrimmed) {
+      rebuilt = `\n${keptTrimmed}\n`;
+    } else {
+      rebuilt = `\n`;
+    }
+
+    return `${pOpen}${rebuilt}${pClose}`;
+  });
 }
+
 
 async function saveGlobalSettings() {
   const clientLang     = document.getElementById("lang").value || "en-US";
@@ -3438,7 +4191,8 @@ async function saveGlobalSettings() {
   let text = originalText;
   text = applyOnOffReplacements(text, localized, globalSettings);
   text = applyValidatorToggle(text, clientLang, globalSettings);
-  text = applyDifficultyIndex(text, clientLang, globalSettings);
+  const wanted = (globalSettings.playtest === "on") ? "playtest" : globalSettings.difficultyHUD;
+  text = applyDifficultyValue(text, clientLang, wanted);
   text = applyMapEntryUpdate(text, resolution);
   text = applyWorkshopBansUpdate(text, clientLang, newActiveBans, localized);
 

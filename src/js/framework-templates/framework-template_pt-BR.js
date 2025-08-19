@@ -3,8 +3,8 @@ export const frameworkTemplate = `configurações
 {
 	principal
 	{
-		Nome do modo: "Genji Parkour - 源氏跑酷 - v1.10.3G"
-		Descrição: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3G"
+		Nome do modo: "Genji Parkour - 源氏跑酷 - v1.10.4A"
+		Descrição: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.4A"
 	}
 	lobby
 	{
@@ -101,6 +101,7 @@ variáveis {
         13: SHIFT
         14: EditSelected
         15: EditSelectIdArray
+        16: EditorOn
         18: TQ
         20: TQ2
         21: EditorMoveItem
@@ -132,7 +133,6 @@ variáveis {
         55: CompRestartLimit
         56: instructiontext
         57: TitleData
-        58: HudStoreEdit
         60: SaveName
         61: SaveCp
         62: SaveEnt
@@ -164,6 +164,7 @@ variáveis {
         89: BanSaveDouble
         90: DestructoIter
         91: MapVectorArray
+        127: __overpyTranslationHelper__
     jogador:
         0: lockState
         1: checkpoint_current
@@ -214,23 +215,22 @@ variáveis {
         46: preview_array1
         47: preview_array2
         48: preview_i
-        49: editor_on
-        50: editor_modeSelect
-        51: editor_fly
-        52: editor_saveCache
-        53: editor_undo
-        54: editor_lock
-        55: editor_hitboxEffect
-        56: editor_hitboxToggle
-        57: editor_bounceIndex
-        58: editor_killIndex
-        59: editor_temp
-        60: comp_done
-        61: comp_countAttempts
-        62: comp_instructionHud
-        63: addon_toggle3rdPov
-        64: addon_ledgeDash
-        65: addon_enableDoubleChecks
+        49: editor_modeSelect
+        50: editor_fly
+        51: editor_saveCache
+        52: editor_undo
+        53: editor_lock
+        54: editor_hitboxEffect
+        55: editor_hitboxToggle
+        56: editor_bounceIndex
+        57: editor_killIndex
+        58: editor_temp
+        59: comp_done
+        60: comp_countAttempts
+        61: comp_instructionHud
+        62: addon_toggle3rdPov
+        63: addon_ledgeDash
+        64: addon_enableDoubleChecks
 }
 sub-rotinas {
     0: StartGame
@@ -254,8 +254,26 @@ sub-rotinas {
     18: RebuildPortals
     19: RebuildBounceOrbs
 }
+regra ("Disable inspector") {
+    evento {
+        Em andamento - Global;
+    }
+    ações {
+        Desativar gravação do Inspetor;
+    }
+}
+
+regra ("OverPy | Global Init") {
+    evento {
+        Em andamento - Global;
+    }
+    ações {
+        Definir Variável Global(__overpyTranslationHelper__, Divisão de String(String Personalizada("0White0흰색0白色"), Primeiro de(Nulo)));
+    }
+}
+
 //Optimize for size enabled
-regra ("<tx0C00000000001344> Parkour v1.10.3G <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Parkour v1.10.4A ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -267,7 +285,6 @@ regra ("Parkour | Setup & Variables") {
     }
     ações {
         "◀ The Official Genji Parkour Editor ▶\\nDiscord: dsc.gg/genjiparkour\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula"
-        Desativar gravação do Inspetor;
         Desativar Conclusão Integrada ao Modo de Jogo;
         Desativar Pontuação Integrada ao Modo de Jogo;
         Desativar Música Integrada ao Modo de Jogo;
@@ -277,25 +294,27 @@ regra ("Parkour | Setup & Variables") {
         Começar a Forçar Sala de Ressurgimento(Todas as Equipes, 2);
         "wait for map data rule"
         Esperar(0.24, Ignorar Condição);
-        "fix team because of naming"
-        If(Comparar(Valor na Matriz(Global.ColorConfig, 16), ==, Cor(Equipe 1)));
-            Definir Variável Global no Índice(ColorConfig, 16, Cor(Azul));
-        Else If(Comparar(Valor na Matriz(Global.ColorConfig, 16), ==, Cor(Equipe 2)));
-            Definir Variável Global no Índice(ColorConfig, 16, Cor(Vermelho));
+        "Turn Editor On"
+        Definir Variável Global(EditorOn, Alternar Configuração do Workshop(String Personalizada("Map Settings ■ 地图设置 ■ 맵 설정"), String Personalizada("Editor Mode ■ 作图模式 ■ 수정 모드"), False, 0));
+        If(Alternar Configuração do Workshop(String Personalizada("Map Settings ■ 地图设置 ■ 맵 설정"), String Personalizada("Basic Map Validator ■ 验证地图 ■ 맵 가능 여부 확인기"), True, 3));
+            Regra de início(AddonCheckMap, Não fazer nada);
         Término;
-        "prevent same color lock orbs"
-        If(Comparar(Valor na Matriz(Global.ColorConfig, 15), ==, Valor na Matriz(Global.ColorConfig, 16)));
-            Definir Variável Global no Índice(ColorConfig, 16, If-Then-Else(Comparar(Valor na Matriz(Global.ColorConfig, 15), ==, Cor(Laranja)), Cor(Verde), Cor(Laranja)));
-        Término;
-        "prevent same color bhop/climb used/unused"
-        If(Comparar(Valor na Matriz(Global.ColorConfig, 7), ==, Valor na Matriz(Global.ColorConfig, 8)));
-            Definir Variável Global no Índice(ColorConfig, 8, If-Then-Else(Comparar(Valor na Matriz(Global.ColorConfig, 7), ==, Cor(Vermelho)), Cor(Laranja), Cor(Vermelho)));
+        Definir Variável Global(PortalOn, Alternar Configuração do Workshop(String Personalizada("Map Settings ■ 地图设置 ■ 맵 설정"), String Personalizada("Portals 󠀨Control Maps󠀩 ■ 启用传送门 󠀨占点地图󠀩 ■ 순간이동 활성화 󠀨쟁탈 맵󠀩"), True, 4));
+        Definir Variável Global(CompMode, E(Não(Global.EditorOn), Alternar Configuração do Workshop(String Personalizada("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), String Personalizada("Tournament Mode ■ 开启竞赛模式 ■ 토너먼트 모드 활성화"), False, 100)));
+        If(Global.CompMode);
+            "-! comp minutes !-\\n5-240"
+            Definir Variável Global(CompTime, Inteiro de Configuração do Workshop(String Personalizada("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), String Personalizada("Time Limit 󠀨Global󠀩 ■ 时间限制 ■ 시간 제한 󠀨전체󠀩"), 120, 1, 240, 101));
+            "-! comp attempt count !-"
+            Definir Variável Global(CompAtmpNum, Inteiro de Configuração do Workshop(String Personalizada("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), String Personalizada("Attempt Count ■ 尝试次数 ■ 시도 수 확인"), 5, 0, 500, 102));
+            "-! comp restartlimiter !-"
+            Definir Variável Global(CompRestartLimit, Alternar Configuração do Workshop(String Personalizada("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), String Personalizada("Disable Restart During Run ■ 竞赛中禁用重新开始 ■ 시도 중 재시작 비활성화"), False, 103));
+        Else;
+            Definir Variável Global(instructiontext, Nulo);
         Término;
         Definir Variável Global(SaveName, Matriz Vazia);
         Definir Variável Global(SaveCp, Matriz Vazia);
         Definir Variável Global(SaveTimer, Matriz Vazia);
         Definir Variável Global(SaveEnt, Matriz Vazia);
-        "SavePauseTime = []\\nSavePauseEnabled = []"
         Definir Variável Global(SaveElapsed, Matriz Vazia);
         Definir Variável Global(Dao, If-Then-Else(Contagem de(Global.Dao), Matriz Filtrada(Global.Dao, Comparar(Somar(Elemento da Matriz Atual, False), >=, Nulo)), Matriz Vazia));
         Definir Variável Global(SHIFT, If-Then-Else(Contagem de(Global.SHIFT), Matriz Filtrada(Global.SHIFT, Comparar(Somar(Elemento da Matriz Atual, False), >=, Nulo)), Matriz Vazia));
@@ -330,20 +349,19 @@ regra ("Parkour | Setup & Variables") {
         Definir Variável Global(BanStand, If-Then-Else(Contagem de(Global.BanStand), Matriz Filtrada(Global.BanStand, Comparar(Somar(Elemento da Matriz Atual, False), >=, Nulo)), Matriz Vazia));
         Definir Variável Global(BanSaveDouble, If-Then-Else(Contagem de(Global.BanSaveDouble), Global.BanSaveDouble, Matriz Vazia));
         Definir Variável Global(BanDjump, If-Then-Else(Contagem de(Global.BanDjump), Global.BanDjump, Matriz Vazia));
-        If(Alternar Configuração do Workshop(String Personalizada("map settings \\n地图设置"), String Personalizada("Basic Map Validator - 验证地图"), True, 3));
-            Regra de início(AddonCheckMap, Não fazer nada);
+        "fix team because of naming"
+        If(Comparar(Valor na Matriz(Global.ColorConfig, 16), ==, Cor(Equipe 1)));
+            Definir Variável Global no Índice(ColorConfig, 16, Cor(Azul));
+        Else If(Comparar(Valor na Matriz(Global.ColorConfig, 16), ==, Cor(Equipe 2)));
+            Definir Variável Global no Índice(ColorConfig, 16, Cor(Vermelho));
         Término;
-        Definir Variável Global(PortalOn, Alternar Configuração do Workshop(String Personalizada("map settings \\n地图设置"), String Personalizada("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), True, 4));
-        Definir Variável Global(CompMode, Alternar Configuração do Workshop(String Personalizada("Competitive mode\\n竞赛模式"), String Personalizada("Turn on competitive mode - 开启竞赛模式"), False, 100));
-        If(Global.CompMode);
-            "-! comp minutes !-\\n5-240"
-            Definir Variável Global(CompTime, Inteiro de Configuração do Workshop(String Personalizada("Competitive mode\\n竞赛模式"), String Personalizada("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
-            "-! comp attempt count !-"
-            Definir Variável Global(CompAtmpNum, Inteiro de Configuração do Workshop(String Personalizada("Competitive mode\\n竞赛模式"), String Personalizada("attempt count - 尝试次数"), 5, 0, 500, 102));
-            "-! comp restartlimiter !-"
-            Definir Variável Global(CompRestartLimit, Alternar Configuração do Workshop(String Personalizada("Competitive mode\\n竞赛模式"), String Personalizada("disable restart during run - 竞赛中禁用重新开始"), False, 103));
-        Else;
-            Definir Variável Global(instructiontext, Nulo);
+        "prevent same color lock orbs"
+        If(Comparar(Valor na Matriz(Global.ColorConfig, 15), ==, Valor na Matriz(Global.ColorConfig, 16)));
+            Definir Variável Global no Índice(ColorConfig, 16, If-Then-Else(Comparar(Valor na Matriz(Global.ColorConfig, 15), ==, Cor(Laranja)), Cor(Verde), Cor(Laranja)));
+        Término;
+        "prevent same color bhop/climb used/unused"
+        If(Comparar(Valor na Matriz(Global.ColorConfig, 7), ==, Valor na Matriz(Global.ColorConfig, 8)));
+            Definir Variável Global no Índice(ColorConfig, 8, If-Then-Else(Comparar(Valor na Matriz(Global.ColorConfig, 7), ==, Cor(Vermelho)), Cor(Laranja), Cor(Vermelho)));
     }
 }
 
@@ -353,37 +371,32 @@ regra ("Parkour | Match time") {
     }
     ações {
         If(Comparar(Modo de jogo atual, !=, Modo de jogo(Confronto)));
-            "0.25"
             Esperar(False, Ignorar Condição);
-            "1"
             Definir Tempo da Partida(False);
-            "1.1"
             Esperar(False, Ignorar Condição);
-            "1"
             Definir Tempo da Partida(False);
-            "1.1"
             Esperar(False, Ignorar Condição);
         Término;
         Definir Tempo da Partida(70);
         Pausar Tempo da Partida;
         Esperar(False, Ignorar Condição);
         Definir Variável Global(TimeRemaining, 265);
-        While(Ou(Global.TimeRemaining, (Jogador Anfitrião).editor_on));
+        While(Global.TimeRemaining);
             Esperar(60, Ignorar Condição);
             Modificar Variável Global(TimeRemaining, Subtrair, True);
             If(Global.CompMode);
                 Modificar Variável Global(CompTime, Subtrair, True);
                 If(Não(Global.CompTime));
-                    Mensagem Grande(Primeiro de(True), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("时间到了"), String Personalizada("time's up")));
+                    Mensagem Grande(Primeiro de(True), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("时间到了"), String Personalizada("Time's Up")));
                     Definir Variável de Jogador(Todos os Jogadores(Todas as Equipes), comp_done, True);
                     Parar de Acompanhar Variável de Jogador(Todos os Jogadores(Todas as Equipes), timer_normal);
-                    "getAllPlayers().disableRespawn()"
                     Definir Dano Recebido(Todos os Jogadores(Todas as Equipes), 100);
                     Abater(Todos os Jogadores(Todas as Equipes), Nulo);
                 Término;
             Término;
         Término;
-        Mensagem Grande(Primeiro de(True), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("房间已达最大持续时间, 即将重启"), String Personalizada("maximum lobby time elapsed, restarting")));
+        "\\"房间已达最大持续时间, 即将重启\\" checkCN \\"Maximum Lobby Time Reached, Restarting\\""
+        Mensagem Grande(Primeiro de(True), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒMaximum Lobby Time Reached, RestartingMaximum Lobby Time Reached, RestartingMaximum Lobby Time Reached, Restarting"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
         Esperar(5, Ignorar Condição);
         "Prevent crash during POTG and closing lobby"
         Definir Variável de Jogador(Todos os Jogadores(Todas as Equipes), lockState, True);
@@ -399,8 +412,6 @@ regra ("Parkour | Player Initialize") {
         Tudo;
     }
     ações {
-        "Turn Editor On"
-        Definir Variável de Jogador(Jogador do Evento, editor_on, Alternar Configuração do Workshop(String Personalizada("map settings \\n地图设置"), String Personalizada("Editor mode - 作图模式"), False, -1));
         Desabilitar HUD de Modo de Jogo(Jogador do Evento);
         Desabilitar Colisão de Movimento com Jogadores(Jogador do Evento);
         Definir Dano Recebido(Jogador do Evento, 0);
@@ -412,6 +423,7 @@ regra ("Parkour | Player Initialize") {
         Pré-carregar Herói(Jogador do Evento, Herói(Genji));
         Definir Variável de Jogador(Jogador do Evento, editor_lock, True);
         Definir Variável de Jogador(Jogador do Evento, toggle_guide, True);
+        "eventPlayer.toggle_quickRestart = true"
         Definir Variável de Jogador(Jogador do Evento, cache_bounceTouched, -1);
         "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
         Esperar(True, Ignorar Condição);
@@ -480,7 +492,7 @@ regra ("Parkour | Ground: Traces, Arrive, & Reset") {
     }
     ações {
         If(Não((Jogador do Evento).checkpoint_notLast));
-            If(E(É Movimentando-se(Jogador do Evento), Não(Ou(Ou(Ou((Jogador do Evento).toggle_practice, (Jogador do Evento).toggle_invisible), (Jogador do Evento).editor_on), Global.CompMode))));
+            If(E(É Movimentando-se(Jogador do Evento), Não(Ou(Ou(Ou((Jogador do Evento).toggle_practice, (Jogador do Evento).toggle_invisible), Global.EditorOn), Global.CompMode))));
                 "traces ----------------------------------------------------------------------------------------------------"
                 Definir Variável de Jogador(Jogador do Evento, cache_rainbow, Valor na Matriz(Matriz(Cor(Vermelho), Cor(Laranja), Cor(Amarelo), Cor(Verde-limão), Cor(Verde), Cor(Turquesa), Cor(Azul), Cor(Roxo), Cor(Violeta), Cor(Rosa)), Modular(Arredondar para Inteiro(Multiplicar(Tempo Total Decorrido, 2), Baixo), 10)));
                 "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
@@ -498,21 +510,25 @@ regra ("Parkour | Ground: Traces, Arrive, & Reset") {
                 Esperar(0.048, Ignorar Condição);
             Término;
         "or eventPlayer.lockState:"
-        Else If(Ou((Jogador do Evento).toggle_invincible, E(Global.CompMode, Não(Global.CompTime))));
+        Else If(Ou(Ou((Jogador do Evento).toggle_invincible, (Jogador do Evento).toggle_spectate), E(Global.CompMode, Não(Global.CompTime))));
         Else If(Comparar(Distância entre(Jogador do Evento, Valor na Matriz(Global.A, Somar((Jogador do Evento).checkpoint_current, True))), <=, 1.4));
-            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
+            "arrived ----------------------------------------------------------------------------------------------------"
             If(Comparar(Contagem de((Jogador do Evento).cache_collectedLocks), <, (Jogador do Evento).cache_bounceMaxLocks));
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   ! 进点前需集齐所有收集球 !"), String Personalizada("   ! collect ALL {0} orbs to unlock !", Valor na Matriz(Global.ColorConfig, 16))));
-                "kill(eventPlayer, null)"
+                "\\"   ! 进点前需集齐所有收集球 !\\" checkCN \\"   ! collect ALL {} orbs to unlock !\\".format(ColorConfig[Customize.orb_lock])"
+                Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   ! Collect All Lock Orbs To Complete !   ! Collect All Lock Orbs To Complete !   ! Collect All Lock Orbs To Complete !"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
+                "kill player if not colleted the locks"
                 Chamar sub-rotina(CheckpointFailReset);
             Else If(E((Jogador do Evento).ban_climb, (Jogador do Evento).skill_usedClimb));
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   爬墙 ↑ 已禁用!"), String Personalizada("   Climb ↑ is banned!")));
+                "\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\")"
+                Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
                 Chamar sub-rotina(CheckpointFailReset);
             Else If(E((Jogador do Evento).ban_bhop, (Jogador do Evento).skill_usedBhop));
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   ≥ 留小跳进点!"), String Personalizada("   ≥ Must have a bhop to complete!")));
+                "\\"   ≥ 留小跳进点!\\" checkCN \\"   ≥ Must Have A Bhop To Complete!!\\""
+                Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   ≥ Must Have A Bhop To Complete!   ≥ Must Have A Bhop To Complete!   ≥ Must Have A Bhop To Complete!"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
                 Chamar sub-rotina(CheckpointFailReset);
             Else If(E((Jogador do Evento).ban_djump, (Jogador do Evento).skill_usedDouble));
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   » 留二段跳!"), String Personalizada("   » Must have a double jump to complete!")));
+                "\\"   » 留二段跳!\\" checkCN \\"   » Must Have A Double Jump To Complete!\\""
+                Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   » Must Have A Double Jump To Complete!   » Must Have A Double Jump To Complete!   » Must Have A Double Jump To Com{0}", String Personalizada("plete!")), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
                 Chamar sub-rotina(CheckpointFailReset);
             Else;
                 Definir Variável de Jogador(Jogador do Evento, checkpoint_moved, True);
@@ -526,7 +542,7 @@ regra ("Parkour | Ground: Traces, Arrive, & Reset") {
                     Definir Variável de Jogador(Jogador do Evento, timer_split, (Jogador do Evento).timer_normal);
                     Chamar sub-rotina(DeleteSave);
                     "complete lvl"
-                    If(E(Comparar((Jogador do Evento).checkpoint_current, ==, Subtrair(Contagem de(Global.A), True)), Não((Jogador do Evento).editor_on)));
+                    If(E(Comparar((Jogador do Evento).checkpoint_current, ==, Subtrair(Contagem de(Global.A), True)), Não(Global.EditorOn)));
                         Parar de Acompanhar Variável de Jogador(Jogador do Evento, timer_normal);
                         Chamar sub-rotina(LeaderboardUpdate);
                         If(E(Global.CompMode, Global.CompAtmpNum));
@@ -543,7 +559,8 @@ regra ("Parkour | Ground: Traces, Arrive, & Reset") {
                                 Definir Variável Global no Índice(CompAtmpSaveCount, Índice do Valor da Matriz(Global.CompAtmpSaveNames, Divisão de String(Primeiro de(Jogador do Evento), Matriz Vazia)), Somar((Jogador do Evento).comp_countAttempts, True));
                             Término;
                         Término;
-                        Mensagem Grande(Primeiro de(True), String Personalizada("{0} {1} {2} sec", Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("已通关! 用时"), String Personalizada("Mission complete! Time")), (Jogador do Evento).timer_normal));
+                        "\\"已通关! 用时\\" checkCN \\"Mission Complete! Time\\""
+                        Mensagem Grande(Primeiro de(True), String Personalizada("{0} {1} {2} Sec", Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒMission Complete! TimeMission Complete! TimeMission Complete! Time"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), (Jogador do Evento).timer_normal));
                         Esperar(False, Ignorar Condição);
                     "update save"
                     Else;
@@ -560,8 +577,8 @@ regra ("Parkour | Ground: Traces, Arrive, & Reset") {
                 Término;
                 Esperar(False, Ignorar Condição);
                 "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\"))"
-                Reproduzir Efeito(Jogador do Evento, Som de Explosão para Anel, Cor(Branco), Jogador do Evento, 100);
-                Reproduzir Efeito(If-Then-Else(Ou(Global.CompMode, (Jogador do Evento).toggle_invisible), Jogador do Evento, True), Explosão em Anel, Cor(Azul-celeste), Somar(Valor na Matriz(Global.A, (Jogador do Evento).checkpoint_current), Multiplicar(1.5, Cima)), 4);
+                Reproduzir Efeito(Jogador do Evento, Som de Explosão para Anel, Nulo, Jogador do Evento, 100);
+                Reproduzir Efeito(If-Then-Else(Ou(Global.CompMode, (Jogador do Evento).toggle_invisible), Jogador do Evento, True), Explosão em Anel, Cor(Azul-celeste), Posição de(Jogador do Evento), 4);
             Término;
         Else If(Comparar(Distância entre(Jogador do Evento, Último de(Valor na Matriz(Global.A, (Jogador do Evento).checkpoint_current))), >, 1.4));
             Chamar sub-rotina(CheckpointFailReset);
@@ -606,19 +623,22 @@ regra ("Parkour | Bounce Ball / Orb") {
         If(Comparar((Jogador do Evento).cache_bounceTouched, >=, Nulo));
             If(Valor na Matriz(Global.BounceToggleLock, (Jogador do Evento).cache_bounceTouched));
                 Modificar Variável de Jogador(Jogador do Evento, cache_collectedLocks, Juntar à Matriz, (Jogador do Evento).cache_bounceTouched);
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   弹球已收集"), String Personalizada("   orb has been collected")));
+                "\\"   弹球已收集\\" checkCN \\"   orb has been collected\\""
+                Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   Collected Orb   Collected Orb   Collected Orb"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
             Término;
             If(Comparar(Valor na Matriz(Global.EditMode, (Jogador do Evento).cache_bounceTouched), >, Nulo));
                 Aplicar Impulso(Jogador do Evento, Cima, Valor na Matriz(Global.EditMode, (Jogador do Evento).cache_bounceTouched), Ao Mundo, Cancelar Deslocamento Contrário XYZ);
             Else If(Comparar(Valor na Matriz(Global.EditMode, (Jogador do Evento).cache_bounceTouched), <, Nulo));
                 Cancelar Ação Primária(Jogador do Evento);
                 Definir Variável de Jogador(Jogador do Evento, skill_usedDouble, Nulo);
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   二段跳已就绪"), String Personalizada("   Double Jump is ready")));
+                "\\"   二段跳已就绪\\" checkCN \\"   » Double Jump is ready\\""
+                Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   » Double Jump Is Ready   » Double Jump Is Ready   » Double Jump Is Ready"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
             Término;
             If(Valor na Matriz(Global.TQ5, (Jogador do Evento).cache_bounceTouched));
                 Definir Habilidade Suprema como Ativada(Jogador do Evento, True);
                 Definir Carga da Suprema(Jogador do Evento, 100);
-                Mensagem Pequena(Jogador do Evento, String Personalizada("   {0} {1} ", String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("终极技能已就绪"), String Personalizada("Ultimate is ready"))));
+                "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+                Mensagem Pequena(Jogador do Evento, String Personalizada("   {0} {1}", String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))));
             Término;
             If(Valor na Matriz(Global.TQ6, (Jogador do Evento).cache_bounceTouched));
                 If(É Usando Habilidade 1(Jogador do Evento));
@@ -626,9 +646,10 @@ regra ("Parkour | Bounce Ball / Orb") {
                     Esperar(False, Ignorar Condição);
                 Término;
                 Definir Habilidade 1 como Ativada(Jogador do Evento, True);
-                Mensagem Pequena(Jogador do Evento, String Personalizada("   {0} {1} ", String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("技能1影已就绪"), String Personalizada("Dash is ready"))));
+                "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+                Mensagem Pequena(Jogador do Evento, String Personalizada("   {0} {1}", String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))));
             Término;
-            Reproduzir Efeito(Jogador do Evento, Som de Explosão para Bônus, Cor(Branco), Jogador do Evento, 75);
+            Reproduzir Efeito(Jogador do Evento, Som de Explosão para Bônus, Nulo, Jogador do Evento, 75);
         Término;
         Esperar(0.24, Ignorar Condição);
         Gerar Loop se a Condição for Verdadeira;
@@ -695,41 +716,41 @@ regra ("Parkour | SUB Update Effect Cache") {
         Definir Variável de Jogador(Jogador do Evento, banString, Matriz Vazia);
         Esperar(False, Ignorar Condição);
         If((Jogador do Evento).checkpoint_notLast);
-            Definir Variável de Jogador(Jogador do Evento, ban_multi, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban Multiclimb - 封禁蹭留"), False, 1), Matriz Contém(Global.BanMulti, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_multi, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Multiclimb ■ 封禁蹭留 ■ 무한 벽타기 금지"), False, 1), Matriz Contém(Global.BanMulti, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_multi);
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("∞ {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_create, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban Createbhop - 封禁卡小"), False, 2), Matriz Contém(Global.BanCreate, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_create, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Createbhop ■ 封禁卡小 ■ 콩콩이 생성 금지"), False, 2), Matriz Contém(Global.BanCreate, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_create);
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("♂ {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_standcreate, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban standcreate - 封禁站卡"), False, 3), Matriz Contém(Global.BanStand, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_standcreate, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Standcreate ■ 封禁站卡 ■ 서서 콩콩이 생성 금지"), False, 3), Matriz Contém(Global.BanStand, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_standcreate);
                 "≥  √ ▼ ↓"
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("♠ {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_dead, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban Deathbhop - 封禁死小"), False, 4), Matriz Contém(Global.BanDead, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_dead, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Deathbhop ■ 封禁死小 ■ 죽음 콩콩이 금지"), False, 4), Matriz Contém(Global.BanDead, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_dead);
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("X {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_emote, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban Emote Savehop - 封禁表情留小"), False, 5), Matriz Contém(Global.BanEmote, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_emote, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Emote Savehop ■ 封禁表情留小 ■ 감정표현 콩콩이 금지"), False, 5), Matriz Contém(Global.BanEmote, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_emote);
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("♥ {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_climb, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban Wallclimb - 封禁爬墙"), False, 6), Matriz Contém(Global.BanClimb, (Jogador do Evento).checkpoint_current)));
-            If((Jogador do Evento).ban_climb);
-                Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("↑ {0}", (Jogador do Evento).banString));
-            Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_savedouble, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("ban save double - 封禁延二段跳"), False, 7), Matriz Contém(Global.BanSaveDouble, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_savedouble, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Save Double ■ 封禁留二段跳 ■ 이단점프 킵 금지"), False, 6), Matriz Contém(Global.BanSaveDouble, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_savedouble);
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("△ {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_bhop, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("require bhop available - 留小跳进点 "), False, 8), Matriz Contém(Global.BanBhop, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_climb, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Ban Wallclimb ■ 封禁爬墙 ■ 벽타기 금지"), False, 7), Matriz Contém(Global.BanClimb, (Jogador do Evento).checkpoint_current)));
+            If((Jogador do Evento).ban_climb);
+                Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("↑ {0}", (Jogador do Evento).banString));
+            Término;
+            Definir Variável de Jogador(Jogador do Evento, ban_bhop, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Require Bhop Available ■ 留小跳进点 ■ 도착 시 콩콩이 필요"), False, 8), Matriz Contém(Global.BanBhop, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_bhop);
                 "≥  √ ▼ ↓"
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("≥ {0}", (Jogador do Evento).banString));
             Término;
-            Definir Variável de Jogador(Jogador do Evento, ban_djump, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), String Personalizada("require djump available - 留二段跳 "), False, 9), Matriz Contém(Global.BanDjump, (Jogador do Evento).checkpoint_current)));
+            Definir Variável de Jogador(Jogador do Evento, ban_djump, Ou(Alternar Configuração do Workshop(String Personalizada("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), String Personalizada("Require Djump Available ■ 留二段跳进点 ■ 도착 시 이단 점프 필요"), False, 9), Matriz Contém(Global.BanDjump, (Jogador do Evento).checkpoint_current)));
             If((Jogador do Evento).ban_djump);
                 "≥  √ ▼ ↓ ︽"
                 Definir Variável de Jogador(Jogador do Evento, banString, String Personalizada("» {0}", (Jogador do Evento).banString));
@@ -746,9 +767,9 @@ regra ("Parkour | SUB Update Effect Cache") {
             Definir Variável de Jogador(Jogador do Evento, ban_djump, False);
         Término;
         Esperar(False, Ignorar Condição);
-        Regra de início(CheckUlt, Regra de reinício);
-        Regra de início(CheckAbility1, Regra de reinício);
-        Anular se(Ou(Comparar(Jogador do Evento, !=, Jogador Anfitrião), Não((Jogador do Evento).editor_on)));
+        Regra de início(CheckUlt, Não fazer nada);
+        Regra de início(CheckAbility1, Não fazer nada);
+        Anular se(Ou(Comparar(Jogador do Evento, !=, Jogador Anfitrião), Não(Global.EditorOn)));
         Chamar sub-rotina(EditUpdateSelectedIds);
         Destruir Efeito((Jogador Anfitrião).editor_hitboxEffect);
         Criar Efeito(If-Then-Else((Jogador Anfitrião).editor_hitboxToggle, Jogador Anfitrião, Nulo), Esfera, Cor(Branco), Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), 1.4, Visível para Posição e Raio);
@@ -925,7 +946,7 @@ regra ("Parkour | SUB Start Game") {
     }
 }
 
-regra ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Mechanics | Checks ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -943,7 +964,8 @@ regra ("Mechanic | All | Jump") {
     ações {
         Definir Variável de Jogador(Jogador do Evento, skill_usedBhop, True);
         If((Jogador do Evento).skill_usedHop);
-            Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   小跳已用"), String Personalizada("   Bhop")));
+            "\\"   小跳已用\\" checkCN \\"   Bhop\\""
+            Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   Bhop   Bhop   Bhop"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
         Else;
             Definir Variável de Jogador(Jogador do Evento, skill_usedHop, True);
     }
@@ -997,7 +1019,8 @@ regra ("Mechanic | All | Emote") {
         If((Jogador do Evento).ban_emote);
             Esperar até(Não(É Comunicando Qualquer Emote(Jogador do Evento)), 999999999999);
             Anular se((Jogador do Evento).toggle_invincible);
-            Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   表情留小 ♥ 已禁用!"), String Personalizada("   Emote Savehop ♥ is banned!")));
+            "\\"   表情留小 ♥ 已禁用!\\" checkCN \\"   Emote Savehop ♥ is banned!\\""
+            Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   Emote Savehop ♥ Is Banned!   Emote Savehop ♥ Is Banned!   Emote Savehop ♥ Is Banned!"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
             Esperar(False, Ignorar Condição);
             Chamar sub-rotina(CheckpointFailReset);
     }
@@ -1025,19 +1048,21 @@ regra ("Mechanic | All | Ground Reset") {
     }
 }
 
-regra ("<tx0C00000000001344> Editor <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("Editor | Clear Excess Data to Save Map") {
+regra ("Editor | Export Map") {
     evento {
-        Em andamento - Global;
+        Em andamento - Cada Jogador;
+        Todas;
+        Tudo;
     }
     condições {
-        "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (Jogador Anfitrião).editor_on != False;
+        Jogador do Evento == Jogador Anfitrião;
+        Global.EditorOn != False;
         É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)) == True;
         É Botão Segurado(Jogador Anfitrião, Botão(Interagir)) == True;
         É Botão Segurado(Jogador Anfitrião, Botão(Recarregar)) == True;
@@ -1050,6 +1075,7 @@ regra ("Editor | Clear Excess Data to Save Map") {
         Definir Variável de Jogador(Jogador Anfitrião, editor_saveCache, Matriz(Global.TimeRemaining, Global.ColorConfig));
         Definir Variável Global(TimeRemaining, Nulo);
         Definir Variável Global(ColorConfig, Nulo);
+        Definir Variável Global(EditorOn, Nulo);
         Definir Variável Global(C, Nulo);
         Definir Variável Global(K, Nulo);
         Definir Variável Global(NANBA, Nulo);
@@ -1082,67 +1108,54 @@ regra ("Editor | Clear Excess Data to Save Map") {
         Definir Variável Global(Cachedcredits, Matriz(Global.Name, Global.Code));
         Definir Variável Global(Name, Nulo);
         Definir Variável Global(Code, Nulo);
-        Regra de início(AddonCheckMap, Não fazer nada);
-        Criar Texto de HUD(Jogador Anfitrião, String Personalizada("­"), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", String Personalizada(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", String Personalizada("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", String Personalizada("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), String Personalizada("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", String Personalizada("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", String Personalizada(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", String Personalizada("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", String Personalizada("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", String Personalizada("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), Topo, -185, Nulo, Nulo, Cor(Verde-limão), String, Visibilidade-padrão);
+        Criar Texto de HUD(Jogador Anfitrião, String Personalizada("­"), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", String Personalizada(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", String Personalizada("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits Here {0}", String Personalizada("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), String Personalizada("   0. Clear Extra Data:\\n Already Done Upon Opening This Window\\n\\n   1. Copy Data:\\n Open Workshop Inspector → Set Variable Targ{0}", String Personalizada("et To Global\\n Click The [X]\\n\\n   2. Insert Data:\\n Paste The Data Into Rule Named 'Map Data <---- Insert Here'\\n\\n   3. Workshop {0}", String Personalizada("Settings:\\n Esc → Show Lobby → Settings → Workshop Settings →\\n Toggle 'Editor Mode' Off\\n Select Display Difficulty\\n\\n   4. Crea{0}", String Personalizada("te Initial Sharecode:\\n Esc → Show Lobby → Settings → Share Code →\\n Create New Code → Copy Code\\n\\n   5. Add Credits:\\n Enter You{0}", String Personalizada("r Name & Map Code In The 'Credits Here' Rule\\n\\n   6. Update For Credits:\\n Esc → Show Lobby → Settings → Share Code →\\n Upload T{0}", String Personalizada("o Existing Code → Paste The Code You Created In Step 4"))))))), Topo, -185, Nulo, Nulo, Cor(Verde-limão), String, Visibilidade-padrão);
         Definir Variável de Jogador no Índice(Jogador Anfitrião, editor_saveCache, 2, ID de Texto Mais Recente);
-        Criar Texto de HUD(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("    > 按互动键关闭当前窗口 <    "), String Personalizada("    > Press Interact to close this window <    ")), Nulo, Nulo, Topo, -183, Cor(Verde-limão), Nulo, Nulo, String, Visibilidade-padrão);
-        Definir Variável de Jogador no Índice(Jogador Anfitrião, editor_saveCache, 3, ID de Texto Mais Recente);
+        Chamar sub-rotina(AddonCheckMap);
         Ativar gravação do Inspetor;
         Desativar gravação do Inspetor;
-        Esperar até(Não(É Botão Segurado(Jogador Anfitrião, Botão(Interagir))), 999999999999);
-        Esperar até(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), 999999999999);
+        Definir Variável Global(EditorOn, True);
         Definir Variável Global(TimeRemaining, Primeiro de((Jogador Anfitrião).editor_saveCache));
         Definir Variável Global(ColorConfig, Valor na Matriz((Jogador Anfitrião).editor_saveCache, True));
-        Destruir Texto de HUD(Valor na Matriz((Jogador Anfitrião).editor_saveCache, 2));
+        Criar Texto de HUD(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("    > 按互动键关闭当前窗口 <    "), String Personalizada("    > Press Interact To Close This Window <    ")), Nulo, Nulo, Topo, -183, Cor(Verde-limão), Nulo, Nulo, String, Visibilidade-padrão);
+        Definir Variável de Jogador no Índice(Jogador Anfitrião, editor_saveCache, False, ID de Texto Mais Recente);
+        Esperar até(Não(É Botão Segurado(Jogador Anfitrião, Botão(Interagir))), 999999999999);
+        Esperar até(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), 999999999999);
+        "Close Window"
+        Destruir Texto de HUD(Primeiro de((Jogador Anfitrião).editor_saveCache));
+        "Instructions"
         Destruir Texto de HUD(Último de((Jogador Anfitrião).editor_saveCache));
         Definir Variável de Jogador(Jogador Anfitrião, editor_saveCache, Nulo);
         Definir Variável de Jogador(Jogador Anfitrião, editor_lock, False);
     }
 }
 
-regra ("Editor | Hud and Effects") {
+regra ("Editor | Hud & Effects") {
     evento {
         Em andamento - Global;
     }
     ações {
         Esperar(0.832000000000000, Ignorar Condição);
-        "cant be condition because host player can leaves, removing the rule fx"
-        Esperar até(Entidade Existe(Todos os Jogadores(Todas as Equipes)), 999999999999);
-        Esperar(False, Ignorar Condição);
-        If((Todos os Jogadores(Todas as Equipes)).editor_on);
-            "hostPlayer.editor_lock = true\\nremove unnesesary huds"
-            While(Contagem de(Global.HudStoreEdit));
-                Destruir Texto de HUD(Primeiro de(Global.HudStoreEdit));
-                Destruir Texto no Mundo(Primeiro de(Global.HudStoreEdit));
-                Modificar Variável Global(HudStoreEdit, Remover da Matriz por Índice, False);
-            Término;
-            Esperar(False, Ignorar Condição);
-            "infinite time and attempts"
-            If(Global.CompMode);
-                Definir Variável Global(CompAtmpNum, Nulo);
-                Definir Variável Global(CompTime, 999999999999);
-                Definir Variável de Jogador(Todos os Jogadores(Todas as Equipes), comp_countAttempts, Nulo);
-                Definir Variável de Jogador(Todos os Jogadores(Todas as Equipes), comp_done, False);
-            Término;
+        "waitUntil(entityExists(getAllPlayers()), Math.INFINITY)  # cant be condition because host player can leaves, removing the rule fx\\nwait()"
+        If(Global.EditorOn);
             Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0}+{1}+{2} | 重新开始", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Interagir))), String Personalizada("{0}+{1}+{2} | Restart", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Interagir)))), Direita, -156, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.EditorMoveItem, String Personalizada("方向键 | 移动实体 \\n{0} | 向上移动 \\n{1} | 向下移动 \\n{2} (长按) | 快速移动", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Pular))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | 新建检查点\\n{0} + {2} | 删除选中的检查点", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 新建击杀球\\n{0} + {1} (长按) | 在准心位置新建", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 新建弹球\\n{0} + {1} (长按) | 在准心位置新建", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 蹭留\\n{0} + {2} | 卡小", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 新建传送门\\n{0} + {1} (长按) | 在准心位置新建", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)))), (Jogador Anfitrião).editor_modeSelect)), If-Then-Else(Global.EditorMoveItem, String Personalizada("walk | move selected\\n{0} | move up\\n{1} | move down\\n{2} (hold) | move faster", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Pular))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | Create New\\n{0} + {2} | Delete selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | Create new\\n{0} + {1} (hold)| raycast new", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | Create new\\n{0} + {1} (hold)| raycast new", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | multiclimb\\n{0} + {2} | createbhop", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | create new\\n{0} + {1} (hold)| raycast new", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)))), (Jogador Anfitrião).editor_modeSelect))), Direita, -148, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Não(Global.EditorMoveItem)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | 删除选中的击杀球", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 删除选中的弹球", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Matriz Vazia, String Personalizada("{0} + {1} | 删除选中的传送门", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário)))), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | delete selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | delete selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Matriz Vazia, String Personalizada("{0} + {1} | delete selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário)))), (Jogador Anfitrião).editor_modeSelect)), Direita, -147, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.EditorMoveItem, String Personalizada("{0} | 放置实体{1} | cancel placement\\n", String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | 移除/新建传送点\\n{0} + {2} | 检查点碰撞模型\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Habilidade 1))), String Personalizada("{0} + {1} | 选择上一个击杀球\\n{0} + {2} | 选择下一个击杀球\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | 选择上一个弹球\\n{0} + {2} | 选择下一个弹球\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | 爬墙\\n{0} + {2} | 延二段跳", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | 选择下一个传送门\\n{0} + {2} | 选择上一个传送门\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar)))), (Jogador Anfitrião).editor_modeSelect)), If-Then-Else(Global.EditorMoveItem, String Personalizada("{0} | confirm placement\\n{1} | cancel placement", String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | Remove/Add teleport\\n{0} + {2} | Toggle Hitbox\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Habilidade 1))), String Personalizada("{0} + {1} | Select previous\\n{0} + {2} | Select next\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | Select previous\\n{0} + {2} | Select next\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | wallclimb\\n{0} + {2} | save double", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | select next\\n{0} + {2} | select previous\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar)))), (Jogador Anfitrião).editor_modeSelect))), Direita, -146, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Não(Global.EditorMoveItem)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), Valor na Matriz(Matriz(String Personalizada("{0} (长按) | 移动检查点", String de Mapeamento de Entrada(Botão(Habilidade 2))), String Personalizada("{0} + {1} | 增大击杀球\\n{0} + {2} | 缩小击杀球", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | 增加弹球弹力\\n{0} + {2} | 减少弹球弹力", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | 死小\\n{0} + {2} | 表情留小", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 移动选中的实体\\n{0} + {2} | 应用到当前/所有关卡(开关)", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Pular)))), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Matriz(String Personalizada("{0} (hold) | Move", String de Mapeamento de Entrada(Botão(Habilidade 2))), String Personalizada("{0} + {1} | Increase size\\n{0} + {2} | Decrease size", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | Increase strength\\n{0} + {2} | Decrease strength", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | death hop\\n{0} + {2} | emote", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | move\\n{0} + {2} | cp/map (toggle)", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Pular)))), (Jogador Anfitrião).editor_modeSelect)), Direita, -145, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Não(Global.EditorMoveItem)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | 移动选中的实体", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 移动选中的实体", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 留小跳进点\\n{0} + {2} | 站卡", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), Matriz Vazia), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | Move", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | Move", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | require bhop\\n{0} + {2} | stand create", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), Matriz Vazia), (Jogador Anfitrião).editor_modeSelect)), Direita, -144, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada(" \\n{0} + {1} | 下一关", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada(" \\n{0} + {1} | Next checkpoint", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário)))), Direita, -150, Nulo, Nulo, If-Then-Else((Jogador Anfitrião).toggle_guide, Cor(Verde), Cor(Laranja)), Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String de Mapeamento de Entrada(Botão(Habilidade 1))), String Personalizada("{0} + {1} | Prev checkpoint\\n{2} (hold)| Fly\\n", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String de Mapeamento de Entrada(Botão(Habilidade 1)))), Direita, -149, Nulo, Nulo, If-Then-Else((Jogador Anfitrião).toggle_guide, Cor(Verde), Cor(Laranja)), Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("保存地图长按 {0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), String Personalizada("{0} 后按弹出窗口的提示进行操作                                                                                                ", String de Mapeamento de Entrada(Botão(Recarregar)))), String Personalizada("to save map, hold {0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), String Personalizada("{0} then follow instructions                                                                                                ", String de Mapeamento de Entrada(Botão(Recarregar))))), Nulo, Esquerda, -197, Nulo, Cor(Amarelo), Nulo, Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Local).editor_saveCache, Nulo, Jogador Local), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)), String Personalizada("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("     "), String de Ícone(Seta: Direita)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), String de Ícone(Seta: Direita), String Personalizada("     ")), String Personalizada("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), String de Ícone(Seta: Direita), String Personalizada("     ")))), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada(" {0} {1} ", Valor na Matriz(Matriz(String de Ícone(Bandeira), String de Ícone(Caveira), String de Ícone(Lua), String de Ícone(Parada), String de Ícone(Espiral)), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Divisão de String(String Personalizada("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), Primeiro de(Nulo)), (Jogador Anfitrião).editor_modeSelect)), String Personalizada(" {0} 源氏 编辑者 {0} ", String de Ícone(Raio)))), If-Then-Else(É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)), String Personalizada("{0} checkpoints\\n{1} boundary spheres\\n{2}", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("     "), String de Ícone(Seta: Direita)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), String de Ícone(Seta: Direita), String Personalizada("     ")), String Personalizada("{0} function orbs\\n{1} skill bans\\n{2} portals", If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), String de Ícone(Seta: Direita), String Personalizada("     ")))), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada(" {0} {1} ", Valor na Matriz(Matriz(String de Ícone(Bandeira), String de Ícone(Caveira), String de Ícone(Lua), String de Ícone(Parada), String de Ícone(Espiral)), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Divisão de String(String Personalizada("checkpoints0boundary spheres0function orbs0skill bans0portals"), Primeiro de(Nulo)), (Jogador Anfitrião).editor_modeSelect)), String Personalizada(" {0} Genji editor {0} ", String de Ícone(Raio))))), Nulo, Nulo, Topo, -174, Cor(Azul), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
-            Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada("{0} + 射击 | 切换作图模式", String de Mapeamento de Entrada(Botão(Corpo a corpo))), String Personalizada("房主/编辑者 {0}", Jogador Anfitrião)), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada("{0} + shoot | change mode", String de Mapeamento de Entrada(Botão(Corpo a corpo))), String Personalizada("Current host/editor: {0}", Jogador Anfitrião))), Nulo, Topo, -175, Nulo, If-Then-Else((Jogador Local).editor_lock, Cor(Cinza), Cor(Branco)), Nulo, Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Ou(Não((Jogador Anfitrião).editor_modeSelect), E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)))), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("弹球给刀"), String Personalizada("检查点给刀")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ5, Global.EditSelected), Matriz Contém(Global.Dao, (Jogador Anfitrião).checkpoint_current)))), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} give ult {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("Orb"), String Personalizada("Level")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ5, Global.EditSelected), Matriz Contém(Global.Dao, (Jogador Anfitrião).checkpoint_current))))), Esquerda, -189, Nulo, Nulo, If-Then-Else(E(Valor na Matriz(Global.TQ5, Global.EditSelected), Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2)), Cor(Verde), If-Then-Else(E(Matriz Contém(Global.Dao, (Jogador Anfitrião).checkpoint_current), Não((Jogador Anfitrião).editor_modeSelect)), Cor(Verde), Cor(Laranja))), Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Ou(Não((Jogador Anfitrião).editor_modeSelect), E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)))), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String Personalizada("{0} {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("弹球给Shift"), String Personalizada("检查点给Shift")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ6, Global.EditSelected), Matriz Contém(Global.SHIFT, (Jogador Anfitrião).checkpoint_current)))), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String Personalizada("{0} give dash {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("Orb"), String Personalizada("Level")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ6, Global.EditSelected), Matriz Contém(Global.SHIFT, (Jogador Anfitrião).checkpoint_current))))), Esquerda, -188, Nulo, Nulo, If-Then-Else(E(Valor na Matriz(Global.TQ6, Global.EditSelected), Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2)), Cor(Verde), If-Then-Else(E(Matriz Contém(Global.SHIFT, (Jogador Anfitrião).checkpoint_current), Não((Jogador Anfitrião).editor_modeSelect)), Cor(Verde), Cor(Laranja))), Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else(E(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), (Jogador Anfitrião).toggle_guide), Contagem de((Jogador Anfitrião).editor_bounceIndex)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} |  收集球(进点前必须集齐) {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | {1}\\n                                                                                                ", String de Ícone(Asterisco), Valor na Matriz(Global.BounceToggleLock, Global.EditSelected))), String Personalizada("{0} + {1} | unlocks checkpoint {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | {1}\\n                                                                                                ", String de Ícone(Asterisco), Valor na Matriz(Global.BounceToggleLock, Global.EditSelected)))), Esquerda, -187, Nulo, Nulo, If-Then-Else(Valor na Matriz(Global.BounceToggleLock, Global.EditSelected), Cor(Verde), Cor(Laranja)), Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("球体/传送门上限: {0}/193 ", Somar(Somar(Contagem de(Global.TQ), Contagem de(Global.H)), Contagem de(Global.CustomPortalStart))), String Personalizada("orb/portal limit: {0}/193 ", Somar(Somar(Contagem de(Global.TQ), Contagem de(Global.H)), Contagem de(Global.CustomPortalStart)))), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -191, Cor(Azul), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.EditorMoveItem, String Personalizada("方向键 | 移动实体 \\n{0} | 向上移动 \\n{1} | 向下移动 \\n{2} (长按) | 快速移动", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Pular))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | 新建检查点\\n{0} + {2} | 删除选中的检查点", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 新建击杀球\\n{0} + {1} (长按) | 在准心位置新建", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 新建弹球\\n{0} + {1} (长按) | 在准心位置新建", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 蹭留\\n{0} + {2} | 卡小", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 新建传送门\\n{0} + {1} (长按) | 在准心位置新建", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)))), (Jogador Anfitrião).editor_modeSelect)), If-Then-Else(Global.EditorMoveItem, String Personalizada("Walk | Move Selected\\n{0} | Move Up\\n{1} | Move Down\\n{2} (Hold) | Move Faster", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Pular))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | Create New\\n{0} + {2} | Delete Selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | Multi-Climb\\n{0} + {2} | Createbhop", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Primário)))), (Jogador Anfitrião).editor_modeSelect))), Direita, -148, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Não(Global.EditorMoveItem)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | 删除选中的击杀球", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 删除选中的弹球", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Matriz Vazia, String Personalizada("{0} + {1} | 删除选中的传送门", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário)))), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | Delete Selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | Delete Selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Matriz Vazia, String Personalizada("{0} + {1} | Delete Selected", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Disparo Secundário)))), (Jogador Anfitrião).editor_modeSelect)), Direita, -147, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.EditorMoveItem, String Personalizada("{0} | 放置实体{1} | Cancel Placement\\n", String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | 移除/新建传送点\\n{0} + {2} | 检查点碰撞模型\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Habilidade 1))), String Personalizada("{0} + {1} | 选择上一个击杀球\\n{0} + {2} | 选择下一个击杀球\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | 选择上一个弹球\\n{0} + {2} | 选择下一个弹球\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | 爬墙\\n{0} + {2} | 延二段跳", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | 选择下一个传送门\\n{0} + {2} | 选择上一个传送门\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar)))), (Jogador Anfitrião).editor_modeSelect)), If-Then-Else(Global.EditorMoveItem, String Personalizada("{0} | Confirm Placement\\n{1} | Cancel Placement", String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), Valor na Matriz(Matriz(String Personalizada("{0} + {1} | Remove/Add Teleport\\n{0} + {2} | Toggle Hitbox\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Habilidade 1))), String Personalizada("{0} + {1} | Select Previous\\n{0} + {2} | Select Next\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | Select Previous\\n{0} + {2} | Select Next\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | Wallclimb\\n{0} + {2} | Save Double", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular))), String Personalizada("{0} + {1} | Select Next\\n{0} + {2} | Select Previous\\n", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar)))), (Jogador Anfitrião).editor_modeSelect))), Direita, -146, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Não(Global.EditorMoveItem)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), Valor na Matriz(Matriz(String Personalizada("{0} (长按) | 移动检查点", String de Mapeamento de Entrada(Botão(Habilidade 2))), String Personalizada("{0} + {1} | 增大击杀球\\n{0} + {2} | 缩小击杀球", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | 增加弹球弹力\\n{0} + {2} | 减少弹球弹力", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | 死小\\n{0} + {2} | 表情留小", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | 移动选中的实体\\n{0} + {2} | 应用到当前/所有关卡(开关)", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Pular)))), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Matriz(String Personalizada("{0} (Hold) | Move", String de Mapeamento de Entrada(Botão(Habilidade 2))), String Personalizada("{0} + {1} | Increase Size\\n{0} + {2} | Decrease Size", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | Increase Strength\\n{0} + {2} | Decrease Strength", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), String Personalizada("{0} + {1} | Death Hop\\n{0} + {2} | Emote", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("{0} + {1} | Move\\n{0} + {2} | Cp/Map (Toggle)", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Pular)))), (Jogador Anfitrião).editor_modeSelect)), Direita, -145, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Não(Global.EditorMoveItem)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | 移动选中的实体", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 移动选中的实体", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | 留小跳进点\\n{0} + {2} | 站卡", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), Matriz Vazia), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Matriz(Matriz Vazia, String Personalizada("{0} + {1} | Move", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | Move", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada("{0} + {1} | Require Bhop\\n{0} + {2} | Stand Create", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Pular)), String de Mapeamento de Entrada(Botão(Agachar))), Matriz Vazia), (Jogador Anfitrião).editor_modeSelect)), Direita, -144, Nulo, Nulo, Cor(Amarelo), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada(" \\n{0} + {1} | 下一关", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário))), String Personalizada(" \\n{0} + {1} | Next Checkpoint", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário)))), Direita, -150, Nulo, Nulo, If-Then-Else((Jogador Anfitrião).toggle_guide, Cor(Verde), Cor(Laranja)), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String de Mapeamento de Entrada(Botão(Habilidade 1))), String Personalizada("{0} + {1} | Prev Checkpoint\\n{2} (hold)| Fly\\n", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String de Mapeamento de Entrada(Botão(Habilidade 1)))), Direita, -149, Nulo, Nulo, If-Then-Else((Jogador Anfitrião).toggle_guide, Cor(Verde), Cor(Laranja)), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("保存地图长按 {0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), String Personalizada("{0} 后按弹出窗口的提示进行操作                                                                                                ", String de Mapeamento de Entrada(Botão(Recarregar)))), String Personalizada("To Save Map, Hold {0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), String Personalizada("{0} Then Follow Instructions                                                                                                ", String de Mapeamento de Entrada(Botão(Recarregar))))), Nulo, Esquerda, -197, Nulo, Cor(Amarelo), Nulo, Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Local).editor_saveCache, Nulo, Jogador Local), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)), String Personalizada("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("     "), String de Ícone(Seta: Direita)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), String de Ícone(Seta: Direita), String Personalizada("     ")), String Personalizada("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), String de Ícone(Seta: Direita), String Personalizada("     ")))), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada(" {0} {1} ", Valor na Matriz(Matriz(String de Ícone(Bandeira), String de Ícone(Caveira), String de Ícone(Lua), String de Ícone(Parada), String de Ícone(Espiral)), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Divisão de String(String Personalizada("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), Primeiro de(Nulo)), (Jogador Anfitrião).editor_modeSelect)), String Personalizada(" {0} 源氏 编辑者 {0} ", String de Ícone(Raio)))), If-Then-Else(É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)), String Personalizada("{0} Checkpoints\\n{1} Boundary Spheres\\n{2}", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("     "), String de Ícone(Seta: Direita)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), String de Ícone(Seta: Direita), String Personalizada("     ")), String Personalizada("{0} Function Orbs\\n{1} Skill Bans\\n{2} Portals", If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String de Ícone(Seta: Direita), String Personalizada("     ")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), String de Ícone(Seta: Direita), String Personalizada("     ")))), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada(" {0} {1} ", Valor na Matriz(Matriz(String de Ícone(Bandeira), String de Ícone(Caveira), String de Ícone(Lua), String de Ícone(Parada), String de Ícone(Espiral)), (Jogador Anfitrião).editor_modeSelect), Valor na Matriz(Divisão de String(String Personalizada("Checkpoints0Boundary Spheres0Function Orbs0Skill Bans0Portals"), Primeiro de(Nulo)), (Jogador Anfitrião).editor_modeSelect)), String Personalizada(" {0} Genji Editor {0} ", String de Ícone(Raio))))), Nulo, Nulo, Topo, -174, Cor(Azul), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada("{0} + 射击 | 切换作图模式", String de Mapeamento de Entrada(Botão(Corpo a corpo))), String Personalizada("房主/编辑者 {0}", Jogador Anfitrião)), If-Then-Else(Comparar(Jogador Local, ==, Jogador Anfitrião), String Personalizada("{0} + Shoot | Change Mode", String de Mapeamento de Entrada(Botão(Corpo a corpo))), String Personalizada("Current Host/Editor: {0}", Jogador Anfitrião))), Nulo, Topo, -175, Nulo, If-Then-Else((Jogador Local).editor_lock, Cor(Cinza), Cor(Branco)), Nulo, Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Ou(Não((Jogador Anfitrião).editor_modeSelect), E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)))), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("弹球给刀"), String Personalizada("检查点给刀")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ5, Global.EditSelected), Matriz Contém(Global.Dao, (Jogador Anfitrião).checkpoint_current)))), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} Give Ult {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("Orb"), String Personalizada("Level")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ5, Global.EditSelected), Matriz Contém(Global.Dao, (Jogador Anfitrião).checkpoint_current))))), Esquerda, -189, Nulo, Nulo, If-Then-Else(E(Valor na Matriz(Global.TQ5, Global.EditSelected), Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2)), Cor(Verde), If-Then-Else(E(Matriz Contém(Global.Dao, (Jogador Anfitrião).checkpoint_current), Não((Jogador Anfitrião).editor_modeSelect)), Cor(Verde), Cor(Laranja))), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else(E((Jogador Anfitrião).toggle_guide, Ou(Não((Jogador Anfitrião).editor_modeSelect), E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)))), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String Personalizada("{0} {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("弹球给Shift"), String Personalizada("检查点给Shift")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ6, Global.EditSelected), Matriz Contém(Global.SHIFT, (Jogador Anfitrião).checkpoint_current)))), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Disparo Secundário)), String Personalizada("{0} Give Dash {1} | {2}                                                                                                ", If-Then-Else((Jogador Anfitrião).editor_modeSelect, String Personalizada("Orb"), String Personalizada("Level")), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ6, Global.EditSelected), Matriz Contém(Global.SHIFT, (Jogador Anfitrião).checkpoint_current))))), Esquerda, -188, Nulo, Nulo, If-Then-Else(E(Valor na Matriz(Global.TQ6, Global.EditSelected), Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2)), Cor(Verde), If-Then-Else(E(Matriz Contém(Global.SHIFT, (Jogador Anfitrião).checkpoint_current), Não((Jogador Anfitrião).editor_modeSelect)), Cor(Verde), Cor(Laranja))), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else(E(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), (Jogador Anfitrião).toggle_guide), Contagem de((Jogador Anfitrião).editor_bounceIndex)), Jogador Anfitrião, Nulo), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} |  收集球(进点前必须集齐) {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | {1}\\n                                                                                                ", String de Ícone(Asterisco), Valor na Matriz(Global.BounceToggleLock, Global.EditSelected))), String Personalizada("{0} + {1} | Unlocks Checkpoint {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | {1}\\n                                                                                                ", String de Ícone(Asterisco), Valor na Matriz(Global.BounceToggleLock, Global.EditSelected)))), Esquerda, -187, Nulo, Nulo, If-Then-Else(Valor na Matriz(Global.BounceToggleLock, Global.EditSelected), Cor(Verde), Cor(Laranja)), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("球体/传送门上限: {0}/193 ", Somar(Somar(Contagem de(Global.TQ), Contagem de(Global.H)), Contagem de(Global.CustomPortalStart))), String Personalizada("Orb/Portal Limit: {0}/193 ", Somar(Somar(Contagem de(Global.TQ), Contagem de(Global.H)), Contagem de(Global.CustomPortalStart)))), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -191, Cor(Azul), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
             "display selected cc/orb info"
-            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(E(Não((Jogador Anfitrião).editor_modeSelect), Contagem de(Global.A)), String Personalizada("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), If-Then-Else(Comparar(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), <, 2), Matriz Vazia, String Personalizada("\\n 传送点: {0}", Valor na Matriz(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), True)))), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Contagem de((Jogador Anfitrião).editor_killIndex)), String Personalizada("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", Valor na Matriz(Global.H, Global.EditSelected), Valor na Matriz(Global.I, Global.EditSelected)), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)), String Personalizada("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", Valor na Matriz(Global.TQ, Global.EditSelected), Valor na Matriz(Global.EditMode, Global.EditSelected), Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String Personalizada("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", If-Then-Else(Matriz Contém(Global.BanMulti, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanCreate, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", If-Then-Else(Matriz Contém(Global.BanStand, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanClimb, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", If-Then-Else(Matriz Contém(Global.BanDead, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanEmote, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", If-Then-Else(Matriz Contém(Global.BanSaveDouble, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanBhop, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia))))), If-Then-Else(E(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Matriz Contém(Matriz((Jogador Anfitrião).checkpoint_current, -1), Valor na Matriz(Global.CustomPortalCP, Global.EditSelected))), Contagem de(Global.CustomPortalCP)), String Personalizada("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Valor na Matriz(Global.CustomPortalEndpoint, Global.EditSelected), If-Then-Else(Comparar(Valor na Matriz(Global.CustomPortalCP, Global.EditSelected), <, Nulo), String Personalizada("所有"), (Jogador Anfitrião).checkpoint_current)), String Personalizada("\\n   当前无数据选中   \\n")))))), If-Then-Else(E(Não((Jogador Anfitrião).editor_modeSelect), Contagem de(Global.A)), String Personalizada("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), If-Then-Else(Comparar(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), <, 2), Matriz Vazia, String Personalizada("\\n Teleport: {0}", Valor na Matriz(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), True)))), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Contagem de((Jogador Anfitrião).editor_killIndex)), String Personalizada("\\n Selected boundary sphere\\n Vector: {0}\\n radius: {1}\\n  + keep out\\n  - stay in\\n", Valor na Matriz(Global.H, Global.EditSelected), Valor na Matriz(Global.I, Global.EditSelected)), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)), String Personalizada("\\n Selected Bounce Orb\\n Vector: {0}\\n strength: {1} \\n ID: {2}\\n", Valor na Matriz(Global.TQ, Global.EditSelected), Valor na Matriz(Global.EditMode, Global.EditSelected), Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String Personalizada("\\n skill bans\\n――――――――――――\\n {0} multi-climb ∞\\n {1} create ♂\\n {2}", If-Then-Else(Matriz Contém(Global.BanMulti, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanCreate, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} stand ♠\\n {1} climb ↑\\n {2}", If-Then-Else(Matriz Contém(Global.BanStand, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanClimb, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} dead X\\n {1} emote ♥\\n {2}", If-Then-Else(Matriz Contém(Global.BanDead, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanEmote, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} save double △\\n――――――――――――\\n {1} require bhop ≥\\n", If-Then-Else(Matriz Contém(Global.BanSaveDouble, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanBhop, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia))))), If-Then-Else(E(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Matriz Contém(Matriz((Jogador Anfitrião).checkpoint_current, -1), Valor na Matriz(Global.CustomPortalCP, Global.EditSelected))), Contagem de(Global.CustomPortalCP)), String Personalizada("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Valor na Matriz(Global.CustomPortalEndpoint, Global.EditSelected), If-Then-Else(Comparar(Valor na Matriz(Global.CustomPortalCP, Global.EditSelected), <, Nulo), String Personalizada("All"), (Jogador Anfitrião).checkpoint_current)), String Personalizada("\\n   No data selected   \\n"))))))), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -190, Cor(Branco), Nulo, Cor(Laranja), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(If-Then-Else((Jogador Anfitrião).toggle_guide, Jogador Anfitrião, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(E(Não((Jogador Anfitrião).editor_modeSelect), Contagem de(Global.A)), String Personalizada("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), If-Then-Else(Comparar(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), <, 2), Matriz Vazia, String Personalizada("\\n 传送点: {0}", Valor na Matriz(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), True)))), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Contagem de((Jogador Anfitrião).editor_killIndex)), String Personalizada("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", Valor na Matriz(Global.H, Global.EditSelected), Valor na Matriz(Global.I, Global.EditSelected)), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)), String Personalizada("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", Valor na Matriz(Global.TQ, Global.EditSelected), Valor na Matriz(Global.EditMode, Global.EditSelected), Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String Personalizada("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", If-Then-Else(Matriz Contém(Global.BanMulti, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanCreate, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", If-Then-Else(Matriz Contém(Global.BanStand, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanClimb, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", If-Then-Else(Matriz Contém(Global.BanDead, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanEmote, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", If-Then-Else(Matriz Contém(Global.BanSaveDouble, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanBhop, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia))))), If-Then-Else(E(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Matriz Contém(Matriz((Jogador Anfitrião).checkpoint_current, -1), Valor na Matriz(Global.CustomPortalCP, Global.EditSelected))), Contagem de(Global.CustomPortalCP)), String Personalizada("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Valor na Matriz(Global.CustomPortalEndpoint, Global.EditSelected), If-Then-Else(Comparar(Valor na Matriz(Global.CustomPortalCP, Global.EditSelected), <, Nulo), String Personalizada("所有"), (Jogador Anfitrião).checkpoint_current)), String Personalizada("\\n   当前无数据选中   \\n")))))), If-Then-Else(E(Não((Jogador Anfitrião).editor_modeSelect), Contagem de(Global.A)), String Personalizada("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), If-Then-Else(Comparar(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), <, 2), Matriz Vazia, String Personalizada("\\n Teleport: {0}", Valor na Matriz(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), True)))), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Contagem de((Jogador Anfitrião).editor_killIndex)), String Personalizada("\\n Selected Boundary Sphere\\n Vector: {0}\\n Radius: {1}\\n  + Keep Out\\n  - Stay In\\n", Valor na Matriz(Global.H, Global.EditSelected), Valor na Matriz(Global.I, Global.EditSelected)), If-Then-Else(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Contagem de((Jogador Anfitrião).editor_bounceIndex)), String Personalizada("\\n Selected Bounce Orb\\n Vector: {0}\\n Strength: {1} \\n ID: {2}\\n", Valor na Matriz(Global.TQ, Global.EditSelected), Valor na Matriz(Global.EditMode, Global.EditSelected), Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 3), String Personalizada("\\n Skill Bans\\n――――――――――――\\n {0} Multi-Climb ∞\\n {1} Create ♂\\n {2}", If-Then-Else(Matriz Contém(Global.BanMulti, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanCreate, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} Stand ♠\\n {1} Climb ↑\\n {2}", If-Then-Else(Matriz Contém(Global.BanStand, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanClimb, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} Dead X\\n {1} Emote ♥\\n {2}", If-Then-Else(Matriz Contém(Global.BanDead, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanEmote, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), String Personalizada("{0} Save Double △\\n――――――――――――\\n {1} Require Bhop ≥\\n", If-Then-Else(Matriz Contém(Global.BanSaveDouble, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia), If-Then-Else(Matriz Contém(Global.BanBhop, (Jogador Anfitrião).checkpoint_current), String Personalizada("√"), Matriz Vazia))))), If-Then-Else(E(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Matriz Contém(Matriz((Jogador Anfitrião).checkpoint_current, -1), Valor na Matriz(Global.CustomPortalCP, Global.EditSelected))), Contagem de(Global.CustomPortalCP)), String Personalizada("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Valor na Matriz(Global.CustomPortalEndpoint, Global.EditSelected), If-Then-Else(Comparar(Valor na Matriz(Global.CustomPortalCP, Global.EditSelected), <, Nulo), String Personalizada("All"), (Jogador Anfitrião).checkpoint_current)), String Personalizada("\\n   No Data Selected   \\n"))))))), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -190, Cor(Branco), Nulo, Cor(Laranja), Visível para e String, Visibilidade-padrão);
             "effects =========================================================================================================================================================================="
-            Criar Texto no Mundo(If-Then-Else(Contagem de(Global.EditSelectIdArray), True, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("选中的实体"), String Personalizada("selected")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Valor na Matriz(Global.H, Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ, Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Nulo))), 1.2, Não Cortar, Visível para e Posição, Cor(Laranja), Visibilidade-padrão);
+            Criar Texto no Mundo(If-Then-Else(Contagem de(Global.EditSelectIdArray), True, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("选中的实体"), String Personalizada("Selected")), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Valor na Matriz(Global.H, Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ, Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Nulo))), 1.2, Não Cortar, Visível para e Posição, Cor(Laranja), Visibilidade-padrão);
             Criar Ícone(If-Then-Else(Contagem de(Global.EditSelectIdArray), True, Nulo), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Valor na Matriz(Global.H, Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 2), Valor na Matriz(Global.TQ, Global.EditSelected), If-Then-Else(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4), Valor na Matriz(Global.CustomPortalStart, Global.EditSelected), Nulo))), Seta: Baixo, Visível para e Posição, Cor(Branco), True);
             "Purple sphere for teleport location"
             Criar Efeito(If-Then-Else(E(Comparar(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), >, 1), Não((Jogador Anfitrião).editor_modeSelect)), Jogador Anfitrião, Nulo), Esfera, Cor(Roxo), Subtrair(Valor na Matriz(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), True), Multiplicar(0.1, Cima)), 0.2, Visível para Posição e Raio);
@@ -1153,21 +1166,17 @@ regra ("Editor | Hud and Effects") {
             Criar Texto no Mundo(If-Then-Else(E(Valor na Matriz(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current), True), Não((Jogador Anfitrião).editor_modeSelect)), Jogador Anfitrião, Nulo), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("检查点位置"), String Personalizada("level location")), Primeiro de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), 1.6, Não Cortar, Visível para Posição e String, Cor(Azul-celeste), Visibilidade-padrão);
             "portal fx"
             Criar Efeito(If-Then-Else(E(Contagem de(Global.EditSelectIdArray), Comparar((Jogador Anfitrião).editor_modeSelect, ==, 4)), Jogador Anfitrião, Nulo), Faíscas, Cor(Roxo), Valor na Matriz(Global.CustomPortalEndpoint, Global.EditSelected), 0.2, Visível para Posição e Raio);
-        "Editor Off"
-        Else;
-            "clear variables if not in editor mode"
-            Definir Variável Global(HudStoreEdit, Nulo);
     }
 }
 
-regra ("Editor |  Fly/Noclip Toggle") {
+regra ("Editor | Toggle Fly & Noclip") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
         Tudo;
     }
     condições {
-        (Jogador do Evento).editor_on != False;
+        Global.EditorOn != False;
         É Botão Segurado(Jogador do Evento, Botão(Habilidade 1)) == True;
         (Jogador do Evento).editor_fly == Nulo;
         E(Global.EditorMoveItem, Comparar(Jogador do Evento, ==, Jogador Anfitrião)) == False;
@@ -1199,13 +1208,13 @@ regra ("Editor |  Fly/Noclip Toggle") {
     }
 }
 
-regra ("Editor | change mode") {
+regra ("Editor | Change Mode") {
     evento {
         Em andamento - Global;
     }
     condições {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_lock == False;
         É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)) == True;
         É Botão Segurado(Jogador Anfitrião, Botão(Disparo Primário)) != É Botão Segurado(Jogador Anfitrião, Botão(Disparo Secundário));
@@ -1226,7 +1235,7 @@ regra ("Editor | change mode") {
     }
 }
 
-regra ("Editor | update selected id") {
+regra ("Editor | Update Selected Id") {
     evento {
         Sub-rotina;
         EditUpdateSelectedIds;
@@ -1247,7 +1256,7 @@ regra ("Editor | update selected id") {
     }
 }
 
-regra ("Editor | select last") {
+regra ("Editor | Select Last") {
     evento {
         Sub-rotina;
         EditorSelectLast;
@@ -1257,7 +1266,7 @@ regra ("Editor | select last") {
     }
 }
 
-regra ("Editor | create cp/orb") {
+regra ("Editor | Create Cp/Orb") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1266,7 +1275,7 @@ regra ("Editor | create cp/orb") {
     condições {
         "Required for UpdateCache()"
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_lock == False;
         Matriz Contém(Matriz(Nulo, 1, 2, 4), (Jogador Anfitrião).editor_modeSelect) == True;
         É Botão Segurado(Jogador Anfitrião, Botão(Interagir)) == True;
@@ -1276,7 +1285,7 @@ regra ("Editor | create cp/orb") {
         Definir Variável de Jogador(Jogador Anfitrião, editor_lock, True);
         If(Não((Jogador Anfitrião).editor_modeSelect));
             If(E(Contagem de(Global.A), Comparar(Distância entre(Jogador Anfitrião, Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), <=, 1.4)));
-                Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   放置的检查点距离太近"), String Personalizada("   Cannot place checkpoint too close.")));
+                Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   放置的检查点距离太近"), String Personalizada("   Cannot Place Checkpoint Too Close.")));
             Else;
                 "$$"
                 If(Comparar((Jogador Anfitrião).checkpoint_current, >=, Subtrair(Contagem de(Global.A), True)));
@@ -1305,12 +1314,12 @@ regra ("Editor | create cp/orb") {
                     Definir Variável Global(BanDjump, Matriz Mapeada(Global.BanDjump, Somar(Elemento da Matriz Atual, If-Then-Else(Comparar(Elemento da Matriz Atual, >=, (Jogador Anfitrião).checkpoint_current), 1, Nulo))));
                 Término;
                 Chamar sub-rotina(UpdateCache);
-                Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   新检查点已创建"), String Personalizada("   New checkpoint created")));
+                Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   新检查点已创建"), String Personalizada("   New Checkpoint Created")));
             Término;
         Else If(Não(Contagem de(Global.A)));
-            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   请先放置检查点"), String Personalizada("   Make a checkpoint first")));
+            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   请先放置检查点"), String Personalizada("   Make A Checkpoint First")));
         Else If(Comparar(Somar(Somar(Contagem de(Global.TQ), Contagem de(Global.H)), Contagem de(Global.CustomPortalStart)), >=, 193));
-            Mensagem Grande(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("当前地图弹球/传送门数量已达上限"), String Personalizada("Orb/portal limit reached for this map")));
+            Mensagem Grande(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("当前地图弹球/传送门数量已达上限"), String Personalizada("Orb/Portal Limit Reached For This Map")));
         Else If(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1));
             Modificar Variável Global(H, Juntar à Matriz, Posição de(Jogador Anfitrião));
             Modificar Variável Global(killballnumber, Juntar à Matriz, (Jogador Anfitrião).checkpoint_current);
@@ -1320,7 +1329,7 @@ regra ("Editor | create cp/orb") {
             Chamar sub-rotina(EditorSelectLast);
             Criar Efeito(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), Comparar((Elemento da Matriz Atual).checkpoint_current, ==, Valor na Matriz(Global.killballnumber, Avaliar Uma Vez(Global.EditSelected)))), Esfera, Valor na Matriz(Global.ColorConfig, 14), Valor na Matriz(Global.H, Avaliar Uma Vez(Global.EditSelected)), Valor Absoluto(Valor na Matriz(Global.I, Avaliar Uma Vez(Global.EditSelected))), Visível para Posição e Raio);
             Modificar Variável Global(K, Juntar à Matriz, Entidade Criada por Último);
-            Mensagem Grande(Primeiro de(True), String Personalizada("{0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("新击杀球已创建! \\n仅生效于检查点"), String Personalizada("New boundary sphere has been created! \\nOnly valid for this checkpoint")), (Jogador Anfitrião).checkpoint_current));
+            Mensagem Grande(Primeiro de(True), String Personalizada("{0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("新击杀球已创建! \\n仅生效于检查点"), String Personalizada("New boundary Sphere Created! \\nOnly Valid For This Checkpoint")), (Jogador Anfitrião).checkpoint_current));
             Esperar até(Não(E(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), É Botão Segurado(Jogador Anfitrião, Botão(Disparo Primário)))), True);
             "EditUpdateSelectedIds() # to arrow during the placement properly"
             While(E(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), É Botão Segurado(Jogador Anfitrião, Botão(Disparo Primário))));
@@ -1340,7 +1349,7 @@ regra ("Editor | create cp/orb") {
             Chamar sub-rotina(EditorSelectLast);
             Criar Efeito(Matriz Filtrada(Juntar à Matriz(Todos os Jogadores(Todas as Equipes), Nulo), E(Comparar((Elemento da Matriz Atual).checkpoint_current, ==, Valor na Matriz(Global.pinballnumber, Avaliar Uma Vez(Global.EditSelected))), Não(Matriz Contém((Elemento da Matriz Atual).cache_collectedLocks, Avaliar Uma Vez(Global.EditSelected))))), Orbe, If-Then-Else(Valor na Matriz(Global.BounceToggleLock, Avaliar Uma Vez(Global.EditSelected)), Valor na Matriz(Global.ColorConfig, 16), Valor na Matriz(Global.ColorConfig, 15)), Valor na Matriz(Global.TQ, Avaliar Uma Vez(Global.EditSelected)), True, Visível para Posição Raio e Cor);
             Modificar Variável Global(TQ2, Juntar à Matriz, Entidade Criada por Último);
-            Mensagem Grande(Primeiro de(True), String Personalizada("{0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("新弹球已创建! \\n仅生效于检查点"), String Personalizada("New Bounce Orb has been created! \\nOnly valid for this checkpoint")), (Jogador Anfitrião).checkpoint_current));
+            Mensagem Grande(Primeiro de(True), String Personalizada("{0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("新弹球已创建! \\n仅生效于检查点"), String Personalizada("New Bounce Orb Created! \\nOnly Valid For This Checkpoint")), (Jogador Anfitrião).checkpoint_current));
             Esperar até(Não(E(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), É Botão Segurado(Jogador Anfitrião, Botão(Disparo Primário)))), True);
             While(E(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), É Botão Segurado(Jogador Anfitrião, Botão(Disparo Primário))));
                 Definir Variável Global no Índice(TQ, Global.EditSelected, Posição de Acerto do Lançamento de Raio(Posição do Olho(Jogador Anfitrião), Somar(Posição do Olho(Jogador Anfitrião), Multiplicar(Direção Frontal de(Jogador Anfitrião), 7)), Nulo, Nulo, False));
@@ -1363,7 +1372,7 @@ regra ("Editor | create cp/orb") {
                 Definir Variável Global no Índice(CustomPortalStart, Global.EditSelected, Posição de Acerto do Lançamento de Raio(Posição do Olho(Jogador Anfitrião), Somar(Posição do Olho(Jogador Anfitrião), Multiplicar(Direção Frontal de(Jogador Anfitrião), 6)), Nulo, Nulo, False));
                 Esperar(False, Ignorar Condição);
             Término;
-            Mensagem Grande(Primeiro de(True), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("新传送门已创建!\\n生效于当前检查点"), String Personalizada("Portal created \\nOnly valid for this checkpoint")));
+            Mensagem Grande(Primeiro de(True), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("新传送门已创建!\\n生效于当前检查点"), String Personalizada("Portal Created \\nOnly Valid For This Checkpoint")));
             Definir Variável Global(EditorMoveItem, True);
         Término;
         Definir Variável de Jogador(Jogador Anfitrião, editor_lock, False);
@@ -1371,7 +1380,7 @@ regra ("Editor | create cp/orb") {
     }
 }
 
-regra ("Editor | delete cp/orb/portal") {
+regra ("Editor | Delete Cp/Orb/Portal") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1380,7 +1389,7 @@ regra ("Editor | delete cp/orb/portal") {
     condições {
         "Required for UpdateCache()"
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_lock == False;
         É Botão Segurado(Jogador Anfitrião, Botão(Interagir)) == True;
         É Botão Segurado(Jogador Anfitrião, Botão(Disparo Secundário)) == True;
@@ -1461,7 +1470,7 @@ regra ("Editor | delete cp/orb/portal") {
             Chamar sub-rotina(RebuildKillOrbs);
             Chamar sub-rotina(RebuildBounceOrbs);
             Chamar sub-rotina(RebuildPortals);
-            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   检查点已删除"), String Personalizada("   Checkpoint has been deleted")));
+            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   检查点已删除"), String Personalizada("   Checkpoint Has Been Deleted")));
         Else If(E(Comparar((Jogador Anfitrião).editor_modeSelect, ==, 1), Contagem de(Global.EditSelectIdArray)));
             Modificar Variável Global(H, Remover da Matriz por Índice, Global.EditSelected);
             Modificar Variável Global(I, Remover da Matriz por Índice, Global.EditSelected);
@@ -1499,7 +1508,7 @@ regra ("Editor | delete cp/orb/portal") {
     }
 }
 
-regra ("Editor | toggle orb functions") {
+regra ("Editor | Toggle Orb Functions") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1508,7 +1517,7 @@ regra ("Editor | toggle orb functions") {
     condições {
         "Required for UpdateCache()"
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == 2;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.EditSelectIdArray) > Nulo;
@@ -1531,7 +1540,7 @@ regra ("Editor | toggle orb functions") {
     }
 }
 
-regra ("Editor | orb radi/strength") {
+regra ("Editor | Orb Radii/Strength") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1540,7 +1549,7 @@ regra ("Editor | orb radi/strength") {
     condições {
         "Required for UpdateCache()"
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         Matriz Contém(Matriz(1, 2), (Jogador Anfitrião).editor_modeSelect) == True;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.EditSelectIdArray) > Nulo;
@@ -1563,13 +1572,13 @@ regra ("Editor | orb radi/strength") {
     }
 }
 
-regra ("Editor | select orb/portal") {
+regra ("Editor | Select Orb/Portal") {
     evento {
         Em andamento - Global;
     }
     condições {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         Matriz Contém(Matriz(1, 2, 4), (Jogador Anfitrião).editor_modeSelect) == True;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.EditSelectIdArray) > Nulo;
@@ -1589,13 +1598,13 @@ regra ("Editor | select orb/portal") {
     }
 }
 
-regra ("Editor | cp size hitbox display") {
+regra ("Editor | Cp Size Hitbox Display") {
     evento {
         Em andamento - Global;
     }
     condições {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == Nulo;
         É Botão Segurado(Jogador Anfitrião, Botão(Interagir)) == True;
         É Botão Segurado(Jogador Anfitrião, Botão(Habilidade 1)) == True;
@@ -1606,12 +1615,12 @@ regra ("Editor | cp size hitbox display") {
     }
 }
 
-regra ("Editor | cp add/remove teleport") {
+regra ("Editor | Cp Add/Remove Teleport") {
     evento {
         Em andamento - Global;
     }
     condições {
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == Nulo;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.A) > True;
@@ -1625,31 +1634,31 @@ regra ("Editor | cp add/remove teleport") {
         Anular se(Ou(É Botão Segurado(Jogador Anfitrião, Botão(Corpo a corpo)), E(É Botão Segurado(Jogador Anfitrião, Botão(Interagir)), É Botão Segurado(Jogador Anfitrião, Botão(Recarregar)))));
         Definir Variável de Jogador(Jogador Anfitrião, editor_lock, True);
         If(Não((Jogador Anfitrião).checkpoint_current));
-            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   不能在第一个检查点设置传送门"), String Personalizada("   Can't place a teleport on first checkpoint")));
+            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   不能在第一个检查点设置传送门"), String Personalizada("   Cannot Place A Teleport On First Checkpoint")));
             Definir Variável de Jogador(Jogador Anfitrião, editor_lock, False);
             Anular;
         Término;
         "remove"
         If(Comparar(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), >, 1));
             Definir Variável Global no Índice(A, (Jogador Anfitrião).checkpoint_current, Primeiro de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)));
-            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   关卡{0}的传送点已移除", (Jogador Anfitrião).checkpoint_current), String Personalizada("   Teleport for level {0} has been removed", (Jogador Anfitrião).checkpoint_current)));
+            Mensagem Pequena(Jogador Anfitrião, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   关卡{0}的传送点已移除", (Jogador Anfitrião).checkpoint_current), String Personalizada("   Teleport For Level {0} Has Been Removed", (Jogador Anfitrião).checkpoint_current)));
         "add"
         Else;
             Definir Variável Global no Índice(A, (Jogador Anfitrião).checkpoint_current, Matriz(If-Then-Else(Contagem de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), Primeiro de(Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), Valor na Matriz(Global.A, (Jogador Anfitrião).checkpoint_current)), Posição de(Jogador Anfitrião)));
-            Mensagem Pequena(Jogador Anfitrião, String Personalizada("{0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   传送点已添加到当前关卡"), String Personalizada("   Teleport has been added for level")), (Jogador Anfitrião).checkpoint_current));
+            Mensagem Pequena(Jogador Anfitrião, String Personalizada("{0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   传送点已添加到当前关卡"), String Personalizada("   Teleport Has Been Added For Level")), (Jogador Anfitrião).checkpoint_current));
         Término;
         Definir Variável de Jogador(Jogador Anfitrião, editor_lock, False);
         Esperar(False, Ignorar Condição);
     }
 }
 
-regra ("Editor | moving checkpoint") {
+regra ("Editor | Moving Checkpoint") {
     evento {
         Em andamento - Global;
     }
     condições {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == Nulo;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.A) > Nulo;
@@ -1687,7 +1696,7 @@ regra ("Editor | moving checkpoint") {
     }
 }
 
-regra ("Editor | add ult/dash") {
+regra ("Editor | Toggle Ult/Dash") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1695,7 +1704,7 @@ regra ("Editor | add ult/dash") {
     }
     condições {
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == Nulo;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.A) > Nulo;
@@ -1720,7 +1729,7 @@ regra ("Editor | add ult/dash") {
     }
 }
 
-regra ("Editor | toggle bans") {
+regra ("Editor | Toggle Bans") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1729,7 +1738,7 @@ regra ("Editor | toggle bans") {
     condições {
         "Required for UpdateCache()"
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == 3;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.A) > Nulo;
@@ -1798,13 +1807,13 @@ regra ("Editor | toggle bans") {
     }
 }
 
-regra ("Editor | portal cp change") {
+regra ("Editor | Change Portal Cp") {
     evento {
         Em andamento - Global;
     }
     condições {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         (Jogador Anfitrião).editor_modeSelect == 4;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.EditSelectIdArray) > Nulo;
@@ -1817,7 +1826,7 @@ regra ("Editor | portal cp change") {
     }
 }
 
-regra ("Editor | move object") {
+regra ("Editor | Move Object") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -1826,7 +1835,7 @@ regra ("Editor | move object") {
     condições {
         "Required for UpdateCache()"
         Jogador do Evento == Jogador Anfitrião;
-        (Jogador Anfitrião).editor_on != False;
+        Global.EditorOn != False;
         Matriz Contém(Matriz(1, 2, 4), (Jogador Anfitrião).editor_modeSelect) == True;
         (Jogador Anfitrião).editor_lock == False;
         Contagem de(Global.EditSelectIdArray) > Nulo;
@@ -1901,7 +1910,7 @@ regra ("Editor | move object") {
     }
 }
 
-regra ("<tx0C00000000001344> Commands <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Commands ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -1915,7 +1924,7 @@ regra ("Command | Toggle Leaderboard (Hold Melee)") {
     }
     condições {
         Contagem de(Global.LeaderBoardFull) > Nulo;
-        (Jogador do Evento).editor_on == False;
+        Global.EditorOn == False;
         É Botão Segurado(Jogador do Evento, Botão(Corpo a corpo)) == True;
     }
     ações {
@@ -1937,10 +1946,10 @@ regra ("Command | Split hide (Hold Dash + Primary + Secondary)") {
     }
     ações {
         Esperar(True, Anular Quando For Falso);
-        "smallMessage(eventPlayer, \\"   split display off\\" if eventPlayer.timer_splitDisplay != -Math.INFINITY else \\"   split display on\\")"
         Definir Variável de Jogador(Jogador do Evento, timer_splitDisplay, If-Then-Else(Comparar((Jogador do Evento).timer_splitDisplay, <=, -999999999999), Nulo, -999999999999));
-        Reproduzir Efeito(Jogador do Evento, Som de Impacto para Bônus, Cor(Branco), Jogador do Evento, 100);
-        Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar((Jogador do Evento).timer_splitDisplay, <=, -999999999999), String Personalizada("   split display off"), String Personalizada("   split display on")));
+        Reproduzir Efeito(Jogador do Evento, Som de Impacto para Bônus, Nulo, Jogador do Evento, 100);
+        "$$ Language"
+        Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar((Jogador do Evento).timer_splitDisplay, <=, -999999999999), String Personalizada("   Split Display Off"), String Personalizada("   Split Display On")));
         Esperar(0.32, Ignorar Condição);
     }
 }
@@ -1953,7 +1962,7 @@ regra ("Command | Toggle Invisible (Hold Deflect)") {
     }
     condições {
         É Botão Segurado(Jogador do Evento, Botão(Habilidade 2)) == True;
-        (Jogador do Evento).editor_on == False;
+        Global.EditorOn == False;
         Global.CompMode == False;
     }
     ações {
@@ -1963,7 +1972,8 @@ regra ("Command | Toggle Invisible (Hold Deflect)") {
         If((Jogador do Evento).toggle_invisible);
             Definir como Invisível(Jogador do Evento, Todos);
         Término;
-        Mensagem Pequena(Jogador do Evento, String Personalizada("   {0} {1}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("隐身模式"), String Personalizada("Invisible")), If-Then-Else((Jogador do Evento).toggle_invisible, String Personalizada("on"), String Personalizada("off"))));
+        Mensagem Pequena(Jogador do Evento, String Personalizada("  {0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒInvisibleInvisibleInvisible"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador do Evento).toggle_invisible, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ | On | On | On"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ | Off | Off | Off"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))))));
+        "\\"   {0} {1}\\".format(\\"隐身模式\\" checkCN \\"Invisible\\", \\"On\\" if eventPlayer.toggle_invisible else \\"Off\\"))"
         Reproduzir Efeito(Jogador do Evento, Som de Impacto para Penalidade, Nulo, Jogador do Evento, 100);
     }
 }
@@ -1975,8 +1985,7 @@ regra ("Command | Preview Orbs & Portals (Hold Primary + Secondary)") {
         Tudo;
     }
     condições {
-        "@Condition eventPlayer.editor_on == false"
-        (Jogador do Evento).lockState == False;
+        "@Condition EditorOn == false"
         (Jogador do Evento).lockState == False;
         (Jogador do Evento).checkpoint_notLast != False;
         É Botão Segurado(Jogador do Evento, Botão(Disparo Primário)) == True;
@@ -2048,24 +2057,24 @@ regra ("Command | Restart Run (Crouch + Interact + Deflect)") {
         If(Global.CompMode);
             Esperar(False, Ignorar Condição);
             If(Comparar(Global.CompTime, <, 1));
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   比赛结束"), String Personalizada("   Competition is over")));
+                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   比赛结束"), String Personalizada("   Competition Is Over")));
                 Definir Variável de Jogador(Jogador do Evento, lockState, False);
                 Anular;
             Else If((Jogador do Evento).comp_done);
                 Definir Variável de Jogador(Jogador do Evento, lockState, False);
                 Anular;
             Else If(E(Global.CompRestartLimit, (Jogador do Evento).checkpoint_notLast));
-                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   禁止在此比赛中运行期间重新启动"), String Personalizada("   Restart during run is disabled for this competition")));
+                Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   禁止在此比赛中运行期间重新启动"), String Personalizada("   Restart During Run Is Disabled For This Competition")));
                 Definir Variável de Jogador(Jogador do Evento, lockState, False);
                 Anular;
             Else If(Global.CompAtmpNum);
                 If(Comparar((Jogador do Evento).comp_countAttempts, ==, Global.CompAtmpNum));
-                    Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   最后一次尝试"), String Personalizada("   This is your final attempt")));
+                    Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   最后一次尝试"), String Personalizada("   This Is Your Final Attempt")));
                     Definir Variável de Jogador(Jogador do Evento, lockState, False);
                     Anular;
                 Término;
                 If(Comparar((Jogador do Evento).comp_countAttempts, <, Nulo));
-                    Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   你没有尝试过"), String Personalizada("   You are out of attempts")));
+                    Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   你没有尝试过"), String Personalizada("   You Are Out Of Attempts")));
                     Definir Variável de Jogador(Jogador do Evento, lockState, False);
                     Anular;
                 Término;
@@ -2087,7 +2096,7 @@ regra ("Command | Restart Run (Crouch + Interact + Deflect)") {
             Ressuscitar(Jogador do Evento);
         Término;
         Chamar sub-rotina(StartGame);
-        Reproduzir Efeito(Jogador do Evento, Som de Explosão para Anel, Cor(Branco), Jogador do Evento, 100);
+        Reproduzir Efeito(Jogador do Evento, Som de Explosão para Anel, Nulo, Jogador do Evento, 100);
         Esperar(Global.CompMode, Ignorar Condição);
         "eventPlayer.allowButton(Button.ABILITY_1)"
         Definir Variável de Jogador(Jogador do Evento, lockState, False);
@@ -2105,19 +2114,18 @@ regra ("Command | Spectate (Hold Interact)") {
     condições {
         É Botão Segurado(Jogador do Evento, Botão(Interagir)) == True;
         É Botão Segurado(Jogador do Evento, Botão(Habilidade 2)) == False;
-        E((Jogador do Evento).editor_on, Ou(Ou(É Botão Segurado(Jogador do Evento, Botão(Corpo a corpo)), É Botão Segurado(Jogador do Evento, Botão(Disparo Primário))), É Botão Segurado(Jogador do Evento, Botão(Disparo Secundário)))) == False;
+        E(Global.EditorOn, Ou(Ou(É Botão Segurado(Jogador do Evento, Botão(Corpo a corpo)), É Botão Segurado(Jogador do Evento, Botão(Disparo Primário))), É Botão Segurado(Jogador do Evento, Botão(Disparo Secundário)))) == False;
     }
     ações {
-        "@Condition false == false"
         Esperar(True, Anular Quando For Falso);
         "editor has interact combos"
-        If((Jogador do Evento).editor_on);
+        If(Global.EditorOn);
             Esperar(True, Anular Quando For Falso);
         Término;
+        Ativar Ressurgimento Integrado ao Modo de Jogo(Jogador do Evento);
+        Desativar Ressurgimento Integrado ao Modo de Jogo(Jogador do Evento);
         If((Jogador do Evento).toggle_spectate);
-            "eventPlayer.enableRespawn()"
             Ressuscitar(Jogador do Evento);
-            "eventPlayer.respawn()"
             If((Jogador do Evento).toggle_practice);
                 Acompanhar Variável de Jogador na Medida(Jogador do Evento, timer_practice, 999999999999, True, Nenhuma);
             Else If((Jogador do Evento).checkpoint_notLast);
@@ -2125,14 +2133,13 @@ regra ("Command | Spectate (Hold Interact)") {
             Término;
             Chamar sub-rotina(CheckpointFailReset);
         Else;
-            Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("   再次长按互动键关闭观战模式"), String Personalizada("   Hold Interact again to turn off spectate mode")));
             Definir Variável de Jogador(Jogador do Evento, toggle_invincible, False);
             Chamar sub-rotina(TimerPause);
             Parar de Acompanhar Variável de Jogador(Jogador do Evento, timer_practice);
-            "eventPlayer.disableRespawn()"
             Definir Dano Recebido(Jogador do Evento, 100);
             Abater(Jogador do Evento, Nulo);
             Definir Dano Recebido(Jogador do Evento, 0);
+            Mensagem Pequena(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   Hold Interact Again To Turn Off Spectate Mode   Hold Interact Again To Turn Off Spectate Mode   Hold Interact Agai{0}", String Personalizada("n To Turn Off Spectate Mode")), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
         Término;
         Definir Variável de Jogador(Jogador do Evento, toggle_spectate, Não((Jogador do Evento).toggle_spectate));
     }
@@ -2157,18 +2164,21 @@ regra ("Command | Toggle Invincible Mode (Melee + Reload)") {
         Definir Variável de Jogador(Jogador do Evento, toggle_invincible, Não((Jogador do Evento).toggle_invincible));
         Definir Variável de Jogador(Jogador do Evento, cache_collectedLocks, Matriz Vazia);
         If((Jogador do Evento).toggle_invincible);
-            Mensagem Grande(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("探点模式"), String Personalizada("Invincible mode")));
+            "\\"探点模式\\" checkCN \\"Invincible mode\\""
+            Mensagem Grande(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒInvincible ModeInvincible ModeInvincible Mode"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
             Chamar sub-rotina(TimerPause);
             Parar de Acompanhar Variável de Jogador(Jogador do Evento, timer_practice);
-            Regra de início(CheckUlt, Regra de reinício);
-            Regra de início(CheckAbility1, Regra de reinício);
+            Regra de início(CheckUlt, Não fazer nada);
+            Regra de início(CheckAbility1, Não fazer nada);
         Else;
             If((Jogador do Evento).toggle_practice);
-                Mensagem Grande(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("练习模式"), String Personalizada("Practice mode")));
+                "\\"练习模式\\" checkCN \\"Practice mode\\""
+                Mensagem Grande(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPractice ModePractice ModePractice Mode"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
                 Acompanhar Variável de Jogador na Medida(Jogador do Evento, timer_practice, 999999999999, True, Nenhuma);
                 Chamar sub-rotina(CheckpointFailReset);
             Else If((Jogador do Evento).checkpoint_notLast);
-                Mensagem Grande(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("跑图模式"), String Personalizada("Normal mode")));
+                "\\"跑图模式\\" checkCN \\"Normal mode\\""
+                Mensagem Grande(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒNormal ModeNormal ModeNormal Mode"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
                 Chamar sub-rotina(TimerResume);
                 Chamar sub-rotina(CheckpointFailReset);
             Término;
@@ -2186,7 +2196,7 @@ regra ("Command | Toggle Practice Mode (Melee + Ultimate)") {
         Tudo;
     }
     condições {
-        (Jogador do Evento).editor_on == False;
+        Global.EditorOn == False;
         Global.CompMode == False;
         (Jogador do Evento).lockState == False;
         É Vivo(Jogador do Evento) == True;
@@ -2198,7 +2208,8 @@ regra ("Command | Toggle Practice Mode (Melee + Ultimate)") {
         Definir Variável de Jogador(Jogador do Evento, lockState, True);
         Definir Variável de Jogador(Jogador do Evento, toggle_practice, Não((Jogador do Evento).toggle_practice));
         If((Jogador do Evento).toggle_practice);
-            Mensagem Grande(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("练习模式"), String Personalizada("Practice mode")));
+            "\\"练习模式\\" checkCN \\"Practice mode\\""
+            Mensagem Grande(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPractice ModePractice ModePractice Mode"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
             Chamar sub-rotina(TimerPause);
             Definir Variável de Jogador(Jogador do Evento, checkpoint_practice, (Jogador do Evento).checkpoint_current);
             Definir Variável de Jogador(Jogador do Evento, timer_splitDisplay, Multiplicar(-999999999999, Comparar((Jogador do Evento).timer_splitDisplay, <=, -999999999999)));
@@ -2210,7 +2221,8 @@ regra ("Command | Toggle Practice Mode (Melee + Ultimate)") {
                 Chamar sub-rotina(CheckpointFailReset);
             Término;
         Else;
-            Mensagem Grande(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("跑图模式"), String Personalizada("Normal mode")));
+            "\\"跑图模式\\" checkCN \\"Normal mode\\""
+            Mensagem Grande(Jogador do Evento, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒNormal ModeNormal ModeNormal Mode"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))));
             Parar de Acompanhar Variável de Jogador(Jogador do Evento, timer_practice);
             Definir Variável de Jogador(Jogador do Evento, checkpoint_current, (Jogador do Evento).checkpoint_practice);
             Chamar sub-rotina(UpdateCache);
@@ -2233,7 +2245,7 @@ regra ("Command | Restart Practice (Hold Interact)") {
         Tudo;
     }
     condições {
-        (Jogador do Evento).editor_on == False;
+        Global.EditorOn == False;
         (Jogador do Evento).lockState == False;
         (Jogador do Evento).toggle_practice != False;
         Ou(É Vivo(Jogador do Evento), (Jogador do Evento).toggle_spectate) == True;
@@ -2270,7 +2282,7 @@ regra ("Command | Skip (Crouch + Primary-Next | Secondary-Previous)") {
         Contagem de(Global.A) > True;
         Global.EditorMoveItem == False;
         E((Jogador do Evento).editor_lock, Comparar(Jogador do Evento, ==, Jogador Anfitrião)) == False;
-        Ou((Jogador Anfitrião).editor_on, (Jogador do Evento).toggle_practice) == True;
+        Ou(Global.EditorOn, (Jogador do Evento).toggle_practice) == True;
         (Jogador do Evento).lockState == False;
         É Botão Segurado(Jogador do Evento, Botão(Agachar)) == True;
         É Botão Segurado(Jogador do Evento, Botão(Disparo Primário)) != É Botão Segurado(Jogador do Evento, Botão(Disparo Secundário));
@@ -2316,8 +2328,9 @@ regra ("Command | Quick Reset (Reload | Hold Reload to Enable)") {
         Término;
         Esperar(True, Anular Quando For Falso);
         Definir Variável de Jogador(Jogador do Evento, toggle_quickRestart, Não((Jogador do Evento).toggle_quickRestart));
-        Reproduzir Efeito(Jogador do Evento, Som de Impacto para Bônus, Cor(Branco), Jogador do Evento, 100);
-        Mensagem Grande(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else((Jogador do Evento).toggle_quickRestart, String Personalizada("快速回点已启用"), String Personalizada("快速回点已关闭")), If-Then-Else((Jogador do Evento).toggle_quickRestart, String Personalizada("Quick reset is enabled"), String Personalizada("Quick reset is disabled"))));
+        Reproduzir Efeito(Jogador do Evento, Som de Impacto para Bônus, Nulo, Jogador do Evento, 100);
+        "(\\"快速回点已启用\\" if eventPlayer.toggle_quickRestart else \\"快速回点已关闭\\") checkCN\\n\\"Quick reset is enabled\\" if eventPlayer.toggle_quickRestart else \\"Quick reset is disabled\\""
+        Mensagem Grande(Jogador do Evento, If-Then-Else((Jogador do Evento).toggle_quickRestart, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒQuick Reset Is EnabledQuick Reset Is EnabledQuick Reset Is Enabled"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒQuick Reset Is DisabledQuick Reset Is DisabledQuick Reset Is Disabled"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))));
     }
 }
 
@@ -2329,7 +2342,7 @@ regra ("Command | Toggle Hud (Hold Secondary)") {
     }
     condições {
         Global.EditorMoveItem == False;
-        E(E((Jogador do Evento).editor_on, Comparar(Jogador do Evento, ==, Jogador Anfitrião)), É Botão Segurado(Jogador do Evento, Botão(Corpo a corpo))) == False;
+        E(E(Global.EditorOn, Comparar(Jogador do Evento, ==, Jogador Anfitrião)), É Botão Segurado(Jogador do Evento, Botão(Corpo a corpo))) == False;
         É Botão Segurado(Jogador do Evento, Botão(Disparo Secundário)) == True;
         É Botão Segurado(Jogador do Evento, Botão(Disparo Primário)) == False;
         "don't activate during skipping"
@@ -2338,8 +2351,9 @@ regra ("Command | Toggle Hud (Hold Secondary)") {
     ações {
         Esperar(1.5, Anular Quando For Falso);
         Definir Variável de Jogador(Jogador do Evento, toggle_guide, Não((Jogador do Evento).toggle_guide));
-        Reproduzir Efeito(Jogador do Evento, Som de Impacto para Bônus, Cor(Branco), Jogador do Evento, 100);
-        Mensagem Pequena(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else((Jogador do Evento).toggle_guide, String Personalizada("   HUD已隐藏"), String Personalizada("   HUD已开启")), If-Then-Else((Jogador do Evento).toggle_guide, String Personalizada("   Hud is now hidden"), String Personalizada("   Hud is now shown"))));
+        Mensagem Pequena(Jogador do Evento, If-Then-Else((Jogador do Evento).toggle_guide, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   HUD Is Now Shown   HUD Is Now Shown   HUD Is Now Shown"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ   HUD Is Now Hidden   HUD Is Now Hidden   HUD Is Now Hidden"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))));
+        "(\\"   HUD已隐藏\\" if eventPlayer.toggle_guide else  \\"   HUD已开启\\")\\ncheckCN\\n(\\"   Hud is now hidden\\" if eventPlayer.toggle_guide else \\"   Hud is now shown\\"))"
+        Reproduzir Efeito(Jogador do Evento, Som de Impacto para Bônus, Nulo, Jogador do Evento, 100);
     }
 }
 
@@ -2382,7 +2396,7 @@ regra ("Command | Toggle 3rd Person Camera (Hold Crouch + Jump)") {
     }
 }
 
-regra ("<tx0C00000000001344> Huds <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Huds ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -2410,35 +2424,36 @@ regra ("Huds | Global Localplayer") {
             Definir Variável Global(Code, String Personalizada("code here - 代码"));
         Término;
         Definir Variável Global(Cachedcredits, Nulo);
-        "hudSubtext(localPlayer.toggle_guide, \\"Discord: dsc.gg/genjiparkour\\" LeftAlign96, HudPosition.LEFT, HO.data_dsc, ColorConfig[Customize.dsc], HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
-        Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else((Jogador Local).toggle_guide, String Personalizada("Discord: dsc.gg/genjiparkour"), Matriz Vazia), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("作者: {0}                                                                                                ", Global.Name), String Personalizada("Made by: {0}                                                                                                ", Global.Name)), Esquerda, -200, Nulo, Valor na Matriz(Global.ColorConfig, 18), Primeiro de(Global.ColorConfig), Visível para e String, Visibilidade-padrão);
-        Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
-        Criar Texto de HUD(Primeiro de(True), Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("代码: {0}                                                                                                ", Global.Code), String Personalizada("Map code: {0}                                                                                                ", Global.Code)), Esquerda, -199, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, True), Visível para e String, Visibilidade-padrão);
-        Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
+        If(Não(Global.EditorOn));
+            Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else((Jogador Local).toggle_guide, String Personalizada("Discord: dsc.gg/genjiparkour"), Matriz Vazia), String Personalizada("{0}: {1}                                                                                                ", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒMade ByMade ByMade By"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Global.Name), Esquerda, -200, Nulo, Valor na Matriz(Global.ColorConfig, 18), Primeiro de(Global.ColorConfig), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD(Primeiro de(True), Nulo, Nulo, String Personalizada("{0}: {1}                                                                                                ", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒMap CodeMap CodeMap Code"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Global.Code), Esquerda, -199, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, True), Visível para e String, Visibilidade-padrão);
+            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} {1} + {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} | {1}", String de Mapeamento de Entrada(Botão(Disparo Secundário)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPreview CPPreview CPPreview CP"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))))), Direita, -160, Nulo, Nulo, If-Then-Else((Jogador Local).preview_array1, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(Primeiro de(E((Jogador Local).preview_array1, (Jogador Local).toggle_guide)), Nulo, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify Zoom\\nAim | Change Preview AngleWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify{0}", String Personalizada(" Zoom\\nAim | Change Preview AngleWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify Zoom\\nAim | Change Preview Angle")), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Nulo, Topo, -171, Nulo, Valor na Matriz(Global.ColorConfig, 6), Nulo, Visível para e String, Nunca Visível);
+            Criar Texto de HUD(Jogador Local, Nulo, Nulo, If-Then-Else(Ou(Comparar((Jogador Local).timer_splitDisplay, <=, -999999999999), (Jogador Local).toggle_spectate), Matriz Vazia, String Personalizada("{0}{1}                                                                                                ", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒSplit: Split: Split: "), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), (Jogador Local).timer_splitDisplay)), Esquerda, -195, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 3), Visível para e String, Visibilidade-padrão);
+            "Remove no hints - visual and element bloat"
+            If(Contagem de(Global.HintText));
+                Criar Texto de HUD(Primeiro de(E((Jogador Local).toggle_guide, Matriz Contém(Global.HintCp, (Jogador Local).checkpoint_current))), Nulo, String Personalizada("{0}{1}", If-Then-Else((Jogador Local).toggle_hints, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ― ― ― ― ― Hint ― ― ― ― ―\\n― ― ― ― ― Hint ― ― ― ― ―\\n― ― ― ― ― Hint ― ― ― ― ―\\n"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ― ― ― Hint Available ― ― ―― ― ― Hint Available ― ― ―― ― ― Hint Available ― ― ―"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), If-Then-Else((Jogador Local).toggle_hints, Valor na Matriz(Global.HintText, Índice do Valor da Matriz(Global.HintCp, (Jogador Local).checkpoint_current)), Matriz Vazia)), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), If-Then-Else((Jogador Local).toggle_hints, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHide HintHide HintHide Hint"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒShow HintShow HintShow Hint"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))))), Direita, -151, Nulo, If-Then-Else((Jogador Local).toggle_hints, Cor(Verde), Cor(Laranja)), If-Then-Else(Matriz Contém(Global.HintCp, (Jogador Local).checkpoint_current), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5)), Cor(Cinza)), Visível para String e Cor, Visibilidade-padrão);
+            Término;
+            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | {1}\\n{2}", String de Mapeamento de Entrada(Botão(Interagir)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒRestartRestartRestart"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String Personalizada("{0} {1} | {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Corpo a corpo)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒLeaderboardLeaderboardLeaderboard"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))))), Direita, -156, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
+            Definir Variável Global(Difficultyhud, Matriz(Caixa de Combinação de Configurações do Workshop(String Personalizada("Map Settings ■ 地图设置 ■ 맵 설정"), String Personalizada("Difficulty 󠀨Display Hud󠀩 ■ 难度 󠀨顶部hud󠀩 ■ 난이도 󠀨HUD 디스플레이󠀩"), 0, Matriz(String Personalizada("<fg27AAFFFF>Playtest ■ 游戏测试 ■ 플레이테스트"), String Personalizada("<fgA0E81BFF>Easy-"), String Personalizada("<fgA0E81BFF>Easy"), String Personalizada("<fgA0E81BFF>Easy+"), String Personalizada("<fge0e000FF>Medium-"), String Personalizada("<fge0e000FF>Medium"), String Personalizada("<fge0e000FF>Medium+"), String Personalizada("<fgEC9900FF>Hard-"), String Personalizada("<fgEC9900FF>Hard"), String Personalizada("<fgEC9900FF>Hard+"), String Personalizada("<fgFF4500FF>Very Hard-"), String Personalizada("<fgFF4500FF>Very Hard"), String Personalizada("<fgFF4500FF>Very Hard+"), String Personalizada("<fgC80013FF>Extreme-"), String Personalizada("<fgC80013FF>Extreme"), String Personalizada("<fgC80013FF>Extreme+"), String Personalizada("<fg960000FF>Hell"), String Personalizada("Do Not Display ■ 不显示 ■ 표시 X")), 1), Alternar Configuração do Workshop(String Personalizada("Map Settings ■ 地图设置 ■ 맵 설정"), String Personalizada("Playtest Display ■ 游戏测试 ■ 플레이테스트 디스플레이"), False, 2)));
+            "display\\n17th entry is 'dont display'"
+            If(Comparar(Primeiro de(Global.Difficultyhud), !=, 17));
+                Criar Texto de HUD(Primeiro de(E((Jogador Local).toggle_guide, Não((Jogador Local).toggle_leaderboard))), If-Then-Else(Último de(Global.Difficultyhud), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPlaytestPlaytestPlaytest"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Matriz Vazia), Valor na Matriz(Matriz(String Personalizada("Playtest"), String Personalizada("Easy -"), String Personalizada("Easy"), String Personalizada("Easy +"), String Personalizada("Medium -"), String Personalizada("Medium"), String Personalizada("Medium +"), String Personalizada("Hard -"), String Personalizada("Hard"), String Personalizada("Hard +"), String Personalizada("Very Hard -"), String Personalizada("Very Hard"), String Personalizada("Very Hard +"), String Personalizada("Extreme -"), String Personalizada("Extreme"), String Personalizada("Extreme +"), String Personalizada("Hell"), Nulo), Primeiro de(Global.Difficultyhud)), Nulo, Topo, -173, Cor(Azul), Valor na Matriz(Matriz(Cor(Azul), Cor(Verde-limão), Cor(Verde-limão), Cor(Verde-limão), Cor(Amarelo), Cor(Amarelo), Cor(Amarelo), Cor(Laranja), Cor(Laranja), Cor(Laranja), Cor Personalizada(255, 69, 0, 255), Cor Personalizada(255, 69, 0, 255), Cor Personalizada(255, 69, 0, 255), Cor(Vermelho), Cor(Vermelho), Cor(Vermelho), Cor Personalizada(150, 0, 0, 255), Nulo), Primeiro de(Global.Difficultyhud)), Nulo, Visível para e String, Visibilidade-padrão);
+            Término;
+        Término;
         "global huds"
-        Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("房间将在 {0} 分钟后重启 - v1.10.3G{1}", Global.TimeRemaining, If-Then-Else(Comparar(Contagem de Texto, >=, 128), String Personalizada("\\n错误: 已达到最大HUD数量上限"), Matriz Vazia)), String Personalizada("Server Restart in {0} Min - v1.10.3G{1}", Global.TimeRemaining, If-Then-Else(Comparar(Contagem de Texto, >=, 128), String Personalizada("\\nerror: max hud count reached"), Matriz Vazia))), Nulo, Direita, -162, Nulo, Valor na Matriz(Global.ColorConfig, 2), Nulo, Visível para e String, Sempre Visível);
+        Criar Texto de HUD(Primeiro de(True), Nulo, String Personalizada("{0}{1}{2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒServer Restart In Server Restart In Server Restart In "), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Global.TimeRemaining, String Personalizada("{0}v1.10.4A{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ Min -  Min -  Min - "), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else(Comparar(Contagem de Texto, >=, 128), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ\\nError: Max HUD Count Reached\\nError: Max HUD Count Reached\\nError: Max HUD Count Reached"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Matriz Vazia))), Nulo, Direita, -162, Nulo, Valor na Matriz(Global.ColorConfig, 2), Nulo, Visível para e String, Sempre Visível);
         "padding for custom hud display"
-        Criar Texto de HUD(Primeiro de(True), Nulo, Nulo, String Personalizada("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nv"), Topo, -164, Nulo, Nulo, Cor(Laranja), Visível para, Visibilidade-padrão);
-        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} {1} | {2}快速回点", If-Then-Else((Jogador Local).toggle_quickRestart, Matriz Vazia, String Personalizada("长按")), String de Mapeamento de Entrada(Botão(Recarregar)), If-Then-Else((Jogador Local).toggle_quickRestart, Matriz Vazia, String Personalizada("启用"))), String Personalizada("{0} {1} |{2} quick reset", If-Then-Else((Jogador Local).toggle_quickRestart, Matriz Vazia, String Personalizada("Hold")), String de Mapeamento de Entrada(Botão(Recarregar)), If-Then-Else((Jogador Local).toggle_quickRestart, Matriz Vazia, String Personalizada(" Enable")))), Direita, -157, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
-        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | 探点模式{2}", String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), If-Then-Else((Jogador Local).toggle_invincible, String Personalizada(" | 启用"), Matriz Vazia)), String Personalizada("{0} + {1} | Invincible{2}", String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), If-Then-Else((Jogador Local).toggle_invincible, String Personalizada(" | ON"), Matriz Vazia))), Direita, -154, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_invincible, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
-        Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else((Jogador Local).toggle_guide, Matriz Vazia, String Personalizada("{0}{1}{2}", If-Then-Else((Jogador Local).toggle_invincible, String de Ícone de Habilidade(Herói(Baptiste), Botão(Habilidade 2)), Matriz Vazia), If-Then-Else((Jogador Local).toggle_practice, String de Ícone de Habilidade(Herói(D.Va), Botão(Habilidade Suprema)), Matriz Vazia), If-Then-Else((Jogador Local).toggle_invisible, String de Ícone de Habilidade(Herói(Sombra), Botão(Habilidade 1)), Matriz Vazia))), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("长按 {0} | 切换显示HUD", String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("Hold {0} | toggle hud", String de Mapeamento de Entrada(Botão(Disparo Secundário)))), Direita, -161, Nulo, Valor na Matriz(Global.ColorConfig, 5), Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
-        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("长按 {0} + {1} | 预览关卡", String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário))), String Personalizada("Hold {0} + {1} | Preview cp", String de Mapeamento de Entrada(Botão(Disparo Primário)), String de Mapeamento de Entrada(Botão(Disparo Secundário)))), Direita, -160, Nulo, Nulo, If-Then-Else((Jogador Local).preview_array1, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
-        "HudStoreEdit.append(getLastCreatedText())"
-        Criar Texto de HUD(Primeiro de(E((Jogador Local).preview_array1, (Jogador Local).toggle_guide)), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("移动键 ◀ ▶ | 预览其他\\n移动键 ◀ ▶ | 修改间距 \\n视角移动 | 调整浏览视角"), String Personalizada("Walk ◀ ▶ | preview others\\nWalk ▲ ▼ | modify zoom\\nAim | change preview angle")), Nulo, Topo, -171, Nulo, Valor na Matriz(Global.ColorConfig, 6), Nulo, Visível para e String, Nunca Visível);
-        "HudStoreEdit.append(getLastCreatedText())"
-        Criar Texto de HUD(Jogador Local, Nulo, Nulo, If-Then-Else(Ou(Comparar((Jogador Local).timer_splitDisplay, <=, -999999999999), (Jogador Local).toggle_spectate), Matriz Vazia, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("单关用时 {0}                                                                                                ", (Jogador Local).timer_splitDisplay), String Personalizada("Split: {0}                                                                                                ", (Jogador Local).timer_splitDisplay))), Esquerda, -195, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 3), Visível para e String, Visibilidade-padrão);
-        Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
+        Criar Texto de HUD(Primeiro de(True), Nulo, Nulo, String Personalizada("­\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n"), Topo, -164, Nulo, Nulo, Cor(Laranja), Visível para, Visibilidade-padrão);
+        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_quickRestart, String Personalizada("{0} | {1}", String de Mapeamento de Entrada(Botão(Recarregar)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒQuick ResetQuick ResetQuick Reset"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), String Personalizada("{0} {1} | {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Recarregar)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒEnable Quick ResetEnable Quick ResetEnable Quick Reset"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))))), Direita, -157, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
+        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Recarregar)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), String Personalizada("{0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒInvincibleInvincibleInvincible"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador Local).toggle_invincible, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ | On | On | On"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Matriz Vazia))), Direita, -154, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_invincible, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
+        Criar Texto de HUD(Primeiro de(True), Nulo, If-Then-Else((Jogador Local).toggle_guide, Matriz Vazia, String Personalizada("{0}{1}{2}", If-Then-Else((Jogador Local).toggle_invincible, String de Ícone de Habilidade(Herói(Baptiste), Botão(Habilidade 2)), Matriz Vazia), If-Then-Else((Jogador Local).toggle_practice, String de Ícone de Habilidade(Herói(D.Va), Botão(Habilidade Suprema)), Matriz Vazia), If-Then-Else((Jogador Local).toggle_invisible, String de Ícone de Habilidade(Herói(Sombra), Botão(Habilidade 1)), Matriz Vazia))), String Personalizada("{0} {1} | {2} HUD", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Disparo Secundário)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒToggleToggleToggle"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), Direita, -161, Nulo, Valor na Matriz(Global.ColorConfig, 5), Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
         "text per checkpoint  text per cp each"
         If(Contagem de(Global.CpHudText));
             Criar Texto de HUD(Primeiro de(E(Matriz Contém(Global.CpHudCp, (Jogador Local).checkpoint_current), (Jogador Local).toggle_guide)), Valor na Matriz(Global.CpHudText, Índice do Valor da Matriz(Global.CpHudCp, (Jogador Local).checkpoint_current)), Nulo, Nulo, Topo, -169, Cor(Azul), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
         Término;
         If(Contagem de(Global.CpIwtText));
             Criar Texto no Mundo(Matriz Contém(Global.CpIwtCp, (Jogador Local).checkpoint_current), Valor na Matriz(Global.CpIwtText, Índice do Valor da Matriz(Global.CpIwtCp, (Jogador Local).checkpoint_current)), Valor na Matriz(Global.CpIwtPos, Índice do Valor da Matriz(Global.CpIwtCp, (Jogador Local).checkpoint_current)), 2, Cortar nas Superfícies, Visível para Posição e String, Global.CpIwtColor, Visibilidade-padrão);
-        Término;
-        "Remove no hints - visual and element bloat"
-        If(Contagem de(Global.HintText));
-            Criar Texto de HUD(Primeiro de(E((Jogador Local).toggle_guide, Matriz Contém(Global.HintCp, (Jogador Local).checkpoint_current))), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else((Jogador Local).toggle_hints, String Personalizada("― ― ― ― ― 提示 ― ― ― ― ―\\n {0} ", Valor na Matriz(Global.HintText, Índice do Valor da Matriz(Global.HintCp, (Jogador Local).checkpoint_current))), String Personalizada("――――――  有可用提示 ――――――")), If-Then-Else((Jogador Local).toggle_hints, String Personalizada("― ― ― ― ― Hint ― ― ― ― ―\\n {0} ", Valor na Matriz(Global.HintText, Índice do Valor da Matriz(Global.HintCp, (Jogador Local).checkpoint_current))), String Personalizada("― ― ― hint available ― ― ―"))), String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade 2)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else((Jogador Local).toggle_hints, String Personalizada("隐藏提示"), String Personalizada("获取提示")), If-Then-Else((Jogador Local).toggle_hints, String Personalizada("hide hint"), String Personalizada("show hint")))), Direita, -151, Nulo, If-Then-Else((Jogador Local).toggle_hints, Cor(Verde), Cor(Laranja)), If-Then-Else(Matriz Contém(Global.HintCp, (Jogador Local).checkpoint_current), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5)), Cor(Cinza)), Visível para String e Cor, Visibilidade-padrão);
-            Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
         Término;
         If(Global.CompMode);
             Criar Texto de HUD(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), (Elemento da Matriz Atual).comp_instructionHud), String Personalizada("                                                                                                                           "), Nulo, Nulo, Topo, -181, Cor(Branco), Nulo, Nulo, Visível para, Visibilidade-padrão);
@@ -2455,25 +2470,14 @@ regra ("Huds | Global Localplayer") {
                 Criar Texto de HUD(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), (Elemento da Matriz Atual).comp_instructionHud), Nulo, Nulo, Valor na Matriz(Global.instructiontext, 3), Topo, -177, Nulo, Nulo, Cor(Branco), Visível para, Visibilidade-padrão);
             Término;
             Criar Texto de HUD(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), (Elemento da Matriz Atual).comp_instructionHud), String Personalizada("                                   Press {0} to start                                ", String de Mapeamento de Entrada(Botão(Interagir))), Nulo, Nulo, Topo, -176, Cor(Branco), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
+        Else If(Não(Global.EditorOn));
+            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} {1} | {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒInvisibleInvisibleInvisible"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador Local).toggle_invisible, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ | On | On | On"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Matriz Vazia))), Direita, -158, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_invisible, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), String Personalizada("{0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPracticePracticePractice"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador Local).toggle_practice, String Personalizada(" | ({0})", (Jogador Local).checkpoint_practice), Matriz Vazia))), Direita, -153, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_practice, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD(Primeiro de(E((Jogador Local).toggle_practice, (Jogador Local).toggle_guide)), Nulo, String Personalizada("{0} + {1} | {2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0}\\n{1} + {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒNext LevelNext LevelNext Level"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Agachar)), String Personalizada("{0} | {1}\\n{2}", String de Mapeamento de Entrada(Botão(Disparo Secundário)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPrevious LevelPrevious LevelPrevious Level"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String Personalizada("{0} | {1}", String de Mapeamento de Entrada(Botão(Interagir)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒRestart PracticeRestart PracticeRestart Practice"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))))))), Nulo, Direita, -152, Nulo, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Nulo, Visível para String e Cor, Visibilidade-padrão);
+            Ignorar(True);
         Else;
-            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("长按 {0} | 观战模式{1}", String de Mapeamento de Entrada(Botão(Interagir)), If-Then-Else((Jogador Local).toggle_spectate, String Personalizada(" | 启用"), Matriz Vazia)), String Personalizada("Hold {0} | Spectate{1}", String de Mapeamento de Entrada(Botão(Interagir)), If-Then-Else((Jogador Local).toggle_spectate, String Personalizada(" | ON"), Matriz Vazia))), Direita, -155, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_spectate, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
-            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("长按 {0} | 隐身模式{1}", String de Mapeamento de Entrada(Botão(Habilidade 2)), If-Then-Else((Jogador Local).toggle_invisible, String Personalizada(" | 启用"), Matriz Vazia)), String Personalizada("Hold {0} | invisible{1}", String de Mapeamento de Entrada(Botão(Habilidade 2)), If-Then-Else((Jogador Local).toggle_invisible, String Personalizada(" | ON"), Matriz Vazia))), Direita, -158, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_invisible, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
-            Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
-            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | 练习模式{2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), If-Then-Else((Jogador Local).toggle_practice, String Personalizada(" | ({0})", (Jogador Local).checkpoint_practice), Matriz Vazia)), String Personalizada("{0} + {1} | Practice{2}", String de Mapeamento de Entrada(Botão(Habilidade Suprema)), String de Mapeamento de Entrada(Botão(Corpo a corpo)), If-Then-Else((Jogador Local).toggle_practice, String Personalizada(" | ({0})", (Jogador Local).checkpoint_practice), Matriz Vazia))), Direita, -153, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_practice, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
-            Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
-            Criar Texto de HUD(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), E((Elemento da Matriz Atual).toggle_practice, (Elemento da Matriz Atual).toggle_guide)), Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} | 下一关\\n{0} + {2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} | 上一关\\n{1} | 回到练习模式起点 ", String de Mapeamento de Entrada(Botão(Disparo Secundário)), String de Mapeamento de Entrada(Botão(Interagir)))), String Personalizada("{0} + {1} | Next level\\n{0} + {2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Disparo Primário)), String Personalizada("{0} | Previous level\\n{1} | Start from practice cp ", String de Mapeamento de Entrada(Botão(Disparo Secundário)), String de Mapeamento de Entrada(Botão(Interagir))))), Nulo, Direita, -152, Nulo, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Nulo, Visível para String e Cor, Visibilidade-padrão);
-            Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
-        Término;
-        "if not hostPlayer.editor_on:\\nfind the value"
-        Definir Variável Global(Difficultyhud, Matriz(Caixa de Combinação de Configurações do Workshop(String Personalizada("map settings \\n地图设置"), String Personalizada("difficulty 󠀨display hud󠀩 - 难度 󠀨顶部hud󠀩"), 0, Matriz(String Personalizada("<fg27AAFFFF>playtest - 游戏测试"), String Personalizada("<fgA0E81BFF>easy-"), String Personalizada("<fgA0E81BFF>easy"), String Personalizada("<fgA0E81BFF>easy+"), String Personalizada("<fge0e000FF>medium-"), String Personalizada("<fge0e000FF>medium"), String Personalizada("<fge0e000FF>medium+"), String Personalizada("<fgEC9900FF>hard-"), String Personalizada("<fgEC9900FF>hard"), String Personalizada("<fgEC9900FF>hard+"), String Personalizada("<fgFF4500FF>very hard-"), String Personalizada("<fgFF4500FF>very hard"), String Personalizada("<fgFF4500FF>very hard+"), String Personalizada("<fgC80013FF>extreme-"), String Personalizada("<fgC80013FF>extreme"), String Personalizada("<fgC80013FF>extreme+"), String Personalizada("<fg960000FF>hell"), String Personalizada("don't display - 不显示")), 0), Alternar Configuração do Workshop(String Personalizada("map settings \\n地图设置"), String Personalizada("Playtest display - 游戏测试"), False, 1)));
-        "display\\n17th entry is 'dont display'"
-        If(Comparar(Primeiro de(Global.Difficultyhud), !=, 17));
-            Criar Texto de HUD(Primeiro de(E((Jogador Local).toggle_guide, Não((Jogador Local).toggle_leaderboard))), If-Then-Else(Último de(Global.Difficultyhud), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("游戏测试"), String Personalizada("Playtest")), Matriz Vazia), Valor na Matriz(Matriz(String Personalizada("playtest"), String Personalizada("easy -"), String Personalizada("easy"), String Personalizada("easy +"), String Personalizada("medium -"), String Personalizada("medium"), String Personalizada("medium +"), String Personalizada("hard -"), String Personalizada("hard"), String Personalizada("hard +"), String Personalizada("very hard -"), String Personalizada("very hard"), String Personalizada("very hard +"), String Personalizada("extreme -"), String Personalizada("extreme"), String Personalizada("extreme +"), String Personalizada("hell"), Nulo), Primeiro de(Global.Difficultyhud)), Nulo, Topo, -173, Cor(Azul), Valor na Matriz(Matriz(Cor(Azul), Cor(Verde-limão), Cor(Verde-limão), Cor(Verde-limão), Cor(Amarelo), Cor(Amarelo), Cor(Amarelo), Cor(Laranja), Cor(Laranja), Cor(Laranja), Cor Personalizada(255, 69, 0, 255), Cor Personalizada(255, 69, 0, 255), Cor Personalizada(255, 69, 0, 255), Cor(Vermelho), Cor(Vermelho), Cor(Vermelho), Cor Personalizada(150, 0, 0, 255), Nulo), Primeiro de(Global.Difficultyhud)), Nulo, Visível para e String, Visibilidade-padrão);
-            Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
-        Término;
-        "restart + leaderboard\\nthis is remade in editor to not include leaderboard"
-        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | 重新开始\\n长按 {1} | 完整成绩排名", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Corpo a corpo)))), String Personalizada("{0} + {1} + {2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Habilidade 2)), String Personalizada("{0} | Restart\\nHold {1} | leaderboard", String de Mapeamento de Entrada(Botão(Interagir)), String de Mapeamento de Entrada(Botão(Corpo a corpo))))), Direita, -156, Nulo, Nulo, Valor na Matriz(Global.ColorConfig, 5), Visível para e String, Visibilidade-padrão);
-        Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
+            //spectateHud:
+            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} {1} | {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Interagir)), String Personalizada("{0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒSpectateSpectateSpectate"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador Local).toggle_spectate, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ | On | On | On"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Matriz Vazia))), Direita, -155, Nulo, Nulo, If-Then-Else((Jogador Local).toggle_spectate, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
     }
 }
 
@@ -2502,7 +2506,7 @@ regra ("Huds | Leaderboard") {
         Término;
         Definir Variável Global(LeaderBoardRemake, String Personalizada("{0}\\n", Global.LeaderBoardRemake));
         "if LeaderBoardFull[0]:"
-        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada(" \\n{0} 排名前5 {0}", String de Ícone(Bandeira)), String Personalizada(" \\n{0} Top 5 {0}", String de Ícone(Bandeira))), Nulo, Direita, -141, Nulo, Cor(Branco), Nulo, Visível para e String, Sempre Visível);
+        Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, String Personalizada(" \\n{0} {1} {0}", String de Ícone(Bandeira), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒTop 5Top 5Top 5"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), Nulo, Direita, -141, Nulo, Cor(Branco), Nulo, Visível para e String, Sempre Visível);
         Definir Variável Global(LeaderBoardHuds, ID de Texto Mais Recente);
         Criar Texto de HUD(Primeiro de(True), String de Ícone de Herói(Herói(Genji)), Primeiro de(Primeiro de(Global.LeaderBoardFull)), Último de(Primeiro de(Global.LeaderBoardFull)), Direita, -140, Cor(Vermelho), Cor(Vermelho), Cor(Vermelho), Visível para, Sempre Visível);
         Modificar Variável Global(LeaderBoardHuds, Juntar à Matriz, ID de Texto Mais Recente);
@@ -2522,7 +2526,7 @@ regra ("Huds | Leaderboard") {
                 Término;
             Término;
         Término;
-        Criar Texto de HUD(If-Then-Else(Avaliar Uma Vez(E(Global.CompMode, Não(Global.CompTime))), True, (Jogador Local).toggle_leaderboard), String Personalizada("　　　　 {0} {1} {0} 　　　　\\n　　　　　　　　　　　　　　　　　　{2}", String de Ícone(Bandeira), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("成绩排名"), String Personalizada("Leaderboard")), Avaliar Uma Vez(Global.LeaderBoardRemake)), Nulo, Nulo, Topo, -165, Cor(Branco), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
+        Criar Texto de HUD(If-Then-Else(Avaliar Uma Vez(E(Global.CompMode, Não(Global.CompTime))), True, (Jogador Local).toggle_leaderboard), String Personalizada("　　　　 {0} {1} {0} 　　　　\\n　　　　　　　　　　　　　　　　　　{2}", String de Ícone(Bandeira), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒLeaderboardLeaderboardLeaderboard"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Avaliar Uma Vez(Global.LeaderBoardRemake)), Nulo, Nulo, Topo, -165, Cor(Branco), Nulo, Nulo, Visível para e String, Visibilidade-padrão);
         Modificar Variável Global(LeaderBoardHuds, Juntar à Matriz, ID de Texto Mais Recente);
         Definir Variável Global(LeaderBoardRemake, Nulo);
         Esperar(False, Ignorar Condição);
@@ -2537,16 +2541,16 @@ regra ("Huds | Each Player") {
     }
     ações {
         Esperar(0.512, Ignorar Condição);
-        Criar Texto de HUD(Jogador do Evento, Nulo, If-Then-Else((Jogador do Evento).toggle_practice, String Personalizada("{0} {1} sec", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("练习用时"), String Personalizada("Practice Time:")), (Jogador do Evento).timer_practice), Matriz Vazia), String Personalizada("{0} {1} sec                                                                                                ", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("用时"), String Personalizada("Time:")), (Jogador do Evento).timer_normal), Esquerda, -196, Nulo, Cor(Cinza), Valor na Matriz(Global.ColorConfig, 3), String, Visibilidade-padrão);
-        Criar Texto de HUD(If-Then-Else((Jogador do Evento).toggle_leaderboard, Nulo, Jogador do Evento), If-Then-Else((Jogador do Evento).preview_array1, String Personalizada(" {0} ({1}/{2}", If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else((Jogador do Evento).preview_i, If-Then-Else(Comparar((Jogador do Evento).preview_i, <=, Contagem de((Jogador do Evento).cache_bouncePosition)), String Personalizada("弹球"), String Personalizada("自定义传送门")), String Personalizada("检查点")), If-Then-Else((Jogador do Evento).preview_i, If-Then-Else(Comparar((Jogador do Evento).preview_i, <=, Contagem de((Jogador do Evento).cache_bouncePosition)), String Personalizada("orb"), String Personalizada("portal")), String Personalizada("checkpoint"))), Somar((Jogador do Evento).preview_i, True), String Personalizada("{0})\\n―――――――――――\\n {1}\\n", Contagem de((Jogador do Evento).preview_array1), If-Then-Else(E(Comparar((Jogador do Evento).preview_i, <=, Contagem de((Jogador do Evento).cache_bouncePosition)), (Jogador do Evento).preview_i), String Personalizada("{0} {1} {2}", If-Then-Else(Valor na Matriz(Global.TQ5, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), Matriz Vazia), If-Then-Else(Valor na Matriz(Global.TQ6, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), Matriz Vazia), String Personalizada("{0} {1}", If-Then-Else(Valor na Matriz(Global.BounceToggleLock, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String de Ícone(Aviso), Matriz Vazia), If-Then-Else(Comparar(Valor na Matriz(Global.EditMode, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), >, Nulo), String de Ícone(Seta: Cima), If-Then-Else(Comparar(Valor na Matriz(Global.EditMode, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), <, Nulo), String de Ícone(Seta: Baixo), Matriz Vazia)))), If-Then-Else((Jogador do Evento).preview_i, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Último de(Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String Personalizada("传送门 {0} 出口 ", Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String Personalizada("传送门 {0} 入口 ", Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i))), If-Then-Else(Último de(Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String Personalizada("portal {0} destination ", Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String Personalizada("portal {0} start ", Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)))), (Jogador do Evento).banString)))), Matriz Vazia), If-Then-Else((Jogador do Evento).preview_array1, Matriz Vazia, String Personalizada("{0}{1} {2}", If-Then-Else(E((Jogador do Evento).toggle_guide, Tamanho da String((Jogador do Evento).banString)), String Personalizada("{0}\\n", (Jogador do Evento).banString), Matriz Vazia), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("关卡"), String Personalizada("Level")), String Personalizada("{0} / {1}", (Jogador do Evento).checkpoint_current, Subtrair(Contagem de(Global.A), True)))), If-Then-Else(E((Jogador do Evento).cache_bounceMaxLocks, Não((Jogador do Evento).preview_array1)), String Personalizada("{0}{1} {2}", Valor na Matriz(Global.ColorConfig, 16), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("球"), String Personalizada(" orbs")), String Personalizada("{0} / {1}", Contagem de((Jogador do Evento).cache_collectedLocks), (Jogador do Evento).cache_bounceMaxLocks)), Matriz Vazia), Topo, -172, Valor na Matriz(Global.ColorConfig, 4), Valor na Matriz(Global.ColorConfig, 4), Valor na Matriz(Global.ColorConfig, 16), Visível para e String, Visibilidade-padrão);
+        Criar Texto de HUD(Jogador do Evento, Nulo, If-Then-Else((Jogador do Evento).toggle_practice, String Personalizada("{0} {1} sec", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPractice Time:Practice Time:Practice Time:"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), (Jogador do Evento).timer_practice), Matriz Vazia), String Personalizada("{0} {1} sec                                                                                                ", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒTime:Time:Time:"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), (Jogador do Evento).timer_normal), Esquerda, -196, Nulo, Cor(Cinza), Valor na Matriz(Global.ColorConfig, 3), String, Visibilidade-padrão);
+        Criar Texto de HUD(If-Then-Else((Jogador do Evento).toggle_leaderboard, Nulo, Jogador do Evento), If-Then-Else((Jogador do Evento).preview_array1, String Personalizada(" {0} ({1}/{2}", If-Then-Else((Jogador do Evento).preview_i, If-Then-Else(Comparar((Jogador do Evento).preview_i, <=, Contagem de((Jogador do Evento).cache_bouncePosition)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒOrbOrbOrb"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPortalPortalPortal"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒCheckpointCheckpointCheckpoint"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), Somar((Jogador do Evento).preview_i, True), String Personalizada("{0})\\n―――――――――――\\n {1}\\n", Contagem de((Jogador do Evento).preview_array1), If-Then-Else(E(Comparar((Jogador do Evento).preview_i, <=, Contagem de((Jogador do Evento).cache_bouncePosition)), (Jogador do Evento).preview_i), String Personalizada("{0} {1} {2}", If-Then-Else(Valor na Matriz(Global.TQ5, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade Suprema)), Matriz Vazia), If-Then-Else(Valor na Matriz(Global.TQ6, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String de Ícone de Habilidade(Herói(Genji), Botão(Habilidade 1)), Matriz Vazia), String Personalizada("{0} {1}", If-Then-Else(Valor na Matriz(Global.BounceToggleLock, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String de Ícone(Aviso), Matriz Vazia), If-Then-Else(Comparar(Valor na Matriz(Global.EditMode, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), >, Nulo), String de Ícone(Seta: Cima), If-Then-Else(Comparar(Valor na Matriz(Global.EditMode, Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), <, Nulo), String de Ícone(Seta: Baixo), Matriz Vazia)))), If-Then-Else((Jogador do Evento).preview_i, If-Then-Else(Último de(Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String Personalizada("{0} {1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPortal ExitPortal ExitPortal Exit"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i)), String Personalizada("{0} {1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒPortal StartPortal StartPortal Start"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Valor na Matriz((Jogador do Evento).preview_array2, (Jogador do Evento).preview_i))), (Jogador do Evento).banString)))), Matriz Vazia), If-Then-Else((Jogador do Evento).preview_array1, Matriz Vazia, String Personalizada("{0}{1} {2}", If-Then-Else(E((Jogador do Evento).toggle_guide, (Jogador do Evento).banString), String Personalizada("{0}\\n", (Jogador do Evento).banString), Matriz Vazia), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒLevelLevelLevel"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String Personalizada("{0} / {1}", (Jogador do Evento).checkpoint_current, Subtrair(Contagem de(Global.A), True)))), If-Then-Else(E((Jogador do Evento).cache_bounceMaxLocks, Não((Jogador do Evento).preview_array1)), String Personalizada("{0} {1} / {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ{0} Orbs{0} Orbs{0} Orbs", Valor na Matriz(Global.ColorConfig, 16)), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Contagem de((Jogador do Evento).cache_collectedLocks), (Jogador do Evento).cache_bounceMaxLocks), Matriz Vazia), Topo, -172, Valor na Matriz(Global.ColorConfig, 4), Valor na Matriz(Global.ColorConfig, 4), Valor na Matriz(Global.ColorConfig, 16), Visível para e String, Visibilidade-padrão);
         Criar Texto de HUD(Jogador do Evento, Nulo, Nulo, String Personalizada("{0}{1}{2}", If-Then-Else(Componente X de((Jogador do Evento).cache_inputs), String Personalizada("■"), String Personalizada("□")), If-Then-Else(Comparar(Componente Z de(Aceleração de(Jogador do Evento)), >, Nulo), String Personalizada("▲"), String Personalizada("△")), String Personalizada("{0}\\n{1}{2}", If-Then-Else(Componente Y de((Jogador do Evento).cache_inputs), String Personalizada("●"), String Personalizada("○")), If-Then-Else(Comparar(Componente X de(Aceleração de(Jogador do Evento)), >, Nulo), String Personalizada("◀"), String Personalizada("◁")), String Personalizada("{0}{1}                                                                                                ", If-Then-Else(Comparar(Componente Z de(Aceleração de(Jogador do Evento)), <, Nulo), String Personalizada("▼"), String Personalizada("∇")), If-Then-Else(Comparar(Componente X de(Aceleração de(Jogador do Evento)), <, Nulo), String Personalizada("▶"), String Personalizada("▷"))))), Esquerda, -192, Nulo, Nulo, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 3)), String, Visibilidade-padrão);
         "climb/bhop indicators"
-        Criar Texto de HUD(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0}{1}", If-Then-Else((Jogador do Evento).skill_usedClimb, String Personalizada("爬墙已用"), String Personalizada("爬墙未用")), If-Then-Else((Jogador do Evento).skill_countMulti, String Personalizada(" ({0})", (Jogador do Evento).skill_countMulti), Matriz Vazia)), String Personalizada("Climb{0}", If-Then-Else((Jogador do Evento).skill_countMulti, String Personalizada(" ({0})", (Jogador do Evento).skill_countMulti), Matriz Vazia))), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -193, If-Then-Else((Jogador do Evento).skill_usedClimb, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 8)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 7))), Nulo, Nulo, String e Cor, Visibilidade-padrão);
-        Criar Texto de HUD(Jogador do Evento, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("{0}{1}", If-Then-Else((Jogador do Evento).skill_usedBhop, String Personalizada("小跳已用"), String Personalizada("小跳未用")), If-Then-Else((Jogador do Evento).skill_countCreates, String Personalizada(" ({0})", (Jogador do Evento).skill_countCreates), Matriz Vazia)), String Personalizada("Bhop{0}", If-Then-Else((Jogador do Evento).skill_countCreates, String Personalizada(" ({0})", (Jogador do Evento).skill_countCreates), Matriz Vazia))), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -194, If-Then-Else((Jogador do Evento).skill_usedBhop, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 8)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 7))), Nulo, Nulo, String e Cor, Visibilidade-padrão);
-        Criar Texto no Mundo(If-Then-Else(E((Jogador do Evento).checkpoint_notLast, (Jogador do Evento).toggle_guide), Jogador do Evento, Nulo), If-Then-Else(E((Jogador do Evento).cache_bounceMaxLocks, Comparar(Contagem de((Jogador do Evento).cache_collectedLocks), <, (Jogador do Evento).cache_bounceMaxLocks)), String Personalizada("{0} {1}", String de Ícone(Aviso), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("先收集橙球"), String Personalizada("collect orbs first"))), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("到这里来"), String Personalizada("come here"))), Valor na Matriz(Global.A, Somar((Jogador do Evento).checkpoint_current, True)), 1.5, Não Cortar, Visível para Posição e String, Valor na Matriz(Global.ColorConfig, 13), Visibilidade-padrão);
+        Criar Texto de HUD(Jogador do Evento, String Personalizada("{0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒClimbClimbClimb"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador do Evento).skill_countMulti, String Personalizada(" ({0})", (Jogador do Evento).skill_countMulti), Matriz Vazia)), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -193, If-Then-Else((Jogador do Evento).skill_usedClimb, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 8)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 7))), Nulo, Nulo, String e Cor, Visibilidade-padrão);
+        Criar Texto de HUD(Jogador do Evento, String Personalizada("{0}{1}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒBhopBhopBhop"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador do Evento).skill_countCreates, String Personalizada(" ({0})", (Jogador do Evento).skill_countCreates), Matriz Vazia)), Nulo, String Personalizada("                                                                                                                                "), Esquerda, -194, If-Then-Else((Jogador do Evento).skill_usedBhop, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 8)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 7))), Nulo, Nulo, String e Cor, Visibilidade-padrão);
+        Criar Texto no Mundo(If-Then-Else(E((Jogador do Evento).checkpoint_notLast, (Jogador do Evento).toggle_guide), Jogador do Evento, Nulo), If-Then-Else(E((Jogador do Evento).cache_bounceMaxLocks, Comparar(Contagem de((Jogador do Evento).cache_collectedLocks), <, (Jogador do Evento).cache_bounceMaxLocks)), String Personalizada("{0}{1}", String de Ícone(Aviso), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒCollect Orbs FirstCollect Orbs FirstCollect Orbs First"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒCome HereCome HereCome Here"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia))))), Valor na Matriz(Global.A, Somar((Jogador do Evento).checkpoint_current, True)), 1.5, Não Cortar, Visível para Posição e String, Valor na Matriz(Global.ColorConfig, 13), Visibilidade-padrão);
         Esperar(2.5, Ignorar Condição);
         If(Global.CompMode);
-            Criar Texto de HUD(Jogador do Evento, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.CompTime, String Personalizada("剩余时间: {0} 分钟{1}", Global.CompTime, If-Then-Else(Comparar((Jogador do Evento).comp_countAttempts, <, Nulo), String Personalizada("\\n你没有尝试过"), If-Then-Else(Global.CompAtmpNum, String Personalizada("\\n尝试 {0} / {1}", (Jogador do Evento).comp_countAttempts, Global.CompAtmpNum), Matriz Vazia))), String Personalizada("! 比赛结束 !")), If-Then-Else(Global.CompTime, String Personalizada("time left: {0} min{1}", Global.CompTime, If-Then-Else(Comparar((Jogador do Evento).comp_countAttempts, <, Nulo), String Personalizada("\\nYou are out of attempts"), If-Then-Else(Global.CompAtmpNum, String Personalizada("\\nAttempt {0} / {1}", (Jogador do Evento).comp_countAttempts, Global.CompAtmpNum), Matriz Vazia))), String Personalizada("! competition is over !"))), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.CompTime, String Personalizada("竞赛模式"), String Personalizada("竞赛模式\\n\\n\\n")), If-Then-Else(Global.CompTime, String Personalizada("competitive mode"), String Personalizada("competitive mode\\n\\n\\n"))), Topo, -182, Nulo, Cor(Amarelo), Cor(Amarelo), String, Visibilidade-padrão);
+            Criar Texto de HUD(Jogador do Evento, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.CompTime, String Personalizada("剩余时间: {0} 分钟{1}", Global.CompTime, If-Then-Else(Comparar((Jogador do Evento).comp_countAttempts, <, Nulo), String Personalizada("\\n你没有尝试过"), If-Then-Else(Global.CompAtmpNum, String Personalizada("\\n尝试 {0} / {1}", (Jogador do Evento).comp_countAttempts, Global.CompAtmpNum), Matriz Vazia))), String Personalizada("! 比赛结束 !")), If-Then-Else(Global.CompTime, String Personalizada("Time Left: {0} Min{1}", Global.CompTime, If-Then-Else(Comparar((Jogador do Evento).comp_countAttempts, <, Nulo), String Personalizada("\\nYou Are Out Of Attempts"), If-Then-Else(Global.CompAtmpNum, String Personalizada("\\nAttempt {0} / {1}", (Jogador do Evento).comp_countAttempts, Global.CompAtmpNum), Matriz Vazia))), String Personalizada("! Competition Is Over !"))), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), If-Then-Else(Global.CompTime, String Personalizada("竞赛模式"), String Personalizada("竞赛模式\\n\\n\\n")), If-Then-Else(Global.CompTime, String Personalizada("Tournament Mode"), String Personalizada("Tournament Mode\\n\\n\\n"))), Topo, -182, Nulo, Cor(Amarelo), Cor(Amarelo), String, Visibilidade-padrão);
     }
 }
 
@@ -2557,7 +2561,7 @@ regra ("Huds | SUB Update Title") {
     }
     ações {
         "or eventPlayer.toggle_practice:"
-        Anular se(Ou(Ou(Global.CompMode, (Jogador do Evento).editor_on), Não(E(Contagem de(Global.TitleData), Matriz Contém(Primeiro de(Global.TitleData), (Jogador do Evento).checkpoint_current)))));
+        Anular se(Ou(Ou(Global.CompMode, Global.EditorOn), Não(E(Contagem de(Global.TitleData), Matriz Contém(Primeiro de(Global.TitleData), (Jogador do Evento).checkpoint_current)))));
         Destruir Texto no Mundo((Jogador do Evento).cache_titleHud);
         Criar Texto no Mundo(Primeiro de(Não((Jogador do Evento).toggle_invisible)), Valor na Matriz(Valor na Matriz(Global.TitleData, True), Índice do Valor da Matriz(Primeiro de(Global.TitleData), (Jogador do Evento).checkpoint_current)), Jogador do Evento, 1.1, Cortar nas Superfícies, Visível para e Posição, Valor na Matriz(Último de(Global.TitleData), Índice do Valor da Matriz(Primeiro de(Global.TitleData), (Jogador do Evento).checkpoint_current)), Visibilidade-padrão);
         Definir Variável de Jogador(Jogador do Evento, cache_titleHud, ID de Texto Mais Recente);
@@ -2573,11 +2577,11 @@ regra ("Huds | Addons") {
         Esperar até(Entidade Existe(Todos os Jogadores(Todas as Equipes)), 999999999999);
         Esperar(False, Ignorar Condição);
         If(Comparar((Todos os Jogadores(Todas as Equipes)).addon_toggle3rdPov, <=, True));
-            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("长按 {0} + {1} | 第三人称{2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular)), If-Then-Else((Jogador Local).addon_toggle3rdPov, String Personalizada(" | 启用"), Matriz Vazia)), String Personalizada("Hold {0} + {1} | 3rd Person{2}", String de Mapeamento de Entrada(Botão(Agachar)), String de Mapeamento de Entrada(Botão(Pular)), If-Then-Else((Jogador Local).addon_toggle3rdPov, String Personalizada(" | ON"), Matriz Vazia))), Direita, -159, Nulo, Nulo, If-Then-Else((Jogador Local).addon_toggle3rdPov, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
+            Criar Texto de HUD((Jogador Local).toggle_guide, Nulo, Nulo, String Personalizada("{0} {1} + {2}", Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒHoldHoldHold"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), String de Mapeamento de Entrada(Botão(Agachar)), String Personalizada("{0} | {1}{2}", String de Mapeamento de Entrada(Botão(Pular)), Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ3rd Person3rd Person3rd Person"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), If-Then-Else((Jogador Local).addon_toggle3rdPov, Valor na Matriz(Divisão de String(String Personalizada("ＴＬＥｒｒ | On | On | On"), Global.__overpyTranslationHelper__), Valor Absoluto(Índice do Valor da Matriz(Global.__overpyTranslationHelper__, Divisão de String(Cor(Branco), Matriz Vazia)))), Matriz Vazia))), Direita, -159, Nulo, Nulo, If-Then-Else((Jogador Local).addon_toggle3rdPov, Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 6)), Avaliar Uma Vez(Valor na Matriz(Global.ColorConfig, 5))), Visível para String e Cor, Visibilidade-padrão);
     }
 }
 
-regra ("<tx0C00000000001344> Effects <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Effects ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -2596,10 +2600,9 @@ regra ("Effects | Setup Effects") {
                 Criar Efeito(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), Ou((Elemento da Matriz Atual).toggle_invincible, Não((Elemento da Matriz Atual).checkpoint_notLast))), Aura Ruim, If-Then-Else(Modular(Global.NANBA, 2), Cor(Azul-piscina), Cor(Laranja)), Valor na Matriz(Global.PortalLoc, Global.NANBA), 0.6, Visível para);
                 Criar Texto no Mundo(Matriz Filtrada(Todos os Jogadores(Todas as Equipes), Ou((Elemento da Matriz Atual).toggle_invincible, Não((Elemento da Matriz Atual).checkpoint_notLast))), Valor na Matriz(Global.PortalNames, Global.NANBA), Somar(Valor na Matriz(Global.PortalLoc, Global.NANBA), Cima), True, Cortar nas Superfícies, Visível para, Cor(Branco), Visibilidade-padrão);
             Término;
+            Esperar(False, Ignorar Condição);
         Término;
-        Esperar até(Entidade Existe(Todos os Jogadores(Todas as Equipes)), 999999999999);
-        Esperar(False, Ignorar Condição);
-        If((Todos os Jogadores(Todas as Equipes)).editor_on);
+        If(Global.EditorOn);
             Chamar sub-rotina(RebuildKillOrbs);
             Chamar sub-rotina(RebuildBounceOrbs);
             Chamar sub-rotina(RebuildPortals);
@@ -2686,7 +2689,7 @@ regra ("Effects | SUB Rebuild Portals") {
     }
 }
 
-regra ("<tx0C00000000001344> Addon Functions <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addon Functions ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -2702,7 +2705,7 @@ regra ("Addon | AFK timer") {
         É Movimentando-se(Jogador do Evento) == False;
         É Vivo(Jogador do Evento) == True;
         É Comunicando Qualquer Emote(Jogador do Evento) == False;
-        (Jogador do Evento).editor_on == False;
+        Global.EditorOn == False;
     }
     ações {
         Esperar(300, Anular Quando For Falso);
@@ -2866,7 +2869,8 @@ regra ("Addon | SUB Basic Map Validator") {
         Definir como Invisível(Global.MsDestructo, Todos);
         Começar a Escalonar Jogador(Global.MsDestructo, 3.111111111111110, False);
         Definir Gravidade(Global.MsDestructo, 999999999999);
-        Esperar até(Surgiu(Global.MsDestructo), 999999999999);
+        "Not infinity incase dummy does not spawn"
+        Esperar até(Surgiu(Global.MsDestructo), 16);
         For variável de jogador(Global.MsDestructo, checkpoint_current, 1, Contagem de(Global.A), True);
             If(E(Primeiro de(Posição Transitável Mais Próxima(Valor na Matriz(Global.A, (Global.MsDestructo).checkpoint_current))), Comparar(Distância entre(Valor na Matriz(Global.A, (Global.MsDestructo).checkpoint_current), Posição Transitável Mais Próxima(Valor na Matriz(Global.A, (Global.MsDestructo).checkpoint_current))), >, 1.4)));
                 Começar a Forçar Posição do Jogador(Global.MsDestructo, Posição de Acerto do Lançamento de Raio(Somar(Valor na Matriz(Global.A, (Global.MsDestructo).checkpoint_current), Multiplicar(1.4, Cima)), Somar(Valor na Matriz(Global.A, (Global.MsDestructo).checkpoint_current), Multiplicar(-1.4, Cima)), Matriz Vazia, Matriz Vazia, False), True);
@@ -2887,11 +2891,14 @@ regra ("Addon | SUB Basic Map Validator") {
             Término;
             //lbl_MapChecker_nextCp:
         Término;
-        Destruir Bot(Equipe de(Global.MsDestructo), Espaço de(Global.MsDestructo));
-        Definir Variável Global(MsDestructo, Nulo);
+        Definir Variável de Jogador(Global.MsDestructo, editor_saveCache, Global.EditorOn);
+        Definir Variável Global(EditorOn, Nulo);
         Ativar gravação do Inspetor;
         Registrar no Inspetor(String Personalizada("■ Map Check Complete ■"));
         Desativar gravação do Inspetor;
+        Definir Variável Global(EditorOn, (Global.MsDestructo).editor_saveCache);
+        Destruir Bot(Equipe de(Global.MsDestructo), Espaço de(Global.MsDestructo));
+        Definir Variável Global(MsDestructo, Nulo);
     }
 }
 
@@ -2909,151 +2916,139 @@ regra ("Addon | SUB 3rd Person Camera") {
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+regra ("Ø Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     evento {
         Em andamento - Global;
     }
 }
 
-regra ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
-    evento {
-        Em andamento - Global;
-    }
-}
-
-regra ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
-    evento {
-        Em andamento - Global;
-    }
-}
-
-regra ("<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入") {
+regra ("☞ Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入") {
     evento {
         Em andamento - Global;
     }
@@ -3123,7 +3118,7 @@ regra ("Instructions for Depricated Rules (ban / portal / dash /ult) - 旧版编
     }
 }
 
-regra ("<tx0C00000000001344> Addons Settings & Data - 附加组件 <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addons Settings & Data - 附加组件 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
@@ -3151,7 +3146,6 @@ desabilitado regra ("Addon | Custom difficulty hud  - 自定义难度hud <---- I
         Esperar(2.5, Ignorar Condição);
         "1) 地图工坊设 置难度改为 “不显示”\\n2) 勾选此规则 点击上方的 开启/关闭 开启此规则\\n3) 修改下面的 创建hud文本 中的“enter custom difficulty here”"
         Criar Texto de HUD(Primeiro de(True), If-Then-Else(Último de(Global.Difficultyhud), If-Then-Else(Comparar(String("Uff"), ==, String Personalizada("噢")), String Personalizada("游戏测试"), String Personalizada("Playtest")), Matriz Vazia), String Personalizada("enter custom difficulty here"), Nulo, Topo, -173, Cor(Azul), Cor(Verde), Nulo, Visível para e String, Visibilidade-padrão);
-        Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
     }
 }
 
@@ -3182,15 +3176,15 @@ desabilitado regra ("Addon | Friend Title - 朋友称号 <---- DISPLAY MESSAGE H
         Esperar até(Surgiu(Jogador do Evento), 999999999999);
         If(Comparar(String Personalizada("your nickname <-------"), ==, Divisão de String(Primeiro de(Jogador do Evento), Matriz Vazia)));
             Mensagem Grande(Primeiro de(True), String Personalizada("Message to the whole room"));
-            Criar Texto no Mundo(Primeiro de(True), String Personalizada("display title"), Jogador do Evento, 1.5, Cortar nas Superfícies, Visível para Posição e String, Cor(Laranja), Visibilidade-padrão);
+            Criar Texto no Mundo(Primeiro de(Não((Jogador do Evento).toggle_invisible)), String Personalizada("display title"), Jogador do Evento, 1.5, Cortar nas Superfícies, Visível para Posição e String, Cor(Laranja), Visibilidade-padrão);
         Término;
         If(Comparar(String Personalizada("your nickname <-------"), ==, Divisão de String(Primeiro de(Jogador do Evento), Matriz Vazia)));
             Mensagem Grande(Primeiro de(True), String Personalizada("Message to the whole room"));
-            Criar Texto no Mundo(Primeiro de(True), String Personalizada("display title"), Jogador do Evento, 1.5, Cortar nas Superfícies, Visível para Posição e String, Cor(Laranja), Visibilidade-padrão);
+            Criar Texto no Mundo(Primeiro de(Não((Jogador do Evento).toggle_invisible)), String Personalizada("display title"), Jogador do Evento, 1.5, Cortar nas Superfícies, Visível para Posição e String, Cor(Laranja), Visibilidade-padrão);
         Término;
         If(Comparar(String Personalizada("your nickname <-------"), ==, Divisão de String(Primeiro de(Jogador do Evento), Matriz Vazia)));
             Mensagem Grande(Primeiro de(True), String Personalizada("Message to the whole room"));
-            Criar Texto no Mundo(Primeiro de(True), String Personalizada("display title"), Jogador do Evento, 1.5, Cortar nas Superfícies, Visível para Posição e String, Cor(Laranja), Visibilidade-padrão);
+            Criar Texto no Mundo(Primeiro de(Não((Jogador do Evento).toggle_invisible)), String Personalizada("display title"), Jogador do Evento, 1.5, Cortar nas Superfícies, Visível para Posição e String, Cor(Laranja), Visibilidade-padrão);
     }
 }
 
@@ -3201,7 +3195,6 @@ desabilitado regra ("Addon | Display Author Time - 展示世界纪录 <---- EDIT
     ações {
         "type your entry in the textfield that says \\"name and time here\\"\\n在文本框 中输入“名称和时间”"
         Criar Texto de HUD(Primeiro de(True), Nulo, String Personalizada(" \\n{0} author time {0}", String de Ícone(Fogo)), String Personalizada("name and time here"), Direita, -142, Nulo, Cor(Rosa), Cor(Rosa), Visível para, Visibilidade-padrão);
-        Modificar Variável Global(HudStoreEdit, Juntar à Matriz, ID de Texto Mais Recente);
     }
 }
 
@@ -3264,13 +3257,13 @@ desabilitado regra ("Addon | 3rd Person Camera Mode - 第三人称") {
     }
 }
 
-regra ("<tx0C00000000001344> Addons Skills - 附加组件技能 <tx0C00000000001344>") {
+regra ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addons Skills - 附加组件技能 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     evento {
         Em andamento - Global;
     }
 }
 
-desabilitado regra ("Addon | Stall enhancer - 增强系統跳的判定") {
+desabilitado regra ("Addon | Stall Enhancer - 增强系統跳的判定") {
     evento {
         Em andamento - Cada Jogador;
         Todas;
@@ -3282,11 +3275,10 @@ desabilitado regra ("Addon | Stall enhancer - 增强系統跳的判定") {
         Velocidade Vertical de(Jogador do Evento) <= 0.05;
         Velocidade Horizontal de(Jogador do Evento) <= 1.3;
         É no Ar(Jogador do Evento) == True;
-        (Jogador do Evento).editor_on != False;
+        Global.EditorOn != False;
         (Jogador do Evento).editor_fly == False;
     }
     ações {
-        "@Condition createWorkshopSetting(bool, \\"map settings \\\\n地图设置\\",\\" Autobounce enhancer - 增强系統跳的判定\\", false, 3)"
         Esperar(0.25, Anular Quando For Falso);
         Começar a Forçar Posição do Jogador(Jogador do Evento, Posição de(Jogador do Evento), False);
         Esperar até(Não(É Movimentando-se(Jogador do Evento)), 1);
@@ -3409,7 +3401,7 @@ desabilitado regra ("Addon | Custom Orb Script") {
         If(Matriz Contém(Matriz(1, 2), (Jogador do Evento).cache_bounceTouched));
             "example gravity (should be reset to 100 in AddonCustomLoadAndReset)"
             Definir Gravidade(Jogador do Evento, 25);
-            Mensagem Pequena(Jogador do Evento, String Personalizada(" you feel light"));
+            Mensagem Pequena(Jogador do Evento, String Personalizada(" You Feel Light"));
             Esperar(2, Ignorar Condição);
             Definir Gravidade(Jogador do Evento, 100);
         Término;
@@ -3417,12 +3409,12 @@ desabilitado regra ("Addon | Custom Orb Script") {
             "example canceling primary makes double jump recover"
             Cancelar Ação Primária(Jogador do Evento);
             Definir Variável de Jogador(Jogador do Evento, skill_usedDouble, Nulo);
-            Mensagem Pequena(Jogador do Evento, String Personalizada(" double jump recovered"));
+            Mensagem Pequena(Jogador do Evento, String Personalizada(" Double Jump Recovered"));
         Término;
         If(Matriz Contém(Matriz(5, 6), (Jogador do Evento).cache_bounceTouched));
             "example move speed"
             Definir Velocidade de Movimento(Jogador do Evento, 250);
-            Mensagem Pequena(Jogador do Evento, String Personalizada(" zooom"));
+            Mensagem Pequena(Jogador do Evento, String Personalizada(" Zooom"));
             Esperar(2, Ignorar Condição);
             Definir Velocidade de Movimento(Jogador do Evento, 100);
     }

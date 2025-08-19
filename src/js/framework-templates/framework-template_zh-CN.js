@@ -3,8 +3,8 @@ export const frameworkTemplate = `设置
 {
 	主程序
 	{
-		模式名称: "Genji Parkour - 源氏跑酷 - v1.10.3G"
-		描述: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3G"
+		模式名称: "Genji Parkour - 源氏跑酷 - v1.10.4A"
+		描述: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.4A"
 	}
 	大厅
 	{
@@ -101,6 +101,7 @@ export const frameworkTemplate = `设置
         13: SHIFT
         14: EditSelected
         15: EditSelectIdArray
+        16: EditorOn
         18: TQ
         20: TQ2
         21: EditorMoveItem
@@ -132,7 +133,6 @@ export const frameworkTemplate = `设置
         55: CompRestartLimit
         56: instructiontext
         57: TitleData
-        58: HudStoreEdit
         60: SaveName
         61: SaveCp
         62: SaveEnt
@@ -164,6 +164,7 @@ export const frameworkTemplate = `设置
         89: BanSaveDouble
         90: DestructoIter
         91: MapVectorArray
+        127: __overpyTranslationHelper__
     玩家:
         0: lockState
         1: checkpoint_current
@@ -214,23 +215,22 @@ export const frameworkTemplate = `设置
         46: preview_array1
         47: preview_array2
         48: preview_i
-        49: editor_on
-        50: editor_modeSelect
-        51: editor_fly
-        52: editor_saveCache
-        53: editor_undo
-        54: editor_lock
-        55: editor_hitboxEffect
-        56: editor_hitboxToggle
-        57: editor_bounceIndex
-        58: editor_killIndex
-        59: editor_temp
-        60: comp_done
-        61: comp_countAttempts
-        62: comp_instructionHud
-        63: addon_toggle3rdPov
-        64: addon_ledgeDash
-        65: addon_enableDoubleChecks
+        49: editor_modeSelect
+        50: editor_fly
+        51: editor_saveCache
+        52: editor_undo
+        53: editor_lock
+        54: editor_hitboxEffect
+        55: editor_hitboxToggle
+        56: editor_bounceIndex
+        57: editor_killIndex
+        58: editor_temp
+        59: comp_done
+        60: comp_countAttempts
+        61: comp_instructionHud
+        62: addon_toggle3rdPov
+        63: addon_ledgeDash
+        64: addon_enableDoubleChecks
 }
 子程序 {
     0: StartGame
@@ -254,8 +254,26 @@ export const frameworkTemplate = `设置
     18: RebuildPortals
     19: RebuildBounceOrbs
 }
+规则 ("Disable inspector") {
+    事件 {
+        持续 - 全局;
+    }
+    动作 {
+        禁用查看器录制;
+    }
+}
+
+规则 ("OverPy | Global Init") {
+    事件 {
+        持续 - 全局;
+    }
+    动作 {
+        设置全局变量(__overpyTranslationHelper__, 字符串分割(自定义字符串("0White0흰색0白色"), 首个(空)));
+    }
+}
+
 //Optimize for size enabled
-规则 ("<tx0C00000000001344> Parkour v1.10.3G <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Parkour v1.10.4A ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -267,7 +285,6 @@ export const frameworkTemplate = `设置
     }
     动作 {
         "◀ The Official Genji Parkour Editor ▶\\nDiscord: dsc.gg/genjiparkour\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula"
-        禁用查看器录制;
         关闭游戏预设完成条件;
         关闭游戏预设计分模式;
         关闭游戏预设音乐模式;
@@ -277,25 +294,27 @@ export const frameworkTemplate = `设置
         开始强制重生室(所有队伍, 2);
         "wait for map data rule"
         等待(0.24, 无视条件);
-        "fix team because of naming"
-        If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍1)));
-            在索引处设置全局变量(ColorConfig, 16, 颜色(蓝色));
-        Else If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍2)));
-            在索引处设置全局变量(ColorConfig, 16, 颜色(红色));
+        "Turn Editor On"
+        设置全局变量(EditorOn, 地图工坊设置开关(自定义字符串("Map Settings ■ 地图设置 ■ 맵 설정"), 自定义字符串("Editor Mode ■ 作图模式 ■ 수정 모드"), 假, 0));
+        If(地图工坊设置开关(自定义字符串("Map Settings ■ 地图设置 ■ 맵 설정"), 自定义字符串("Basic Map Validator ■ 验证地图 ■ 맵 가능 여부 확인기"), 真, 3));
+            开始规则(AddonCheckMap, 无动作);
         End;
-        "prevent same color lock orbs"
-        If(比较(数组中的值(全局.ColorConfig, 15), ==, 数组中的值(全局.ColorConfig, 16)));
-            在索引处设置全局变量(ColorConfig, 16, If-Then-Else(比较(数组中的值(全局.ColorConfig, 15), ==, 颜色(橙色)), 颜色(绿色), 颜色(橙色)));
-        End;
-        "prevent same color bhop/climb used/unused"
-        If(比较(数组中的值(全局.ColorConfig, 7), ==, 数组中的值(全局.ColorConfig, 8)));
-            在索引处设置全局变量(ColorConfig, 8, If-Then-Else(比较(数组中的值(全局.ColorConfig, 7), ==, 颜色(红色)), 颜色(橙色), 颜色(红色)));
+        设置全局变量(PortalOn, 地图工坊设置开关(自定义字符串("Map Settings ■ 地图设置 ■ 맵 설정"), 自定义字符串("Portals 󠀨Control Maps󠀩 ■ 启用传送门 󠀨占点地图󠀩 ■ 순간이동 활성화 󠀨쟁탈 맵󠀩"), 真, 4));
+        设置全局变量(CompMode, 与(非(全局.EditorOn), 地图工坊设置开关(自定义字符串("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), 自定义字符串("Tournament Mode ■ 开启竞赛模式 ■ 토너먼트 모드 활성화"), 假, 100)));
+        If(全局.CompMode);
+            "-! comp minutes !-\\n5-240"
+            设置全局变量(CompTime, 地图工坊设置整数(自定义字符串("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), 自定义字符串("Time Limit 󠀨Global󠀩 ■ 时间限制 ■ 시간 제한 󠀨전체󠀩"), 120, 1, 240, 101));
+            "-! comp attempt count !-"
+            设置全局变量(CompAtmpNum, 地图工坊设置整数(自定义字符串("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), 自定义字符串("Attempt Count ■ 尝试次数 ■ 시도 수 확인"), 5, 0, 500, 102));
+            "-! comp restartlimiter !-"
+            设置全局变量(CompRestartLimit, 地图工坊设置开关(自定义字符串("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), 自定义字符串("Disable Restart During Run ■ 竞赛中禁用重新开始 ■ 시도 중 재시작 비활성화"), 假, 103));
+        Else;
+            设置全局变量(instructiontext, 空);
         End;
         设置全局变量(SaveName, 空数组);
         设置全局变量(SaveCp, 空数组);
         设置全局变量(SaveTimer, 空数组);
         设置全局变量(SaveEnt, 空数组);
-        "SavePauseTime = []\\nSavePauseEnabled = []"
         设置全局变量(SaveElapsed, 空数组);
         设置全局变量(Dao, If-Then-Else(数量(全局.Dao), 已过滤的数组(全局.Dao, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
         设置全局变量(SHIFT, If-Then-Else(数量(全局.SHIFT), 已过滤的数组(全局.SHIFT, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
@@ -330,20 +349,19 @@ export const frameworkTemplate = `设置
         设置全局变量(BanStand, If-Then-Else(数量(全局.BanStand), 已过滤的数组(全局.BanStand, 比较(加(当前数组元素, 假), >=, 空)), 空数组));
         设置全局变量(BanSaveDouble, If-Then-Else(数量(全局.BanSaveDouble), 全局.BanSaveDouble, 空数组));
         设置全局变量(BanDjump, If-Then-Else(数量(全局.BanDjump), 全局.BanDjump, 空数组));
-        If(地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Basic Map Validator - 验证地图"), 真, 3));
-            开始规则(AddonCheckMap, 无动作);
+        "fix team because of naming"
+        If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍1)));
+            在索引处设置全局变量(ColorConfig, 16, 颜色(蓝色));
+        Else If(比较(数组中的值(全局.ColorConfig, 16), ==, 颜色(队伍2)));
+            在索引处设置全局变量(ColorConfig, 16, 颜色(红色));
         End;
-        设置全局变量(PortalOn, 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), 真, 4));
-        设置全局变量(CompMode, 地图工坊设置开关(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("Turn on competitive mode - 开启竞赛模式"), 假, 100));
-        If(全局.CompMode);
-            "-! comp minutes !-\\n5-240"
-            设置全局变量(CompTime, 地图工坊设置整数(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
-            "-! comp attempt count !-"
-            设置全局变量(CompAtmpNum, 地图工坊设置整数(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("attempt count - 尝试次数"), 5, 0, 500, 102));
-            "-! comp restartlimiter !-"
-            设置全局变量(CompRestartLimit, 地图工坊设置开关(自定义字符串("Competitive mode\\n竞赛模式"), 自定义字符串("disable restart during run - 竞赛中禁用重新开始"), 假, 103));
-        Else;
-            设置全局变量(instructiontext, 空);
+        "prevent same color lock orbs"
+        If(比较(数组中的值(全局.ColorConfig, 15), ==, 数组中的值(全局.ColorConfig, 16)));
+            在索引处设置全局变量(ColorConfig, 16, If-Then-Else(比较(数组中的值(全局.ColorConfig, 15), ==, 颜色(橙色)), 颜色(绿色), 颜色(橙色)));
+        End;
+        "prevent same color bhop/climb used/unused"
+        If(比较(数组中的值(全局.ColorConfig, 7), ==, 数组中的值(全局.ColorConfig, 8)));
+            在索引处设置全局变量(ColorConfig, 8, If-Then-Else(比较(数组中的值(全局.ColorConfig, 7), ==, 颜色(红色)), 颜色(橙色), 颜色(红色)));
     }
 }
 
@@ -353,37 +371,32 @@ export const frameworkTemplate = `设置
     }
     动作 {
         If(比较(当前游戏模式, !=, 游戏模式(突击模式)));
-            "0.25"
             等待(假, 无视条件);
-            "1"
             设置比赛时间(假);
-            "1.1"
             等待(假, 无视条件);
-            "1"
             设置比赛时间(假);
-            "1.1"
             等待(假, 无视条件);
         End;
         设置比赛时间(70);
         比赛时间暂停;
         等待(假, 无视条件);
         设置全局变量(TimeRemaining, 265);
-        While(或(全局.TimeRemaining, (主机玩家).editor_on));
+        While(全局.TimeRemaining);
             等待(60, 无视条件);
             修改全局变量(TimeRemaining, 减, 真);
             If(全局.CompMode);
                 修改全局变量(CompTime, 减, 真);
                 If(非(全局.CompTime));
-                    大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("时间到了"), 自定义字符串("time's up")));
+                    大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("时间到了"), 自定义字符串("Time's Up")));
                     设置玩家变量(所有玩家(所有队伍), comp_done, 真);
                     停止追踪玩家变量(所有玩家(所有队伍), timer_normal);
-                    "getAllPlayers().disableRespawn()"
                     设置受到伤害(所有玩家(所有队伍), 100);
                     击杀(所有玩家(所有队伍), 空);
                 End;
             End;
         End;
-        大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("房间已达最大持续时间, 即将重启"), 自定义字符串("maximum lobby time elapsed, restarting")));
+        "\\"房间已达最大持续时间, 即将重启\\" checkCN \\"Maximum Lobby Time Reached, Restarting\\""
+        大字体信息(首个(真), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒMaximum Lobby Time Reached, RestartingMaximum Lobby Time Reached, RestartingMaximum Lobby Time Reached, Restarting"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
         等待(5, 无视条件);
         "Prevent crash during POTG and closing lobby"
         设置玩家变量(所有玩家(所有队伍), lockState, 真);
@@ -399,8 +412,6 @@ export const frameworkTemplate = `设置
         全部;
     }
     动作 {
-        "Turn Editor On"
-        设置玩家变量(事件玩家, editor_on, 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Editor mode - 作图模式"), 假, -1));
         隐藏游戏模式HUD(事件玩家);
         取消与玩家的移动碰撞(事件玩家);
         设置受到伤害(事件玩家, 0);
@@ -412,6 +423,7 @@ export const frameworkTemplate = `设置
         预加载英雄(事件玩家, 英雄(源氏));
         设置玩家变量(事件玩家, editor_lock, 真);
         设置玩家变量(事件玩家, toggle_guide, 真);
+        "eventPlayer.toggle_quickRestart = true"
         设置玩家变量(事件玩家, cache_bounceTouched, -1);
         "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
         等待(真, 无视条件);
@@ -480,7 +492,7 @@ export const frameworkTemplate = `设置
     }
     动作 {
         If(非((事件玩家).checkpoint_notLast));
-            If(与(正在移动(事件玩家), 非(或(或(或((事件玩家).toggle_practice, (事件玩家).toggle_invisible), (事件玩家).editor_on), 全局.CompMode))));
+            If(与(正在移动(事件玩家), 非(或(或(或((事件玩家).toggle_practice, (事件玩家).toggle_invisible), 全局.EditorOn), 全局.CompMode))));
                 "traces ----------------------------------------------------------------------------------------------------"
                 设置玩家变量(事件玩家, cache_rainbow, 数组中的值(数组(颜色(红色), 颜色(橙色), 颜色(黄色), 颜色(灰绿色), 颜色(绿色), 颜色(青绿色), 颜色(蓝色), 颜色(亮紫色), 颜色(紫色), 颜色(玫红)), 余数(取整(乘(总计消耗时间, 2), 下), 10)));
                 "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
@@ -498,21 +510,25 @@ export const frameworkTemplate = `设置
                 等待(0.048, 无视条件);
             End;
         "or eventPlayer.lockState:"
-        Else If(或((事件玩家).toggle_invincible, 与(全局.CompMode, 非(全局.CompTime))));
+        Else If(或(或((事件玩家).toggle_invincible, (事件玩家).toggle_spectate), 与(全局.CompMode, 非(全局.CompTime))));
         Else If(比较(相距距离(事件玩家, 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真))), <=, 1.4));
-            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
+            "arrived ----------------------------------------------------------------------------------------------------"
             If(比较(数量((事件玩家).cache_collectedLocks), <, (事件玩家).cache_bounceMaxLocks));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   ! 进点前需集齐所有收集球 !"), 自定义字符串("   ! collect ALL {0} orbs to unlock !", 数组中的值(全局.ColorConfig, 16))));
-                "kill(eventPlayer, null)"
+                "\\"   ! 进点前需集齐所有收集球 !\\" checkCN \\"   ! collect ALL {} orbs to unlock !\\".format(ColorConfig[Customize.orb_lock])"
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   ! Collect All Lock Orbs To Complete !   ! Collect All Lock Orbs To Complete !   ! Collect All Lock Orbs To Complete !"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
+                "kill player if not colleted the locks"
                 调用子程序(CheckpointFailReset);
             Else If(与((事件玩家).ban_climb, (事件玩家).skill_usedClimb));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   爬墙 ↑ 已禁用!"), 自定义字符串("   Climb ↑ is banned!")));
+                "\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\")"
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
                 调用子程序(CheckpointFailReset);
             Else If(与((事件玩家).ban_bhop, (事件玩家).skill_usedBhop));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   ≥ 留小跳进点!"), 自定义字符串("   ≥ Must have a bhop to complete!")));
+                "\\"   ≥ 留小跳进点!\\" checkCN \\"   ≥ Must Have A Bhop To Complete!!\\""
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   ≥ Must Have A Bhop To Complete!   ≥ Must Have A Bhop To Complete!   ≥ Must Have A Bhop To Complete!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
                 调用子程序(CheckpointFailReset);
             Else If(与((事件玩家).ban_djump, (事件玩家).skill_usedDouble));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   » 留二段跳!"), 自定义字符串("   » Must have a double jump to complete!")));
+                "\\"   » 留二段跳!\\" checkCN \\"   » Must Have A Double Jump To Complete!\\""
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   » Must Have A Double Jump To Complete!   » Must Have A Double Jump To Complete!   » Must Have A Double Jump To Com{0}", 自定义字符串("plete!")), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
                 调用子程序(CheckpointFailReset);
             Else;
                 设置玩家变量(事件玩家, checkpoint_moved, 真);
@@ -526,7 +542,7 @@ export const frameworkTemplate = `设置
                     设置玩家变量(事件玩家, timer_split, (事件玩家).timer_normal);
                     调用子程序(DeleteSave);
                     "complete lvl"
-                    If(与(比较((事件玩家).checkpoint_current, ==, 减(数量(全局.A), 真)), 非((事件玩家).editor_on)));
+                    If(与(比较((事件玩家).checkpoint_current, ==, 减(数量(全局.A), 真)), 非(全局.EditorOn)));
                         停止追踪玩家变量(事件玩家, timer_normal);
                         调用子程序(LeaderboardUpdate);
                         If(与(全局.CompMode, 全局.CompAtmpNum));
@@ -543,7 +559,8 @@ export const frameworkTemplate = `设置
                                 在索引处设置全局变量(CompAtmpSaveCount, 数组值的索引(全局.CompAtmpSaveNames, 字符串分割(首个(事件玩家), 空数组)), 加((事件玩家).comp_countAttempts, 真));
                             End;
                         End;
-                        大字体信息(首个(真), 自定义字符串("{0} {1} {2} sec", 事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("已通关! 用时"), 自定义字符串("Mission complete! Time")), (事件玩家).timer_normal));
+                        "\\"已通关! 用时\\" checkCN \\"Mission Complete! Time\\""
+                        大字体信息(首个(真), 自定义字符串("{0} {1} {2} Sec", 事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒMission Complete! TimeMission Complete! TimeMission Complete! Time"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), (事件玩家).timer_normal));
                         等待(假, 无视条件);
                     "update save"
                     Else;
@@ -560,8 +577,8 @@ export const frameworkTemplate = `设置
                 End;
                 等待(假, 无视条件);
                 "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\"))"
-                播放效果(事件玩家, 环状爆炸声音, 颜色(白色), 事件玩家, 100);
-                播放效果(If-Then-Else(或(全局.CompMode, (事件玩家).toggle_invisible), 事件玩家, 真), 环状爆炸, 颜色(天蓝色), 加(数组中的值(全局.A, (事件玩家).checkpoint_current), 乘(1.5, 上)), 4);
+                播放效果(事件玩家, 环状爆炸声音, 空, 事件玩家, 100);
+                播放效果(If-Then-Else(或(全局.CompMode, (事件玩家).toggle_invisible), 事件玩家, 真), 环状爆炸, 颜色(天蓝色), 所选位置(事件玩家), 4);
             End;
         Else If(比较(相距距离(事件玩家, 最后(数组中的值(全局.A, (事件玩家).checkpoint_current))), >, 1.4));
             调用子程序(CheckpointFailReset);
@@ -606,19 +623,22 @@ export const frameworkTemplate = `设置
         If(比较((事件玩家).cache_bounceTouched, >=, 空));
             If(数组中的值(全局.BounceToggleLock, (事件玩家).cache_bounceTouched));
                 修改玩家变量(事件玩家, cache_collectedLocks, 添加至数组, (事件玩家).cache_bounceTouched);
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   弹球已收集"), 自定义字符串("   orb has been collected")));
+                "\\"   弹球已收集\\" checkCN \\"   orb has been collected\\""
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Collected Orb   Collected Orb   Collected Orb"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
             End;
             If(比较(数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), >, 空));
                 施加推力(事件玩家, 上, 数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), 至地图, 取消相反运动XYZ);
             Else If(比较(数组中的值(全局.EditMode, (事件玩家).cache_bounceTouched), <, 空));
                 取消主要动作(事件玩家);
                 设置玩家变量(事件玩家, skill_usedDouble, 空);
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   二段跳已就绪"), 自定义字符串("   Double Jump is ready")));
+                "\\"   二段跳已就绪\\" checkCN \\"   » Double Jump is ready\\""
+                小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   » Double Jump Is Ready   » Double Jump Is Ready   » Double Jump Is Ready"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
             End;
             If(数组中的值(全局.TQ5, (事件玩家).cache_bounceTouched));
                 设置启用终极技能(事件玩家, 真);
                 设置终极技能充能(事件玩家, 100);
-                小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("终极技能已就绪"), 自定义字符串("Ultimate is ready"))));
+                "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+                小字体信息(事件玩家, 自定义字符串("   {0} {1}", 技能图标字符串(英雄(源氏), 按钮(终极技能)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))));
             End;
             If(数组中的值(全局.TQ6, (事件玩家).cache_bounceTouched));
                 If(正在使用技能 1(事件玩家));
@@ -626,9 +646,10 @@ export const frameworkTemplate = `设置
                     等待(假, 无视条件);
                 End;
                 设置启用技能 1(事件玩家, 真);
-                小字体信息(事件玩家, 自定义字符串("   {0} {1} ", 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("技能1影已就绪"), 自定义字符串("Dash is ready"))));
+                "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+                小字体信息(事件玩家, 自定义字符串("   {0} {1}", 技能图标字符串(英雄(源氏), 按钮(技能1)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))));
             End;
-            播放效果(事件玩家, 状态爆炸声音, 颜色(白色), 事件玩家, 75);
+            播放效果(事件玩家, 状态爆炸声音, 空, 事件玩家, 75);
         End;
         等待(0.24, 无视条件);
         如条件为“真”则循环;
@@ -695,41 +716,41 @@ export const frameworkTemplate = `设置
         设置玩家变量(事件玩家, banString, 空数组);
         等待(假, 无视条件);
         If((事件玩家).checkpoint_notLast);
-            设置玩家变量(事件玩家, ban_multi, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Multiclimb - 封禁蹭留"), 假, 1), 数组包含(全局.BanMulti, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_multi, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Multiclimb ■ 封禁蹭留 ■ 무한 벽타기 금지"), 假, 1), 数组包含(全局.BanMulti, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_multi);
                 设置玩家变量(事件玩家, banString, 自定义字符串("∞ {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_create, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Createbhop - 封禁卡小"), 假, 2), 数组包含(全局.BanCreate, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_create, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Createbhop ■ 封禁卡小 ■ 콩콩이 생성 금지"), 假, 2), 数组包含(全局.BanCreate, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_create);
                 设置玩家变量(事件玩家, banString, 自定义字符串("♂ {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_standcreate, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban standcreate - 封禁站卡"), 假, 3), 数组包含(全局.BanStand, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_standcreate, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Standcreate ■ 封禁站卡 ■ 서서 콩콩이 생성 금지"), 假, 3), 数组包含(全局.BanStand, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_standcreate);
                 "≥  √ ▼ ↓"
                 设置玩家变量(事件玩家, banString, 自定义字符串("♠ {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_dead, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Deathbhop - 封禁死小"), 假, 4), 数组包含(全局.BanDead, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_dead, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Deathbhop ■ 封禁死小 ■ 죽음 콩콩이 금지"), 假, 4), 数组包含(全局.BanDead, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_dead);
                 设置玩家变量(事件玩家, banString, 自定义字符串("X {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_emote, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Emote Savehop - 封禁表情留小"), 假, 5), 数组包含(全局.BanEmote, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_emote, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Emote Savehop ■ 封禁表情留小 ■ 감정표현 콩콩이 금지"), 假, 5), 数组包含(全局.BanEmote, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_emote);
                 设置玩家变量(事件玩家, banString, 自定义字符串("♥ {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_climb, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban Wallclimb - 封禁爬墙"), 假, 6), 数组包含(全局.BanClimb, (事件玩家).checkpoint_current)));
-            If((事件玩家).ban_climb);
-                设置玩家变量(事件玩家, banString, 自定义字符串("↑ {0}", (事件玩家).banString));
-            End;
-            设置玩家变量(事件玩家, ban_savedouble, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("ban save double - 封禁延二段跳"), 假, 7), 数组包含(全局.BanSaveDouble, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_savedouble, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Save Double ■ 封禁留二段跳 ■ 이단점프 킵 금지"), 假, 6), 数组包含(全局.BanSaveDouble, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_savedouble);
                 设置玩家变量(事件玩家, banString, 自定义字符串("△ {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_bhop, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("require bhop available - 留小跳进点 "), 假, 8), 数组包含(全局.BanBhop, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_climb, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Ban Wallclimb ■ 封禁爬墙 ■ 벽타기 금지"), 假, 7), 数组包含(全局.BanClimb, (事件玩家).checkpoint_current)));
+            If((事件玩家).ban_climb);
+                设置玩家变量(事件玩家, banString, 自定义字符串("↑ {0}", (事件玩家).banString));
+            End;
+            设置玩家变量(事件玩家, ban_bhop, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Require Bhop Available ■ 留小跳进点 ■ 도착 시 콩콩이 필요"), 假, 8), 数组包含(全局.BanBhop, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_bhop);
                 "≥  √ ▼ ↓"
                 设置玩家变量(事件玩家, banString, 自定义字符串("≥ {0}", (事件玩家).banString));
             End;
-            设置玩家变量(事件玩家, ban_djump, 或(地图工坊设置开关(自定义字符串("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), 自定义字符串("require djump available - 留二段跳 "), 假, 9), 数组包含(全局.BanDjump, (事件玩家).checkpoint_current)));
+            设置玩家变量(事件玩家, ban_djump, 或(地图工坊设置开关(自定义字符串("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), 自定义字符串("Require Djump Available ■ 留二段跳进点 ■ 도착 시 이단 점프 필요"), 假, 9), 数组包含(全局.BanDjump, (事件玩家).checkpoint_current)));
             If((事件玩家).ban_djump);
                 "≥  √ ▼ ↓ ︽"
                 设置玩家变量(事件玩家, banString, 自定义字符串("» {0}", (事件玩家).banString));
@@ -746,9 +767,9 @@ export const frameworkTemplate = `设置
             设置玩家变量(事件玩家, ban_djump, 假);
         End;
         等待(假, 无视条件);
-        开始规则(CheckUlt, 重新开始规则);
-        开始规则(CheckAbility1, 重新开始规则);
-        根据条件中止(或(比较(事件玩家, !=, 主机玩家), 非((事件玩家).editor_on)));
+        开始规则(CheckUlt, 无动作);
+        开始规则(CheckAbility1, 无动作);
+        根据条件中止(或(比较(事件玩家, !=, 主机玩家), 非(全局.EditorOn)));
         调用子程序(EditUpdateSelectedIds);
         消除效果((主机玩家).editor_hitboxEffect);
         创建效果(If-Then-Else((主机玩家).editor_hitboxToggle, 主机玩家, 空), 球体, 颜色(白色), 数组中的值(全局.A, (主机玩家).checkpoint_current), 1.4, 可见，位置和半径);
@@ -925,7 +946,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Mechanics | Checks ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -943,7 +964,8 @@ export const frameworkTemplate = `设置
     动作 {
         设置玩家变量(事件玩家, skill_usedBhop, 真);
         If((事件玩家).skill_usedHop);
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   小跳已用"), 自定义字符串("   Bhop")));
+            "\\"   小跳已用\\" checkCN \\"   Bhop\\""
+            小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Bhop   Bhop   Bhop"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
         Else;
             设置玩家变量(事件玩家, skill_usedHop, 真);
     }
@@ -997,7 +1019,8 @@ export const frameworkTemplate = `设置
         If((事件玩家).ban_emote);
             等待直到 (非(正在使用表情交流(事件玩家)), 999999999999);
             根据条件中止((事件玩家).toggle_invincible);
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   表情留小 ♥ 已禁用!"), 自定义字符串("   Emote Savehop ♥ is banned!")));
+            "\\"   表情留小 ♥ 已禁用!\\" checkCN \\"   Emote Savehop ♥ is banned!\\""
+            小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Emote Savehop ♥ Is Banned!   Emote Savehop ♥ Is Banned!   Emote Savehop ♥ Is Banned!"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
             等待(假, 无视条件);
             调用子程序(CheckpointFailReset);
     }
@@ -1025,19 +1048,21 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Editor <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("Editor | Clear Excess Data to Save Map") {
+规则 ("Editor | Export Map") {
     事件 {
-        持续 - 全局;
+        持续 - 每名玩家;
+        双方;
+        全部;
     }
     条件 {
-        "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (主机玩家).editor_on != 假;
+        事件玩家 == 主机玩家;
+        全局.EditorOn != 假;
         按钮被按下(主机玩家, 按钮(近身攻击)) == 真;
         按钮被按下(主机玩家, 按钮(互动)) == 真;
         按钮被按下(主机玩家, 按钮(装填)) == 真;
@@ -1050,6 +1075,7 @@ export const frameworkTemplate = `设置
         设置玩家变量(主机玩家, editor_saveCache, 数组(全局.TimeRemaining, 全局.ColorConfig));
         设置全局变量(TimeRemaining, 空);
         设置全局变量(ColorConfig, 空);
+        设置全局变量(EditorOn, 空);
         设置全局变量(C, 空);
         设置全局变量(K, 空);
         设置全局变量(NANBA, 空);
@@ -1082,67 +1108,54 @@ export const frameworkTemplate = `设置
         设置全局变量(Cachedcredits, 数组(全局.Name, 全局.Code));
         设置全局变量(Name, 空);
         设置全局变量(Code, 空);
-        开始规则(AddonCheckMap, 无动作);
-        创建HUD文本(主机玩家, 自定义字符串("­"), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", 自定义字符串(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", 自定义字符串("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", 自定义字符串("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), 自定义字符串("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", 自定义字符串("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", 自定义字符串(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", 自定义字符串("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", 自定义字符串("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", 自定义字符串("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), 顶部, -185, 空, 空, 颜色(灰绿色), 字符串, 默认可见度);
+        创建HUD文本(主机玩家, 自定义字符串("­"), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", 自定义字符串(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", 自定义字符串("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits Here {0}", 自定义字符串("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), 自定义字符串("   0. Clear Extra Data:\\n Already Done Upon Opening This Window\\n\\n   1. Copy Data:\\n Open Workshop Inspector → Set Variable Targ{0}", 自定义字符串("et To Global\\n Click The [X]\\n\\n   2. Insert Data:\\n Paste The Data Into Rule Named 'Map Data <---- Insert Here'\\n\\n   3. Workshop {0}", 自定义字符串("Settings:\\n Esc → Show Lobby → Settings → Workshop Settings →\\n Toggle 'Editor Mode' Off\\n Select Display Difficulty\\n\\n   4. Crea{0}", 自定义字符串("te Initial Sharecode:\\n Esc → Show Lobby → Settings → Share Code →\\n Create New Code → Copy Code\\n\\n   5. Add Credits:\\n Enter You{0}", 自定义字符串("r Name & Map Code In The 'Credits Here' Rule\\n\\n   6. Update For Credits:\\n Esc → Show Lobby → Settings → Share Code →\\n Upload T{0}", 自定义字符串("o Existing Code → Paste The Code You Created In Step 4"))))))), 顶部, -185, 空, 空, 颜色(灰绿色), 字符串, 默认可见度);
         在索引处设置玩家变量(主机玩家, editor_saveCache, 2, 上一个文本ID);
-        创建HUD文本(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("    > 按互动键关闭当前窗口 <    "), 自定义字符串("    > Press Interact to close this window <    ")), 空, 空, 顶部, -183, 颜色(灰绿色), 空, 空, 字符串, 默认可见度);
-        在索引处设置玩家变量(主机玩家, editor_saveCache, 3, 上一个文本ID);
+        调用子程序(AddonCheckMap);
         启用查看器录制;
         禁用查看器录制;
-        等待直到 (非(按钮被按下(主机玩家, 按钮(互动))), 999999999999);
-        等待直到 (按钮被按下(主机玩家, 按钮(互动)), 999999999999);
+        设置全局变量(EditorOn, 真);
         设置全局变量(TimeRemaining, 首个((主机玩家).editor_saveCache));
         设置全局变量(ColorConfig, 数组中的值((主机玩家).editor_saveCache, 真));
-        消除HUD文本(数组中的值((主机玩家).editor_saveCache, 2));
+        创建HUD文本(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("    > 按互动键关闭当前窗口 <    "), 自定义字符串("    > Press Interact To Close This Window <    ")), 空, 空, 顶部, -183, 颜色(灰绿色), 空, 空, 字符串, 默认可见度);
+        在索引处设置玩家变量(主机玩家, editor_saveCache, 假, 上一个文本ID);
+        等待直到 (非(按钮被按下(主机玩家, 按钮(互动))), 999999999999);
+        等待直到 (按钮被按下(主机玩家, 按钮(互动)), 999999999999);
+        "Close Window"
+        消除HUD文本(首个((主机玩家).editor_saveCache));
+        "Instructions"
         消除HUD文本(最后((主机玩家).editor_saveCache));
         设置玩家变量(主机玩家, editor_saveCache, 空);
         设置玩家变量(主机玩家, editor_lock, 假);
     }
 }
 
-规则 ("Editor | Hud and Effects") {
+规则 ("Editor | Hud & Effects") {
     事件 {
         持续 - 全局;
     }
     动作 {
         等待(0.832000000000000, 无视条件);
-        "cant be condition because host player can leaves, removing the rule fx"
-        等待直到 (实体存在(所有玩家(所有队伍)), 999999999999);
-        等待(假, 无视条件);
-        If((所有玩家(所有队伍)).editor_on);
-            "hostPlayer.editor_lock = true\\nremove unnesesary huds"
-            While(数量(全局.HudStoreEdit));
-                消除HUD文本(首个(全局.HudStoreEdit));
-                消除地图文本(首个(全局.HudStoreEdit));
-                修改全局变量(HudStoreEdit, 根据索引从数组中移除, 假);
-            End;
-            等待(假, 无视条件);
-            "infinite time and attempts"
-            If(全局.CompMode);
-                设置全局变量(CompAtmpNum, 空);
-                设置全局变量(CompTime, 999999999999);
-                设置玩家变量(所有玩家(所有队伍), comp_countAttempts, 空);
-                设置玩家变量(所有玩家(所有队伍), comp_done, 假);
-            End;
+        "waitUntil(entityExists(getAllPlayers()), Math.INFINITY)  # cant be condition because host player can leaves, removing the rule fx\\nwait()"
+        If(全局.EditorOn);
             创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0}+{1}+{2} | 重新开始", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(互动))), 自定义字符串("{0}+{1}+{2} | Restart", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(互动)))), 右边, -156, 空, 空, 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.EditorMoveItem, 自定义字符串("方向键 | 移动实体 \\n{0} | 向上移动 \\n{1} | 向下移动 \\n{2} (长按) | 快速移动", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(跳跃))), 数组中的值(数组(自定义字符串("{0} + {1} | 新建检查点\\n{0} + {2} | 删除选中的检查点", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 新建击杀球\\n{0} + {1} (长按) | 在准心位置新建", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 新建弹球\\n{0} + {1} (长按) | 在准心位置新建", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 蹭留\\n{0} + {2} | 卡小", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 新建传送门\\n{0} + {1} (长按) | 在准心位置新建", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)))), (主机玩家).editor_modeSelect)), If-Then-Else(全局.EditorMoveItem, 自定义字符串("walk | move selected\\n{0} | move up\\n{1} | move down\\n{2} (hold) | move faster", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(跳跃))), 数组中的值(数组(自定义字符串("{0} + {1} | Create New\\n{0} + {2} | Delete selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | Create new\\n{0} + {1} (hold)| raycast new", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | Create new\\n{0} + {1} (hold)| raycast new", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | multiclimb\\n{0} + {2} | createbhop", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | create new\\n{0} + {1} (hold)| raycast new", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)))), (主机玩家).editor_modeSelect))), 右边, -148, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 非(全局.EditorMoveItem)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | 删除选中的击杀球", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 删除选中的弹球", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 空数组, 自定义字符串("{0} + {1} | 删除选中的传送门", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式)))), (主机玩家).editor_modeSelect), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | delete selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | delete selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 空数组, 自定义字符串("{0} + {1} | delete selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式)))), (主机玩家).editor_modeSelect)), 右边, -147, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.EditorMoveItem, 自定义字符串("{0} | 放置实体{1} | cancel placement\\n", 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 数组中的值(数组(自定义字符串("{0} + {1} | 移除/新建传送点\\n{0} + {2} | 检查点碰撞模型\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | 选择上一个击杀球\\n{0} + {2} | 选择下一个击杀球\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | 选择上一个弹球\\n{0} + {2} | 选择下一个弹球\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | 爬墙\\n{0} + {2} | 延二段跳", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | 选择下一个传送门\\n{0} + {2} | 选择上一个传送门\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下)))), (主机玩家).editor_modeSelect)), If-Then-Else(全局.EditorMoveItem, 自定义字符串("{0} | confirm placement\\n{1} | cancel placement", 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 数组中的值(数组(自定义字符串("{0} + {1} | Remove/Add teleport\\n{0} + {2} | Toggle Hitbox\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | Select previous\\n{0} + {2} | Select next\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | Select previous\\n{0} + {2} | Select next\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | wallclimb\\n{0} + {2} | save double", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | select next\\n{0} + {2} | select previous\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下)))), (主机玩家).editor_modeSelect))), 右边, -146, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 非(全局.EditorMoveItem)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 数组中的值(数组(自定义字符串("{0} (长按) | 移动检查点", 输入绑定字符串(按钮(技能2))), 自定义字符串("{0} + {1} | 增大击杀球\\n{0} + {2} | 缩小击杀球", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | 增加弹球弹力\\n{0} + {2} | 减少弹球弹力", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | 死小\\n{0} + {2} | 表情留小", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 移动选中的实体\\n{0} + {2} | 应用到当前/所有关卡(开关)", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(跳跃)))), (主机玩家).editor_modeSelect), 数组中的值(数组(自定义字符串("{0} (hold) | Move", 输入绑定字符串(按钮(技能2))), 自定义字符串("{0} + {1} | Increase size\\n{0} + {2} | Decrease size", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | Increase strength\\n{0} + {2} | Decrease strength", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | death hop\\n{0} + {2} | emote", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | move\\n{0} + {2} | cp/map (toggle)", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(跳跃)))), (主机玩家).editor_modeSelect)), 右边, -145, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 非(全局.EditorMoveItem)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | 移动选中的实体", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 移动选中的实体", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 留小跳进点\\n{0} + {2} | 站卡", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 空数组), (主机玩家).editor_modeSelect), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | Move", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | Move", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | require bhop\\n{0} + {2} | stand create", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 空数组), (主机玩家).editor_modeSelect)), 右边, -144, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串(" \\n{0} + {1} | 下一关", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串(" \\n{0} + {1} | Next checkpoint", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式)))), 右边, -150, 空, 空, If-Then-Else((主机玩家).toggle_guide, 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | Prev checkpoint\\n{2} (hold)| Fly\\n", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(技能1)))), 右边, -149, 空, 空, If-Then-Else((主机玩家).toggle_guide, 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("保存地图长按 {0} + {1} + {2}", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0} 后按弹出窗口的提示进行操作                                                                                                ", 输入绑定字符串(按钮(装填)))), 自定义字符串("to save map, hold {0} + {1} + {2}", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0} then follow instructions                                                                                                ", 输入绑定字符串(按钮(装填))))), 空, 左边, -197, 空, 颜色(黄色), 空, 可见和字符串, 默认可见度);
-            创建HUD文本(If-Then-Else((本地玩家).editor_saveCache, 空, 本地玩家), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(字符串分割(自定义字符串("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), 首个(空)), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} 源氏 编辑者 {0} ", 图标字符串(箭矢)))), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} checkpoints\\n{1} boundary spheres\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} function orbs\\n{1} skill bans\\n{2} portals", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(字符串分割(自定义字符串("checkpoints0boundary spheres0function orbs0skill bans0portals"), 首个(空)), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} Genji editor {0} ", 图标字符串(箭矢))))), 空, 空, 顶部, -174, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
-            创建HUD文本(首个(真), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串("{0} + 射击 | 切换作图模式", 输入绑定字符串(按钮(近身攻击))), 自定义字符串("房主/编辑者 {0}", 主机玩家)), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串("{0} + shoot | change mode", 输入绑定字符串(按钮(近身攻击))), 自定义字符串("Current host/editor: {0}", 主机玩家))), 空, 顶部, -175, 空, If-Then-Else((本地玩家).editor_lock, 颜色(灰色), 颜色(白色)), 空, 可见，字符串和颜色, 默认可见度);
-            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 或(非((主机玩家).editor_modeSelect), 与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)))), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("弹球给刀"), 自定义字符串("检查点给刀")), 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ5, 全局.EditSelected), 数组包含(全局.Dao, (主机玩家).checkpoint_current)))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} give ult {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("Orb"), 自定义字符串("Level")), 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ5, 全局.EditSelected), 数组包含(全局.Dao, (主机玩家).checkpoint_current))))), 左边, -189, 空, 空, If-Then-Else(与(数组中的值(全局.TQ5, 全局.EditSelected), 比较((主机玩家).editor_modeSelect, ==, 2)), 颜色(绿色), If-Then-Else(与(数组包含(全局.Dao, (主机玩家).checkpoint_current), 非((主机玩家).editor_modeSelect)), 颜色(绿色), 颜色(橙色))), 可见，字符串和颜色, 默认可见度);
-            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 或(非((主机玩家).editor_modeSelect), 与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)))), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(辅助攻击模式)), 自定义字符串("{0} {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("弹球给Shift"), 自定义字符串("检查点给Shift")), 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ6, 全局.EditSelected), 数组包含(全局.SHIFT, (主机玩家).checkpoint_current)))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(辅助攻击模式)), 自定义字符串("{0} give dash {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("Orb"), 自定义字符串("Level")), 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ6, 全局.EditSelected), 数组包含(全局.SHIFT, (主机玩家).checkpoint_current))))), 左边, -188, 空, 空, If-Then-Else(与(数组中的值(全局.TQ6, 全局.EditSelected), 比较((主机玩家).editor_modeSelect, ==, 2)), 颜色(绿色), If-Then-Else(与(数组包含(全局.SHIFT, (主机玩家).checkpoint_current), 非((主机玩家).editor_modeSelect)), 颜色(绿色), 颜色(橙色))), 可见，字符串和颜色, 默认可见度);
-            创建HUD文本(If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 2), (主机玩家).toggle_guide), 数量((主机玩家).editor_bounceIndex)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} |  收集球(进点前必须集齐) {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | {1}\\n                                                                                                ", 图标字符串(星形), 数组中的值(全局.BounceToggleLock, 全局.EditSelected))), 自定义字符串("{0} + {1} | unlocks checkpoint {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | {1}\\n                                                                                                ", 图标字符串(星形), 数组中的值(全局.BounceToggleLock, 全局.EditSelected)))), 左边, -187, 空, 空, If-Then-Else(数组中的值(全局.BounceToggleLock, 全局.EditSelected), 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("球体/传送门上限: {0}/193 ", 加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart))), 自定义字符串("orb/portal limit: {0}/193 ", 加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart)))), 空, 自定义字符串("                                                                                                                                "), 左边, -191, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.EditorMoveItem, 自定义字符串("方向键 | 移动实体 \\n{0} | 向上移动 \\n{1} | 向下移动 \\n{2} (长按) | 快速移动", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(跳跃))), 数组中的值(数组(自定义字符串("{0} + {1} | 新建检查点\\n{0} + {2} | 删除选中的检查点", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 新建击杀球\\n{0} + {1} (长按) | 在准心位置新建", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 新建弹球\\n{0} + {1} (长按) | 在准心位置新建", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 蹭留\\n{0} + {2} | 卡小", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 新建传送门\\n{0} + {1} (长按) | 在准心位置新建", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)))), (主机玩家).editor_modeSelect)), If-Then-Else(全局.EditorMoveItem, 自定义字符串("Walk | Move Selected\\n{0} | Move Up\\n{1} | Move Down\\n{2} (Hold) | Move Faster", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(跳跃))), 数组中的值(数组(自定义字符串("{0} + {1} | Create New\\n{0} + {2} | Delete Selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | Multi-Climb\\n{0} + {2} | Createbhop", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(主要攻击模式)))), (主机玩家).editor_modeSelect))), 右边, -148, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 非(全局.EditorMoveItem)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | 删除选中的击杀球", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 删除选中的弹球", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 空数组, 自定义字符串("{0} + {1} | 删除选中的传送门", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式)))), (主机玩家).editor_modeSelect), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | Delete Selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | Delete Selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式))), 空数组, 自定义字符串("{0} + {1} | Delete Selected", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(辅助攻击模式)))), (主机玩家).editor_modeSelect)), 右边, -147, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.EditorMoveItem, 自定义字符串("{0} | 放置实体{1} | Cancel Placement\\n", 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 数组中的值(数组(自定义字符串("{0} + {1} | 移除/新建传送点\\n{0} + {2} | 检查点碰撞模型\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | 选择上一个击杀球\\n{0} + {2} | 选择下一个击杀球\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | 选择上一个弹球\\n{0} + {2} | 选择下一个弹球\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | 爬墙\\n{0} + {2} | 延二段跳", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | 选择下一个传送门\\n{0} + {2} | 选择上一个传送门\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下)))), (主机玩家).editor_modeSelect)), If-Then-Else(全局.EditorMoveItem, 自定义字符串("{0} | Confirm Placement\\n{1} | Cancel Placement", 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 数组中的值(数组(自定义字符串("{0} + {1} | Remove/Add Teleport\\n{0} + {2} | Toggle Hitbox\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | Select Previous\\n{0} + {2} | Select Next\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | Select Previous\\n{0} + {2} | Select Next\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | Wallclimb\\n{0} + {2} | Save Double", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃))), 自定义字符串("{0} + {1} | Select Next\\n{0} + {2} | Select Previous\\n", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下)))), (主机玩家).editor_modeSelect))), 右边, -146, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 非(全局.EditorMoveItem)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 数组中的值(数组(自定义字符串("{0} (长按) | 移动检查点", 输入绑定字符串(按钮(技能2))), 自定义字符串("{0} + {1} | 增大击杀球\\n{0} + {2} | 缩小击杀球", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | 增加弹球弹力\\n{0} + {2} | 减少弹球弹力", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | 死小\\n{0} + {2} | 表情留小", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | 移动选中的实体\\n{0} + {2} | 应用到当前/所有关卡(开关)", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(跳跃)))), (主机玩家).editor_modeSelect), 数组中的值(数组(自定义字符串("{0} (Hold) | Move", 输入绑定字符串(按钮(技能2))), 自定义字符串("{0} + {1} | Increase Size\\n{0} + {2} | Decrease Size", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | Increase Strength\\n{0} + {2} | Decrease Strength", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 自定义字符串("{0} + {1} | Death Hop\\n{0} + {2} | Emote", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("{0} + {1} | Move\\n{0} + {2} | Cp/Map (Toggle)", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(跳跃)))), (主机玩家).editor_modeSelect)), 右边, -145, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 非(全局.EditorMoveItem)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | 移动选中的实体", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 移动选中的实体", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | 留小跳进点\\n{0} + {2} | 站卡", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 空数组), (主机玩家).editor_modeSelect), 数组中的值(数组(空数组, 自定义字符串("{0} + {1} | Move", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | Move", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串("{0} + {1} | Require Bhop\\n{0} + {2} | Stand Create", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(跳跃)), 输入绑定字符串(按钮(蹲下))), 空数组), (主机玩家).editor_modeSelect)), 右边, -144, 空, 空, 颜色(黄色), 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串(" \\n{0} + {1} | 下一关", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式))), 自定义字符串(" \\n{0} + {1} | Next Checkpoint", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式)))), 右边, -150, 空, 空, If-Then-Else((主机玩家).toggle_guide, 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(技能1))), 自定义字符串("{0} + {1} | Prev Checkpoint\\n{2} (hold)| Fly\\n", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(技能1)))), 右边, -149, 空, 空, If-Then-Else((主机玩家).toggle_guide, 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("保存地图长按 {0} + {1} + {2}", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0} 后按弹出窗口的提示进行操作                                                                                                ", 输入绑定字符串(按钮(装填)))), 自定义字符串("To Save Map, Hold {0} + {1} + {2}", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0} Then Follow Instructions                                                                                                ", 输入绑定字符串(按钮(装填))))), 空, 左边, -197, 空, 颜色(黄色), 空, 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else((本地玩家).editor_saveCache, 空, 本地玩家), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(字符串分割(自定义字符串("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), 首个(空)), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} 源氏 编辑者 {0} ", 图标字符串(箭矢)))), If-Then-Else(按钮被按下(主机玩家, 按钮(近身攻击)), 自定义字符串("{0} Checkpoints\\n{1} Boundary Spheres\\n{2}", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("     "), 图标字符串(箭头：向右)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 图标字符串(箭头：向右), 自定义字符串("     ")), 自定义字符串("{0} Function Orbs\\n{1} Skill Bans\\n{2} Portals", If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 图标字符串(箭头：向右), 自定义字符串("     ")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 图标字符串(箭头：向右), 自定义字符串("     ")))), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串(" {0} {1} ", 数组中的值(数组(图标字符串(旗帜), 图标字符串(骷髅), 图标字符串(满月), 图标字符串(停止), 图标字符串(螺旋)), (主机玩家).editor_modeSelect), 数组中的值(字符串分割(自定义字符串("Checkpoints0Boundary Spheres0Function Orbs0Skill Bans0Portals"), 首个(空)), (主机玩家).editor_modeSelect)), 自定义字符串(" {0} Genji Editor {0} ", 图标字符串(箭矢))))), 空, 空, 顶部, -174, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
+            创建HUD文本(首个(真), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串("{0} + 射击 | 切换作图模式", 输入绑定字符串(按钮(近身攻击))), 自定义字符串("房主/编辑者 {0}", 主机玩家)), If-Then-Else(比较(本地玩家, ==, 主机玩家), 自定义字符串("{0} + Shoot | Change Mode", 输入绑定字符串(按钮(近身攻击))), 自定义字符串("Current Host/Editor: {0}", 主机玩家))), 空, 顶部, -175, 空, If-Then-Else((本地玩家).editor_lock, 颜色(灰色), 颜色(白色)), 空, 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 或(非((主机玩家).editor_modeSelect), 与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)))), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("弹球给刀"), 自定义字符串("检查点给刀")), 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ5, 全局.EditSelected), 数组包含(全局.Dao, (主机玩家).checkpoint_current)))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} Give Ult {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("Orb"), 自定义字符串("Level")), 技能图标字符串(英雄(源氏), 按钮(终极技能)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ5, 全局.EditSelected), 数组包含(全局.Dao, (主机玩家).checkpoint_current))))), 左边, -189, 空, 空, If-Then-Else(与(数组中的值(全局.TQ5, 全局.EditSelected), 比较((主机玩家).editor_modeSelect, ==, 2)), 颜色(绿色), If-Then-Else(与(数组包含(全局.Dao, (主机玩家).checkpoint_current), 非((主机玩家).editor_modeSelect)), 颜色(绿色), 颜色(橙色))), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(If-Then-Else(与((主机玩家).toggle_guide, 或(非((主机玩家).editor_modeSelect), 与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)))), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(辅助攻击模式)), 自定义字符串("{0} {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("弹球给Shift"), 自定义字符串("检查点给Shift")), 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ6, 全局.EditSelected), 数组包含(全局.SHIFT, (主机玩家).checkpoint_current)))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(辅助攻击模式)), 自定义字符串("{0} Give Dash {1} | {2}                                                                                                ", If-Then-Else((主机玩家).editor_modeSelect, 自定义字符串("Orb"), 自定义字符串("Level")), 技能图标字符串(英雄(源氏), 按钮(技能1)), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ6, 全局.EditSelected), 数组包含(全局.SHIFT, (主机玩家).checkpoint_current))))), 左边, -188, 空, 空, If-Then-Else(与(数组中的值(全局.TQ6, 全局.EditSelected), 比较((主机玩家).editor_modeSelect, ==, 2)), 颜色(绿色), If-Then-Else(与(数组包含(全局.SHIFT, (主机玩家).checkpoint_current), 非((主机玩家).editor_modeSelect)), 颜色(绿色), 颜色(橙色))), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 2), (主机玩家).toggle_guide), 数量((主机玩家).editor_bounceIndex)), 主机玩家, 空), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} |  收集球(进点前必须集齐) {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | {1}\\n                                                                                                ", 图标字符串(星形), 数组中的值(全局.BounceToggleLock, 全局.EditSelected))), 自定义字符串("{0} + {1} | Unlocks Checkpoint {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | {1}\\n                                                                                                ", 图标字符串(星形), 数组中的值(全局.BounceToggleLock, 全局.EditSelected)))), 左边, -187, 空, 空, If-Then-Else(数组中的值(全局.BounceToggleLock, 全局.EditSelected), 颜色(绿色), 颜色(橙色)), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("球体/传送门上限: {0}/193 ", 加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart))), 自定义字符串("Orb/Portal Limit: {0}/193 ", 加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart)))), 空, 自定义字符串("                                                                                                                                "), 左边, -191, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
             "display selected cc/orb info"
-            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(与(非((主机玩家).editor_modeSelect), 数量(全局.A)), 自定义字符串("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", 数组中的值(全局.A, (主机玩家).checkpoint_current), If-Then-Else(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), <, 2), 空数组, 自定义字符串("\\n 传送点: {0}", 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真)))), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量((主机玩家).editor_killIndex)), 自定义字符串("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", 数组中的值(全局.H, 全局.EditSelected), 数组中的值(全局.I, 全局.EditSelected)), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)), 自定义字符串("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", 数组中的值(全局.TQ, 全局.EditSelected), 数组中的值(全局.EditMode, 全局.EditSelected), 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 自定义字符串("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", If-Then-Else(数组包含(全局.BanMulti, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanCreate, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", If-Then-Else(数组包含(全局.BanStand, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanClimb, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", If-Then-Else(数组包含(全局.BanDead, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanEmote, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", If-Then-Else(数组包含(全局.BanSaveDouble, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanBhop, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组))))), If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 4), 数组包含(数组((主机玩家).checkpoint_current, -1), 数组中的值(全局.CustomPortalCP, 全局.EditSelected))), 数量(全局.CustomPortalCP)), 自定义字符串("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), If-Then-Else(比较(数组中的值(全局.CustomPortalCP, 全局.EditSelected), <, 空), 自定义字符串("所有"), (主机玩家).checkpoint_current)), 自定义字符串("\\n   当前无数据选中   \\n")))))), If-Then-Else(与(非((主机玩家).editor_modeSelect), 数量(全局.A)), 自定义字符串("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", 数组中的值(全局.A, (主机玩家).checkpoint_current), If-Then-Else(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), <, 2), 空数组, 自定义字符串("\\n Teleport: {0}", 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真)))), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量((主机玩家).editor_killIndex)), 自定义字符串("\\n Selected boundary sphere\\n Vector: {0}\\n radius: {1}\\n  + keep out\\n  - stay in\\n", 数组中的值(全局.H, 全局.EditSelected), 数组中的值(全局.I, 全局.EditSelected)), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)), 自定义字符串("\\n Selected Bounce Orb\\n Vector: {0}\\n strength: {1} \\n ID: {2}\\n", 数组中的值(全局.TQ, 全局.EditSelected), 数组中的值(全局.EditMode, 全局.EditSelected), 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 自定义字符串("\\n skill bans\\n――――――――――――\\n {0} multi-climb ∞\\n {1} create ♂\\n {2}", If-Then-Else(数组包含(全局.BanMulti, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanCreate, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} stand ♠\\n {1} climb ↑\\n {2}", If-Then-Else(数组包含(全局.BanStand, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanClimb, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} dead X\\n {1} emote ♥\\n {2}", If-Then-Else(数组包含(全局.BanDead, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanEmote, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} save double △\\n――――――――――――\\n {1} require bhop ≥\\n", If-Then-Else(数组包含(全局.BanSaveDouble, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanBhop, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组))))), If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 4), 数组包含(数组((主机玩家).checkpoint_current, -1), 数组中的值(全局.CustomPortalCP, 全局.EditSelected))), 数量(全局.CustomPortalCP)), 自定义字符串("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), If-Then-Else(比较(数组中的值(全局.CustomPortalCP, 全局.EditSelected), <, 空), 自定义字符串("All"), (主机玩家).checkpoint_current)), 自定义字符串("\\n   No data selected   \\n"))))))), 空, 自定义字符串("                                                                                                                                "), 左边, -190, 颜色(白色), 空, 颜色(橙色), 可见和字符串, 默认可见度);
+            创建HUD文本(If-Then-Else((主机玩家).toggle_guide, 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(与(非((主机玩家).editor_modeSelect), 数量(全局.A)), 自定义字符串("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", 数组中的值(全局.A, (主机玩家).checkpoint_current), If-Then-Else(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), <, 2), 空数组, 自定义字符串("\\n 传送点: {0}", 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真)))), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量((主机玩家).editor_killIndex)), 自定义字符串("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", 数组中的值(全局.H, 全局.EditSelected), 数组中的值(全局.I, 全局.EditSelected)), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)), 自定义字符串("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", 数组中的值(全局.TQ, 全局.EditSelected), 数组中的值(全局.EditMode, 全局.EditSelected), 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 自定义字符串("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", If-Then-Else(数组包含(全局.BanMulti, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanCreate, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", If-Then-Else(数组包含(全局.BanStand, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanClimb, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", If-Then-Else(数组包含(全局.BanDead, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanEmote, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", If-Then-Else(数组包含(全局.BanSaveDouble, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanBhop, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组))))), If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 4), 数组包含(数组((主机玩家).checkpoint_current, -1), 数组中的值(全局.CustomPortalCP, 全局.EditSelected))), 数量(全局.CustomPortalCP)), 自定义字符串("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), If-Then-Else(比较(数组中的值(全局.CustomPortalCP, 全局.EditSelected), <, 空), 自定义字符串("所有"), (主机玩家).checkpoint_current)), 自定义字符串("\\n   当前无数据选中   \\n")))))), If-Then-Else(与(非((主机玩家).editor_modeSelect), 数量(全局.A)), 自定义字符串("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", 数组中的值(全局.A, (主机玩家).checkpoint_current), If-Then-Else(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), <, 2), 空数组, 自定义字符串("\\n Teleport: {0}", 数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真)))), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量((主机玩家).editor_killIndex)), 自定义字符串("\\n Selected Boundary Sphere\\n Vector: {0}\\n Radius: {1}\\n  + Keep Out\\n  - Stay In\\n", 数组中的值(全局.H, 全局.EditSelected), 数组中的值(全局.I, 全局.EditSelected)), If-Then-Else(与(比较((主机玩家).editor_modeSelect, ==, 2), 数量((主机玩家).editor_bounceIndex)), 自定义字符串("\\n Selected Bounce Orb\\n Vector: {0}\\n Strength: {1} \\n ID: {2}\\n", 数组中的值(全局.TQ, 全局.EditSelected), 数组中的值(全局.EditMode, 全局.EditSelected), 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 3), 自定义字符串("\\n Skill Bans\\n――――――――――――\\n {0} Multi-Climb ∞\\n {1} Create ♂\\n {2}", If-Then-Else(数组包含(全局.BanMulti, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanCreate, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} Stand ♠\\n {1} Climb ↑\\n {2}", If-Then-Else(数组包含(全局.BanStand, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanClimb, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} Dead X\\n {1} Emote ♥\\n {2}", If-Then-Else(数组包含(全局.BanDead, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanEmote, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), 自定义字符串("{0} Save Double △\\n――――――――――――\\n {1} Require Bhop ≥\\n", If-Then-Else(数组包含(全局.BanSaveDouble, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组), If-Then-Else(数组包含(全局.BanBhop, (主机玩家).checkpoint_current), 自定义字符串("√"), 空数组))))), If-Then-Else(与(与(比较((主机玩家).editor_modeSelect, ==, 4), 数组包含(数组((主机玩家).checkpoint_current, -1), 数组中的值(全局.CustomPortalCP, 全局.EditSelected))), 数量(全局.CustomPortalCP)), 自定义字符串("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), If-Then-Else(比较(数组中的值(全局.CustomPortalCP, 全局.EditSelected), <, 空), 自定义字符串("All"), (主机玩家).checkpoint_current)), 自定义字符串("\\n   No Data Selected   \\n"))))))), 空, 自定义字符串("                                                                                                                                "), 左边, -190, 颜色(白色), 空, 颜色(橙色), 可见和字符串, 默认可见度);
             "effects =========================================================================================================================================================================="
-            创建地图文本(If-Then-Else(数量(全局.EditSelectIdArray), 真, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("选中的实体"), 自定义字符串("selected")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 数组中的值(全局.H, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 空))), 1.2, 不要截取, 可见和位置, 颜色(橙色), 默认可见度);
+            创建地图文本(If-Then-Else(数量(全局.EditSelectIdArray), 真, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("选中的实体"), 自定义字符串("Selected")), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 数组中的值(全局.H, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 空))), 1.2, 不要截取, 可见和位置, 颜色(橙色), 默认可见度);
             创建图标(If-Then-Else(数量(全局.EditSelectIdArray), 真, 空), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 1), 数组中的值(全局.H, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 2), 数组中的值(全局.TQ, 全局.EditSelected), If-Then-Else(比较((主机玩家).editor_modeSelect, ==, 4), 数组中的值(全局.CustomPortalStart, 全局.EditSelected), 空))), 箭头：向下, 可见和位置, 颜色(白色), 真);
             "Purple sphere for teleport location"
             创建效果(If-Then-Else(与(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), >, 1), 非((主机玩家).editor_modeSelect)), 主机玩家, 空), 球体, 颜色(亮紫色), 减(数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 乘(0.1, 上)), 0.2, 可见，位置和半径);
@@ -1153,21 +1166,17 @@ export const frameworkTemplate = `设置
             创建地图文本(If-Then-Else(与(数组中的值(数组中的值(全局.A, (主机玩家).checkpoint_current), 真), 非((主机玩家).editor_modeSelect)), 主机玩家, 空), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("检查点位置"), 自定义字符串("level location")), 首个(数组中的值(全局.A, (主机玩家).checkpoint_current)), 1.6, 不要截取, 可见，位置和字符串, 颜色(天蓝色), 默认可见度);
             "portal fx"
             创建效果(If-Then-Else(与(数量(全局.EditSelectIdArray), 比较((主机玩家).editor_modeSelect, ==, 4)), 主机玩家, 空), 火花, 颜色(亮紫色), 数组中的值(全局.CustomPortalEndpoint, 全局.EditSelected), 0.2, 可见，位置和半径);
-        "Editor Off"
-        Else;
-            "clear variables if not in editor mode"
-            设置全局变量(HudStoreEdit, 空);
     }
 }
 
-规则 ("Editor |  Fly/Noclip Toggle") {
+规则 ("Editor | Toggle Fly & Noclip") {
     事件 {
         持续 - 每名玩家;
         双方;
         全部;
     }
     条件 {
-        (事件玩家).editor_on != 假;
+        全局.EditorOn != 假;
         按钮被按下(事件玩家, 按钮(技能1)) == 真;
         (事件玩家).editor_fly == 空;
         与(全局.EditorMoveItem, 比较(事件玩家, ==, 主机玩家)) == 假;
@@ -1199,13 +1208,13 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | change mode") {
+规则 ("Editor | Change Mode") {
     事件 {
         持续 - 全局;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_lock == 假;
         按钮被按下(主机玩家, 按钮(近身攻击)) == 真;
         按钮被按下(主机玩家, 按钮(主要攻击模式)) != 按钮被按下(主机玩家, 按钮(辅助攻击模式));
@@ -1226,7 +1235,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | update selected id") {
+规则 ("Editor | Update Selected Id") {
     事件 {
         子程序;
         EditUpdateSelectedIds;
@@ -1247,7 +1256,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | select last") {
+规则 ("Editor | Select Last") {
     事件 {
         子程序;
         EditorSelectLast;
@@ -1257,7 +1266,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | create cp/orb") {
+规则 ("Editor | Create Cp/Orb") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1266,7 +1275,7 @@ export const frameworkTemplate = `设置
     条件 {
         "Required for UpdateCache()"
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_lock == 假;
         数组包含(数组(空, 1, 2, 4), (主机玩家).editor_modeSelect) == 真;
         按钮被按下(主机玩家, 按钮(互动)) == 真;
@@ -1276,7 +1285,7 @@ export const frameworkTemplate = `设置
         设置玩家变量(主机玩家, editor_lock, 真);
         If(非((主机玩家).editor_modeSelect));
             If(与(数量(全局.A), 比较(相距距离(主机玩家, 数组中的值(全局.A, (主机玩家).checkpoint_current)), <=, 1.4)));
-                小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   放置的检查点距离太近"), 自定义字符串("   Cannot place checkpoint too close.")));
+                小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   放置的检查点距离太近"), 自定义字符串("   Cannot Place Checkpoint Too Close.")));
             Else;
                 "$$"
                 If(比较((主机玩家).checkpoint_current, >=, 减(数量(全局.A), 真)));
@@ -1305,12 +1314,12 @@ export const frameworkTemplate = `设置
                     设置全局变量(BanDjump, 映射的数组(全局.BanDjump, 加(当前数组元素, If-Then-Else(比较(当前数组元素, >=, (主机玩家).checkpoint_current), 1, 空))));
                 End;
                 调用子程序(UpdateCache);
-                小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   新检查点已创建"), 自定义字符串("   New checkpoint created")));
+                小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   新检查点已创建"), 自定义字符串("   New Checkpoint Created")));
             End;
         Else If(非(数量(全局.A)));
-            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   请先放置检查点"), 自定义字符串("   Make a checkpoint first")));
+            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   请先放置检查点"), 自定义字符串("   Make A Checkpoint First")));
         Else If(比较(加(加(数量(全局.TQ), 数量(全局.H)), 数量(全局.CustomPortalStart)), >=, 193));
-            大字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("当前地图弹球/传送门数量已达上限"), 自定义字符串("Orb/portal limit reached for this map")));
+            大字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("当前地图弹球/传送门数量已达上限"), 自定义字符串("Orb/Portal Limit Reached For This Map")));
         Else If(比较((主机玩家).editor_modeSelect, ==, 1));
             修改全局变量(H, 添加至数组, 所选位置(主机玩家));
             修改全局变量(killballnumber, 添加至数组, (主机玩家).checkpoint_current);
@@ -1320,7 +1329,7 @@ export const frameworkTemplate = `设置
             调用子程序(EditorSelectLast);
             创建效果(已过滤的数组(所有玩家(所有队伍), 比较((当前数组元素).checkpoint_current, ==, 数组中的值(全局.killballnumber, 单次赋值(全局.EditSelected)))), 球体, 数组中的值(全局.ColorConfig, 14), 数组中的值(全局.H, 单次赋值(全局.EditSelected)), 绝对值(数组中的值(全局.I, 单次赋值(全局.EditSelected))), 可见，位置和半径);
             修改全局变量(K, 添加至数组, 最后创建的实体);
-            大字体信息(首个(真), 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("新击杀球已创建! \\n仅生效于检查点"), 自定义字符串("New boundary sphere has been created! \\nOnly valid for this checkpoint")), (主机玩家).checkpoint_current));
+            大字体信息(首个(真), 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("新击杀球已创建! \\n仅生效于检查点"), 自定义字符串("New boundary Sphere Created! \\nOnly Valid For This Checkpoint")), (主机玩家).checkpoint_current));
             等待直到 (非(与(按钮被按下(主机玩家, 按钮(互动)), 按钮被按下(主机玩家, 按钮(主要攻击模式)))), 真);
             "EditUpdateSelectedIds() # to arrow during the placement properly"
             While(与(按钮被按下(主机玩家, 按钮(互动)), 按钮被按下(主机玩家, 按钮(主要攻击模式))));
@@ -1340,7 +1349,7 @@ export const frameworkTemplate = `设置
             调用子程序(EditorSelectLast);
             创建效果(已过滤的数组(添加至数组(所有玩家(所有队伍), 空), 与(比较((当前数组元素).checkpoint_current, ==, 数组中的值(全局.pinballnumber, 单次赋值(全局.EditSelected))), 非(数组包含((当前数组元素).cache_collectedLocks, 单次赋值(全局.EditSelected))))), 球, If-Then-Else(数组中的值(全局.BounceToggleLock, 单次赋值(全局.EditSelected)), 数组中的值(全局.ColorConfig, 16), 数组中的值(全局.ColorConfig, 15)), 数组中的值(全局.TQ, 单次赋值(全局.EditSelected)), 真, 可见，位置，半径和颜色);
             修改全局变量(TQ2, 添加至数组, 最后创建的实体);
-            大字体信息(首个(真), 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("新弹球已创建! \\n仅生效于检查点"), 自定义字符串("New Bounce Orb has been created! \\nOnly valid for this checkpoint")), (主机玩家).checkpoint_current));
+            大字体信息(首个(真), 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("新弹球已创建! \\n仅生效于检查点"), 自定义字符串("New Bounce Orb Created! \\nOnly Valid For This Checkpoint")), (主机玩家).checkpoint_current));
             等待直到 (非(与(按钮被按下(主机玩家, 按钮(互动)), 按钮被按下(主机玩家, 按钮(主要攻击模式)))), 真);
             While(与(按钮被按下(主机玩家, 按钮(互动)), 按钮被按下(主机玩家, 按钮(主要攻击模式))));
                 在索引处设置全局变量(TQ, 全局.EditSelected, 射线命中位置(眼睛位置(主机玩家), 加(眼睛位置(主机玩家), 乘(面朝方向(主机玩家), 7)), 空, 空, 假));
@@ -1363,7 +1372,7 @@ export const frameworkTemplate = `设置
                 在索引处设置全局变量(CustomPortalStart, 全局.EditSelected, 射线命中位置(眼睛位置(主机玩家), 加(眼睛位置(主机玩家), 乘(面朝方向(主机玩家), 6)), 空, 空, 假));
                 等待(假, 无视条件);
             End;
-            大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("新传送门已创建!\\n生效于当前检查点"), 自定义字符串("Portal created \\nOnly valid for this checkpoint")));
+            大字体信息(首个(真), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("新传送门已创建!\\n生效于当前检查点"), 自定义字符串("Portal Created \\nOnly Valid For This Checkpoint")));
             设置全局变量(EditorMoveItem, 真);
         End;
         设置玩家变量(主机玩家, editor_lock, 假);
@@ -1371,7 +1380,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | delete cp/orb/portal") {
+规则 ("Editor | Delete Cp/Orb/Portal") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1380,7 +1389,7 @@ export const frameworkTemplate = `设置
     条件 {
         "Required for UpdateCache()"
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_lock == 假;
         按钮被按下(主机玩家, 按钮(互动)) == 真;
         按钮被按下(主机玩家, 按钮(辅助攻击模式)) == 真;
@@ -1461,7 +1470,7 @@ export const frameworkTemplate = `设置
             调用子程序(RebuildKillOrbs);
             调用子程序(RebuildBounceOrbs);
             调用子程序(RebuildPortals);
-            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   检查点已删除"), 自定义字符串("   Checkpoint has been deleted")));
+            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   检查点已删除"), 自定义字符串("   Checkpoint Has Been Deleted")));
         Else If(与(比较((主机玩家).editor_modeSelect, ==, 1), 数量(全局.EditSelectIdArray)));
             修改全局变量(H, 根据索引从数组中移除, 全局.EditSelected);
             修改全局变量(I, 根据索引从数组中移除, 全局.EditSelected);
@@ -1499,7 +1508,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | toggle orb functions") {
+规则 ("Editor | Toggle Orb Functions") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1508,7 +1517,7 @@ export const frameworkTemplate = `设置
     条件 {
         "Required for UpdateCache()"
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 2;
         (主机玩家).editor_lock == 假;
         数量(全局.EditSelectIdArray) > 空;
@@ -1531,7 +1540,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | orb radi/strength") {
+规则 ("Editor | Orb Radii/Strength") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1540,7 +1549,7 @@ export const frameworkTemplate = `设置
     条件 {
         "Required for UpdateCache()"
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         数组包含(数组(1, 2), (主机玩家).editor_modeSelect) == 真;
         (主机玩家).editor_lock == 假;
         数量(全局.EditSelectIdArray) > 空;
@@ -1563,13 +1572,13 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | select orb/portal") {
+规则 ("Editor | Select Orb/Portal") {
     事件 {
         持续 - 全局;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         数组包含(数组(1, 2, 4), (主机玩家).editor_modeSelect) == 真;
         (主机玩家).editor_lock == 假;
         数量(全局.EditSelectIdArray) > 空;
@@ -1589,13 +1598,13 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | cp size hitbox display") {
+规则 ("Editor | Cp Size Hitbox Display") {
     事件 {
         持续 - 全局;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 空;
         按钮被按下(主机玩家, 按钮(互动)) == 真;
         按钮被按下(主机玩家, 按钮(技能1)) == 真;
@@ -1606,12 +1615,12 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | cp add/remove teleport") {
+规则 ("Editor | Cp Add/Remove Teleport") {
     事件 {
         持续 - 全局;
     }
     条件 {
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 空;
         (主机玩家).editor_lock == 假;
         数量(全局.A) > 真;
@@ -1625,31 +1634,31 @@ export const frameworkTemplate = `设置
         根据条件中止(或(按钮被按下(主机玩家, 按钮(近身攻击)), 与(按钮被按下(主机玩家, 按钮(互动)), 按钮被按下(主机玩家, 按钮(装填)))));
         设置玩家变量(主机玩家, editor_lock, 真);
         If(非((主机玩家).checkpoint_current));
-            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   不能在第一个检查点设置传送门"), 自定义字符串("   Can't place a teleport on first checkpoint")));
+            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   不能在第一个检查点设置传送门"), 自定义字符串("   Cannot Place A Teleport On First Checkpoint")));
             设置玩家变量(主机玩家, editor_lock, 假);
             中止;
         End;
         "remove"
         If(比较(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), >, 1));
             在索引处设置全局变量(A, (主机玩家).checkpoint_current, 首个(数组中的值(全局.A, (主机玩家).checkpoint_current)));
-            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   关卡{0}的传送点已移除", (主机玩家).checkpoint_current), 自定义字符串("   Teleport for level {0} has been removed", (主机玩家).checkpoint_current)));
+            小字体信息(主机玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   关卡{0}的传送点已移除", (主机玩家).checkpoint_current), 自定义字符串("   Teleport For Level {0} Has Been Removed", (主机玩家).checkpoint_current)));
         "add"
         Else;
             在索引处设置全局变量(A, (主机玩家).checkpoint_current, 数组(If-Then-Else(数量(数组中的值(全局.A, (主机玩家).checkpoint_current)), 首个(数组中的值(全局.A, (主机玩家).checkpoint_current)), 数组中的值(全局.A, (主机玩家).checkpoint_current)), 所选位置(主机玩家)));
-            小字体信息(主机玩家, 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   传送点已添加到当前关卡"), 自定义字符串("   Teleport has been added for level")), (主机玩家).checkpoint_current));
+            小字体信息(主机玩家, 自定义字符串("{0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   传送点已添加到当前关卡"), 自定义字符串("   Teleport Has Been Added For Level")), (主机玩家).checkpoint_current));
         End;
         设置玩家变量(主机玩家, editor_lock, 假);
         等待(假, 无视条件);
     }
 }
 
-规则 ("Editor | moving checkpoint") {
+规则 ("Editor | Moving Checkpoint") {
     事件 {
         持续 - 全局;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 空;
         (主机玩家).editor_lock == 假;
         数量(全局.A) > 空;
@@ -1687,7 +1696,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | add ult/dash") {
+规则 ("Editor | Toggle Ult/Dash") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1695,7 +1704,7 @@ export const frameworkTemplate = `设置
     }
     条件 {
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 空;
         (主机玩家).editor_lock == 假;
         数量(全局.A) > 空;
@@ -1720,7 +1729,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | toggle bans") {
+规则 ("Editor | Toggle Bans") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1729,7 +1738,7 @@ export const frameworkTemplate = `设置
     条件 {
         "Required for UpdateCache()"
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 3;
         (主机玩家).editor_lock == 假;
         数量(全局.A) > 空;
@@ -1798,13 +1807,13 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | portal cp change") {
+规则 ("Editor | Change Portal Cp") {
     事件 {
         持续 - 全局;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (主机玩家).editor_modeSelect == 4;
         (主机玩家).editor_lock == 假;
         数量(全局.EditSelectIdArray) > 空;
@@ -1817,7 +1826,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("Editor | move object") {
+规则 ("Editor | Move Object") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -1826,7 +1835,7 @@ export const frameworkTemplate = `设置
     条件 {
         "Required for UpdateCache()"
         事件玩家 == 主机玩家;
-        (主机玩家).editor_on != 假;
+        全局.EditorOn != 假;
         数组包含(数组(1, 2, 4), (主机玩家).editor_modeSelect) == 真;
         (主机玩家).editor_lock == 假;
         数量(全局.EditSelectIdArray) > 空;
@@ -1901,7 +1910,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Commands <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Commands ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -1915,7 +1924,7 @@ export const frameworkTemplate = `设置
     }
     条件 {
         数量(全局.LeaderBoardFull) > 空;
-        (事件玩家).editor_on == 假;
+        全局.EditorOn == 假;
         按钮被按下(事件玩家, 按钮(近身攻击)) == 真;
     }
     动作 {
@@ -1937,10 +1946,10 @@ export const frameworkTemplate = `设置
     }
     动作 {
         等待(真, 当为“假”时中止);
-        "smallMessage(eventPlayer, \\"   split display off\\" if eventPlayer.timer_splitDisplay != -Math.INFINITY else \\"   split display on\\")"
         设置玩家变量(事件玩家, timer_splitDisplay, If-Then-Else(比较((事件玩家).timer_splitDisplay, <=, -999999999999), 空, -999999999999));
-        播放效果(事件玩家, 正面状态施加声音, 颜色(白色), 事件玩家, 100);
-        小字体信息(事件玩家, If-Then-Else(比较((事件玩家).timer_splitDisplay, <=, -999999999999), 自定义字符串("   split display off"), 自定义字符串("   split display on")));
+        播放效果(事件玩家, 正面状态施加声音, 空, 事件玩家, 100);
+        "$$ Language"
+        小字体信息(事件玩家, If-Then-Else(比较((事件玩家).timer_splitDisplay, <=, -999999999999), 自定义字符串("   Split Display Off"), 自定义字符串("   Split Display On")));
         等待(0.32, 无视条件);
     }
 }
@@ -1953,7 +1962,7 @@ export const frameworkTemplate = `设置
     }
     条件 {
         按钮被按下(事件玩家, 按钮(技能2)) == 真;
-        (事件玩家).editor_on == 假;
+        全局.EditorOn == 假;
         全局.CompMode == 假;
     }
     动作 {
@@ -1963,7 +1972,8 @@ export const frameworkTemplate = `设置
         If((事件玩家).toggle_invisible);
             设置不可见(事件玩家, 全部);
         End;
-        小字体信息(事件玩家, 自定义字符串("   {0} {1}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("隐身模式"), 自定义字符串("Invisible")), If-Then-Else((事件玩家).toggle_invisible, 自定义字符串("on"), 自定义字符串("off"))));
+        小字体信息(事件玩家, 自定义字符串("  {0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒInvisibleInvisibleInvisible"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((事件玩家).toggle_invisible, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ | On | On | On"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ | Off | Off | Off"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))))));
+        "\\"   {0} {1}\\".format(\\"隐身模式\\" checkCN \\"Invisible\\", \\"On\\" if eventPlayer.toggle_invisible else \\"Off\\"))"
         播放效果(事件玩家, 负面状态施加声音, 空, 事件玩家, 100);
     }
 }
@@ -1975,8 +1985,7 @@ export const frameworkTemplate = `设置
         全部;
     }
     条件 {
-        "@Condition eventPlayer.editor_on == false"
-        (事件玩家).lockState == 假;
+        "@Condition EditorOn == false"
         (事件玩家).lockState == 假;
         (事件玩家).checkpoint_notLast != 假;
         按钮被按下(事件玩家, 按钮(主要攻击模式)) == 真;
@@ -2048,24 +2057,24 @@ export const frameworkTemplate = `设置
         If(全局.CompMode);
             等待(假, 无视条件);
             If(比较(全局.CompTime, <, 1));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   比赛结束"), 自定义字符串("   Competition is over")));
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   比赛结束"), 自定义字符串("   Competition Is Over")));
                 设置玩家变量(事件玩家, lockState, 假);
                 中止;
             Else If((事件玩家).comp_done);
                 设置玩家变量(事件玩家, lockState, 假);
                 中止;
             Else If(与(全局.CompRestartLimit, (事件玩家).checkpoint_notLast));
-                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   禁止在此比赛中运行期间重新启动"), 自定义字符串("   Restart during run is disabled for this competition")));
+                小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   禁止在此比赛中运行期间重新启动"), 自定义字符串("   Restart During Run Is Disabled For This Competition")));
                 设置玩家变量(事件玩家, lockState, 假);
                 中止;
             Else If(全局.CompAtmpNum);
                 If(比较((事件玩家).comp_countAttempts, ==, 全局.CompAtmpNum));
-                    小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   最后一次尝试"), 自定义字符串("   This is your final attempt")));
+                    小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   最后一次尝试"), 自定义字符串("   This Is Your Final Attempt")));
                     设置玩家变量(事件玩家, lockState, 假);
                     中止;
                 End;
                 If(比较((事件玩家).comp_countAttempts, <, 空));
-                    小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   你没有尝试过"), 自定义字符串("   You are out of attempts")));
+                    小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   你没有尝试过"), 自定义字符串("   You Are Out Of Attempts")));
                     设置玩家变量(事件玩家, lockState, 假);
                     中止;
                 End;
@@ -2087,7 +2096,7 @@ export const frameworkTemplate = `设置
             复活(事件玩家);
         End;
         调用子程序(StartGame);
-        播放效果(事件玩家, 环状爆炸声音, 颜色(白色), 事件玩家, 100);
+        播放效果(事件玩家, 环状爆炸声音, 空, 事件玩家, 100);
         等待(全局.CompMode, 无视条件);
         "eventPlayer.allowButton(Button.ABILITY_1)"
         设置玩家变量(事件玩家, lockState, 假);
@@ -2105,19 +2114,18 @@ export const frameworkTemplate = `设置
     条件 {
         按钮被按下(事件玩家, 按钮(互动)) == 真;
         按钮被按下(事件玩家, 按钮(技能2)) == 假;
-        与((事件玩家).editor_on, 或(或(按钮被按下(事件玩家, 按钮(近身攻击)), 按钮被按下(事件玩家, 按钮(主要攻击模式))), 按钮被按下(事件玩家, 按钮(辅助攻击模式)))) == 假;
+        与(全局.EditorOn, 或(或(按钮被按下(事件玩家, 按钮(近身攻击)), 按钮被按下(事件玩家, 按钮(主要攻击模式))), 按钮被按下(事件玩家, 按钮(辅助攻击模式)))) == 假;
     }
     动作 {
-        "@Condition false == false"
         等待(真, 当为“假”时中止);
         "editor has interact combos"
-        If((事件玩家).editor_on);
+        If(全局.EditorOn);
             等待(真, 当为“假”时中止);
         End;
+        开启游戏预设复生模式(事件玩家);
+        关闭游戏预设复生模式(事件玩家);
         If((事件玩家).toggle_spectate);
-            "eventPlayer.enableRespawn()"
             复活(事件玩家);
-            "eventPlayer.respawn()"
             If((事件玩家).toggle_practice);
                 追踪玩家变量频率(事件玩家, timer_practice, 999999999999, 真, 全部禁用);
             Else If((事件玩家).checkpoint_notLast);
@@ -2125,14 +2133,13 @@ export const frameworkTemplate = `设置
             End;
             调用子程序(CheckpointFailReset);
         Else;
-            小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("   再次长按互动键关闭观战模式"), 自定义字符串("   Hold Interact again to turn off spectate mode")));
             设置玩家变量(事件玩家, toggle_invincible, 假);
             调用子程序(TimerPause);
             停止追踪玩家变量(事件玩家, timer_practice);
-            "eventPlayer.disableRespawn()"
             设置受到伤害(事件玩家, 100);
             击杀(事件玩家, 空);
             设置受到伤害(事件玩家, 0);
+            小字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   Hold Interact Again To Turn Off Spectate Mode   Hold Interact Again To Turn Off Spectate Mode   Hold Interact Agai{0}", 自定义字符串("n To Turn Off Spectate Mode")), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
         End;
         设置玩家变量(事件玩家, toggle_spectate, 非((事件玩家).toggle_spectate));
     }
@@ -2157,18 +2164,21 @@ export const frameworkTemplate = `设置
         设置玩家变量(事件玩家, toggle_invincible, 非((事件玩家).toggle_invincible));
         设置玩家变量(事件玩家, cache_collectedLocks, 空数组);
         If((事件玩家).toggle_invincible);
-            大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("探点模式"), 自定义字符串("Invincible mode")));
+            "\\"探点模式\\" checkCN \\"Invincible mode\\""
+            大字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒInvincible ModeInvincible ModeInvincible Mode"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
             调用子程序(TimerPause);
             停止追踪玩家变量(事件玩家, timer_practice);
-            开始规则(CheckUlt, 重新开始规则);
-            开始规则(CheckAbility1, 重新开始规则);
+            开始规则(CheckUlt, 无动作);
+            开始规则(CheckAbility1, 无动作);
         Else;
             If((事件玩家).toggle_practice);
-                大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("练习模式"), 自定义字符串("Practice mode")));
+                "\\"练习模式\\" checkCN \\"Practice mode\\""
+                大字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPractice ModePractice ModePractice Mode"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
                 追踪玩家变量频率(事件玩家, timer_practice, 999999999999, 真, 全部禁用);
                 调用子程序(CheckpointFailReset);
             Else If((事件玩家).checkpoint_notLast);
-                大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("跑图模式"), 自定义字符串("Normal mode")));
+                "\\"跑图模式\\" checkCN \\"Normal mode\\""
+                大字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒNormal ModeNormal ModeNormal Mode"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
                 调用子程序(TimerResume);
                 调用子程序(CheckpointFailReset);
             End;
@@ -2186,7 +2196,7 @@ export const frameworkTemplate = `设置
         全部;
     }
     条件 {
-        (事件玩家).editor_on == 假;
+        全局.EditorOn == 假;
         全局.CompMode == 假;
         (事件玩家).lockState == 假;
         存活(事件玩家) == 真;
@@ -2198,7 +2208,8 @@ export const frameworkTemplate = `设置
         设置玩家变量(事件玩家, lockState, 真);
         设置玩家变量(事件玩家, toggle_practice, 非((事件玩家).toggle_practice));
         If((事件玩家).toggle_practice);
-            大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("练习模式"), 自定义字符串("Practice mode")));
+            "\\"练习模式\\" checkCN \\"Practice mode\\""
+            大字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPractice ModePractice ModePractice Mode"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
             调用子程序(TimerPause);
             设置玩家变量(事件玩家, checkpoint_practice, (事件玩家).checkpoint_current);
             设置玩家变量(事件玩家, timer_splitDisplay, 乘(-999999999999, 比较((事件玩家).timer_splitDisplay, <=, -999999999999)));
@@ -2210,7 +2221,8 @@ export const frameworkTemplate = `设置
                 调用子程序(CheckpointFailReset);
             End;
         Else;
-            大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("跑图模式"), 自定义字符串("Normal mode")));
+            "\\"跑图模式\\" checkCN \\"Normal mode\\""
+            大字体信息(事件玩家, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒNormal ModeNormal ModeNormal Mode"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))));
             停止追踪玩家变量(事件玩家, timer_practice);
             设置玩家变量(事件玩家, checkpoint_current, (事件玩家).checkpoint_practice);
             调用子程序(UpdateCache);
@@ -2233,7 +2245,7 @@ export const frameworkTemplate = `设置
         全部;
     }
     条件 {
-        (事件玩家).editor_on == 假;
+        全局.EditorOn == 假;
         (事件玩家).lockState == 假;
         (事件玩家).toggle_practice != 假;
         或(存活(事件玩家), (事件玩家).toggle_spectate) == 真;
@@ -2270,7 +2282,7 @@ export const frameworkTemplate = `设置
         数量(全局.A) > 真;
         全局.EditorMoveItem == 假;
         与((事件玩家).editor_lock, 比较(事件玩家, ==, 主机玩家)) == 假;
-        或((主机玩家).editor_on, (事件玩家).toggle_practice) == 真;
+        或(全局.EditorOn, (事件玩家).toggle_practice) == 真;
         (事件玩家).lockState == 假;
         按钮被按下(事件玩家, 按钮(蹲下)) == 真;
         按钮被按下(事件玩家, 按钮(主要攻击模式)) != 按钮被按下(事件玩家, 按钮(辅助攻击模式));
@@ -2316,8 +2328,9 @@ export const frameworkTemplate = `设置
         End;
         等待(真, 当为“假”时中止);
         设置玩家变量(事件玩家, toggle_quickRestart, 非((事件玩家).toggle_quickRestart));
-        播放效果(事件玩家, 正面状态施加声音, 颜色(白色), 事件玩家, 100);
-        大字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else((事件玩家).toggle_quickRestart, 自定义字符串("快速回点已启用"), 自定义字符串("快速回点已关闭")), If-Then-Else((事件玩家).toggle_quickRestart, 自定义字符串("Quick reset is enabled"), 自定义字符串("Quick reset is disabled"))));
+        播放效果(事件玩家, 正面状态施加声音, 空, 事件玩家, 100);
+        "(\\"快速回点已启用\\" if eventPlayer.toggle_quickRestart else \\"快速回点已关闭\\") checkCN\\n\\"Quick reset is enabled\\" if eventPlayer.toggle_quickRestart else \\"Quick reset is disabled\\""
+        大字体信息(事件玩家, If-Then-Else((事件玩家).toggle_quickRestart, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒQuick Reset Is EnabledQuick Reset Is EnabledQuick Reset Is Enabled"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒQuick Reset Is DisabledQuick Reset Is DisabledQuick Reset Is Disabled"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))));
     }
 }
 
@@ -2329,7 +2342,7 @@ export const frameworkTemplate = `设置
     }
     条件 {
         全局.EditorMoveItem == 假;
-        与(与((事件玩家).editor_on, 比较(事件玩家, ==, 主机玩家)), 按钮被按下(事件玩家, 按钮(近身攻击))) == 假;
+        与(与(全局.EditorOn, 比较(事件玩家, ==, 主机玩家)), 按钮被按下(事件玩家, 按钮(近身攻击))) == 假;
         按钮被按下(事件玩家, 按钮(辅助攻击模式)) == 真;
         按钮被按下(事件玩家, 按钮(主要攻击模式)) == 假;
         "don't activate during skipping"
@@ -2338,8 +2351,9 @@ export const frameworkTemplate = `设置
     动作 {
         等待(1.5, 当为“假”时中止);
         设置玩家变量(事件玩家, toggle_guide, 非((事件玩家).toggle_guide));
-        播放效果(事件玩家, 正面状态施加声音, 颜色(白色), 事件玩家, 100);
-        小字体信息(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else((事件玩家).toggle_guide, 自定义字符串("   HUD已隐藏"), 自定义字符串("   HUD已开启")), If-Then-Else((事件玩家).toggle_guide, 自定义字符串("   Hud is now hidden"), 自定义字符串("   Hud is now shown"))));
+        小字体信息(事件玩家, If-Then-Else((事件玩家).toggle_guide, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   HUD Is Now Shown   HUD Is Now Shown   HUD Is Now Shown"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ   HUD Is Now Hidden   HUD Is Now Hidden   HUD Is Now Hidden"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))));
+        "(\\"   HUD已隐藏\\" if eventPlayer.toggle_guide else  \\"   HUD已开启\\")\\ncheckCN\\n(\\"   Hud is now hidden\\" if eventPlayer.toggle_guide else \\"   Hud is now shown\\"))"
+        播放效果(事件玩家, 正面状态施加声音, 空, 事件玩家, 100);
     }
 }
 
@@ -2382,7 +2396,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Huds <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Huds ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -2410,35 +2424,36 @@ export const frameworkTemplate = `设置
             设置全局变量(Code, 自定义字符串("code here - 代码"));
         End;
         设置全局变量(Cachedcredits, 空);
-        "hudSubtext(localPlayer.toggle_guide, \\"Discord: dsc.gg/genjiparkour\\" LeftAlign96, HudPosition.LEFT, HO.data_dsc, ColorConfig[Customize.dsc], HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
-        创建HUD文本(首个(真), 空, If-Then-Else((本地玩家).toggle_guide, 自定义字符串("Discord: dsc.gg/genjiparkour"), 空数组), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("作者: {0}                                                                                                ", 全局.Name), 自定义字符串("Made by: {0}                                                                                                ", 全局.Name)), 左边, -200, 空, 数组中的值(全局.ColorConfig, 18), 首个(全局.ColorConfig), 可见和字符串, 默认可见度);
-        修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
-        创建HUD文本(首个(真), 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("代码: {0}                                                                                                ", 全局.Code), 自定义字符串("Map code: {0}                                                                                                ", 全局.Code)), 左边, -199, 空, 空, 数组中的值(全局.ColorConfig, 真), 可见和字符串, 默认可见度);
-        修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
+        If(非(全局.EditorOn));
+            创建HUD文本(首个(真), 空, If-Then-Else((本地玩家).toggle_guide, 自定义字符串("Discord: dsc.gg/genjiparkour"), 空数组), 自定义字符串("{0}: {1}                                                                                                ", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒMade ByMade ByMade By"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 全局.Name), 左边, -200, 空, 数组中的值(全局.ColorConfig, 18), 首个(全局.ColorConfig), 可见和字符串, 默认可见度);
+            创建HUD文本(首个(真), 空, 空, 自定义字符串("{0}: {1}                                                                                                ", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒMap CodeMap CodeMap Code"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 全局.Code), 左边, -199, 空, 空, 数组中的值(全局.ColorConfig, 真), 可见和字符串, 默认可见度);
+            创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} {1} + {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} | {1}", 输入绑定字符串(按钮(辅助攻击模式)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPreview CPPreview CPPreview CP"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))))), 右边, -160, 空, 空, If-Then-Else((本地玩家).preview_array1, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(首个(与((本地玩家).preview_array1, (本地玩家).toggle_guide)), 空, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify Zoom\\nAim | Change Preview AngleWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify{0}", 自定义字符串(" Zoom\\nAim | Change Preview AngleWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify Zoom\\nAim | Change Preview Angle")), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空, 顶部, -171, 空, 数组中的值(全局.ColorConfig, 6), 空, 可见和字符串, 始终不可见);
+            创建HUD文本(本地玩家, 空, 空, If-Then-Else(或(比较((本地玩家).timer_splitDisplay, <=, -999999999999), (本地玩家).toggle_spectate), 空数组, 自定义字符串("{0}{1}                                                                                                ", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒSplit: Split: Split: "), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), (本地玩家).timer_splitDisplay)), 左边, -195, 空, 空, 数组中的值(全局.ColorConfig, 3), 可见和字符串, 默认可见度);
+            "Remove no hints - visual and element bloat"
+            If(数量(全局.HintText));
+                创建HUD文本(首个(与((本地玩家).toggle_guide, 数组包含(全局.HintCp, (本地玩家).checkpoint_current))), 空, 自定义字符串("{0}{1}", If-Then-Else((本地玩家).toggle_hints, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ― ― ― ― ― Hint ― ― ― ― ―\\n― ― ― ― ― Hint ― ― ― ― ―\\n― ― ― ― ― Hint ― ― ― ― ―\\n"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ― ― ― Hint Available ― ― ―― ― ― Hint Available ― ― ―― ― ― Hint Available ― ― ―"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), If-Then-Else((本地玩家).toggle_hints, 数组中的值(全局.HintText, 数组值的索引(全局.HintCp, (本地玩家).checkpoint_current)), 空数组)), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(近身攻击)), If-Then-Else((本地玩家).toggle_hints, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHide HintHide HintHide Hint"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒShow HintShow HintShow Hint"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))))), 右边, -151, 空, If-Then-Else((本地玩家).toggle_hints, 颜色(绿色), 颜色(橙色)), If-Then-Else(数组包含(全局.HintCp, (本地玩家).checkpoint_current), 单次赋值(数组中的值(全局.ColorConfig, 5)), 颜色(灰色)), 可见，字符串和颜色, 默认可见度);
+            End;
+            创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} + {1} + {2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | {1}\\n{2}", 输入绑定字符串(按钮(互动)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒRestartRestartRestart"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 自定义字符串("{0} {1} | {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(近身攻击)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒLeaderboardLeaderboardLeaderboard"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))))), 右边, -156, 空, 空, 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
+            设置全局变量(Difficultyhud, 数组(地图工坊设置组合(自定义字符串("Map Settings ■ 地图设置 ■ 맵 설정"), 自定义字符串("Difficulty 󠀨Display Hud󠀩 ■ 难度 󠀨顶部hud󠀩 ■ 난이도 󠀨HUD 디스플레이󠀩"), 0, 数组(自定义字符串("<fg27AAFFFF>Playtest ■ 游戏测试 ■ 플레이테스트"), 自定义字符串("<fgA0E81BFF>Easy-"), 自定义字符串("<fgA0E81BFF>Easy"), 自定义字符串("<fgA0E81BFF>Easy+"), 自定义字符串("<fge0e000FF>Medium-"), 自定义字符串("<fge0e000FF>Medium"), 自定义字符串("<fge0e000FF>Medium+"), 自定义字符串("<fgEC9900FF>Hard-"), 自定义字符串("<fgEC9900FF>Hard"), 自定义字符串("<fgEC9900FF>Hard+"), 自定义字符串("<fgFF4500FF>Very Hard-"), 自定义字符串("<fgFF4500FF>Very Hard"), 自定义字符串("<fgFF4500FF>Very Hard+"), 自定义字符串("<fgC80013FF>Extreme-"), 自定义字符串("<fgC80013FF>Extreme"), 自定义字符串("<fgC80013FF>Extreme+"), 自定义字符串("<fg960000FF>Hell"), 自定义字符串("Do Not Display ■ 不显示 ■ 표시 X")), 1), 地图工坊设置开关(自定义字符串("Map Settings ■ 地图设置 ■ 맵 설정"), 自定义字符串("Playtest Display ■ 游戏测试 ■ 플레이테스트 디스플레이"), 假, 2)));
+            "display\\n17th entry is 'dont display'"
+            If(比较(首个(全局.Difficultyhud), !=, 17));
+                创建HUD文本(首个(与((本地玩家).toggle_guide, 非((本地玩家).toggle_leaderboard))), If-Then-Else(最后(全局.Difficultyhud), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPlaytestPlaytestPlaytest"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空数组), 数组中的值(数组(自定义字符串("Playtest"), 自定义字符串("Easy -"), 自定义字符串("Easy"), 自定义字符串("Easy +"), 自定义字符串("Medium -"), 自定义字符串("Medium"), 自定义字符串("Medium +"), 自定义字符串("Hard -"), 自定义字符串("Hard"), 自定义字符串("Hard +"), 自定义字符串("Very Hard -"), 自定义字符串("Very Hard"), 自定义字符串("Very Hard +"), 自定义字符串("Extreme -"), 自定义字符串("Extreme"), 自定义字符串("Extreme +"), 自定义字符串("Hell"), 空), 首个(全局.Difficultyhud)), 空, 顶部, -173, 颜色(蓝色), 数组中的值(数组(颜色(蓝色), 颜色(灰绿色), 颜色(灰绿色), 颜色(灰绿色), 颜色(黄色), 颜色(黄色), 颜色(黄色), 颜色(橙色), 颜色(橙色), 颜色(橙色), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 颜色(红色), 颜色(红色), 颜色(红色), 自定义颜色(150, 0, 0, 255), 空), 首个(全局.Difficultyhud)), 空, 可见和字符串, 默认可见度);
+            End;
+        End;
         "global huds"
-        创建HUD文本(首个(真), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("房间将在 {0} 分钟后重启 - v1.10.3G{1}", 全局.TimeRemaining, If-Then-Else(比较(文本数量, >=, 128), 自定义字符串("\\n错误: 已达到最大HUD数量上限"), 空数组)), 自定义字符串("Server Restart in {0} Min - v1.10.3G{1}", 全局.TimeRemaining, If-Then-Else(比较(文本数量, >=, 128), 自定义字符串("\\nerror: max hud count reached"), 空数组))), 空, 右边, -162, 空, 数组中的值(全局.ColorConfig, 2), 空, 可见和字符串, 始终可见);
+        创建HUD文本(首个(真), 空, 自定义字符串("{0}{1}{2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒServer Restart In Server Restart In Server Restart In "), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 全局.TimeRemaining, 自定义字符串("{0}v1.10.4A{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ Min -  Min -  Min - "), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else(比较(文本数量, >=, 128), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ\\nError: Max HUD Count Reached\\nError: Max HUD Count Reached\\nError: Max HUD Count Reached"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空数组))), 空, 右边, -162, 空, 数组中的值(全局.ColorConfig, 2), 空, 可见和字符串, 始终可见);
         "padding for custom hud display"
-        创建HUD文本(首个(真), 空, 空, 自定义字符串("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nv"), 顶部, -164, 空, 空, 颜色(橙色), 可见, 默认可见度);
-        创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} {1} | {2}快速回点", If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串("长按")), 输入绑定字符串(按钮(装填)), If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串("启用"))), 自定义字符串("{0} {1} |{2} quick reset", If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串("Hold")), 输入绑定字符串(按钮(装填)), If-Then-Else((本地玩家).toggle_quickRestart, 空数组, 自定义字符串(" Enable")))), 右边, -157, 空, 空, 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
-        创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | 探点模式{2}", 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(近身攻击)), If-Then-Else((本地玩家).toggle_invincible, 自定义字符串(" | 启用"), 空数组)), 自定义字符串("{0} + {1} | Invincible{2}", 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(近身攻击)), If-Then-Else((本地玩家).toggle_invincible, 自定义字符串(" | ON"), 空数组))), 右边, -154, 空, 空, If-Then-Else((本地玩家).toggle_invincible, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
-        创建HUD文本(首个(真), 空, If-Then-Else((本地玩家).toggle_guide, 空数组, 自定义字符串("{0}{1}{2}", If-Then-Else((本地玩家).toggle_invincible, 技能图标字符串(英雄(巴蒂斯特), 按钮(技能2)), 空数组), If-Then-Else((本地玩家).toggle_practice, 技能图标字符串(英雄(D.Va), 按钮(终极技能)), 空数组), If-Then-Else((本地玩家).toggle_invisible, 技能图标字符串(英雄(黑影), 按钮(技能1)), 空数组))), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("长按 {0} | 切换显示HUD", 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("Hold {0} | toggle hud", 输入绑定字符串(按钮(辅助攻击模式)))), 右边, -161, 空, 数组中的值(全局.ColorConfig, 5), 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
-        创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("长按 {0} + {1} | 预览关卡", 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式))), 自定义字符串("Hold {0} + {1} | Preview cp", 输入绑定字符串(按钮(主要攻击模式)), 输入绑定字符串(按钮(辅助攻击模式)))), 右边, -160, 空, 空, If-Then-Else((本地玩家).preview_array1, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
-        "HudStoreEdit.append(getLastCreatedText())"
-        创建HUD文本(首个(与((本地玩家).preview_array1, (本地玩家).toggle_guide)), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("移动键 ◀ ▶ | 预览其他\\n移动键 ◀ ▶ | 修改间距 \\n视角移动 | 调整浏览视角"), 自定义字符串("Walk ◀ ▶ | preview others\\nWalk ▲ ▼ | modify zoom\\nAim | change preview angle")), 空, 顶部, -171, 空, 数组中的值(全局.ColorConfig, 6), 空, 可见和字符串, 始终不可见);
-        "HudStoreEdit.append(getLastCreatedText())"
-        创建HUD文本(本地玩家, 空, 空, If-Then-Else(或(比较((本地玩家).timer_splitDisplay, <=, -999999999999), (本地玩家).toggle_spectate), 空数组, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("单关用时 {0}                                                                                                ", (本地玩家).timer_splitDisplay), 自定义字符串("Split: {0}                                                                                                ", (本地玩家).timer_splitDisplay))), 左边, -195, 空, 空, 数组中的值(全局.ColorConfig, 3), 可见和字符串, 默认可见度);
-        修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
+        创建HUD文本(首个(真), 空, 空, 自定义字符串("­\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n"), 顶部, -164, 空, 空, 颜色(橙色), 可见, 默认可见度);
+        创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else((本地玩家).toggle_quickRestart, 自定义字符串("{0} | {1}", 输入绑定字符串(按钮(装填)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒQuick ResetQuick ResetQuick Reset"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 自定义字符串("{0} {1} | {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(装填)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒEnable Quick ResetEnable Quick ResetEnable Quick Reset"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))))), 右边, -157, 空, 空, 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
+        创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(装填)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒInvincibleInvincibleInvincible"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((本地玩家).toggle_invincible, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ | On | On | On"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空数组))), 右边, -154, 空, 空, If-Then-Else((本地玩家).toggle_invincible, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
+        创建HUD文本(首个(真), 空, If-Then-Else((本地玩家).toggle_guide, 空数组, 自定义字符串("{0}{1}{2}", If-Then-Else((本地玩家).toggle_invincible, 技能图标字符串(英雄(巴蒂斯特), 按钮(技能2)), 空数组), If-Then-Else((本地玩家).toggle_practice, 技能图标字符串(英雄(D.Va), 按钮(终极技能)), 空数组), If-Then-Else((本地玩家).toggle_invisible, 技能图标字符串(英雄(黑影), 按钮(技能1)), 空数组))), 自定义字符串("{0} {1} | {2} HUD", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(辅助攻击模式)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒToggleToggleToggle"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 右边, -161, 空, 数组中的值(全局.ColorConfig, 5), 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
         "text per checkpoint  text per cp each"
         If(数量(全局.CpHudText));
             创建HUD文本(首个(与(数组包含(全局.CpHudCp, (本地玩家).checkpoint_current), (本地玩家).toggle_guide)), 数组中的值(全局.CpHudText, 数组值的索引(全局.CpHudCp, (本地玩家).checkpoint_current)), 空, 空, 顶部, -169, 颜色(蓝色), 空, 空, 可见和字符串, 默认可见度);
         End;
         If(数量(全局.CpIwtText));
             创建地图文本(数组包含(全局.CpIwtCp, (本地玩家).checkpoint_current), 数组中的值(全局.CpIwtText, 数组值的索引(全局.CpIwtCp, (本地玩家).checkpoint_current)), 数组中的值(全局.CpIwtPos, 数组值的索引(全局.CpIwtCp, (本地玩家).checkpoint_current)), 2, 根据表面截取, 可见，位置和字符串, 全局.CpIwtColor, 默认可见度);
-        End;
-        "Remove no hints - visual and element bloat"
-        If(数量(全局.HintText));
-            创建HUD文本(首个(与((本地玩家).toggle_guide, 数组包含(全局.HintCp, (本地玩家).checkpoint_current))), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else((本地玩家).toggle_hints, 自定义字符串("― ― ― ― ― 提示 ― ― ― ― ―\\n {0} ", 数组中的值(全局.HintText, 数组值的索引(全局.HintCp, (本地玩家).checkpoint_current))), 自定义字符串("――――――  有可用提示 ――――――")), If-Then-Else((本地玩家).toggle_hints, 自定义字符串("― ― ― ― ― Hint ― ― ― ― ―\\n {0} ", 数组中的值(全局.HintText, 数组值的索引(全局.HintCp, (本地玩家).checkpoint_current))), 自定义字符串("― ― ― hint available ― ― ―"))), 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(技能2)), 输入绑定字符串(按钮(近身攻击)), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else((本地玩家).toggle_hints, 自定义字符串("隐藏提示"), 自定义字符串("获取提示")), If-Then-Else((本地玩家).toggle_hints, 自定义字符串("hide hint"), 自定义字符串("show hint")))), 右边, -151, 空, If-Then-Else((本地玩家).toggle_hints, 颜色(绿色), 颜色(橙色)), If-Then-Else(数组包含(全局.HintCp, (本地玩家).checkpoint_current), 单次赋值(数组中的值(全局.ColorConfig, 5)), 颜色(灰色)), 可见，字符串和颜色, 默认可见度);
-            修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
         End;
         If(全局.CompMode);
             创建HUD文本(已过滤的数组(所有玩家(所有队伍), (当前数组元素).comp_instructionHud), 自定义字符串("                                                                                                                           "), 空, 空, 顶部, -181, 颜色(白色), 空, 空, 可见, 默认可见度);
@@ -2455,25 +2470,14 @@ export const frameworkTemplate = `设置
                 创建HUD文本(已过滤的数组(所有玩家(所有队伍), (当前数组元素).comp_instructionHud), 空, 空, 数组中的值(全局.instructiontext, 3), 顶部, -177, 空, 空, 颜色(白色), 可见, 默认可见度);
             End;
             创建HUD文本(已过滤的数组(所有玩家(所有队伍), (当前数组元素).comp_instructionHud), 自定义字符串("                                   Press {0} to start                                ", 输入绑定字符串(按钮(互动))), 空, 空, 顶部, -176, 颜色(白色), 空, 空, 可见和字符串, 默认可见度);
+        Else If(非(全局.EditorOn));
+            创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} {1} | {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒInvisibleInvisibleInvisible"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((本地玩家).toggle_invisible, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ | On | On | On"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空数组))), 右边, -158, 空, 空, If-Then-Else((本地玩家).toggle_invisible, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(近身攻击)), 自定义字符串("{0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPracticePracticePractice"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((本地玩家).toggle_practice, 自定义字符串(" | ({0})", (本地玩家).checkpoint_practice), 空数组))), 右边, -153, 空, 空, If-Then-Else((本地玩家).toggle_practice, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本(首个(与((本地玩家).toggle_practice, (本地玩家).toggle_guide)), 空, 自定义字符串("{0} + {1} | {2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0}\\n{1} + {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒNext LevelNext LevelNext Level"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(蹲下)), 自定义字符串("{0} | {1}\\n{2}", 输入绑定字符串(按钮(辅助攻击模式)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPrevious LevelPrevious LevelPrevious Level"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 自定义字符串("{0} | {1}", 输入绑定字符串(按钮(互动)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒRestart PracticeRestart PracticeRestart Practice"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))))))), 空, 右边, -152, 空, 单次赋值(数组中的值(全局.ColorConfig, 6)), 空, 可见，字符串和颜色, 默认可见度);
+            跳过(真);
         Else;
-            创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("长按 {0} | 观战模式{1}", 输入绑定字符串(按钮(互动)), If-Then-Else((本地玩家).toggle_spectate, 自定义字符串(" | 启用"), 空数组)), 自定义字符串("Hold {0} | Spectate{1}", 输入绑定字符串(按钮(互动)), If-Then-Else((本地玩家).toggle_spectate, 自定义字符串(" | ON"), 空数组))), 右边, -155, 空, 空, If-Then-Else((本地玩家).toggle_spectate, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
-            创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("长按 {0} | 隐身模式{1}", 输入绑定字符串(按钮(技能2)), If-Then-Else((本地玩家).toggle_invisible, 自定义字符串(" | 启用"), 空数组)), 自定义字符串("Hold {0} | invisible{1}", 输入绑定字符串(按钮(技能2)), If-Then-Else((本地玩家).toggle_invisible, 自定义字符串(" | ON"), 空数组))), 右边, -158, 空, 空, If-Then-Else((本地玩家).toggle_invisible, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
-            修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
-            创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | 练习模式{2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(近身攻击)), If-Then-Else((本地玩家).toggle_practice, 自定义字符串(" | ({0})", (本地玩家).checkpoint_practice), 空数组)), 自定义字符串("{0} + {1} | Practice{2}", 输入绑定字符串(按钮(终极技能)), 输入绑定字符串(按钮(近身攻击)), If-Then-Else((本地玩家).toggle_practice, 自定义字符串(" | ({0})", (本地玩家).checkpoint_practice), 空数组))), 右边, -153, 空, 空, If-Then-Else((本地玩家).toggle_practice, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
-            修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
-            创建HUD文本(已过滤的数组(所有玩家(所有队伍), 与((当前数组元素).toggle_practice, (当前数组元素).toggle_guide)), 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} | 下一关\\n{0} + {2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} | 上一关\\n{1} | 回到练习模式起点 ", 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(互动)))), 自定义字符串("{0} + {1} | Next level\\n{0} + {2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(主要攻击模式)), 自定义字符串("{0} | Previous level\\n{1} | Start from practice cp ", 输入绑定字符串(按钮(辅助攻击模式)), 输入绑定字符串(按钮(互动))))), 空, 右边, -152, 空, 单次赋值(数组中的值(全局.ColorConfig, 6)), 空, 可见，字符串和颜色, 默认可见度);
-            修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
-        End;
-        "if not hostPlayer.editor_on:\\nfind the value"
-        设置全局变量(Difficultyhud, 数组(地图工坊设置组合(自定义字符串("map settings \\n地图设置"), 自定义字符串("difficulty 󠀨display hud󠀩 - 难度 󠀨顶部hud󠀩"), 0, 数组(自定义字符串("<fg27AAFFFF>playtest - 游戏测试"), 自定义字符串("<fgA0E81BFF>easy-"), 自定义字符串("<fgA0E81BFF>easy"), 自定义字符串("<fgA0E81BFF>easy+"), 自定义字符串("<fge0e000FF>medium-"), 自定义字符串("<fge0e000FF>medium"), 自定义字符串("<fge0e000FF>medium+"), 自定义字符串("<fgEC9900FF>hard-"), 自定义字符串("<fgEC9900FF>hard"), 自定义字符串("<fgEC9900FF>hard+"), 自定义字符串("<fgFF4500FF>very hard-"), 自定义字符串("<fgFF4500FF>very hard"), 自定义字符串("<fgFF4500FF>very hard+"), 自定义字符串("<fgC80013FF>extreme-"), 自定义字符串("<fgC80013FF>extreme"), 自定义字符串("<fgC80013FF>extreme+"), 自定义字符串("<fg960000FF>hell"), 自定义字符串("don't display - 不显示")), 0), 地图工坊设置开关(自定义字符串("map settings \\n地图设置"), 自定义字符串("Playtest display - 游戏测试"), 假, 1)));
-        "display\\n17th entry is 'dont display'"
-        If(比较(首个(全局.Difficultyhud), !=, 17));
-            创建HUD文本(首个(与((本地玩家).toggle_guide, 非((本地玩家).toggle_leaderboard))), If-Then-Else(最后(全局.Difficultyhud), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("游戏测试"), 自定义字符串("Playtest")), 空数组), 数组中的值(数组(自定义字符串("playtest"), 自定义字符串("easy -"), 自定义字符串("easy"), 自定义字符串("easy +"), 自定义字符串("medium -"), 自定义字符串("medium"), 自定义字符串("medium +"), 自定义字符串("hard -"), 自定义字符串("hard"), 自定义字符串("hard +"), 自定义字符串("very hard -"), 自定义字符串("very hard"), 自定义字符串("very hard +"), 自定义字符串("extreme -"), 自定义字符串("extreme"), 自定义字符串("extreme +"), 自定义字符串("hell"), 空), 首个(全局.Difficultyhud)), 空, 顶部, -173, 颜色(蓝色), 数组中的值(数组(颜色(蓝色), 颜色(灰绿色), 颜色(灰绿色), 颜色(灰绿色), 颜色(黄色), 颜色(黄色), 颜色(黄色), 颜色(橙色), 颜色(橙色), 颜色(橙色), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 自定义颜色(255, 69, 0, 255), 颜色(红色), 颜色(红色), 颜色(红色), 自定义颜色(150, 0, 0, 255), 空), 首个(全局.Difficultyhud)), 空, 可见和字符串, 默认可见度);
-            修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
-        End;
-        "restart + leaderboard\\nthis is remade in editor to not include leaderboard"
-        创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0} + {1} + {2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | 重新开始\\n长按 {1} | 完整成绩排名", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击)))), 自定义字符串("{0} + {1} + {2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(技能2)), 自定义字符串("{0} | Restart\\nHold {1} | leaderboard", 输入绑定字符串(按钮(互动)), 输入绑定字符串(按钮(近身攻击))))), 右边, -156, 空, 空, 数组中的值(全局.ColorConfig, 5), 可见和字符串, 默认可见度);
-        修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
+            //spectateHud:
+            创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} {1} | {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(互动)), 自定义字符串("{0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒSpectateSpectateSpectate"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((本地玩家).toggle_spectate, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ | On | On | On"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空数组))), 右边, -155, 空, 空, If-Then-Else((本地玩家).toggle_spectate, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
     }
 }
 
@@ -2502,7 +2506,7 @@ export const frameworkTemplate = `设置
         End;
         设置全局变量(LeaderBoardRemake, 自定义字符串("{0}\\n", 全局.LeaderBoardRemake));
         "if LeaderBoardFull[0]:"
-        创建HUD文本((本地玩家).toggle_guide, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串(" \\n{0} 排名前5 {0}", 图标字符串(旗帜)), 自定义字符串(" \\n{0} Top 5 {0}", 图标字符串(旗帜))), 空, 右边, -141, 空, 颜色(白色), 空, 可见和字符串, 始终可见);
+        创建HUD文本((本地玩家).toggle_guide, 空, 自定义字符串(" \\n{0} {1} {0}", 图标字符串(旗帜), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒTop 5Top 5Top 5"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 空, 右边, -141, 空, 颜色(白色), 空, 可见和字符串, 始终可见);
         设置全局变量(LeaderBoardHuds, 上一个文本ID);
         创建HUD文本(首个(真), 英雄图标字符串(英雄(源氏)), 首个(首个(全局.LeaderBoardFull)), 最后(首个(全局.LeaderBoardFull)), 右边, -140, 颜色(红色), 颜色(红色), 颜色(红色), 可见, 始终可见);
         修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
@@ -2522,7 +2526,7 @@ export const frameworkTemplate = `设置
                 End;
             End;
         End;
-        创建HUD文本(If-Then-Else(单次赋值(与(全局.CompMode, 非(全局.CompTime))), 真, (本地玩家).toggle_leaderboard), 自定义字符串("　　　　 {0} {1} {0} 　　　　\\n　　　　　　　　　　　　　　　　　　{2}", 图标字符串(旗帜), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("成绩排名"), 自定义字符串("Leaderboard")), 单次赋值(全局.LeaderBoardRemake)), 空, 空, 顶部, -165, 颜色(白色), 空, 空, 可见和字符串, 默认可见度);
+        创建HUD文本(If-Then-Else(单次赋值(与(全局.CompMode, 非(全局.CompTime))), 真, (本地玩家).toggle_leaderboard), 自定义字符串("　　　　 {0} {1} {0} 　　　　\\n　　　　　　　　　　　　　　　　　　{2}", 图标字符串(旗帜), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒLeaderboardLeaderboardLeaderboard"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 单次赋值(全局.LeaderBoardRemake)), 空, 空, 顶部, -165, 颜色(白色), 空, 空, 可见和字符串, 默认可见度);
         修改全局变量(LeaderBoardHuds, 添加至数组, 上一个文本ID);
         设置全局变量(LeaderBoardRemake, 空);
         等待(假, 无视条件);
@@ -2537,16 +2541,16 @@ export const frameworkTemplate = `设置
     }
     动作 {
         等待(0.512, 无视条件);
-        创建HUD文本(事件玩家, 空, If-Then-Else((事件玩家).toggle_practice, 自定义字符串("{0} {1} sec", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("练习用时"), 自定义字符串("Practice Time:")), (事件玩家).timer_practice), 空数组), 自定义字符串("{0} {1} sec                                                                                                ", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("用时"), 自定义字符串("Time:")), (事件玩家).timer_normal), 左边, -196, 空, 颜色(灰色), 数组中的值(全局.ColorConfig, 3), 字符串, 默认可见度);
-        创建HUD文本(If-Then-Else((事件玩家).toggle_leaderboard, 空, 事件玩家), If-Then-Else((事件玩家).preview_array1, 自定义字符串(" {0} ({1}/{2}", If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else((事件玩家).preview_i, If-Then-Else(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), 自定义字符串("弹球"), 自定义字符串("自定义传送门")), 自定义字符串("检查点")), If-Then-Else((事件玩家).preview_i, If-Then-Else(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), 自定义字符串("orb"), 自定义字符串("portal")), 自定义字符串("checkpoint"))), 加((事件玩家).preview_i, 真), 自定义字符串("{0})\\n―――――――――――\\n {1}\\n", 数量((事件玩家).preview_array1), If-Then-Else(与(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), (事件玩家).preview_i), 自定义字符串("{0} {1} {2}", If-Then-Else(数组中的值(全局.TQ5, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 技能图标字符串(英雄(源氏), 按钮(终极技能)), 空数组), If-Then-Else(数组中的值(全局.TQ6, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 技能图标字符串(英雄(源氏), 按钮(技能1)), 空数组), 自定义字符串("{0} {1}", If-Then-Else(数组中的值(全局.BounceToggleLock, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 图标字符串(警告), 空数组), If-Then-Else(比较(数组中的值(全局.EditMode, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), >, 空), 图标字符串(箭头：向上), If-Then-Else(比较(数组中的值(全局.EditMode, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), <, 空), 图标字符串(箭头：向下), 空数组)))), If-Then-Else((事件玩家).preview_i, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(最后(数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("传送门 {0} 出口 ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("传送门 {0} 入口 ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i))), If-Then-Else(最后(数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("portal {0} destination ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("portal {0} start ", 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)))), (事件玩家).banString)))), 空数组), If-Then-Else((事件玩家).preview_array1, 空数组, 自定义字符串("{0}{1} {2}", If-Then-Else(与((事件玩家).toggle_guide, 字符串长度((事件玩家).banString)), 自定义字符串("{0}\\n", (事件玩家).banString), 空数组), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("关卡"), 自定义字符串("Level")), 自定义字符串("{0} / {1}", (事件玩家).checkpoint_current, 减(数量(全局.A), 真)))), If-Then-Else(与((事件玩家).cache_bounceMaxLocks, 非((事件玩家).preview_array1)), 自定义字符串("{0}{1} {2}", 数组中的值(全局.ColorConfig, 16), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("球"), 自定义字符串(" orbs")), 自定义字符串("{0} / {1}", 数量((事件玩家).cache_collectedLocks), (事件玩家).cache_bounceMaxLocks)), 空数组), 顶部, -172, 数组中的值(全局.ColorConfig, 4), 数组中的值(全局.ColorConfig, 4), 数组中的值(全局.ColorConfig, 16), 可见和字符串, 默认可见度);
+        创建HUD文本(事件玩家, 空, If-Then-Else((事件玩家).toggle_practice, 自定义字符串("{0} {1} sec", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPractice Time:Practice Time:Practice Time:"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), (事件玩家).timer_practice), 空数组), 自定义字符串("{0} {1} sec                                                                                                ", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒTime:Time:Time:"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), (事件玩家).timer_normal), 左边, -196, 空, 颜色(灰色), 数组中的值(全局.ColorConfig, 3), 字符串, 默认可见度);
+        创建HUD文本(If-Then-Else((事件玩家).toggle_leaderboard, 空, 事件玩家), If-Then-Else((事件玩家).preview_array1, 自定义字符串(" {0} ({1}/{2}", If-Then-Else((事件玩家).preview_i, If-Then-Else(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒOrbOrbOrb"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPortalPortalPortal"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒCheckpointCheckpointCheckpoint"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 加((事件玩家).preview_i, 真), 自定义字符串("{0})\\n―――――――――――\\n {1}\\n", 数量((事件玩家).preview_array1), If-Then-Else(与(比较((事件玩家).preview_i, <=, 数量((事件玩家).cache_bouncePosition)), (事件玩家).preview_i), 自定义字符串("{0} {1} {2}", If-Then-Else(数组中的值(全局.TQ5, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 技能图标字符串(英雄(源氏), 按钮(终极技能)), 空数组), If-Then-Else(数组中的值(全局.TQ6, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 技能图标字符串(英雄(源氏), 按钮(技能1)), 空数组), 自定义字符串("{0} {1}", If-Then-Else(数组中的值(全局.BounceToggleLock, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 图标字符串(警告), 空数组), If-Then-Else(比较(数组中的值(全局.EditMode, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), >, 空), 图标字符串(箭头：向上), If-Then-Else(比较(数组中的值(全局.EditMode, 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), <, 空), 图标字符串(箭头：向下), 空数组)))), If-Then-Else((事件玩家).preview_i, If-Then-Else(最后(数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("{0} {1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPortal ExitPortal ExitPortal Exit"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i)), 自定义字符串("{0} {1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒPortal StartPortal StartPortal Start"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数组中的值((事件玩家).preview_array2, (事件玩家).preview_i))), (事件玩家).banString)))), 空数组), If-Then-Else((事件玩家).preview_array1, 空数组, 自定义字符串("{0}{1} {2}", If-Then-Else(与((事件玩家).toggle_guide, (事件玩家).banString), 自定义字符串("{0}\\n", (事件玩家).banString), 空数组), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒLevelLevelLevel"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 自定义字符串("{0} / {1}", (事件玩家).checkpoint_current, 减(数量(全局.A), 真)))), If-Then-Else(与((事件玩家).cache_bounceMaxLocks, 非((事件玩家).preview_array1)), 自定义字符串("{0} {1} / {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ{0} Orbs{0} Orbs{0} Orbs", 数组中的值(全局.ColorConfig, 16)), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 数量((事件玩家).cache_collectedLocks), (事件玩家).cache_bounceMaxLocks), 空数组), 顶部, -172, 数组中的值(全局.ColorConfig, 4), 数组中的值(全局.ColorConfig, 4), 数组中的值(全局.ColorConfig, 16), 可见和字符串, 默认可见度);
         创建HUD文本(事件玩家, 空, 空, 自定义字符串("{0}{1}{2}", If-Then-Else(X方向分量((事件玩家).cache_inputs), 自定义字符串("■"), 自定义字符串("□")), If-Then-Else(比较(Z方向分量(阈值(事件玩家)), >, 空), 自定义字符串("▲"), 自定义字符串("△")), 自定义字符串("{0}\\n{1}{2}", If-Then-Else(Y方向分量((事件玩家).cache_inputs), 自定义字符串("●"), 自定义字符串("○")), If-Then-Else(比较(X方向分量(阈值(事件玩家)), >, 空), 自定义字符串("◀"), 自定义字符串("◁")), 自定义字符串("{0}{1}                                                                                                ", If-Then-Else(比较(Z方向分量(阈值(事件玩家)), <, 空), 自定义字符串("▼"), 自定义字符串("∇")), If-Then-Else(比较(X方向分量(阈值(事件玩家)), <, 空), 自定义字符串("▶"), 自定义字符串("▷"))))), 左边, -192, 空, 空, 单次赋值(数组中的值(全局.ColorConfig, 3)), 字符串, 默认可见度);
         "climb/bhop indicators"
-        创建HUD文本(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0}{1}", If-Then-Else((事件玩家).skill_usedClimb, 自定义字符串("爬墙已用"), 自定义字符串("爬墙未用")), If-Then-Else((事件玩家).skill_countMulti, 自定义字符串(" ({0})", (事件玩家).skill_countMulti), 空数组)), 自定义字符串("Climb{0}", If-Then-Else((事件玩家).skill_countMulti, 自定义字符串(" ({0})", (事件玩家).skill_countMulti), 空数组))), 空, 自定义字符串("                                                                                                                                "), 左边, -193, If-Then-Else((事件玩家).skill_usedClimb, 单次赋值(数组中的值(全局.ColorConfig, 8)), 单次赋值(数组中的值(全局.ColorConfig, 7))), 空, 空, 字符串和颜色, 默认可见度);
-        创建HUD文本(事件玩家, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("{0}{1}", If-Then-Else((事件玩家).skill_usedBhop, 自定义字符串("小跳已用"), 自定义字符串("小跳未用")), If-Then-Else((事件玩家).skill_countCreates, 自定义字符串(" ({0})", (事件玩家).skill_countCreates), 空数组)), 自定义字符串("Bhop{0}", If-Then-Else((事件玩家).skill_countCreates, 自定义字符串(" ({0})", (事件玩家).skill_countCreates), 空数组))), 空, 自定义字符串("                                                                                                                                "), 左边, -194, If-Then-Else((事件玩家).skill_usedBhop, 单次赋值(数组中的值(全局.ColorConfig, 8)), 单次赋值(数组中的值(全局.ColorConfig, 7))), 空, 空, 字符串和颜色, 默认可见度);
-        创建地图文本(If-Then-Else(与((事件玩家).checkpoint_notLast, (事件玩家).toggle_guide), 事件玩家, 空), If-Then-Else(与((事件玩家).cache_bounceMaxLocks, 比较(数量((事件玩家).cache_collectedLocks), <, (事件玩家).cache_bounceMaxLocks)), 自定义字符串("{0} {1}", 图标字符串(警告), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("先收集橙球"), 自定义字符串("collect orbs first"))), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("到这里来"), 自定义字符串("come here"))), 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 1.5, 不要截取, 可见，位置和字符串, 数组中的值(全局.ColorConfig, 13), 默认可见度);
+        创建HUD文本(事件玩家, 自定义字符串("{0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒClimbClimbClimb"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((事件玩家).skill_countMulti, 自定义字符串(" ({0})", (事件玩家).skill_countMulti), 空数组)), 空, 自定义字符串("                                                                                                                                "), 左边, -193, If-Then-Else((事件玩家).skill_usedClimb, 单次赋值(数组中的值(全局.ColorConfig, 8)), 单次赋值(数组中的值(全局.ColorConfig, 7))), 空, 空, 字符串和颜色, 默认可见度);
+        创建HUD文本(事件玩家, 自定义字符串("{0}{1}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒBhopBhopBhop"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((事件玩家).skill_countCreates, 自定义字符串(" ({0})", (事件玩家).skill_countCreates), 空数组)), 空, 自定义字符串("                                                                                                                                "), 左边, -194, If-Then-Else((事件玩家).skill_usedBhop, 单次赋值(数组中的值(全局.ColorConfig, 8)), 单次赋值(数组中的值(全局.ColorConfig, 7))), 空, 空, 字符串和颜色, 默认可见度);
+        创建地图文本(If-Then-Else(与((事件玩家).checkpoint_notLast, (事件玩家).toggle_guide), 事件玩家, 空), If-Then-Else(与((事件玩家).cache_bounceMaxLocks, 比较(数量((事件玩家).cache_collectedLocks), <, (事件玩家).cache_bounceMaxLocks)), 自定义字符串("{0}{1}", 图标字符串(警告), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒCollect Orbs FirstCollect Orbs FirstCollect Orbs First"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒCome HereCome HereCome Here"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组))))), 数组中的值(全局.A, 加((事件玩家).checkpoint_current, 真)), 1.5, 不要截取, 可见，位置和字符串, 数组中的值(全局.ColorConfig, 13), 默认可见度);
         等待(2.5, 无视条件);
         If(全局.CompMode);
-            创建HUD文本(事件玩家, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.CompTime, 自定义字符串("剩余时间: {0} 分钟{1}", 全局.CompTime, If-Then-Else(比较((事件玩家).comp_countAttempts, <, 空), 自定义字符串("\\n你没有尝试过"), If-Then-Else(全局.CompAtmpNum, 自定义字符串("\\n尝试 {0} / {1}", (事件玩家).comp_countAttempts, 全局.CompAtmpNum), 空数组))), 自定义字符串("! 比赛结束 !")), If-Then-Else(全局.CompTime, 自定义字符串("time left: {0} min{1}", 全局.CompTime, If-Then-Else(比较((事件玩家).comp_countAttempts, <, 空), 自定义字符串("\\nYou are out of attempts"), If-Then-Else(全局.CompAtmpNum, 自定义字符串("\\nAttempt {0} / {1}", (事件玩家).comp_countAttempts, 全局.CompAtmpNum), 空数组))), 自定义字符串("! competition is over !"))), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.CompTime, 自定义字符串("竞赛模式"), 自定义字符串("竞赛模式\\n\\n\\n")), If-Then-Else(全局.CompTime, 自定义字符串("competitive mode"), 自定义字符串("competitive mode\\n\\n\\n"))), 顶部, -182, 空, 颜色(黄色), 颜色(黄色), 字符串, 默认可见度);
+            创建HUD文本(事件玩家, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.CompTime, 自定义字符串("剩余时间: {0} 分钟{1}", 全局.CompTime, If-Then-Else(比较((事件玩家).comp_countAttempts, <, 空), 自定义字符串("\\n你没有尝试过"), If-Then-Else(全局.CompAtmpNum, 自定义字符串("\\n尝试 {0} / {1}", (事件玩家).comp_countAttempts, 全局.CompAtmpNum), 空数组))), 自定义字符串("! 比赛结束 !")), If-Then-Else(全局.CompTime, 自定义字符串("Time Left: {0} Min{1}", 全局.CompTime, If-Then-Else(比较((事件玩家).comp_countAttempts, <, 空), 自定义字符串("\\nYou Are Out Of Attempts"), If-Then-Else(全局.CompAtmpNum, 自定义字符串("\\nAttempt {0} / {1}", (事件玩家).comp_countAttempts, 全局.CompAtmpNum), 空数组))), 自定义字符串("! Competition Is Over !"))), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), If-Then-Else(全局.CompTime, 自定义字符串("竞赛模式"), 自定义字符串("竞赛模式\\n\\n\\n")), If-Then-Else(全局.CompTime, 自定义字符串("Tournament Mode"), 自定义字符串("Tournament Mode\\n\\n\\n"))), 顶部, -182, 空, 颜色(黄色), 颜色(黄色), 字符串, 默认可见度);
     }
 }
 
@@ -2557,7 +2561,7 @@ export const frameworkTemplate = `设置
     }
     动作 {
         "or eventPlayer.toggle_practice:"
-        根据条件中止(或(或(全局.CompMode, (事件玩家).editor_on), 非(与(数量(全局.TitleData), 数组包含(首个(全局.TitleData), (事件玩家).checkpoint_current)))));
+        根据条件中止(或(或(全局.CompMode, 全局.EditorOn), 非(与(数量(全局.TitleData), 数组包含(首个(全局.TitleData), (事件玩家).checkpoint_current)))));
         消除地图文本((事件玩家).cache_titleHud);
         创建地图文本(首个(非((事件玩家).toggle_invisible)), 数组中的值(数组中的值(全局.TitleData, 真), 数组值的索引(首个(全局.TitleData), (事件玩家).checkpoint_current)), 事件玩家, 1.1, 根据表面截取, 可见和位置, 数组中的值(最后(全局.TitleData), 数组值的索引(首个(全局.TitleData), (事件玩家).checkpoint_current)), 默认可见度);
         设置玩家变量(事件玩家, cache_titleHud, 上一个文本ID);
@@ -2573,11 +2577,11 @@ export const frameworkTemplate = `设置
         等待直到 (实体存在(所有玩家(所有队伍)), 999999999999);
         等待(假, 无视条件);
         If(比较((所有玩家(所有队伍)).addon_toggle3rdPov, <=, 真));
-            创建HUD文本((本地玩家).toggle_guide, 空, 空, If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("长按 {0} + {1} | 第三人称{2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃)), If-Then-Else((本地玩家).addon_toggle3rdPov, 自定义字符串(" | 启用"), 空数组)), 自定义字符串("Hold {0} + {1} | 3rd Person{2}", 输入绑定字符串(按钮(蹲下)), 输入绑定字符串(按钮(跳跃)), If-Then-Else((本地玩家).addon_toggle3rdPov, 自定义字符串(" | ON"), 空数组))), 右边, -159, 空, 空, If-Then-Else((本地玩家).addon_toggle3rdPov, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
+            创建HUD文本((本地玩家).toggle_guide, 空, 空, 自定义字符串("{0} {1} + {2}", 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒHoldHoldHold"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 输入绑定字符串(按钮(蹲下)), 自定义字符串("{0} | {1}{2}", 输入绑定字符串(按钮(跳跃)), 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ3rd Person3rd Person3rd Person"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), If-Then-Else((本地玩家).addon_toggle3rdPov, 数组中的值(字符串分割(自定义字符串("ＴＬＥｒｒ | On | On | On"), 全局.__overpyTranslationHelper__), 绝对值(数组值的索引(全局.__overpyTranslationHelper__, 字符串分割(颜色(白色), 空数组)))), 空数组))), 右边, -159, 空, 空, If-Then-Else((本地玩家).addon_toggle3rdPov, 单次赋值(数组中的值(全局.ColorConfig, 6)), 单次赋值(数组中的值(全局.ColorConfig, 5))), 可见，字符串和颜色, 默认可见度);
     }
 }
 
-规则 ("<tx0C00000000001344> Effects <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Effects ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -2596,10 +2600,9 @@ export const frameworkTemplate = `设置
                 创建效果(已过滤的数组(所有玩家(所有队伍), 或((当前数组元素).toggle_invincible, 非((当前数组元素).checkpoint_notLast))), 有害光环, If-Then-Else(余数(全局.NANBA, 2), 颜色(水绿色), 颜色(橙色)), 数组中的值(全局.PortalLoc, 全局.NANBA), 0.6, 可见);
                 创建地图文本(已过滤的数组(所有玩家(所有队伍), 或((当前数组元素).toggle_invincible, 非((当前数组元素).checkpoint_notLast))), 数组中的值(全局.PortalNames, 全局.NANBA), 加(数组中的值(全局.PortalLoc, 全局.NANBA), 上), 真, 根据表面截取, 可见, 颜色(白色), 默认可见度);
             End;
+            等待(假, 无视条件);
         End;
-        等待直到 (实体存在(所有玩家(所有队伍)), 999999999999);
-        等待(假, 无视条件);
-        If((所有玩家(所有队伍)).editor_on);
+        If(全局.EditorOn);
             调用子程序(RebuildKillOrbs);
             调用子程序(RebuildBounceOrbs);
             调用子程序(RebuildPortals);
@@ -2686,7 +2689,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Addon Functions <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addon Functions ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -2702,7 +2705,7 @@ export const frameworkTemplate = `设置
         正在移动(事件玩家) == 假;
         存活(事件玩家) == 真;
         正在使用表情交流(事件玩家) == 假;
-        (事件玩家).editor_on == 假;
+        全局.EditorOn == 假;
     }
     动作 {
         等待(300, 当为“假”时中止);
@@ -2866,7 +2869,8 @@ export const frameworkTemplate = `设置
         设置不可见(全局.MsDestructo, 全部);
         开始调整玩家大小(全局.MsDestructo, 3.111111111111110, 假);
         设置引力(全局.MsDestructo, 999999999999);
-        等待直到 (已重生(全局.MsDestructo), 999999999999);
+        "Not infinity incase dummy does not spawn"
+        等待直到 (已重生(全局.MsDestructo), 16);
         For 玩家变量(全局.MsDestructo, checkpoint_current, 1, 数量(全局.A), 真);
             If(与(首个(最近的可行走位置(数组中的值(全局.A, (全局.MsDestructo).checkpoint_current))), 比较(相距距离(数组中的值(全局.A, (全局.MsDestructo).checkpoint_current), 最近的可行走位置(数组中的值(全局.A, (全局.MsDestructo).checkpoint_current))), >, 1.4)));
                 开始强制设置玩家位置(全局.MsDestructo, 射线命中位置(加(数组中的值(全局.A, (全局.MsDestructo).checkpoint_current), 乘(1.4, 上)), 加(数组中的值(全局.A, (全局.MsDestructo).checkpoint_current), 乘(-1.4, 上)), 空数组, 空数组, 假), 真);
@@ -2887,11 +2891,14 @@ export const frameworkTemplate = `设置
             End;
             //lbl_MapChecker_nextCp:
         End;
-        移除机器人(所在队伍(全局.MsDestructo), 栏位(全局.MsDestructo));
-        设置全局变量(MsDestructo, 空);
+        设置玩家变量(全局.MsDestructo, editor_saveCache, 全局.EditorOn);
+        设置全局变量(EditorOn, 空);
         启用查看器录制;
         记入查看器(自定义字符串("■ Map Check Complete ■"));
         禁用查看器录制;
+        设置全局变量(EditorOn, (全局.MsDestructo).editor_saveCache);
+        移除机器人(所在队伍(全局.MsDestructo), 栏位(全局.MsDestructo));
+        设置全局变量(MsDestructo, 空);
     }
 }
 
@@ -2909,151 +2916,139 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+规则 ("Ø Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     事件 {
         持续 - 全局;
     }
 }
 
-规则 ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
-    事件 {
-        持续 - 全局;
-    }
-}
-
-规则 ("<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入") {
+规则 ("☞ Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入") {
     事件 {
         持续 - 全局;
     }
@@ -3123,7 +3118,7 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Addons Settings & Data - 附加组件 <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addons Settings & Data - 附加组件 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
@@ -3151,7 +3146,6 @@ export const frameworkTemplate = `设置
         等待(2.5, 无视条件);
         "1) 地图工坊设 置难度改为 “不显示”\\n2) 勾选此规则 点击上方的 开启/关闭 开启此规则\\n3) 修改下面的 创建hud文本 中的“enter custom difficulty here”"
         创建HUD文本(首个(真), If-Then-Else(最后(全局.Difficultyhud), If-Then-Else(比较(字符串("噢"), ==, 自定义字符串("噢")), 自定义字符串("游戏测试"), 自定义字符串("Playtest")), 空数组), 自定义字符串("enter custom difficulty here"), 空, 顶部, -173, 颜色(蓝色), 颜色(绿色), 空, 可见和字符串, 默认可见度);
-        修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
     }
 }
 
@@ -3182,15 +3176,15 @@ export const frameworkTemplate = `设置
         等待直到 (已重生(事件玩家), 999999999999);
         If(比较(自定义字符串("your nickname <-------"), ==, 字符串分割(首个(事件玩家), 空数组)));
             大字体信息(首个(真), 自定义字符串("Message to the whole room"));
-            创建地图文本(首个(真), 自定义字符串("display title"), 事件玩家, 1.5, 根据表面截取, 可见，位置和字符串, 颜色(橙色), 默认可见度);
+            创建地图文本(首个(非((事件玩家).toggle_invisible)), 自定义字符串("display title"), 事件玩家, 1.5, 根据表面截取, 可见，位置和字符串, 颜色(橙色), 默认可见度);
         End;
         If(比较(自定义字符串("your nickname <-------"), ==, 字符串分割(首个(事件玩家), 空数组)));
             大字体信息(首个(真), 自定义字符串("Message to the whole room"));
-            创建地图文本(首个(真), 自定义字符串("display title"), 事件玩家, 1.5, 根据表面截取, 可见，位置和字符串, 颜色(橙色), 默认可见度);
+            创建地图文本(首个(非((事件玩家).toggle_invisible)), 自定义字符串("display title"), 事件玩家, 1.5, 根据表面截取, 可见，位置和字符串, 颜色(橙色), 默认可见度);
         End;
         If(比较(自定义字符串("your nickname <-------"), ==, 字符串分割(首个(事件玩家), 空数组)));
             大字体信息(首个(真), 自定义字符串("Message to the whole room"));
-            创建地图文本(首个(真), 自定义字符串("display title"), 事件玩家, 1.5, 根据表面截取, 可见，位置和字符串, 颜色(橙色), 默认可见度);
+            创建地图文本(首个(非((事件玩家).toggle_invisible)), 自定义字符串("display title"), 事件玩家, 1.5, 根据表面截取, 可见，位置和字符串, 颜色(橙色), 默认可见度);
     }
 }
 
@@ -3201,7 +3195,6 @@ export const frameworkTemplate = `设置
     动作 {
         "type your entry in the textfield that says \\"name and time here\\"\\n在文本框 中输入“名称和时间”"
         创建HUD文本(首个(真), 空, 自定义字符串(" \\n{0} author time {0}", 图标字符串(火焰)), 自定义字符串("name and time here"), 右边, -142, 空, 颜色(玫红), 颜色(玫红), 可见, 默认可见度);
-        修改全局变量(HudStoreEdit, 添加至数组, 上一个文本ID);
     }
 }
 
@@ -3264,13 +3257,13 @@ export const frameworkTemplate = `设置
     }
 }
 
-规则 ("<tx0C00000000001344> Addons Skills - 附加组件技能 <tx0C00000000001344>") {
+规则 ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addons Skills - 附加组件技能 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     事件 {
         持续 - 全局;
     }
 }
 
-禁用 规则 ("Addon | Stall enhancer - 增强系統跳的判定") {
+禁用 规则 ("Addon | Stall Enhancer - 增强系統跳的判定") {
     事件 {
         持续 - 每名玩家;
         双方;
@@ -3282,11 +3275,10 @@ export const frameworkTemplate = `设置
         垂直速度(事件玩家) <= 0.05;
         水平速度(事件玩家) <= 1.3;
         正在空中(事件玩家) == 真;
-        (事件玩家).editor_on != 假;
+        全局.EditorOn != 假;
         (事件玩家).editor_fly == 假;
     }
     动作 {
-        "@Condition createWorkshopSetting(bool, \\"map settings \\\\n地图设置\\",\\" Autobounce enhancer - 增强系統跳的判定\\", false, 3)"
         等待(0.25, 当为“假”时中止);
         开始强制设置玩家位置(事件玩家, 所选位置(事件玩家), 假);
         等待直到 (非(正在移动(事件玩家)), 1);
@@ -3409,7 +3401,7 @@ export const frameworkTemplate = `设置
         If(数组包含(数组(1, 2), (事件玩家).cache_bounceTouched));
             "example gravity (should be reset to 100 in AddonCustomLoadAndReset)"
             设置引力(事件玩家, 25);
-            小字体信息(事件玩家, 自定义字符串(" you feel light"));
+            小字体信息(事件玩家, 自定义字符串(" You Feel Light"));
             等待(2, 无视条件);
             设置引力(事件玩家, 100);
         End;
@@ -3417,12 +3409,12 @@ export const frameworkTemplate = `设置
             "example canceling primary makes double jump recover"
             取消主要动作(事件玩家);
             设置玩家变量(事件玩家, skill_usedDouble, 空);
-            小字体信息(事件玩家, 自定义字符串(" double jump recovered"));
+            小字体信息(事件玩家, 自定义字符串(" Double Jump Recovered"));
         End;
         If(数组包含(数组(5, 6), (事件玩家).cache_bounceTouched));
             "example move speed"
             设置移动速度(事件玩家, 250);
-            小字体信息(事件玩家, 自定义字符串(" zooom"));
+            小字体信息(事件玩家, 自定义字符串(" Zooom"));
             等待(2, 无视条件);
             设置移动速度(事件玩家, 100);
     }

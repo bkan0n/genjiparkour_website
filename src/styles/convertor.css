@@ -55,14 +55,22 @@
   min-height: 320px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.convert-map-layout:not(.active) { 
+  display: none !important;
+}
+
+.convert-map-layout.active {
+  display: flex !important;
 }
 
 /* ----- Bouton "copy map to clipboard" ----- */
 .copy-btn {
   align-self: center;
-  margin-bottom: 20px;
+  margin: 0 auto 15px;
   padding: 8px 16px;
   background: var(--block-label-bg);
   color: var(--block-label-color);
@@ -72,6 +80,7 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.3s;
+  display: flex;
 }
 
 .copy-btn:hover {
@@ -185,7 +194,7 @@
 }
 
 .mapdata {
-  flex: 1;
+  flex: 1 0 auto;
   width: 100%;
   min-height: 200px;
   padding: 12px;
@@ -209,7 +218,8 @@
 .footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 12px;
   font-size: 0.8em;
   color: var(--text-muted, #888);
 }
@@ -225,15 +235,6 @@
 }
 
 /* ----- Styles globaux de la zone “Map settings” ----- */
-.convert-map-layout {
-  display: none;
-  flex-direction: column;
-}
-
-.convert-map-layout.active {
-  display: flex;
-}
-
 #mapSettings {
   display: flex;
   flex-direction: column;

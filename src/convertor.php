@@ -24,9 +24,9 @@ include BASE_PATH . "discord/header.php";
 
 <div class="container">
   <div class="tab-buttons" id="mainTabs">
-    <button onclick="selectSection('convertMap')" id="convertMapBtn" class="active"><?= htmlspecialchars($translations['convertor']['convert_map']) ?></button>
-    <button onclick="selectSection('help')" id="helpBtn"><?= htmlspecialchars($translations['convertor']['help']) ?></button>
-    <button onclick="selectSection('mapSettings')" id="mapSettingsBtn"><?= htmlspecialchars($translations['convertor']['edit_map_data']) ?></button>
+    <button id="convertMapBtn" class="active"><?= htmlspecialchars($translations['convertor']['convert_map']) ?></button>
+    <button id="helpBtn"><?= htmlspecialchars($translations['convertor']['help']) ?></button>
+    <button id="mapSettingsBtn"><?= htmlspecialchars($translations['convertor']['edit_map_data']) ?></button>
   </div>
 
   <div id="convertMap" class="convert-map-layout">
@@ -106,7 +106,7 @@ include BASE_PATH . "discord/header.php";
     </div>
   </div>
 
-  <div id="help" class="content active help-section">
+  <div id="help" class="content help-section" style="display: none;">
     <div class="help-step">
       <strong><?= htmlspecialchars($translations['convertor']['step1']) ?></strong>
       <p><?= htmlspecialchars($translations['convertor']['step1_text']) ?></p>
