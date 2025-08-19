@@ -3,8 +3,8 @@ export const frameworkTemplate = `設定
 {
 	メイン
 	{
-		モード名: "Genji Parkour - 源氏跑酷 - v1.10.3G"
-		説明: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.3G"
+		モード名: "Genji Parkour - 源氏跑酷 - v1.10.4A"
+		説明: "\\n\\n\\n◀ The Official Genji Parkour Editor ▶\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula\\nv1.10.4A"
 	}
 	ロビー
 	{
@@ -101,6 +101,7 @@ export const frameworkTemplate = `設定
         13: SHIFT
         14: EditSelected
         15: EditSelectIdArray
+        16: EditorOn
         18: TQ
         20: TQ2
         21: EditorMoveItem
@@ -132,7 +133,6 @@ export const frameworkTemplate = `設定
         55: CompRestartLimit
         56: instructiontext
         57: TitleData
-        58: HudStoreEdit
         60: SaveName
         61: SaveCp
         62: SaveEnt
@@ -164,6 +164,7 @@ export const frameworkTemplate = `設定
         89: BanSaveDouble
         90: DestructoIter
         91: MapVectorArray
+        127: __overpyTranslationHelper__
     プレイヤー:
         0: lockState
         1: checkpoint_current
@@ -214,23 +215,22 @@ export const frameworkTemplate = `設定
         46: preview_array1
         47: preview_array2
         48: preview_i
-        49: editor_on
-        50: editor_modeSelect
-        51: editor_fly
-        52: editor_saveCache
-        53: editor_undo
-        54: editor_lock
-        55: editor_hitboxEffect
-        56: editor_hitboxToggle
-        57: editor_bounceIndex
-        58: editor_killIndex
-        59: editor_temp
-        60: comp_done
-        61: comp_countAttempts
-        62: comp_instructionHud
-        63: addon_toggle3rdPov
-        64: addon_ledgeDash
-        65: addon_enableDoubleChecks
+        49: editor_modeSelect
+        50: editor_fly
+        51: editor_saveCache
+        52: editor_undo
+        53: editor_lock
+        54: editor_hitboxEffect
+        55: editor_hitboxToggle
+        56: editor_bounceIndex
+        57: editor_killIndex
+        58: editor_temp
+        59: comp_done
+        60: comp_countAttempts
+        61: comp_instructionHud
+        62: addon_toggle3rdPov
+        63: addon_ledgeDash
+        64: addon_enableDoubleChecks
 }
 サブルーチン {
     0: StartGame
@@ -254,8 +254,26 @@ export const frameworkTemplate = `設定
     18: RebuildPortals
     19: RebuildBounceOrbs
 }
+ルール ("Disable inspector") {
+    イベント {
+        進行中 - グローバル;
+    }
+    アクション {
+        インスペクターでの記録を無効化;
+    }
+}
+
+ルール ("OverPy | Global Init") {
+    イベント {
+        進行中 - グローバル;
+    }
+    アクション {
+        グローバル変数を設定(__overpyTranslationHelper__, 文字列の分割(カスタムストリング("0White0흰색0白色"), 最初の値(NULL)));
+    }
+}
+
 //Optimize for size enabled
-ルール ("<tx0C00000000001344> Parkour v1.10.3G <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Parkour v1.10.4A ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -267,7 +285,6 @@ export const frameworkTemplate = `設定
     }
     アクション {
         "◀ The Official Genji Parkour Editor ▶\\nDiscord: dsc.gg/genjiparkour\\nCode: 54CRY\\nAdapted by: LulledLion, FishoFire, Nebula"
-        インスペクターでの記録を無効化;
         ゲーム・モードの標準完了を無効化;
         ゲーム・モードの標準スコアリングを無効化;
         ゲーム・モードのBGMを無効化;
@@ -277,25 +294,27 @@ export const frameworkTemplate = `設定
         リスポーンエリアの強制を開始(すべてのチーム, 2);
         "wait for map data rule"
         待機(0.24, 条件無視);
-        "fix team because of naming"
-        IF(COMPARE(配列内の値(グローバル.ColorConfig, 16), ==, 色(チーム1)));
-            インデックスのグローバル変数を設定(ColorConfig, 16, 色(青));
-        ELSE IF(COMPARE(配列内の値(グローバル.ColorConfig, 16), ==, 色(チーム2)));
-            インデックスのグローバル変数を設定(ColorConfig, 16, 色(赤));
+        "Turn Editor On"
+        グローバル変数を設定(EditorOn, ワークショップの設定の切り替え(カスタムストリング("Map Settings ■ 地图设置 ■ 맵 설정"), カスタムストリング("Editor Mode ■ 作图模式 ■ 수정 모드"), False, 0));
+        IF(ワークショップの設定の切り替え(カスタムストリング("Map Settings ■ 地图设置 ■ 맵 설정"), カスタムストリング("Basic Map Validator ■ 验证地图 ■ 맵 가능 여부 확인기"), True, 3));
+            ルールを開始(AddonCheckMap, 何もしない);
         END;
-        "prevent same color lock orbs"
-        IF(COMPARE(配列内の値(グローバル.ColorConfig, 15), ==, 配列内の値(グローバル.ColorConfig, 16)));
-            インデックスのグローバル変数を設定(ColorConfig, 16, IF-THEN-ELSE(COMPARE(配列内の値(グローバル.ColorConfig, 15), ==, 色(オレンジ)), 色(緑), 色(オレンジ)));
-        END;
-        "prevent same color bhop/climb used/unused"
-        IF(COMPARE(配列内の値(グローバル.ColorConfig, 7), ==, 配列内の値(グローバル.ColorConfig, 8)));
-            インデックスのグローバル変数を設定(ColorConfig, 8, IF-THEN-ELSE(COMPARE(配列内の値(グローバル.ColorConfig, 7), ==, 色(赤)), 色(オレンジ), 色(赤)));
+        グローバル変数を設定(PortalOn, ワークショップの設定の切り替え(カスタムストリング("Map Settings ■ 地图设置 ■ 맵 설정"), カスタムストリング("Portals 󠀨Control Maps󠀩 ■ 启用传送门 󠀨占点地图󠀩 ■ 순간이동 활성화 󠀨쟁탈 맵󠀩"), True, 4));
+        グローバル変数を設定(CompMode, AND(NOT(グローバル.EditorOn), ワークショップの設定の切り替え(カスタムストリング("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), カスタムストリング("Tournament Mode ■ 开启竞赛模式 ■ 토너먼트 모드 활성화"), False, 100)));
+        IF(グローバル.CompMode);
+            "-! comp minutes !-\\n5-240"
+            グローバル変数を設定(CompTime, ワークショップの設定（整数）(カスタムストリング("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), カスタムストリング("Time Limit 󠀨Global󠀩 ■ 时间限制 ■ 시간 제한 󠀨전체󠀩"), 120, 1, 240, 101));
+            "-! comp attempt count !-"
+            グローバル変数を設定(CompAtmpNum, ワークショップの設定（整数）(カスタムストリング("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), カスタムストリング("Attempt Count ■ 尝试次数 ■ 시도 수 확인"), 5, 0, 500, 102));
+            "-! comp restartlimiter !-"
+            グローバル変数を設定(CompRestartLimit, ワークショップの設定の切り替え(カスタムストリング("Tournament Mode ■ 竞赛模式 ■ 토너먼트 모드"), カスタムストリング("Disable Restart During Run ■ 竞赛中禁用重新开始 ■ 시도 중 재시작 비활성화"), False, 103));
+        ELSE;
+            グローバル変数を設定(instructiontext, NULL);
         END;
         グローバル変数を設定(SaveName, 空の配列);
         グローバル変数を設定(SaveCp, 空の配列);
         グローバル変数を設定(SaveTimer, 空の配列);
         グローバル変数を設定(SaveEnt, 空の配列);
-        "SavePauseTime = []\\nSavePauseEnabled = []"
         グローバル変数を設定(SaveElapsed, 空の配列);
         グローバル変数を設定(Dao, IF-THEN-ELSE(カウント: (グローバル.Dao), フィルタリングされた配列(グローバル.Dao, COMPARE(追加(現在の配列の要素, False), >=, NULL)), 空の配列));
         グローバル変数を設定(SHIFT, IF-THEN-ELSE(カウント: (グローバル.SHIFT), フィルタリングされた配列(グローバル.SHIFT, COMPARE(追加(現在の配列の要素, False), >=, NULL)), 空の配列));
@@ -330,20 +349,19 @@ export const frameworkTemplate = `設定
         グローバル変数を設定(BanStand, IF-THEN-ELSE(カウント: (グローバル.BanStand), フィルタリングされた配列(グローバル.BanStand, COMPARE(追加(現在の配列の要素, False), >=, NULL)), 空の配列));
         グローバル変数を設定(BanSaveDouble, IF-THEN-ELSE(カウント: (グローバル.BanSaveDouble), グローバル.BanSaveDouble, 空の配列));
         グローバル変数を設定(BanDjump, IF-THEN-ELSE(カウント: (グローバル.BanDjump), グローバル.BanDjump, 空の配列));
-        IF(ワークショップの設定の切り替え(カスタムストリング("map settings \\n地图设置"), カスタムストリング("Basic Map Validator - 验证地图"), True, 3));
-            ルールを開始(AddonCheckMap, 何もしない);
+        "fix team because of naming"
+        IF(COMPARE(配列内の値(グローバル.ColorConfig, 16), ==, 色(チーム1)));
+            インデックスのグローバル変数を設定(ColorConfig, 16, 色(青));
+        ELSE IF(COMPARE(配列内の値(グローバル.ColorConfig, 16), ==, 色(チーム2)));
+            インデックスのグローバル変数を設定(ColorConfig, 16, 色(赤));
         END;
-        グローバル変数を設定(PortalOn, ワークショップの設定の切り替え(カスタムストリング("map settings \\n地图设置"), カスタムストリング("enable portals 󠀨control maps󠀩 - 启用传送门 󠀨占点地图󠀩"), True, 4));
-        グローバル変数を設定(CompMode, ワークショップの設定の切り替え(カスタムストリング("Competitive mode\\n竞赛模式"), カスタムストリング("Turn on competitive mode - 开启竞赛模式"), False, 100));
-        IF(グローバル.CompMode);
-            "-! comp minutes !-\\n5-240"
-            グローバル変数を設定(CompTime, ワークショップの設定（整数）(カスタムストリング("Competitive mode\\n竞赛模式"), カスタムストリング("time limit 󠀨global󠀩 - 时间限制"), 120, 1, 240, 101));
-            "-! comp attempt count !-"
-            グローバル変数を設定(CompAtmpNum, ワークショップの設定（整数）(カスタムストリング("Competitive mode\\n竞赛模式"), カスタムストリング("attempt count - 尝试次数"), 5, 0, 500, 102));
-            "-! comp restartlimiter !-"
-            グローバル変数を設定(CompRestartLimit, ワークショップの設定の切り替え(カスタムストリング("Competitive mode\\n竞赛模式"), カスタムストリング("disable restart during run - 竞赛中禁用重新开始"), False, 103));
-        ELSE;
-            グローバル変数を設定(instructiontext, NULL);
+        "prevent same color lock orbs"
+        IF(COMPARE(配列内の値(グローバル.ColorConfig, 15), ==, 配列内の値(グローバル.ColorConfig, 16)));
+            インデックスのグローバル変数を設定(ColorConfig, 16, IF-THEN-ELSE(COMPARE(配列内の値(グローバル.ColorConfig, 15), ==, 色(オレンジ)), 色(緑), 色(オレンジ)));
+        END;
+        "prevent same color bhop/climb used/unused"
+        IF(COMPARE(配列内の値(グローバル.ColorConfig, 7), ==, 配列内の値(グローバル.ColorConfig, 8)));
+            インデックスのグローバル変数を設定(ColorConfig, 8, IF-THEN-ELSE(COMPARE(配列内の値(グローバル.ColorConfig, 7), ==, 色(赤)), 色(オレンジ), 色(赤)));
     }
 }
 
@@ -353,37 +371,32 @@ export const frameworkTemplate = `設定
     }
     アクション {
         IF(COMPARE(現在のゲーム・モード, !=, ゲーム・モード(スカーミッシュ)));
-            "0.25"
             待機(False, 条件無視);
-            "1"
             マッチ時間を設定(False);
-            "1.1"
             待機(False, 条件無視);
-            "1"
             マッチ時間を設定(False);
-            "1.1"
             待機(False, 条件無視);
         END;
         マッチ時間を設定(70);
         マッチ時間をポーズする;
         待機(False, 条件無視);
         グローバル変数を設定(TimeRemaining, 265);
-        WHILE(OR(グローバル.TimeRemaining, (ホスト・プレイヤー).editor_on));
+        WHILE(グローバル.TimeRemaining);
             待機(60, 条件無視);
             グローバル変数を変更(TimeRemaining, 引く, True);
             IF(グローバル.CompMode);
                 グローバル変数を変更(CompTime, 引く, True);
                 IF(NOT(グローバル.CompTime));
-                    大きなメッセージ(最初の値(True), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("时间到了"), カスタムストリング("time's up")));
+                    大きなメッセージ(最初の値(True), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("时间到了"), カスタムストリング("Time's Up")));
                     プレイヤー変数を設定(すべてのプレイヤー(すべてのチーム), comp_done, True);
                     プレイヤー変数の追跡を中止(すべてのプレイヤー(すべてのチーム), timer_normal);
-                    "getAllPlayers().disableRespawn()"
                     受けるダメージを設定(すべてのプレイヤー(すべてのチーム), 100);
                     キル(すべてのプレイヤー(すべてのチーム), NULL);
                 END;
             END;
         END;
-        大きなメッセージ(最初の値(True), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("房间已达最大持续时间, 即将重启"), カスタムストリング("maximum lobby time elapsed, restarting")));
+        "\\"房间已达最大持续时间, 即将重启\\" checkCN \\"Maximum Lobby Time Reached, Restarting\\""
+        大きなメッセージ(最初の値(True), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒMaximum Lobby Time Reached, RestartingMaximum Lobby Time Reached, RestartingMaximum Lobby Time Reached, Restarting"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
         待機(5, 条件無視);
         "Prevent crash during POTG and closing lobby"
         プレイヤー変数を設定(すべてのプレイヤー(すべてのチーム), lockState, True);
@@ -399,8 +412,6 @@ export const frameworkTemplate = `設定
         すべて;
     }
     アクション {
-        "Turn Editor On"
-        プレイヤー変数を設定(イベント・プレイヤー, editor_on, ワークショップの設定の切り替え(カスタムストリング("map settings \\n地图设置"), カスタムストリング("Editor mode - 作图模式"), False, -1));
         ゲーム・モードHUDを無効化(イベント・プレイヤー);
         移動時のプレイヤーとの衝突判定を無効化(イベント・プレイヤー);
         受けるダメージを設定(イベント・プレイヤー, 0);
@@ -412,6 +423,7 @@ export const frameworkTemplate = `設定
         ヒーローをプリロード(イベント・プレイヤー, ヒーロー(ゲンジ));
         プレイヤー変数を設定(イベント・プレイヤー, editor_lock, True);
         プレイヤー変数を設定(イベント・プレイヤー, toggle_guide, True);
+        "eventPlayer.toggle_quickRestart = true"
         プレイヤー変数を設定(イベント・プレイヤー, cache_bounceTouched, -1);
         "big waits first for about 1 second before loading, to make sure things like comp mode are fully loaded and configured, load fx in meanwhile"
         待機(True, 条件無視);
@@ -480,7 +492,7 @@ export const frameworkTemplate = `設定
     }
     アクション {
         IF(NOT((イベント・プレイヤー).checkpoint_notLast));
-            IF(AND(移動している(イベント・プレイヤー), NOT(OR(OR(OR((イベント・プレイヤー).toggle_practice, (イベント・プレイヤー).toggle_invisible), (イベント・プレイヤー).editor_on), グローバル.CompMode))));
+            IF(AND(移動している(イベント・プレイヤー), NOT(OR(OR(OR((イベント・プレイヤー).toggle_practice, (イベント・プレイヤー).toggle_invisible), グローバル.EditorOn), グローバル.CompMode))));
                 "traces ----------------------------------------------------------------------------------------------------"
                 プレイヤー変数を設定(イベント・プレイヤー, cache_rainbow, 配列内の値(配列(色(赤), 色(オレンジ), 色(黄色), 色(ライムグリーン), 色(緑), 色(ターコイズ), 色(青), 色(紫), 色(バイオレット), 色(ローズ)), 剰余(整数への四捨五入(乗算(合計経過時間, 2), 下), 10)));
                 "eventPlayer.cache_rainbow =  rgb((cosDeg(getTotalTimeElapsed()/2 * 360 - 0) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 120) + 0.5) * 255, (cosDeg(getTotalTimeElapsed/2 * 360 - 240) + 0.5) * 255)\\n1.6 - 0.2 in 0.2 steps"
@@ -498,21 +510,25 @@ export const frameworkTemplate = `設定
                 待機(0.048, 条件無視);
             END;
         "or eventPlayer.lockState:"
-        ELSE IF(OR((イベント・プレイヤー).toggle_invincible, AND(グローバル.CompMode, NOT(グローバル.CompTime))));
+        ELSE IF(OR(OR((イベント・プレイヤー).toggle_invincible, (イベント・プレイヤー).toggle_spectate), AND(グローバル.CompMode, NOT(グローバル.CompTime))));
         ELSE IF(COMPARE(二点間の距離(イベント・プレイヤー, 配列内の値(グローバル.A, 追加((イベント・プレイヤー).checkpoint_current, True))), <=, 1.4));
-            "arrived ----------------------------------------------------------------------------------------------------\\nkill player if not colleted the locks"
+            "arrived ----------------------------------------------------------------------------------------------------"
             IF(COMPARE(カウント: ((イベント・プレイヤー).cache_collectedLocks), <, (イベント・プレイヤー).cache_bounceMaxLocks));
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   ! 进点前需集齐所有收集球 !"), カスタムストリング("   ! collect ALL {0} orbs to unlock !", 配列内の値(グローバル.ColorConfig, 16))));
-                "kill(eventPlayer, null)"
+                "\\"   ! 进点前需集齐所有收集球 !\\" checkCN \\"   ! collect ALL {} orbs to unlock !\\".format(ColorConfig[Customize.orb_lock])"
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   ! Collect All Lock Orbs To Complete !   ! Collect All Lock Orbs To Complete !   ! Collect All Lock Orbs To Complete !"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
+                "kill player if not colleted the locks"
                 サブルーチンの呼び出し(CheckpointFailReset);
             ELSE IF(AND((イベント・プレイヤー).ban_climb, (イベント・プレイヤー).skill_usedClimb));
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   爬墙 ↑ 已禁用!"), カスタムストリング("   Climb ↑ is banned!")));
+                "\\"   爬墙 ↑ 已禁用!\\" checkCN \\"   Climb ↑ is banned!\\")"
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Climb ↑ Is Banned!   Climb ↑ Is Banned!   Climb ↑ Is Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
                 サブルーチンの呼び出し(CheckpointFailReset);
             ELSE IF(AND((イベント・プレイヤー).ban_bhop, (イベント・プレイヤー).skill_usedBhop));
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   ≥ 留小跳进点!"), カスタムストリング("   ≥ Must have a bhop to complete!")));
+                "\\"   ≥ 留小跳进点!\\" checkCN \\"   ≥ Must Have A Bhop To Complete!!\\""
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   ≥ Must Have A Bhop To Complete!   ≥ Must Have A Bhop To Complete!   ≥ Must Have A Bhop To Complete!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
                 サブルーチンの呼び出し(CheckpointFailReset);
             ELSE IF(AND((イベント・プレイヤー).ban_djump, (イベント・プレイヤー).skill_usedDouble));
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   » 留二段跳!"), カスタムストリング("   » Must have a double jump to complete!")));
+                "\\"   » 留二段跳!\\" checkCN \\"   » Must Have A Double Jump To Complete!\\""
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   » Must Have A Double Jump To Complete!   » Must Have A Double Jump To Complete!   » Must Have A Double Jump To Com{0}", カスタムストリング("plete!")), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
                 サブルーチンの呼び出し(CheckpointFailReset);
             ELSE;
                 プレイヤー変数を設定(イベント・プレイヤー, checkpoint_moved, True);
@@ -526,7 +542,7 @@ export const frameworkTemplate = `設定
                     プレイヤー変数を設定(イベント・プレイヤー, timer_split, (イベント・プレイヤー).timer_normal);
                     サブルーチンの呼び出し(DeleteSave);
                     "complete lvl"
-                    IF(AND(COMPARE((イベント・プレイヤー).checkpoint_current, ==, 減算(カウント: (グローバル.A), True)), NOT((イベント・プレイヤー).editor_on)));
+                    IF(AND(COMPARE((イベント・プレイヤー).checkpoint_current, ==, 減算(カウント: (グローバル.A), True)), NOT(グローバル.EditorOn)));
                         プレイヤー変数の追跡を中止(イベント・プレイヤー, timer_normal);
                         サブルーチンの呼び出し(LeaderboardUpdate);
                         IF(AND(グローバル.CompMode, グローバル.CompAtmpNum));
@@ -543,7 +559,8 @@ export const frameworkTemplate = `設定
                                 インデックスのグローバル変数を設定(CompAtmpSaveCount, 配列値のインデックス(グローバル.CompAtmpSaveNames, 文字列の分割(最初の値(イベント・プレイヤー), 空の配列)), 追加((イベント・プレイヤー).comp_countAttempts, True));
                             END;
                         END;
-                        大きなメッセージ(最初の値(True), カスタムストリング("{0} {1} {2} sec", イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("已通关! 用时"), カスタムストリング("Mission complete! Time")), (イベント・プレイヤー).timer_normal));
+                        "\\"已通关! 用时\\" checkCN \\"Mission Complete! Time\\""
+                        大きなメッセージ(最初の値(True), カスタムストリング("{0} {1} {2} Sec", イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒMission Complete! TimeMission Complete! TimeMission Complete! Time"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), (イベント・プレイヤー).timer_normal));
                         待機(False, 条件無視);
                     "update save"
                     ELSE;
@@ -560,8 +577,8 @@ export const frameworkTemplate = `設定
                 END;
                 待機(False, 条件無視);
                 "msg disabled due to annoying new sound\\nbigMessage(eventPlayer,  \\"{1} {0}\\".format(eventPlayer.checkpoint_current, \\"抵达检查点\\" checkCN \\"Arrived at level\\"))"
-                エフェクトを再生(イベント・プレイヤー, 爆発音（リング）, 色(白), イベント・プレイヤー, 100);
-                エフェクトを再生(IF-THEN-ELSE(OR(グローバル.CompMode, (イベント・プレイヤー).toggle_invisible), イベント・プレイヤー, True), リングの爆発, 色(スカイブルー), 追加(配列内の値(グローバル.A, (イベント・プレイヤー).checkpoint_current), 乗算(1.5, 上)), 4);
+                エフェクトを再生(イベント・プレイヤー, 爆発音（リング）, NULL, イベント・プレイヤー, 100);
+                エフェクトを再生(IF-THEN-ELSE(OR(グローバル.CompMode, (イベント・プレイヤー).toggle_invisible), イベント・プレイヤー, True), リングの爆発, 色(スカイブルー), 位置: (イベント・プレイヤー), 4);
             END;
         ELSE IF(COMPARE(二点間の距離(イベント・プレイヤー, 最後の値(配列内の値(グローバル.A, (イベント・プレイヤー).checkpoint_current))), >, 1.4));
             サブルーチンの呼び出し(CheckpointFailReset);
@@ -606,19 +623,22 @@ export const frameworkTemplate = `設定
         IF(COMPARE((イベント・プレイヤー).cache_bounceTouched, >=, NULL));
             IF(配列内の値(グローバル.BounceToggleLock, (イベント・プレイヤー).cache_bounceTouched));
                 プレイヤー変数を変更(イベント・プレイヤー, cache_collectedLocks, 配列に追加, (イベント・プレイヤー).cache_bounceTouched);
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   弹球已收集"), カスタムストリング("   orb has been collected")));
+                "\\"   弹球已收集\\" checkCN \\"   orb has been collected\\""
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Collected Orb   Collected Orb   Collected Orb"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
             END;
             IF(COMPARE(配列内の値(グローバル.EditMode, (イベント・プレイヤー).cache_bounceTouched), >, NULL));
                 推進力を適用(イベント・プレイヤー, 上, 配列内の値(グローバル.EditMode, (イベント・プレイヤー).cache_bounceTouched), 対ワールド: , 逆モーションXYZをキャンセル);
             ELSE IF(COMPARE(配列内の値(グローバル.EditMode, (イベント・プレイヤー).cache_bounceTouched), <, NULL));
                 メインアクションをキャンセル(イベント・プレイヤー);
                 プレイヤー変数を設定(イベント・プレイヤー, skill_usedDouble, NULL);
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   二段跳已就绪"), カスタムストリング("   Double Jump is ready")));
+                "\\"   二段跳已就绪\\" checkCN \\"   » Double Jump is ready\\""
+                小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   » Double Jump Is Ready   » Double Jump Is Ready   » Double Jump Is Ready"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
             END;
             IF(配列内の値(グローバル.TQ5, (イベント・プレイヤー).cache_bounceTouched));
                 アルティメット・アビリティを有効化(イベント・プレイヤー, True);
                 アルティメット・チャージを設定(イベント・プレイヤー, 100);
-                小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1} ", アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("终极技能已就绪"), カスタムストリング("Ultimate is ready"))));
+                "\\"终极技能已就绪\\" checkCN \\"Ultimate is ready\\""
+                小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1}", アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒUltimate Is ReadyUltimate Is ReadyUltimate Is Ready"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))));
             END;
             IF(配列内の値(グローバル.TQ6, (イベント・プレイヤー).cache_bounceTouched));
                 IF(アビリティ1を使用(イベント・プレイヤー));
@@ -626,9 +646,10 @@ export const frameworkTemplate = `設定
                     待機(False, 条件無視);
                 END;
                 アビリティ1を有効化(イベント・プレイヤー, True);
-                小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1} ", アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("技能1影已就绪"), カスタムストリング("Dash is ready"))));
+                "\\"技能1影已就绪\\" checkCN \\"Dash is ready\\""
+                小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1}", アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒDash Is ReadyDash Is ReadyDash Is Ready"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))));
             END;
-            エフェクトを再生(イベント・プレイヤー, 爆発音（バフ）, 色(白), イベント・プレイヤー, 75);
+            エフェクトを再生(イベント・プレイヤー, 爆発音（バフ）, NULL, イベント・プレイヤー, 75);
         END;
         待機(0.24, 条件無視);
         条件が「TRUE」の場合ループ;
@@ -695,41 +716,41 @@ export const frameworkTemplate = `設定
         プレイヤー変数を設定(イベント・プレイヤー, banString, 空の配列);
         待機(False, 条件無視);
         IF((イベント・プレイヤー).checkpoint_notLast);
-            プレイヤー変数を設定(イベント・プレイヤー, ban_multi, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban Multiclimb - 封禁蹭留"), False, 1), 含む配列(グローバル.BanMulti, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_multi, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Multiclimb ■ 封禁蹭留 ■ 무한 벽타기 금지"), False, 1), 含む配列(グローバル.BanMulti, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_multi);
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("∞ {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_create, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban Createbhop - 封禁卡小"), False, 2), 含む配列(グローバル.BanCreate, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_create, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Createbhop ■ 封禁卡小 ■ 콩콩이 생성 금지"), False, 2), 含む配列(グローバル.BanCreate, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_create);
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("♂ {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_standcreate, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban standcreate - 封禁站卡"), False, 3), 含む配列(グローバル.BanStand, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_standcreate, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Standcreate ■ 封禁站卡 ■ 서서 콩콩이 생성 금지"), False, 3), 含む配列(グローバル.BanStand, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_standcreate);
                 "≥  √ ▼ ↓"
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("♠ {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_dead, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban Deathbhop - 封禁死小"), False, 4), 含む配列(グローバル.BanDead, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_dead, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Deathbhop ■ 封禁死小 ■ 죽음 콩콩이 금지"), False, 4), 含む配列(グローバル.BanDead, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_dead);
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("X {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_emote, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban Emote Savehop - 封禁表情留小"), False, 5), 含む配列(グローバル.BanEmote, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_emote, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Emote Savehop ■ 封禁表情留小 ■ 감정표현 콩콩이 금지"), False, 5), 含む配列(グローバル.BanEmote, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_emote);
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("♥ {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_climb, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban Wallclimb - 封禁爬墙"), False, 6), 含む配列(グローバル.BanClimb, (イベント・プレイヤー).checkpoint_current)));
-            IF((イベント・プレイヤー).ban_climb);
-                プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("↑ {0}", (イベント・プレイヤー).banString));
-            END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_savedouble, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("ban save double - 封禁延二段跳"), False, 7), 含む配列(グローバル.BanSaveDouble, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_savedouble, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Save Double ■ 封禁留二段跳 ■ 이단점프 킵 금지"), False, 6), 含む配列(グローバル.BanSaveDouble, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_savedouble);
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("△ {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_bhop, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("require bhop available - 留小跳进点 "), False, 8), 含む配列(グローバル.BanBhop, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_climb, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Ban Wallclimb ■ 封禁爬墙 ■ 벽타기 금지"), False, 7), 含む配列(グローバル.BanClimb, (イベント・プレイヤー).checkpoint_current)));
+            IF((イベント・プレイヤー).ban_climb);
+                プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("↑ {0}", (イベント・プレイヤー).banString));
+            END;
+            プレイヤー変数を設定(イベント・プレイヤー, ban_bhop, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Require Bhop Available ■ 留小跳进点 ■ 도착 시 콩콩이 필요"), False, 8), 含む配列(グローバル.BanBhop, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_bhop);
                 "≥  √ ▼ ↓"
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("≥ {0}", (イベント・プレイヤー).banString));
             END;
-            プレイヤー変数を設定(イベント・プレイヤー, ban_djump, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (applies to all levels)\\n封禁(应用于所有关卡)"), カスタムストリング("require djump available - 留二段跳 "), False, 9), 含む配列(グローバル.BanDjump, (イベント・プレイヤー).checkpoint_current)));
+            プレイヤー変数を設定(イベント・プレイヤー, ban_djump, OR(ワークショップの設定の切り替え(カスタムストリング("Ban (All Levels) ■ 封禁(应用于所有关卡) ■ 금지 (모든 레벨에 적용)"), カスタムストリング("Require Djump Available ■ 留二段跳进点 ■ 도착 시 이단 점프 필요"), False, 9), 含む配列(グローバル.BanDjump, (イベント・プレイヤー).checkpoint_current)));
             IF((イベント・プレイヤー).ban_djump);
                 "≥  √ ▼ ↓ ︽"
                 プレイヤー変数を設定(イベント・プレイヤー, banString, カスタムストリング("» {0}", (イベント・プレイヤー).banString));
@@ -746,9 +767,9 @@ export const frameworkTemplate = `設定
             プレイヤー変数を設定(イベント・プレイヤー, ban_djump, False);
         END;
         待機(False, 条件無視);
-        ルールを開始(CheckUlt, ルールをやり直す);
-        ルールを開始(CheckAbility1, ルールをやり直す);
-        中止する条件(OR(COMPARE(イベント・プレイヤー, !=, ホスト・プレイヤー), NOT((イベント・プレイヤー).editor_on)));
+        ルールを開始(CheckUlt, 何もしない);
+        ルールを開始(CheckAbility1, 何もしない);
+        中止する条件(OR(COMPARE(イベント・プレイヤー, !=, ホスト・プレイヤー), NOT(グローバル.EditorOn)));
         サブルーチンの呼び出し(EditUpdateSelectedIds);
         エフェクトを破棄((ホスト・プレイヤー).editor_hitboxEffect);
         エフェクトを作成(IF-THEN-ELSE((ホスト・プレイヤー).editor_hitboxToggle, ホスト・プレイヤー, NULL), 球体, 色(白), 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), 1.4, 表示される相手、位置、範囲);
@@ -925,7 +946,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Mechanics | Checks <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Mechanics | Checks ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -943,7 +964,8 @@ export const frameworkTemplate = `設定
     アクション {
         プレイヤー変数を設定(イベント・プレイヤー, skill_usedBhop, True);
         IF((イベント・プレイヤー).skill_usedHop);
-            小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   小跳已用"), カスタムストリング("   Bhop")));
+            "\\"   小跳已用\\" checkCN \\"   Bhop\\""
+            小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Bhop   Bhop   Bhop"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
         ELSE;
             プレイヤー変数を設定(イベント・プレイヤー, skill_usedHop, True);
     }
@@ -997,7 +1019,8 @@ export const frameworkTemplate = `設定
         IF((イベント・プレイヤー).ban_emote);
             条件待機(NOT(エモートでコミュニケーションしている(イベント・プレイヤー)), 999999999999);
             中止する条件((イベント・プレイヤー).toggle_invincible);
-            小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   表情留小 ♥ 已禁用!"), カスタムストリング("   Emote Savehop ♥ is banned!")));
+            "\\"   表情留小 ♥ 已禁用!\\" checkCN \\"   Emote Savehop ♥ is banned!\\""
+            小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Emote Savehop ♥ Is Banned!   Emote Savehop ♥ Is Banned!   Emote Savehop ♥ Is Banned!"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
             待機(False, 条件無視);
             サブルーチンの呼び出し(CheckpointFailReset);
     }
@@ -1025,19 +1048,21 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Editor <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Editor ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("Editor | Clear Excess Data to Save Map") {
+ルール ("Editor | Export Map") {
     イベント {
-        進行中 - グローバル;
+        進行中 - 各プレイヤー;
+        すべて;
+        すべて;
     }
     条件 {
-        "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (ホスト・プレイヤー).editor_on != False;
+        イベント・プレイヤー == ホスト・プレイヤー;
+        グローバル.EditorOn != False;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)) == True;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)) == True;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(リロード)) == True;
@@ -1050,6 +1075,7 @@ export const frameworkTemplate = `設定
         プレイヤー変数を設定(ホスト・プレイヤー, editor_saveCache, 配列(グローバル.TimeRemaining, グローバル.ColorConfig));
         グローバル変数を設定(TimeRemaining, NULL);
         グローバル変数を設定(ColorConfig, NULL);
+        グローバル変数を設定(EditorOn, NULL);
         グローバル変数を設定(C, NULL);
         グローバル変数を設定(K, NULL);
         グローバル変数を設定(NANBA, NULL);
@@ -1082,67 +1108,54 @@ export const frameworkTemplate = `設定
         グローバル変数を設定(Cachedcredits, 配列(グローバル.Name, グローバル.Code));
         グローバル変数を設定(Name, NULL);
         グローバル変数を設定(Code, NULL);
-        ルールを開始(AddonCheckMap, 何もしない);
-        HUDテキストを作成(ホスト・プレイヤー, カスタムストリング("­"), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", カスタムストリング(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", カスタムストリング("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits here {0}", カスタムストリング("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), カスタムストリング("   0. clear excess data:\\n Already done when opening this window\\n\\n   1. Copy data:\\n Open Workshop Inspector → Set variable tar{0}", カスタムストリング("get as global\\n click the [x]\\n\\n   2. Insert data:\\n Paste the data into rule named 'Map Data <---- INSERT HERE'\\n\\n   3. Workshop{0}", カスタムストリング(" settings:\\n ESC → SHOW LOBBY → SETTINGS → workshop settings →\\n toggle 'Editor mode' off\\n Select display difficulty\\n\\n   4. Cre{0}", カスタムストリング("ate initial sharecode:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n CREATE NEW CODE → COPY CODE\\n\\n   5. Add credits:\\n Enter yo{0}", カスタムストリング("ur name & map code in the 'Credits here' rule\\n\\n   6. Update for credits:\\n ESC → SHOW LOBBY → SETTINGS → SHARE CODE →\\n UPLOAD {0}", カスタムストリング("TO EXISTING CODE → PASTE THE CODE YOU CREATED IN STEP 4"))))))), トップ, -185, NULL, NULL, 色(ライムグリーン), 文字列, デフォルト表示);
+        HUDテキストを作成(ホスト・プレイヤー, カスタムストリング("­"), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   0. 清理无用数据:\\n (此窗口打开时将自动完成)\\n\\n   1. 复制数据:\\n Esc → 打开地图工坊查看器 → 右下角'变量目标'改为全局\\n 点击窗口下方图标 (X) 复制作图数据\\n\\n   2. 录入数据:\\n Esc → 打开地图工坊编辑器{0}", カスタムストリング(" → 规则第(2/2)页 → 展开规则'数据录入 <---- 在这输入'\\n 点击'动作'一栏右侧橙色粘贴图标 录入数据\\n\\n   3. 地图工坊设置:\\n ESC → 显示大厅 → 设置 → 地图工坊设置→\\n 拉至底部 关闭'作图模式'\\n 选择地图难度\\n{0}", カスタムストリング("\\n   4. 创建初始地图代码:\\n Esc → 显示大厅 → 设置 → 分享代码 →\\n 创建新的代码 → 复制并记下代码\\n\\n   5. 添加作者信息:\\n Esc → 打开地图工坊编辑器 → 规则第(2/2)页 → 展开规则'Credits Here {0}", カスタムストリング("- 作者名字'\\n 修改自定义字符串文本框中的内容\\n\\n   6. 更新地图及作者信息:\\n Esc → 显示大厅 → 设置 → 共享代码 →\\n 上传至现有代码 → 粘贴步骤4中获得的代码")))), カスタムストリング("   0. Clear Extra Data:\\n Already Done Upon Opening This Window\\n\\n   1. Copy Data:\\n Open Workshop Inspector → Set Variable Targ{0}", カスタムストリング("et To Global\\n Click The [X]\\n\\n   2. Insert Data:\\n Paste The Data Into Rule Named 'Map Data <---- Insert Here'\\n\\n   3. Workshop {0}", カスタムストリング("Settings:\\n Esc → Show Lobby → Settings → Workshop Settings →\\n Toggle 'Editor Mode' Off\\n Select Display Difficulty\\n\\n   4. Crea{0}", カスタムストリング("te Initial Sharecode:\\n Esc → Show Lobby → Settings → Share Code →\\n Create New Code → Copy Code\\n\\n   5. Add Credits:\\n Enter You{0}", カスタムストリング("r Name & Map Code In The 'Credits Here' Rule\\n\\n   6. Update For Credits:\\n Esc → Show Lobby → Settings → Share Code →\\n Upload T{0}", カスタムストリング("o Existing Code → Paste The Code You Created In Step 4"))))))), トップ, -185, NULL, NULL, 色(ライムグリーン), 文字列, デフォルト表示);
         インデックスのプレイヤー変数を設定(ホスト・プレイヤー, editor_saveCache, 2, 最新のテキストID);
-        HUDテキストを作成(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("    > 按互动键关闭当前窗口 <    "), カスタムストリング("    > Press Interact to close this window <    ")), NULL, NULL, トップ, -183, 色(ライムグリーン), NULL, NULL, 文字列, デフォルト表示);
-        インデックスのプレイヤー変数を設定(ホスト・プレイヤー, editor_saveCache, 3, 最新のテキストID);
+        サブルーチンの呼び出し(AddonCheckMap);
         インスペクターでの記録を有効化;
         インスペクターでの記録を無効化;
-        条件待機(NOT(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト))), 999999999999);
-        条件待機(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), 999999999999);
+        グローバル変数を設定(EditorOn, True);
         グローバル変数を設定(TimeRemaining, 最初の値((ホスト・プレイヤー).editor_saveCache));
         グローバル変数を設定(ColorConfig, 配列内の値((ホスト・プレイヤー).editor_saveCache, True));
-        HUDテキストを破棄(配列内の値((ホスト・プレイヤー).editor_saveCache, 2));
+        HUDテキストを作成(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("    > 按互动键关闭当前窗口 <    "), カスタムストリング("    > Press Interact To Close This Window <    ")), NULL, NULL, トップ, -183, 色(ライムグリーン), NULL, NULL, 文字列, デフォルト表示);
+        インデックスのプレイヤー変数を設定(ホスト・プレイヤー, editor_saveCache, False, 最新のテキストID);
+        条件待機(NOT(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト))), 999999999999);
+        条件待機(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), 999999999999);
+        "Close Window"
+        HUDテキストを破棄(最初の値((ホスト・プレイヤー).editor_saveCache));
+        "Instructions"
         HUDテキストを破棄(最後の値((ホスト・プレイヤー).editor_saveCache));
         プレイヤー変数を設定(ホスト・プレイヤー, editor_saveCache, NULL);
         プレイヤー変数を設定(ホスト・プレイヤー, editor_lock, False);
     }
 }
 
-ルール ("Editor | Hud and Effects") {
+ルール ("Editor | Hud & Effects") {
     イベント {
         進行中 - グローバル;
     }
     アクション {
         待機(0.832000000000000, 条件無視);
-        "cant be condition because host player can leaves, removing the rule fx"
-        条件待機(エンティティが存在している(すべてのプレイヤー(すべてのチーム)), 999999999999);
-        待機(False, 条件無視);
-        IF((すべてのプレイヤー(すべてのチーム)).editor_on);
-            "hostPlayer.editor_lock = true\\nremove unnesesary huds"
-            WHILE(カウント: (グローバル.HudStoreEdit));
-                HUDテキストを破棄(最初の値(グローバル.HudStoreEdit));
-                ワールド内テキストを破棄(最初の値(グローバル.HudStoreEdit));
-                グローバル変数を変更(HudStoreEdit, インデックスを配列から削除, False);
-            END;
-            待機(False, 条件無視);
-            "infinite time and attempts"
-            IF(グローバル.CompMode);
-                グローバル変数を設定(CompAtmpNum, NULL);
-                グローバル変数を設定(CompTime, 999999999999);
-                プレイヤー変数を設定(すべてのプレイヤー(すべてのチーム), comp_countAttempts, NULL);
-                プレイヤー変数を設定(すべてのプレイヤー(すべてのチーム), comp_done, False);
-            END;
+        "waitUntil(entityExists(getAllPlayers()), Math.INFINITY)  # cant be condition because host player can leaves, removing the rule fx\\nwait()"
+        IF(グローバル.EditorOn);
             HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0}+{1}+{2} | 重新开始", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(インタラクト))), カスタムストリング("{0}+{1}+{2} | Restart", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(インタラクト)))), 右, -156, NULL, NULL, 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("方向键 | 移动实体 \\n{0} | 向上移动 \\n{1} | 向下移动 \\n{2} (长按) | 快速移动", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(ジャンプ))), 配列内の値(配列(カスタムストリング("{0} + {1} | 新建检查点\\n{0} + {2} | 删除选中的检查点", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 新建击杀球\\n{0} + {1} (长按) | 在准心位置新建", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 新建弹球\\n{0} + {1} (长按) | 在准心位置新建", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 蹭留\\n{0} + {2} | 卡小", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 新建传送门\\n{0} + {1} (长按) | 在准心位置新建", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)))), (ホスト・プレイヤー).editor_modeSelect)), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("walk | move selected\\n{0} | move up\\n{1} | move down\\n{2} (hold) | move faster", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(ジャンプ))), 配列内の値(配列(カスタムストリング("{0} + {1} | Create New\\n{0} + {2} | Delete selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | Create new\\n{0} + {1} (hold)| raycast new", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | Create new\\n{0} + {1} (hold)| raycast new", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | multiclimb\\n{0} + {2} | createbhop", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | create new\\n{0} + {1} (hold)| raycast new", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)))), (ホスト・プレイヤー).editor_modeSelect))), 右, -148, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, NOT(グローバル.EditorMoveItem)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | 删除选中的击杀球", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 删除选中的弹球", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), 空の配列, カスタムストリング("{0} + {1} | 删除选中的传送门", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃)))), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | delete selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | delete selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), 空の配列, カスタムストリング("{0} + {1} | delete selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃)))), (ホスト・プレイヤー).editor_modeSelect)), 右, -147, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("{0} | 放置实体{1} | cancel placement\\n", 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), 配列内の値(配列(カスタムストリング("{0} + {1} | 移除/新建传送点\\n{0} + {2} | 检查点碰撞模型\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | 选择上一个击杀球\\n{0} + {2} | 选择下一个击杀球\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | 选择上一个弹球\\n{0} + {2} | 选择下一个弹球\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | 爬墙\\n{0} + {2} | 延二段跳", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | 选择下一个传送门\\n{0} + {2} | 选择上一个传送门\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ)))), (ホスト・プレイヤー).editor_modeSelect)), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("{0} | confirm placement\\n{1} | cancel placement", 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), 配列内の値(配列(カスタムストリング("{0} + {1} | Remove/Add teleport\\n{0} + {2} | Toggle Hitbox\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | Select previous\\n{0} + {2} | Select next\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | Select previous\\n{0} + {2} | Select next\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | wallclimb\\n{0} + {2} | save double", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | select next\\n{0} + {2} | select previous\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ)))), (ホスト・プレイヤー).editor_modeSelect))), 右, -146, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, NOT(グローバル.EditorMoveItem)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), 配列内の値(配列(カスタムストリング("{0} (长按) | 移动检查点", 入力割り当ての文字列(ボタン(アビリティ2))), カスタムストリング("{0} + {1} | 增大击杀球\\n{0} + {2} | 缩小击杀球", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | 增加弹球弹力\\n{0} + {2} | 减少弹球弹力", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | 死小\\n{0} + {2} | 表情留小", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 移动选中的实体\\n{0} + {2} | 应用到当前/所有关卡(开关)", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(ジャンプ)))), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(カスタムストリング("{0} (hold) | Move", 入力割り当ての文字列(ボタン(アビリティ2))), カスタムストリング("{0} + {1} | Increase size\\n{0} + {2} | Decrease size", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | Increase strength\\n{0} + {2} | Decrease strength", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | death hop\\n{0} + {2} | emote", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | move\\n{0} + {2} | cp/map (toggle)", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(ジャンプ)))), (ホスト・プレイヤー).editor_modeSelect)), 右, -145, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, NOT(グローバル.EditorMoveItem)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | 移动选中的实体", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 移动选中的实体", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 留小跳进点\\n{0} + {2} | 站卡", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), 空の配列), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | Move", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | Move", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | require bhop\\n{0} + {2} | stand create", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), 空の配列), (ホスト・プレイヤー).editor_modeSelect)), 右, -144, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング(" \\n{0} + {1} | 下一关", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング(" \\n{0} + {1} | Next checkpoint", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃)))), 右, -150, NULL, NULL, IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | Prev checkpoint\\n{2} (hold)| Fly\\n", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(アビリティ1)))), 右, -149, NULL, NULL, IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("保存地图长按 {0} + {1} + {2}", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0} 后按弹出窗口的提示进行操作                                                                                                ", 入力割り当ての文字列(ボタン(リロード)))), カスタムストリング("to save map, hold {0} + {1} + {2}", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0} then follow instructions                                                                                                ", 入力割り当ての文字列(ボタン(リロード))))), NULL, 左, -197, NULL, 色(黄色), NULL, 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ローカルプレイヤー).editor_saveCache, NULL, ローカルプレイヤー), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(文字列の分割(カスタムストリング("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), 最初の値(NULL)), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} 源氏 编辑者 {0} ", アイコンストリング(雷光の弓)))), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} checkpoints\\n{1} boundary spheres\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} function orbs\\n{1} skill bans\\n{2} portals", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(文字列の分割(カスタムストリング("checkpoints0boundary spheres0function orbs0skill bans0portals"), 最初の値(NULL)), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} Genji editor {0} ", アイコンストリング(雷光の弓))))), NULL, NULL, トップ, -174, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
-            HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング("{0} + 射击 | 切换作图模式", 入力割り当ての文字列(ボタン(近接))), カスタムストリング("房主/编辑者 {0}", ホスト・プレイヤー)), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング("{0} + shoot | change mode", 入力割り当ての文字列(ボタン(近接))), カスタムストリング("Current host/editor: {0}", ホスト・プレイヤー))), NULL, トップ, -175, NULL, IF-THEN-ELSE((ローカルプレイヤー).editor_lock, 色(グレー), 色(白)), NULL, 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, OR(NOT((ホスト・プレイヤー).editor_modeSelect), AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)))), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("弹球给刀"), カスタムストリング("检查点给刀")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ5, グローバル.EditSelected), 含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current)))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} give ult {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("Orb"), カスタムストリング("Level")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ5, グローバル.EditSelected), 含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current))))), 左, -189, NULL, NULL, IF-THEN-ELSE(AND(配列内の値(グローバル.TQ5, グローバル.EditSelected), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2)), 色(緑), IF-THEN-ELSE(AND(含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current), NOT((ホスト・プレイヤー).editor_modeSelect)), 色(緑), 色(オレンジ))), 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, OR(NOT((ホスト・プレイヤー).editor_modeSelect), AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)))), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(サブ攻撃)), カスタムストリング("{0} {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("弹球给Shift"), カスタムストリング("检查点给Shift")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ6, グローバル.EditSelected), 含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current)))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(サブ攻撃)), カスタムストリング("{0} give dash {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("Orb"), カスタムストリング("Level")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ6, グローバル.EditSelected), 含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current))))), 左, -188, NULL, NULL, IF-THEN-ELSE(AND(配列内の値(グローバル.TQ6, グローバル.EditSelected), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2)), 色(緑), IF-THEN-ELSE(AND(含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current), NOT((ホスト・プレイヤー).editor_modeSelect)), 色(緑), 色(オレンジ))), 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE(AND(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), (ホスト・プレイヤー).toggle_guide), カウント: ((ホスト・プレイヤー).editor_bounceIndex)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} |  收集球(进点前必须集齐) {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | {1}\\n                                                                                                ", アイコンストリング(アスタリスク), 配列内の値(グローバル.BounceToggleLock, グローバル.EditSelected))), カスタムストリング("{0} + {1} | unlocks checkpoint {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | {1}\\n                                                                                                ", アイコンストリング(アスタリスク), 配列内の値(グローバル.BounceToggleLock, グローバル.EditSelected)))), 左, -187, NULL, NULL, IF-THEN-ELSE(配列内の値(グローバル.BounceToggleLock, グローバル.EditSelected), 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("球体/传送门上限: {0}/193 ", 追加(追加(カウント: (グローバル.TQ), カウント: (グローバル.H)), カウント: (グローバル.CustomPortalStart))), カスタムストリング("orb/portal limit: {0}/193 ", 追加(追加(カウント: (グローバル.TQ), カウント: (グローバル.H)), カウント: (グローバル.CustomPortalStart)))), NULL, カスタムストリング("                                                                                                                                "), 左, -191, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("方向键 | 移动实体 \\n{0} | 向上移动 \\n{1} | 向下移动 \\n{2} (长按) | 快速移动", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(ジャンプ))), 配列内の値(配列(カスタムストリング("{0} + {1} | 新建检查点\\n{0} + {2} | 删除选中的检查点", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 新建击杀球\\n{0} + {1} (长按) | 在准心位置新建", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 新建弹球\\n{0} + {1} (长按) | 在准心位置新建", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 蹭留\\n{0} + {2} | 卡小", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 新建传送门\\n{0} + {1} (长按) | 在准心位置新建", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)))), (ホスト・プレイヤー).editor_modeSelect)), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("Walk | Move Selected\\n{0} | Move Up\\n{1} | Move Down\\n{2} (Hold) | Move Faster", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(ジャンプ))), 配列内の値(配列(カスタムストリング("{0} + {1} | Create New\\n{0} + {2} | Delete Selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | Multi-Climb\\n{0} + {2} | Createbhop", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | Create New\\n{0} + {1} (Hold)| Raycast New", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(メイン攻撃)))), (ホスト・プレイヤー).editor_modeSelect))), 右, -148, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, NOT(グローバル.EditorMoveItem)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | 删除选中的击杀球", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 删除选中的弹球", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), 空の配列, カスタムストリング("{0} + {1} | 删除选中的传送门", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃)))), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | Delete Selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | Delete Selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃))), 空の配列, カスタムストリング("{0} + {1} | Delete Selected", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(サブ攻撃)))), (ホスト・プレイヤー).editor_modeSelect)), 右, -147, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("{0} | 放置实体{1} | Cancel Placement\\n", 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), 配列内の値(配列(カスタムストリング("{0} + {1} | 移除/新建传送点\\n{0} + {2} | 检查点碰撞模型\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | 选择上一个击杀球\\n{0} + {2} | 选择下一个击杀球\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | 选择上一个弹球\\n{0} + {2} | 选择下一个弹球\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | 爬墙\\n{0} + {2} | 延二段跳", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | 选择下一个传送门\\n{0} + {2} | 选择上一个传送门\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ)))), (ホスト・プレイヤー).editor_modeSelect)), IF-THEN-ELSE(グローバル.EditorMoveItem, カスタムストリング("{0} | Confirm Placement\\n{1} | Cancel Placement", 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), 配列内の値(配列(カスタムストリング("{0} + {1} | Remove/Add Teleport\\n{0} + {2} | Toggle Hitbox\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | Select Previous\\n{0} + {2} | Select Next\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | Select Previous\\n{0} + {2} | Select Next\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | Wallclimb\\n{0} + {2} | Save Double", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ))), カスタムストリング("{0} + {1} | Select Next\\n{0} + {2} | Select Previous\\n", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ)))), (ホスト・プレイヤー).editor_modeSelect))), 右, -146, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, NOT(グローバル.EditorMoveItem)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), 配列内の値(配列(カスタムストリング("{0} (长按) | 移动检查点", 入力割り当ての文字列(ボタン(アビリティ2))), カスタムストリング("{0} + {1} | 增大击杀球\\n{0} + {2} | 缩小击杀球", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | 增加弹球弹力\\n{0} + {2} | 减少弹球弹力", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | 死小\\n{0} + {2} | 表情留小", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | 移动选中的实体\\n{0} + {2} | 应用到当前/所有关卡(开关)", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(ジャンプ)))), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(カスタムストリング("{0} (Hold) | Move", 入力割り当ての文字列(ボタン(アビリティ2))), カスタムストリング("{0} + {1} | Increase Size\\n{0} + {2} | Decrease Size", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | Increase Strength\\n{0} + {2} | Decrease Strength", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), カスタムストリング("{0} + {1} | Death Hop\\n{0} + {2} | Emote", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("{0} + {1} | Move\\n{0} + {2} | Cp/Map (Toggle)", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(ジャンプ)))), (ホスト・プレイヤー).editor_modeSelect)), 右, -145, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, NOT(グローバル.EditorMoveItem)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | 移动选中的实体", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 移动选中的实体", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | 留小跳进点\\n{0} + {2} | 站卡", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), 空の配列), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(配列(空の配列, カスタムストリング("{0} + {1} | Move", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | Move", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング("{0} + {1} | Require Bhop\\n{0} + {2} | Stand Create", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(ジャンプ)), 入力割り当ての文字列(ボタン(しゃがみ))), 空の配列), (ホスト・プレイヤー).editor_modeSelect)), 右, -144, NULL, NULL, 色(黄色), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング(" \\n{0} + {1} | 下一关", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃))), カスタムストリング(" \\n{0} + {1} | Next Checkpoint", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃)))), 右, -150, NULL, NULL, IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | 上一关\\n{2} (长按) | 飞行\\n", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(アビリティ1))), カスタムストリング("{0} + {1} | Prev Checkpoint\\n{2} (hold)| Fly\\n", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(アビリティ1)))), 右, -149, NULL, NULL, IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("保存地图长按 {0} + {1} + {2}", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0} 后按弹出窗口的提示进行操作                                                                                                ", 入力割り当ての文字列(ボタン(リロード)))), カスタムストリング("To Save Map, Hold {0} + {1} + {2}", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0} Then Follow Instructions                                                                                                ", 入力割り当ての文字列(ボタン(リロード))))), NULL, 左, -197, NULL, 色(黄色), NULL, 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ローカルプレイヤー).editor_saveCache, NULL, ローカルプレイヤー), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} 检查点模式\\n{1} 击杀球模式\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} 弹球模式\\n{1} 封禁(单关)\\n{2} 自定义传送门 ", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(文字列の分割(カスタムストリング("检查点模式0击杀球模式0弹球模式0封禁(单关)0自定义传送门"), 最初の値(NULL)), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} 源氏 编辑者 {0} ", アイコンストリング(雷光の弓)))), IF-THEN-ELSE(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), カスタムストリング("{0} Checkpoints\\n{1} Boundary Spheres\\n{2}", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("     "), アイコンストリング(矢印:右)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), アイコンストリング(矢印:右), カスタムストリング("     ")), カスタムストリング("{0} Function Orbs\\n{1} Skill Bans\\n{2} Portals", IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), アイコンストリング(矢印:右), カスタムストリング("     ")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), アイコンストリング(矢印:右), カスタムストリング("     ")))), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング(" {0} {1} ", 配列内の値(配列(アイコンストリング(通報), アイコンストリング(スカル), アイコンストリング(月), アイコンストリング(停止), アイコンストリング(螺旋を描く)), (ホスト・プレイヤー).editor_modeSelect), 配列内の値(文字列の分割(カスタムストリング("Checkpoints0Boundary Spheres0Function Orbs0Skill Bans0Portals"), 最初の値(NULL)), (ホスト・プレイヤー).editor_modeSelect)), カスタムストリング(" {0} Genji Editor {0} ", アイコンストリング(雷光の弓))))), NULL, NULL, トップ, -174, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング("{0} + 射击 | 切换作图模式", 入力割り当ての文字列(ボタン(近接))), カスタムストリング("房主/编辑者 {0}", ホスト・プレイヤー)), IF-THEN-ELSE(COMPARE(ローカルプレイヤー, ==, ホスト・プレイヤー), カスタムストリング("{0} + Shoot | Change Mode", 入力割り当ての文字列(ボタン(近接))), カスタムストリング("Current Host/Editor: {0}", ホスト・プレイヤー))), NULL, トップ, -175, NULL, IF-THEN-ELSE((ローカルプレイヤー).editor_lock, 色(グレー), 色(白)), NULL, 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, OR(NOT((ホスト・プレイヤー).editor_modeSelect), AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)))), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("弹球给刀"), カスタムストリング("检查点给刀")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ5, グローバル.EditSelected), 含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current)))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} Give Ult {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("Orb"), カスタムストリング("Level")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ5, グローバル.EditSelected), 含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current))))), 左, -189, NULL, NULL, IF-THEN-ELSE(AND(配列内の値(グローバル.TQ5, グローバル.EditSelected), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2)), 色(緑), IF-THEN-ELSE(AND(含む配列(グローバル.Dao, (ホスト・プレイヤー).checkpoint_current), NOT((ホスト・プレイヤー).editor_modeSelect)), 色(緑), 色(オレンジ))), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE(AND((ホスト・プレイヤー).toggle_guide, OR(NOT((ホスト・プレイヤー).editor_modeSelect), AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)))), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(サブ攻撃)), カスタムストリング("{0} {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("弹球给Shift"), カスタムストリング("检查点给Shift")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ6, グローバル.EditSelected), 含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current)))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(サブ攻撃)), カスタムストリング("{0} Give Dash {1} | {2}                                                                                                ", IF-THEN-ELSE((ホスト・プレイヤー).editor_modeSelect, カスタムストリング("Orb"), カスタムストリング("Level")), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ6, グローバル.EditSelected), 含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current))))), 左, -188, NULL, NULL, IF-THEN-ELSE(AND(配列内の値(グローバル.TQ6, グローバル.EditSelected), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2)), 色(緑), IF-THEN-ELSE(AND(含む配列(グローバル.SHIFT, (ホスト・プレイヤー).checkpoint_current), NOT((ホスト・プレイヤー).editor_modeSelect)), 色(緑), 色(オレンジ))), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE(AND(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), (ホスト・プレイヤー).toggle_guide), カウント: ((ホスト・プレイヤー).editor_bounceIndex)), ホスト・プレイヤー, NULL), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} |  收集球(进点前必须集齐) {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | {1}\\n                                                                                                ", アイコンストリング(アスタリスク), 配列内の値(グローバル.BounceToggleLock, グローバル.EditSelected))), カスタムストリング("{0} + {1} | Unlocks Checkpoint {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | {1}\\n                                                                                                ", アイコンストリング(アスタリスク), 配列内の値(グローバル.BounceToggleLock, グローバル.EditSelected)))), 左, -187, NULL, NULL, IF-THEN-ELSE(配列内の値(グローバル.BounceToggleLock, グローバル.EditSelected), 色(緑), 色(オレンジ)), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("球体/传送门上限: {0}/193 ", 追加(追加(カウント: (グローバル.TQ), カウント: (グローバル.H)), カウント: (グローバル.CustomPortalStart))), カスタムストリング("Orb/Portal Limit: {0}/193 ", 追加(追加(カウント: (グローバル.TQ), カウント: (グローバル.H)), カウント: (グローバル.CustomPortalStart)))), NULL, カスタムストリング("                                                                                                                                "), 左, -191, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
             "display selected cc/orb info"
-            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(AND(NOT((ホスト・プレイヤー).editor_modeSelect), カウント: (グローバル.A)), カスタムストリング("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), IF-THEN-ELSE(COMPARE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), <, 2), 空の配列, カスタムストリング("\\n 传送点: {0}", 配列内の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), True)))), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), カウント: ((ホスト・プレイヤー).editor_killIndex)), カスタムストリング("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", 配列内の値(グローバル.H, グローバル.EditSelected), 配列内の値(グローバル.I, グローバル.EditSelected)), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)), カスタムストリング("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", 配列内の値(グローバル.TQ, グローバル.EditSelected), 配列内の値(グローバル.EditMode, グローバル.EditSelected), グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), カスタムストリング("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanMulti, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanCreate, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanStand, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanClimb, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanDead, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanEmote, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", IF-THEN-ELSE(含む配列(グローバル.BanSaveDouble, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanBhop, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列))))), IF-THEN-ELSE(AND(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 含む配列(配列((ホスト・プレイヤー).checkpoint_current, -1), 配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected))), カウント: (グローバル.CustomPortalCP)), カスタムストリング("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), 配列内の値(グローバル.CustomPortalEndpoint, グローバル.EditSelected), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected), <, NULL), カスタムストリング("所有"), (ホスト・プレイヤー).checkpoint_current)), カスタムストリング("\\n   当前无数据选中   \\n")))))), IF-THEN-ELSE(AND(NOT((ホスト・プレイヤー).editor_modeSelect), カウント: (グローバル.A)), カスタムストリング("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), IF-THEN-ELSE(COMPARE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), <, 2), 空の配列, カスタムストリング("\\n Teleport: {0}", 配列内の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), True)))), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), カウント: ((ホスト・プレイヤー).editor_killIndex)), カスタムストリング("\\n Selected boundary sphere\\n Vector: {0}\\n radius: {1}\\n  + keep out\\n  - stay in\\n", 配列内の値(グローバル.H, グローバル.EditSelected), 配列内の値(グローバル.I, グローバル.EditSelected)), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)), カスタムストリング("\\n Selected Bounce Orb\\n Vector: {0}\\n strength: {1} \\n ID: {2}\\n", 配列内の値(グローバル.TQ, グローバル.EditSelected), 配列内の値(グローバル.EditMode, グローバル.EditSelected), グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), カスタムストリング("\\n skill bans\\n――――――――――――\\n {0} multi-climb ∞\\n {1} create ♂\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanMulti, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanCreate, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} stand ♠\\n {1} climb ↑\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanStand, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanClimb, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} dead X\\n {1} emote ♥\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanDead, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanEmote, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} save double △\\n――――――――――――\\n {1} require bhop ≥\\n", IF-THEN-ELSE(含む配列(グローバル.BanSaveDouble, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanBhop, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列))))), IF-THEN-ELSE(AND(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 含む配列(配列((ホスト・プレイヤー).checkpoint_current, -1), 配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected))), カウント: (グローバル.CustomPortalCP)), カスタムストリング("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), 配列内の値(グローバル.CustomPortalEndpoint, グローバル.EditSelected), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected), <, NULL), カスタムストリング("All"), (ホスト・プレイヤー).checkpoint_current)), カスタムストリング("\\n   No data selected   \\n"))))))), NULL, カスタムストリング("                                                                                                                                "), 左, -190, 色(白), NULL, 色(オレンジ), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(IF-THEN-ELSE((ホスト・プレイヤー).toggle_guide, ホスト・プレイヤー, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(AND(NOT((ホスト・プレイヤー).editor_modeSelect), カウント: (グローバル.A)), カスタムストリング("\\n 选中的检查点 \\n 矢量: {0}{1} \\n", 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), IF-THEN-ELSE(COMPARE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), <, 2), 空の配列, カスタムストリング("\\n 传送点: {0}", 配列内の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), True)))), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), カウント: ((ホスト・プレイヤー).editor_killIndex)), カスタムストリング("\\n 选中的击杀球\\n 矢量: {0}\\n 半径: {1}\\n  + 進不去\\n  - 出不來\\n", 配列内の値(グローバル.H, グローバル.EditSelected), 配列内の値(グローバル.I, グローバル.EditSelected)), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)), カスタムストリング("\\n 选中的弹球\\n 矢量: {0}\\n 弹力: {1}\\n 序号: {2}\\n", 配列内の値(グローバル.TQ, グローバル.EditSelected), 配列内の値(グローバル.EditMode, グローバル.EditSelected), グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), カスタムストリング("\\n 封禁(单关)\\n――――――――――――\\n {0} 蹭留 ∞\\n {1} 卡小 ♂\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanMulti, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanCreate, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} 站卡 ♠\\n {1} 爬墙 ↑\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanStand, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanClimb, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} 死小 X\\n {1} 表情留小 ♥\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanDead, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanEmote, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} 延二段跳 △\\n――――――――――――\\n {1} 留小跳进点 ≥\\n", IF-THEN-ELSE(含む配列(グローバル.BanSaveDouble, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanBhop, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列))))), IF-THEN-ELSE(AND(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 含む配列(配列((ホスト・プレイヤー).checkpoint_current, -1), 配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected))), カウント: (グローバル.CustomPortalCP)), カスタムストリング("\\n 入口矢量: {0}\\n 出口矢量: {1}\\n 应用关卡: {2}\\n", 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), 配列内の値(グローバル.CustomPortalEndpoint, グローバル.EditSelected), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected), <, NULL), カスタムストリング("所有"), (ホスト・プレイヤー).checkpoint_current)), カスタムストリング("\\n   当前无数据选中   \\n")))))), IF-THEN-ELSE(AND(NOT((ホスト・プレイヤー).editor_modeSelect), カウント: (グローバル.A)), カスタムストリング("\\n Selected Checkpoint\\n Vector: {0}{1} \\n", 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), IF-THEN-ELSE(COMPARE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), <, 2), 空の配列, カスタムストリング("\\n Teleport: {0}", 配列内の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), True)))), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), カウント: ((ホスト・プレイヤー).editor_killIndex)), カスタムストリング("\\n Selected Boundary Sphere\\n Vector: {0}\\n Radius: {1}\\n  + Keep Out\\n  - Stay In\\n", 配列内の値(グローバル.H, グローバル.EditSelected), 配列内の値(グローバル.I, グローバル.EditSelected)), IF-THEN-ELSE(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), カウント: ((ホスト・プレイヤー).editor_bounceIndex)), カスタムストリング("\\n Selected Bounce Orb\\n Vector: {0}\\n Strength: {1} \\n ID: {2}\\n", 配列内の値(グローバル.TQ, グローバル.EditSelected), 配列内の値(グローバル.EditMode, グローバル.EditSelected), グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 3), カスタムストリング("\\n Skill Bans\\n――――――――――――\\n {0} Multi-Climb ∞\\n {1} Create ♂\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanMulti, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanCreate, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} Stand ♠\\n {1} Climb ↑\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanStand, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanClimb, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} Dead X\\n {1} Emote ♥\\n {2}", IF-THEN-ELSE(含む配列(グローバル.BanDead, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanEmote, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), カスタムストリング("{0} Save Double △\\n――――――――――――\\n {1} Require Bhop ≥\\n", IF-THEN-ELSE(含む配列(グローバル.BanSaveDouble, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列), IF-THEN-ELSE(含む配列(グローバル.BanBhop, (ホスト・プレイヤー).checkpoint_current), カスタムストリング("√"), 空の配列))))), IF-THEN-ELSE(AND(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 含む配列(配列((ホスト・プレイヤー).checkpoint_current, -1), 配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected))), カウント: (グローバル.CustomPortalCP)), カスタムストリング("\\n Start: {0} \\n End: {1} \\n CP: {2} \\n", 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), 配列内の値(グローバル.CustomPortalEndpoint, グローバル.EditSelected), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.CustomPortalCP, グローバル.EditSelected), <, NULL), カスタムストリング("All"), (ホスト・プレイヤー).checkpoint_current)), カスタムストリング("\\n   No Data Selected   \\n"))))))), NULL, カスタムストリング("                                                                                                                                "), 左, -190, 色(白), NULL, 色(オレンジ), 表示される相手、文字列, デフォルト表示);
             "effects =========================================================================================================================================================================="
-            ワールド内テキストを作成(IF-THEN-ELSE(カウント: (グローバル.EditSelectIdArray), True, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("选中的实体"), カスタムストリング("selected")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), 配列内の値(グローバル.H, グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ, グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), NULL))), 1.2, クリップしない, 表示される相手、位置, 色(オレンジ), デフォルト表示);
+            ワールド内テキストを作成(IF-THEN-ELSE(カウント: (グローバル.EditSelectIdArray), True, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("选中的实体"), カスタムストリング("Selected")), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), 配列内の値(グローバル.H, グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ, グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), NULL))), 1.2, クリップしない, 表示される相手、位置, 色(オレンジ), デフォルト表示);
             アイコンを作成(IF-THEN-ELSE(カウント: (グローバル.EditSelectIdArray), True, NULL), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), 配列内の値(グローバル.H, グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 2), 配列内の値(グローバル.TQ, グローバル.EditSelected), IF-THEN-ELSE(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4), 配列内の値(グローバル.CustomPortalStart, グローバル.EditSelected), NULL))), 矢印:下, 表示される相手、位置, 色(白), True);
             "Purple sphere for teleport location"
             エフェクトを作成(IF-THEN-ELSE(AND(COMPARE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), >, 1), NOT((ホスト・プレイヤー).editor_modeSelect)), ホスト・プレイヤー, NULL), 球体, 色(紫), 減算(配列内の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), True), 乗算(0.1, 上)), 0.2, 表示される相手、位置、範囲);
@@ -1153,21 +1166,17 @@ export const frameworkTemplate = `設定
             ワールド内テキストを作成(IF-THEN-ELSE(AND(配列内の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current), True), NOT((ホスト・プレイヤー).editor_modeSelect)), ホスト・プレイヤー, NULL), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("检查点位置"), カスタムストリング("level location")), 最初の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), 1.6, クリップしない, 表示される相手、位置、文字列, 色(スカイブルー), デフォルト表示);
             "portal fx"
             エフェクトを作成(IF-THEN-ELSE(AND(カウント: (グローバル.EditSelectIdArray), COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 4)), ホスト・プレイヤー, NULL), スパークル, 色(紫), 配列内の値(グローバル.CustomPortalEndpoint, グローバル.EditSelected), 0.2, 表示される相手、位置、範囲);
-        "Editor Off"
-        ELSE;
-            "clear variables if not in editor mode"
-            グローバル変数を設定(HudStoreEdit, NULL);
     }
 }
 
-ルール ("Editor |  Fly/Noclip Toggle") {
+ルール ("Editor | Toggle Fly & Noclip") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
         すべて;
     }
     条件 {
-        (イベント・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(アビリティ1)) == True;
         (イベント・プレイヤー).editor_fly == NULL;
         AND(グローバル.EditorMoveItem, COMPARE(イベント・プレイヤー, ==, ホスト・プレイヤー)) == False;
@@ -1199,13 +1208,13 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | change mode") {
+ルール ("Editor | Change Mode") {
     イベント {
         進行中 - グローバル;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_lock == False;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)) == True;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(メイン攻撃)) != ボタンが長押しされている(ホスト・プレイヤー, ボタン(サブ攻撃));
@@ -1226,7 +1235,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | update selected id") {
+ルール ("Editor | Update Selected Id") {
     イベント {
         サブルーチン;
         EditUpdateSelectedIds;
@@ -1247,7 +1256,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | select last") {
+ルール ("Editor | Select Last") {
     イベント {
         サブルーチン;
         EditorSelectLast;
@@ -1257,7 +1266,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | create cp/orb") {
+ルール ("Editor | Create Cp/Orb") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1266,7 +1275,7 @@ export const frameworkTemplate = `設定
     条件 {
         "Required for UpdateCache()"
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_lock == False;
         含む配列(配列(NULL, 1, 2, 4), (ホスト・プレイヤー).editor_modeSelect) == True;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)) == True;
@@ -1276,7 +1285,7 @@ export const frameworkTemplate = `設定
         プレイヤー変数を設定(ホスト・プレイヤー, editor_lock, True);
         IF(NOT((ホスト・プレイヤー).editor_modeSelect));
             IF(AND(カウント: (グローバル.A), COMPARE(二点間の距離(ホスト・プレイヤー, 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), <=, 1.4)));
-                小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   放置的检查点距离太近"), カスタムストリング("   Cannot place checkpoint too close.")));
+                小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   放置的检查点距离太近"), カスタムストリング("   Cannot Place Checkpoint Too Close.")));
             ELSE;
                 "$$"
                 IF(COMPARE((ホスト・プレイヤー).checkpoint_current, >=, 減算(カウント: (グローバル.A), True)));
@@ -1305,12 +1314,12 @@ export const frameworkTemplate = `設定
                     グローバル変数を設定(BanDjump, マッピングされた配列(グローバル.BanDjump, 追加(現在の配列の要素, IF-THEN-ELSE(COMPARE(現在の配列の要素, >=, (ホスト・プレイヤー).checkpoint_current), 1, NULL))));
                 END;
                 サブルーチンの呼び出し(UpdateCache);
-                小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   新检查点已创建"), カスタムストリング("   New checkpoint created")));
+                小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   新检查点已创建"), カスタムストリング("   New Checkpoint Created")));
             END;
         ELSE IF(NOT(カウント: (グローバル.A)));
-            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   请先放置检查点"), カスタムストリング("   Make a checkpoint first")));
+            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   请先放置检查点"), カスタムストリング("   Make A Checkpoint First")));
         ELSE IF(COMPARE(追加(追加(カウント: (グローバル.TQ), カウント: (グローバル.H)), カウント: (グローバル.CustomPortalStart)), >=, 193));
-            大きなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("当前地图弹球/传送门数量已达上限"), カスタムストリング("Orb/portal limit reached for this map")));
+            大きなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("当前地图弹球/传送门数量已达上限"), カスタムストリング("Orb/Portal Limit Reached For This Map")));
         ELSE IF(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1));
             グローバル変数を変更(H, 配列に追加, 位置: (ホスト・プレイヤー));
             グローバル変数を変更(killballnumber, 配列に追加, (ホスト・プレイヤー).checkpoint_current);
@@ -1320,7 +1329,7 @@ export const frameworkTemplate = `設定
             サブルーチンの呼び出し(EditorSelectLast);
             エフェクトを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), COMPARE((現在の配列の要素).checkpoint_current, ==, 配列内の値(グローバル.killballnumber, 一度だけ評価(グローバル.EditSelected)))), 球体, 配列内の値(グローバル.ColorConfig, 14), 配列内の値(グローバル.H, 一度だけ評価(グローバル.EditSelected)), 絶対値(配列内の値(グローバル.I, 一度だけ評価(グローバル.EditSelected))), 表示される相手、位置、範囲);
             グローバル変数を変更(K, 配列に追加, 最新のエンティティ);
-            大きなメッセージ(最初の値(True), カスタムストリング("{0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("新击杀球已创建! \\n仅生效于检查点"), カスタムストリング("New boundary sphere has been created! \\nOnly valid for this checkpoint")), (ホスト・プレイヤー).checkpoint_current));
+            大きなメッセージ(最初の値(True), カスタムストリング("{0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("新击杀球已创建! \\n仅生效于检查点"), カスタムストリング("New boundary Sphere Created! \\nOnly Valid For This Checkpoint")), (ホスト・プレイヤー).checkpoint_current));
             条件待機(NOT(AND(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), ボタンが長押しされている(ホスト・プレイヤー, ボタン(メイン攻撃)))), True);
             "EditUpdateSelectedIds() # to arrow during the placement properly"
             WHILE(AND(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), ボタンが長押しされている(ホスト・プレイヤー, ボタン(メイン攻撃))));
@@ -1340,7 +1349,7 @@ export const frameworkTemplate = `設定
             サブルーチンの呼び出し(EditorSelectLast);
             エフェクトを作成(フィルタリングされた配列(配列に追加(すべてのプレイヤー(すべてのチーム), NULL), AND(COMPARE((現在の配列の要素).checkpoint_current, ==, 配列内の値(グローバル.pinballnumber, 一度だけ評価(グローバル.EditSelected))), NOT(含む配列((現在の配列の要素).cache_collectedLocks, 一度だけ評価(グローバル.EditSelected))))), オーブ, IF-THEN-ELSE(配列内の値(グローバル.BounceToggleLock, 一度だけ評価(グローバル.EditSelected)), 配列内の値(グローバル.ColorConfig, 16), 配列内の値(グローバル.ColorConfig, 15)), 配列内の値(グローバル.TQ, 一度だけ評価(グローバル.EditSelected)), True, 表示される相手、位置、半径、色);
             グローバル変数を変更(TQ2, 配列に追加, 最新のエンティティ);
-            大きなメッセージ(最初の値(True), カスタムストリング("{0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("新弹球已创建! \\n仅生效于检查点"), カスタムストリング("New Bounce Orb has been created! \\nOnly valid for this checkpoint")), (ホスト・プレイヤー).checkpoint_current));
+            大きなメッセージ(最初の値(True), カスタムストリング("{0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("新弹球已创建! \\n仅生效于检查点"), カスタムストリング("New Bounce Orb Created! \\nOnly Valid For This Checkpoint")), (ホスト・プレイヤー).checkpoint_current));
             条件待機(NOT(AND(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), ボタンが長押しされている(ホスト・プレイヤー, ボタン(メイン攻撃)))), True);
             WHILE(AND(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), ボタンが長押しされている(ホスト・プレイヤー, ボタン(メイン攻撃))));
                 インデックスのグローバル変数を設定(TQ, グローバル.EditSelected, レイ・キャストのヒット位置(目の位置(ホスト・プレイヤー), 追加(目の位置(ホスト・プレイヤー), 乗算(プレイヤーが向いている方向: (ホスト・プレイヤー), 7)), NULL, NULL, False));
@@ -1363,7 +1372,7 @@ export const frameworkTemplate = `設定
                 インデックスのグローバル変数を設定(CustomPortalStart, グローバル.EditSelected, レイ・キャストのヒット位置(目の位置(ホスト・プレイヤー), 追加(目の位置(ホスト・プレイヤー), 乗算(プレイヤーが向いている方向: (ホスト・プレイヤー), 6)), NULL, NULL, False));
                 待機(False, 条件無視);
             END;
-            大きなメッセージ(最初の値(True), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("新传送门已创建!\\n生效于当前检查点"), カスタムストリング("Portal created \\nOnly valid for this checkpoint")));
+            大きなメッセージ(最初の値(True), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("新传送门已创建!\\n生效于当前检查点"), カスタムストリング("Portal Created \\nOnly Valid For This Checkpoint")));
             グローバル変数を設定(EditorMoveItem, True);
         END;
         プレイヤー変数を設定(ホスト・プレイヤー, editor_lock, False);
@@ -1371,7 +1380,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | delete cp/orb/portal") {
+ルール ("Editor | Delete Cp/Orb/Portal") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1380,7 +1389,7 @@ export const frameworkTemplate = `設定
     条件 {
         "Required for UpdateCache()"
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_lock == False;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)) == True;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(サブ攻撃)) == True;
@@ -1461,7 +1470,7 @@ export const frameworkTemplate = `設定
             サブルーチンの呼び出し(RebuildKillOrbs);
             サブルーチンの呼び出し(RebuildBounceOrbs);
             サブルーチンの呼び出し(RebuildPortals);
-            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   检查点已删除"), カスタムストリング("   Checkpoint has been deleted")));
+            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   检查点已删除"), カスタムストリング("   Checkpoint Has Been Deleted")));
         ELSE IF(AND(COMPARE((ホスト・プレイヤー).editor_modeSelect, ==, 1), カウント: (グローバル.EditSelectIdArray)));
             グローバル変数を変更(H, インデックスを配列から削除, グローバル.EditSelected);
             グローバル変数を変更(I, インデックスを配列から削除, グローバル.EditSelected);
@@ -1499,7 +1508,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | toggle orb functions") {
+ルール ("Editor | Toggle Orb Functions") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1508,7 +1517,7 @@ export const frameworkTemplate = `設定
     条件 {
         "Required for UpdateCache()"
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == 2;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.EditSelectIdArray) > NULL;
@@ -1531,7 +1540,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | orb radi/strength") {
+ルール ("Editor | Orb Radii/Strength") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1540,7 +1549,7 @@ export const frameworkTemplate = `設定
     条件 {
         "Required for UpdateCache()"
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         含む配列(配列(1, 2), (ホスト・プレイヤー).editor_modeSelect) == True;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.EditSelectIdArray) > NULL;
@@ -1563,13 +1572,13 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | select orb/portal") {
+ルール ("Editor | Select Orb/Portal") {
     イベント {
         進行中 - グローバル;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         含む配列(配列(1, 2, 4), (ホスト・プレイヤー).editor_modeSelect) == True;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.EditSelectIdArray) > NULL;
@@ -1589,13 +1598,13 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | cp size hitbox display") {
+ルール ("Editor | Cp Size Hitbox Display") {
     イベント {
         進行中 - グローバル;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == NULL;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)) == True;
         ボタンが長押しされている(ホスト・プレイヤー, ボタン(アビリティ1)) == True;
@@ -1606,12 +1615,12 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | cp add/remove teleport") {
+ルール ("Editor | Cp Add/Remove Teleport") {
     イベント {
         進行中 - グローバル;
     }
     条件 {
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == NULL;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.A) > True;
@@ -1625,31 +1634,31 @@ export const frameworkTemplate = `設定
         中止する条件(OR(ボタンが長押しされている(ホスト・プレイヤー, ボタン(近接)), AND(ボタンが長押しされている(ホスト・プレイヤー, ボタン(インタラクト)), ボタンが長押しされている(ホスト・プレイヤー, ボタン(リロード)))));
         プレイヤー変数を設定(ホスト・プレイヤー, editor_lock, True);
         IF(NOT((ホスト・プレイヤー).checkpoint_current));
-            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   不能在第一个检查点设置传送门"), カスタムストリング("   Can't place a teleport on first checkpoint")));
+            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   不能在第一个检查点设置传送门"), カスタムストリング("   Cannot Place A Teleport On First Checkpoint")));
             プレイヤー変数を設定(ホスト・プレイヤー, editor_lock, False);
             中止;
         END;
         "remove"
         IF(COMPARE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), >, 1));
             インデックスのグローバル変数を設定(A, (ホスト・プレイヤー).checkpoint_current, 最初の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)));
-            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   关卡{0}的传送点已移除", (ホスト・プレイヤー).checkpoint_current), カスタムストリング("   Teleport for level {0} has been removed", (ホスト・プレイヤー).checkpoint_current)));
+            小さなメッセージ(ホスト・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   关卡{0}的传送点已移除", (ホスト・プレイヤー).checkpoint_current), カスタムストリング("   Teleport For Level {0} Has Been Removed", (ホスト・プレイヤー).checkpoint_current)));
         "add"
         ELSE;
             インデックスのグローバル変数を設定(A, (ホスト・プレイヤー).checkpoint_current, 配列(IF-THEN-ELSE(カウント: (配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), 最初の値(配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), 配列内の値(グローバル.A, (ホスト・プレイヤー).checkpoint_current)), 位置: (ホスト・プレイヤー)));
-            小さなメッセージ(ホスト・プレイヤー, カスタムストリング("{0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   传送点已添加到当前关卡"), カスタムストリング("   Teleport has been added for level")), (ホスト・プレイヤー).checkpoint_current));
+            小さなメッセージ(ホスト・プレイヤー, カスタムストリング("{0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   传送点已添加到当前关卡"), カスタムストリング("   Teleport Has Been Added For Level")), (ホスト・プレイヤー).checkpoint_current));
         END;
         プレイヤー変数を設定(ホスト・プレイヤー, editor_lock, False);
         待機(False, 条件無視);
     }
 }
 
-ルール ("Editor | moving checkpoint") {
+ルール ("Editor | Moving Checkpoint") {
     イベント {
         進行中 - グローバル;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == NULL;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.A) > NULL;
@@ -1687,7 +1696,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | add ult/dash") {
+ルール ("Editor | Toggle Ult/Dash") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1695,7 +1704,7 @@ export const frameworkTemplate = `設定
     }
     条件 {
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == NULL;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.A) > NULL;
@@ -1720,7 +1729,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | toggle bans") {
+ルール ("Editor | Toggle Bans") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1729,7 +1738,7 @@ export const frameworkTemplate = `設定
     条件 {
         "Required for UpdateCache()"
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == 3;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.A) > NULL;
@@ -1798,13 +1807,13 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | portal cp change") {
+ルール ("Editor | Change Portal Cp") {
     イベント {
         進行中 - グローバル;
     }
     条件 {
         "@Event eachPlayer\\n@Condition eventPlayer == hostPlayer"
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (ホスト・プレイヤー).editor_modeSelect == 4;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.EditSelectIdArray) > NULL;
@@ -1817,7 +1826,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("Editor | move object") {
+ルール ("Editor | Move Object") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -1826,7 +1835,7 @@ export const frameworkTemplate = `設定
     条件 {
         "Required for UpdateCache()"
         イベント・プレイヤー == ホスト・プレイヤー;
-        (ホスト・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         含む配列(配列(1, 2, 4), (ホスト・プレイヤー).editor_modeSelect) == True;
         (ホスト・プレイヤー).editor_lock == False;
         カウント: (グローバル.EditSelectIdArray) > NULL;
@@ -1901,7 +1910,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Commands <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Commands ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -1915,7 +1924,7 @@ export const frameworkTemplate = `設定
     }
     条件 {
         カウント: (グローバル.LeaderBoardFull) > NULL;
-        (イベント・プレイヤー).editor_on == False;
+        グローバル.EditorOn == False;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(近接)) == True;
     }
     アクション {
@@ -1937,10 +1946,10 @@ export const frameworkTemplate = `設定
     }
     アクション {
         待機(True, 「FALSE」の場合中止);
-        "smallMessage(eventPlayer, \\"   split display off\\" if eventPlayer.timer_splitDisplay != -Math.INFINITY else \\"   split display on\\")"
         プレイヤー変数を設定(イベント・プレイヤー, timer_splitDisplay, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).timer_splitDisplay, <=, -999999999999), NULL, -999999999999));
-        エフェクトを再生(イベント・プレイヤー, 衝撃音（バフ）, 色(白), イベント・プレイヤー, 100);
-        小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).timer_splitDisplay, <=, -999999999999), カスタムストリング("   split display off"), カスタムストリング("   split display on")));
+        エフェクトを再生(イベント・プレイヤー, 衝撃音（バフ）, NULL, イベント・プレイヤー, 100);
+        "$$ Language"
+        小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).timer_splitDisplay, <=, -999999999999), カスタムストリング("   Split Display Off"), カスタムストリング("   Split Display On")));
         待機(0.32, 条件無視);
     }
 }
@@ -1953,7 +1962,7 @@ export const frameworkTemplate = `設定
     }
     条件 {
         ボタンが長押しされている(イベント・プレイヤー, ボタン(アビリティ2)) == True;
-        (イベント・プレイヤー).editor_on == False;
+        グローバル.EditorOn == False;
         グローバル.CompMode == False;
     }
     アクション {
@@ -1963,7 +1972,8 @@ export const frameworkTemplate = `設定
         IF((イベント・プレイヤー).toggle_invisible);
             目視可否を設定(イベント・プレイヤー, すべて);
         END;
-        小さなメッセージ(イベント・プレイヤー, カスタムストリング("   {0} {1}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("隐身模式"), カスタムストリング("Invisible")), IF-THEN-ELSE((イベント・プレイヤー).toggle_invisible, カスタムストリング("on"), カスタムストリング("off"))));
+        小さなメッセージ(イベント・プレイヤー, カスタムストリング("  {0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒInvisibleInvisibleInvisible"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((イベント・プレイヤー).toggle_invisible, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ | On | On | On"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ | Off | Off | Off"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))))));
+        "\\"   {0} {1}\\".format(\\"隐身模式\\" checkCN \\"Invisible\\", \\"On\\" if eventPlayer.toggle_invisible else \\"Off\\"))"
         エフェクトを再生(イベント・プレイヤー, 衝撃音（デバフ）, NULL, イベント・プレイヤー, 100);
     }
 }
@@ -1975,8 +1985,7 @@ export const frameworkTemplate = `設定
         すべて;
     }
     条件 {
-        "@Condition eventPlayer.editor_on == false"
-        (イベント・プレイヤー).lockState == False;
+        "@Condition EditorOn == false"
         (イベント・プレイヤー).lockState == False;
         (イベント・プレイヤー).checkpoint_notLast != False;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(メイン攻撃)) == True;
@@ -2048,24 +2057,24 @@ export const frameworkTemplate = `設定
         IF(グローバル.CompMode);
             待機(False, 条件無視);
             IF(COMPARE(グローバル.CompTime, <, 1));
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   比赛结束"), カスタムストリング("   Competition is over")));
+                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   比赛结束"), カスタムストリング("   Competition Is Over")));
                 プレイヤー変数を設定(イベント・プレイヤー, lockState, False);
                 中止;
             ELSE IF((イベント・プレイヤー).comp_done);
                 プレイヤー変数を設定(イベント・プレイヤー, lockState, False);
                 中止;
             ELSE IF(AND(グローバル.CompRestartLimit, (イベント・プレイヤー).checkpoint_notLast));
-                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   禁止在此比赛中运行期间重新启动"), カスタムストリング("   Restart during run is disabled for this competition")));
+                小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   禁止在此比赛中运行期间重新启动"), カスタムストリング("   Restart During Run Is Disabled For This Competition")));
                 プレイヤー変数を設定(イベント・プレイヤー, lockState, False);
                 中止;
             ELSE IF(グローバル.CompAtmpNum);
                 IF(COMPARE((イベント・プレイヤー).comp_countAttempts, ==, グローバル.CompAtmpNum));
-                    小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   最后一次尝试"), カスタムストリング("   This is your final attempt")));
+                    小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   最后一次尝试"), カスタムストリング("   This Is Your Final Attempt")));
                     プレイヤー変数を設定(イベント・プレイヤー, lockState, False);
                     中止;
                 END;
                 IF(COMPARE((イベント・プレイヤー).comp_countAttempts, <, NULL));
-                    小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   你没有尝试过"), カスタムストリング("   You are out of attempts")));
+                    小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   你没有尝试过"), カスタムストリング("   You Are Out Of Attempts")));
                     プレイヤー変数を設定(イベント・プレイヤー, lockState, False);
                     中止;
                 END;
@@ -2087,7 +2096,7 @@ export const frameworkTemplate = `設定
             蘇生(イベント・プレイヤー);
         END;
         サブルーチンの呼び出し(StartGame);
-        エフェクトを再生(イベント・プレイヤー, 爆発音（リング）, 色(白), イベント・プレイヤー, 100);
+        エフェクトを再生(イベント・プレイヤー, 爆発音（リング）, NULL, イベント・プレイヤー, 100);
         待機(グローバル.CompMode, 条件無視);
         "eventPlayer.allowButton(Button.ABILITY_1)"
         プレイヤー変数を設定(イベント・プレイヤー, lockState, False);
@@ -2105,19 +2114,18 @@ export const frameworkTemplate = `設定
     条件 {
         ボタンが長押しされている(イベント・プレイヤー, ボタン(インタラクト)) == True;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(アビリティ2)) == False;
-        AND((イベント・プレイヤー).editor_on, OR(OR(ボタンが長押しされている(イベント・プレイヤー, ボタン(近接)), ボタンが長押しされている(イベント・プレイヤー, ボタン(メイン攻撃))), ボタンが長押しされている(イベント・プレイヤー, ボタン(サブ攻撃)))) == False;
+        AND(グローバル.EditorOn, OR(OR(ボタンが長押しされている(イベント・プレイヤー, ボタン(近接)), ボタンが長押しされている(イベント・プレイヤー, ボタン(メイン攻撃))), ボタンが長押しされている(イベント・プレイヤー, ボタン(サブ攻撃)))) == False;
     }
     アクション {
-        "@Condition false == false"
         待機(True, 「FALSE」の場合中止);
         "editor has interact combos"
-        IF((イベント・プレイヤー).editor_on);
+        IF(グローバル.EditorOn);
             待機(True, 「FALSE」の場合中止);
         END;
+        ゲーム・モードの標準リスポーンを有効化(イベント・プレイヤー);
+        ゲーム・モードの標準リスポーンを無効化(イベント・プレイヤー);
         IF((イベント・プレイヤー).toggle_spectate);
-            "eventPlayer.enableRespawn()"
             蘇生(イベント・プレイヤー);
-            "eventPlayer.respawn()"
             IF((イベント・プレイヤー).toggle_practice);
                 プレイヤー変数を特定のレートで追跡(イベント・プレイヤー, timer_practice, 999999999999, True, なし);
             ELSE IF((イベント・プレイヤー).checkpoint_notLast);
@@ -2125,14 +2133,13 @@ export const frameworkTemplate = `設定
             END;
             サブルーチンの呼び出し(CheckpointFailReset);
         ELSE;
-            小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("   再次长按互动键关闭观战模式"), カスタムストリング("   Hold Interact again to turn off spectate mode")));
             プレイヤー変数を設定(イベント・プレイヤー, toggle_invincible, False);
             サブルーチンの呼び出し(TimerPause);
             プレイヤー変数の追跡を中止(イベント・プレイヤー, timer_practice);
-            "eventPlayer.disableRespawn()"
             受けるダメージを設定(イベント・プレイヤー, 100);
             キル(イベント・プレイヤー, NULL);
             受けるダメージを設定(イベント・プレイヤー, 0);
+            小さなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   Hold Interact Again To Turn Off Spectate Mode   Hold Interact Again To Turn Off Spectate Mode   Hold Interact Agai{0}", カスタムストリング("n To Turn Off Spectate Mode")), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
         END;
         プレイヤー変数を設定(イベント・プレイヤー, toggle_spectate, NOT((イベント・プレイヤー).toggle_spectate));
     }
@@ -2157,18 +2164,21 @@ export const frameworkTemplate = `設定
         プレイヤー変数を設定(イベント・プレイヤー, toggle_invincible, NOT((イベント・プレイヤー).toggle_invincible));
         プレイヤー変数を設定(イベント・プレイヤー, cache_collectedLocks, 空の配列);
         IF((イベント・プレイヤー).toggle_invincible);
-            大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("探点模式"), カスタムストリング("Invincible mode")));
+            "\\"探点模式\\" checkCN \\"Invincible mode\\""
+            大きなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒInvincible ModeInvincible ModeInvincible Mode"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
             サブルーチンの呼び出し(TimerPause);
             プレイヤー変数の追跡を中止(イベント・プレイヤー, timer_practice);
-            ルールを開始(CheckUlt, ルールをやり直す);
-            ルールを開始(CheckAbility1, ルールをやり直す);
+            ルールを開始(CheckUlt, 何もしない);
+            ルールを開始(CheckAbility1, 何もしない);
         ELSE;
             IF((イベント・プレイヤー).toggle_practice);
-                大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("练习模式"), カスタムストリング("Practice mode")));
+                "\\"练习模式\\" checkCN \\"Practice mode\\""
+                大きなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPractice ModePractice ModePractice Mode"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
                 プレイヤー変数を特定のレートで追跡(イベント・プレイヤー, timer_practice, 999999999999, True, なし);
                 サブルーチンの呼び出し(CheckpointFailReset);
             ELSE IF((イベント・プレイヤー).checkpoint_notLast);
-                大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("跑图模式"), カスタムストリング("Normal mode")));
+                "\\"跑图模式\\" checkCN \\"Normal mode\\""
+                大きなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒNormal ModeNormal ModeNormal Mode"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
                 サブルーチンの呼び出し(TimerResume);
                 サブルーチンの呼び出し(CheckpointFailReset);
             END;
@@ -2186,7 +2196,7 @@ export const frameworkTemplate = `設定
         すべて;
     }
     条件 {
-        (イベント・プレイヤー).editor_on == False;
+        グローバル.EditorOn == False;
         グローバル.CompMode == False;
         (イベント・プレイヤー).lockState == False;
         生存している(イベント・プレイヤー) == True;
@@ -2198,7 +2208,8 @@ export const frameworkTemplate = `設定
         プレイヤー変数を設定(イベント・プレイヤー, lockState, True);
         プレイヤー変数を設定(イベント・プレイヤー, toggle_practice, NOT((イベント・プレイヤー).toggle_practice));
         IF((イベント・プレイヤー).toggle_practice);
-            大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("练习模式"), カスタムストリング("Practice mode")));
+            "\\"练习模式\\" checkCN \\"Practice mode\\""
+            大きなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPractice ModePractice ModePractice Mode"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
             サブルーチンの呼び出し(TimerPause);
             プレイヤー変数を設定(イベント・プレイヤー, checkpoint_practice, (イベント・プレイヤー).checkpoint_current);
             プレイヤー変数を設定(イベント・プレイヤー, timer_splitDisplay, 乗算(-999999999999, COMPARE((イベント・プレイヤー).timer_splitDisplay, <=, -999999999999)));
@@ -2210,7 +2221,8 @@ export const frameworkTemplate = `設定
                 サブルーチンの呼び出し(CheckpointFailReset);
             END;
         ELSE;
-            大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("跑图模式"), カスタムストリング("Normal mode")));
+            "\\"跑图模式\\" checkCN \\"Normal mode\\""
+            大きなメッセージ(イベント・プレイヤー, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒNormal ModeNormal ModeNormal Mode"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))));
             プレイヤー変数の追跡を中止(イベント・プレイヤー, timer_practice);
             プレイヤー変数を設定(イベント・プレイヤー, checkpoint_current, (イベント・プレイヤー).checkpoint_practice);
             サブルーチンの呼び出し(UpdateCache);
@@ -2233,7 +2245,7 @@ export const frameworkTemplate = `設定
         すべて;
     }
     条件 {
-        (イベント・プレイヤー).editor_on == False;
+        グローバル.EditorOn == False;
         (イベント・プレイヤー).lockState == False;
         (イベント・プレイヤー).toggle_practice != False;
         OR(生存している(イベント・プレイヤー), (イベント・プレイヤー).toggle_spectate) == True;
@@ -2270,7 +2282,7 @@ export const frameworkTemplate = `設定
         カウント: (グローバル.A) > True;
         グローバル.EditorMoveItem == False;
         AND((イベント・プレイヤー).editor_lock, COMPARE(イベント・プレイヤー, ==, ホスト・プレイヤー)) == False;
-        OR((ホスト・プレイヤー).editor_on, (イベント・プレイヤー).toggle_practice) == True;
+        OR(グローバル.EditorOn, (イベント・プレイヤー).toggle_practice) == True;
         (イベント・プレイヤー).lockState == False;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(しゃがみ)) == True;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(メイン攻撃)) != ボタンが長押しされている(イベント・プレイヤー, ボタン(サブ攻撃));
@@ -2316,8 +2328,9 @@ export const frameworkTemplate = `設定
         END;
         待機(True, 「FALSE」の場合中止);
         プレイヤー変数を設定(イベント・プレイヤー, toggle_quickRestart, NOT((イベント・プレイヤー).toggle_quickRestart));
-        エフェクトを再生(イベント・プレイヤー, 衝撃音（バフ）, 色(白), イベント・プレイヤー, 100);
-        大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE((イベント・プレイヤー).toggle_quickRestart, カスタムストリング("快速回点已启用"), カスタムストリング("快速回点已关闭")), IF-THEN-ELSE((イベント・プレイヤー).toggle_quickRestart, カスタムストリング("Quick reset is enabled"), カスタムストリング("Quick reset is disabled"))));
+        エフェクトを再生(イベント・プレイヤー, 衝撃音（バフ）, NULL, イベント・プレイヤー, 100);
+        "(\\"快速回点已启用\\" if eventPlayer.toggle_quickRestart else \\"快速回点已关闭\\") checkCN\\n\\"Quick reset is enabled\\" if eventPlayer.toggle_quickRestart else \\"Quick reset is disabled\\""
+        大きなメッセージ(イベント・プレイヤー, IF-THEN-ELSE((イベント・プレイヤー).toggle_quickRestart, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒQuick Reset Is EnabledQuick Reset Is EnabledQuick Reset Is Enabled"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒQuick Reset Is DisabledQuick Reset Is DisabledQuick Reset Is Disabled"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))));
     }
 }
 
@@ -2329,7 +2342,7 @@ export const frameworkTemplate = `設定
     }
     条件 {
         グローバル.EditorMoveItem == False;
-        AND(AND((イベント・プレイヤー).editor_on, COMPARE(イベント・プレイヤー, ==, ホスト・プレイヤー)), ボタンが長押しされている(イベント・プレイヤー, ボタン(近接))) == False;
+        AND(AND(グローバル.EditorOn, COMPARE(イベント・プレイヤー, ==, ホスト・プレイヤー)), ボタンが長押しされている(イベント・プレイヤー, ボタン(近接))) == False;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(サブ攻撃)) == True;
         ボタンが長押しされている(イベント・プレイヤー, ボタン(メイン攻撃)) == False;
         "don't activate during skipping"
@@ -2338,8 +2351,9 @@ export const frameworkTemplate = `設定
     アクション {
         待機(1.5, 「FALSE」の場合中止);
         プレイヤー変数を設定(イベント・プレイヤー, toggle_guide, NOT((イベント・プレイヤー).toggle_guide));
-        エフェクトを再生(イベント・プレイヤー, 衝撃音（バフ）, 色(白), イベント・プレイヤー, 100);
-        小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE((イベント・プレイヤー).toggle_guide, カスタムストリング("   HUD已隐藏"), カスタムストリング("   HUD已开启")), IF-THEN-ELSE((イベント・プレイヤー).toggle_guide, カスタムストリング("   Hud is now hidden"), カスタムストリング("   Hud is now shown"))));
+        小さなメッセージ(イベント・プレイヤー, IF-THEN-ELSE((イベント・プレイヤー).toggle_guide, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   HUD Is Now Shown   HUD Is Now Shown   HUD Is Now Shown"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ   HUD Is Now Hidden   HUD Is Now Hidden   HUD Is Now Hidden"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))));
+        "(\\"   HUD已隐藏\\" if eventPlayer.toggle_guide else  \\"   HUD已开启\\")\\ncheckCN\\n(\\"   Hud is now hidden\\" if eventPlayer.toggle_guide else \\"   Hud is now shown\\"))"
+        エフェクトを再生(イベント・プレイヤー, 衝撃音（バフ）, NULL, イベント・プレイヤー, 100);
     }
 }
 
@@ -2382,7 +2396,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Huds <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Huds ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -2410,35 +2424,36 @@ export const frameworkTemplate = `設定
             グローバル変数を設定(Code, カスタムストリング("code here - 代码"));
         END;
         グローバル変数を設定(Cachedcredits, NULL);
-        "hudSubtext(localPlayer.toggle_guide, \\"Discord: dsc.gg/genjiparkour\\" LeftAlign96, HudPosition.LEFT, HO.data_dsc, ColorConfig[Customize.dsc], HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
-        HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_guide, カスタムストリング("Discord: dsc.gg/genjiparkour"), 空の配列), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("作者: {0}                                                                                                ", グローバル.Name), カスタムストリング("Made by: {0}                                                                                                ", グローバル.Name)), 左, -200, NULL, 配列内の値(グローバル.ColorConfig, 18), 最初の値(グローバル.ColorConfig), 表示される相手、文字列, デフォルト表示);
-        グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
-        HUDテキストを作成(最初の値(True), NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("代码: {0}                                                                                                ", グローバル.Code), カスタムストリング("Map code: {0}                                                                                                ", グローバル.Code)), 左, -199, NULL, NULL, 配列内の値(グローバル.ColorConfig, True), 表示される相手、文字列, デフォルト表示);
-        グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
+        IF(NOT(グローバル.EditorOn));
+            HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_guide, カスタムストリング("Discord: dsc.gg/genjiparkour"), 空の配列), カスタムストリング("{0}: {1}                                                                                                ", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒMade ByMade ByMade By"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), グローバル.Name), 左, -200, NULL, 配列内の値(グローバル.ColorConfig, 18), 最初の値(グローバル.ColorConfig), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成(最初の値(True), NULL, NULL, カスタムストリング("{0}: {1}                                                                                                ", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒMap CodeMap CodeMap Code"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), グローバル.Code), 左, -199, NULL, NULL, 配列内の値(グローバル.ColorConfig, True), 表示される相手、文字列, デフォルト表示);
+            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} {1} + {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} | {1}", 入力割り当ての文字列(ボタン(サブ攻撃)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPreview CPPreview CPPreview CP"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))))), 右, -160, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).preview_array1, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(最初の値(AND((ローカルプレイヤー).preview_array1, (ローカルプレイヤー).toggle_guide)), NULL, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify Zoom\\nAim | Change Preview AngleWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify{0}", カスタムストリング(" Zoom\\nAim | Change Preview AngleWalk ◀ ▶ | Preview Others\\nWalk ▲ ▼ | Modify Zoom\\nAim | Change Preview Angle")), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), NULL, トップ, -171, NULL, 配列内の値(グローバル.ColorConfig, 6), NULL, 表示される相手、文字列, 表示されない);
+            HUDテキストを作成(ローカルプレイヤー, NULL, NULL, IF-THEN-ELSE(OR(COMPARE((ローカルプレイヤー).timer_splitDisplay, <=, -999999999999), (ローカルプレイヤー).toggle_spectate), 空の配列, カスタムストリング("{0}{1}                                                                                                ", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒSplit: Split: Split: "), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), (ローカルプレイヤー).timer_splitDisplay)), 左, -195, NULL, NULL, 配列内の値(グローバル.ColorConfig, 3), 表示される相手、文字列, デフォルト表示);
+            "Remove no hints - visual and element bloat"
+            IF(カウント: (グローバル.HintText));
+                HUDテキストを作成(最初の値(AND((ローカルプレイヤー).toggle_guide, 含む配列(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current))), NULL, カスタムストリング("{0}{1}", IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ― ― ― ― ― Hint ― ― ― ― ―\\n― ― ― ― ― Hint ― ― ― ― ―\\n― ― ― ― ― Hint ― ― ― ― ―\\n"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ― ― ― Hint Available ― ― ―― ― ― Hint Available ― ― ―― ― ― Hint Available ― ― ―"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, 配列内の値(グローバル.HintText, 配列値のインデックス(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current)), 空の配列)), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(近接)), IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHide HintHide HintHide Hint"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒShow HintShow HintShow Hint"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))))), 右, -151, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, 色(緑), 色(オレンジ)), IF-THEN-ELSE(含む配列(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5)), 色(グレー)), 表示される相手、文字列、色, デフォルト表示);
+            END;
+            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} + {1} + {2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | {1}\\n{2}", 入力割り当ての文字列(ボタン(インタラクト)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒRestartRestartRestart"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), カスタムストリング("{0} {1} | {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(近接)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒLeaderboardLeaderboardLeaderboard"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))))), 右, -156, NULL, NULL, 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
+            グローバル変数を設定(Difficultyhud, 配列(ワークショップ設定コンボ(カスタムストリング("Map Settings ■ 地图设置 ■ 맵 설정"), カスタムストリング("Difficulty 󠀨Display Hud󠀩 ■ 难度 󠀨顶部hud󠀩 ■ 난이도 󠀨HUD 디스플레이󠀩"), 0, 配列(カスタムストリング("<fg27AAFFFF>Playtest ■ 游戏测试 ■ 플레이테스트"), カスタムストリング("<fgA0E81BFF>Easy-"), カスタムストリング("<fgA0E81BFF>Easy"), カスタムストリング("<fgA0E81BFF>Easy+"), カスタムストリング("<fge0e000FF>Medium-"), カスタムストリング("<fge0e000FF>Medium"), カスタムストリング("<fge0e000FF>Medium+"), カスタムストリング("<fgEC9900FF>Hard-"), カスタムストリング("<fgEC9900FF>Hard"), カスタムストリング("<fgEC9900FF>Hard+"), カスタムストリング("<fgFF4500FF>Very Hard-"), カスタムストリング("<fgFF4500FF>Very Hard"), カスタムストリング("<fgFF4500FF>Very Hard+"), カスタムストリング("<fgC80013FF>Extreme-"), カスタムストリング("<fgC80013FF>Extreme"), カスタムストリング("<fgC80013FF>Extreme+"), カスタムストリング("<fg960000FF>Hell"), カスタムストリング("Do Not Display ■ 不显示 ■ 표시 X")), 1), ワークショップの設定の切り替え(カスタムストリング("Map Settings ■ 地图设置 ■ 맵 설정"), カスタムストリング("Playtest Display ■ 游戏测试 ■ 플레이테스트 디스플레이"), False, 2)));
+            "display\\n17th entry is 'dont display'"
+            IF(COMPARE(最初の値(グローバル.Difficultyhud), !=, 17));
+                HUDテキストを作成(最初の値(AND((ローカルプレイヤー).toggle_guide, NOT((ローカルプレイヤー).toggle_leaderboard))), IF-THEN-ELSE(最後の値(グローバル.Difficultyhud), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPlaytestPlaytestPlaytest"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 空の配列), 配列内の値(配列(カスタムストリング("Playtest"), カスタムストリング("Easy -"), カスタムストリング("Easy"), カスタムストリング("Easy +"), カスタムストリング("Medium -"), カスタムストリング("Medium"), カスタムストリング("Medium +"), カスタムストリング("Hard -"), カスタムストリング("Hard"), カスタムストリング("Hard +"), カスタムストリング("Very Hard -"), カスタムストリング("Very Hard"), カスタムストリング("Very Hard +"), カスタムストリング("Extreme -"), カスタムストリング("Extreme"), カスタムストリング("Extreme +"), カスタムストリング("Hell"), NULL), 最初の値(グローバル.Difficultyhud)), NULL, トップ, -173, 色(青), 配列内の値(配列(色(青), 色(ライムグリーン), 色(ライムグリーン), 色(ライムグリーン), 色(黄色), 色(黄色), 色(黄色), 色(オレンジ), 色(オレンジ), 色(オレンジ), カスタム・カラー(255, 69, 0, 255), カスタム・カラー(255, 69, 0, 255), カスタム・カラー(255, 69, 0, 255), 色(赤), 色(赤), 色(赤), カスタム・カラー(150, 0, 0, 255), NULL), 最初の値(グローバル.Difficultyhud)), NULL, 表示される相手、文字列, デフォルト表示);
+            END;
+        END;
         "global huds"
-        HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("房间将在 {0} 分钟后重启 - v1.10.3G{1}", グローバル.TimeRemaining, IF-THEN-ELSE(COMPARE(テキスト数, >=, 128), カスタムストリング("\\n错误: 已达到最大HUD数量上限"), 空の配列)), カスタムストリング("Server Restart in {0} Min - v1.10.3G{1}", グローバル.TimeRemaining, IF-THEN-ELSE(COMPARE(テキスト数, >=, 128), カスタムストリング("\\nerror: max hud count reached"), 空の配列))), NULL, 右, -162, NULL, 配列内の値(グローバル.ColorConfig, 2), NULL, 表示される相手、文字列, 常に表示);
+        HUDテキストを作成(最初の値(True), NULL, カスタムストリング("{0}{1}{2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒServer Restart In Server Restart In Server Restart In "), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), グローバル.TimeRemaining, カスタムストリング("{0}v1.10.4A{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ Min -  Min -  Min - "), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE(COMPARE(テキスト数, >=, 128), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ\\nError: Max HUD Count Reached\\nError: Max HUD Count Reached\\nError: Max HUD Count Reached"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 空の配列))), NULL, 右, -162, NULL, 配列内の値(グローバル.ColorConfig, 2), NULL, 表示される相手、文字列, 常に表示);
         "padding for custom hud display"
-        HUDテキストを作成(最初の値(True), NULL, NULL, カスタムストリング("\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nv"), トップ, -164, NULL, NULL, 色(オレンジ), 目視可能: , デフォルト表示);
-        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} {1} | {2}快速回点", IF-THEN-ELSE((ローカルプレイヤー).toggle_quickRestart, 空の配列, カスタムストリング("长按")), 入力割り当ての文字列(ボタン(リロード)), IF-THEN-ELSE((ローカルプレイヤー).toggle_quickRestart, 空の配列, カスタムストリング("启用"))), カスタムストリング("{0} {1} |{2} quick reset", IF-THEN-ELSE((ローカルプレイヤー).toggle_quickRestart, 空の配列, カスタムストリング("Hold")), 入力割り当ての文字列(ボタン(リロード)), IF-THEN-ELSE((ローカルプレイヤー).toggle_quickRestart, 空の配列, カスタムストリング(" Enable")))), 右, -157, NULL, NULL, 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
-        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | 探点模式{2}", 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(近接)), IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, カスタムストリング(" | 启用"), 空の配列)), カスタムストリング("{0} + {1} | Invincible{2}", 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(近接)), IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, カスタムストリング(" | ON"), 空の配列))), 右, -154, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
-        HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_guide, 空の配列, カスタムストリング("{0}{1}{2}", IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, アビリティアイコンストリング(ヒーロー(バティスト), ボタン(アビリティ2)), 空の配列), IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, アビリティアイコンストリング(ヒーロー(D.Va), ボタン(アルティメット)), 空の配列), IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, アビリティアイコンストリング(ヒーロー(ソンブラ), ボタン(アビリティ1)), 空の配列))), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("长按 {0} | 切换显示HUD", 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("Hold {0} | toggle hud", 入力割り当ての文字列(ボタン(サブ攻撃)))), 右, -161, NULL, 配列内の値(グローバル.ColorConfig, 5), 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
-        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("长按 {0} + {1} | 预览关卡", 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃))), カスタムストリング("Hold {0} + {1} | Preview cp", 入力割り当ての文字列(ボタン(メイン攻撃)), 入力割り当ての文字列(ボタン(サブ攻撃)))), 右, -160, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).preview_array1, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
-        "HudStoreEdit.append(getLastCreatedText())"
-        HUDテキストを作成(最初の値(AND((ローカルプレイヤー).preview_array1, (ローカルプレイヤー).toggle_guide)), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("移动键 ◀ ▶ | 预览其他\\n移动键 ◀ ▶ | 修改间距 \\n视角移动 | 调整浏览视角"), カスタムストリング("Walk ◀ ▶ | preview others\\nWalk ▲ ▼ | modify zoom\\nAim | change preview angle")), NULL, トップ, -171, NULL, 配列内の値(グローバル.ColorConfig, 6), NULL, 表示される相手、文字列, 表示されない);
-        "HudStoreEdit.append(getLastCreatedText())"
-        HUDテキストを作成(ローカルプレイヤー, NULL, NULL, IF-THEN-ELSE(OR(COMPARE((ローカルプレイヤー).timer_splitDisplay, <=, -999999999999), (ローカルプレイヤー).toggle_spectate), 空の配列, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("单关用时 {0}                                                                                                ", (ローカルプレイヤー).timer_splitDisplay), カスタムストリング("Split: {0}                                                                                                ", (ローカルプレイヤー).timer_splitDisplay))), 左, -195, NULL, NULL, 配列内の値(グローバル.ColorConfig, 3), 表示される相手、文字列, デフォルト表示);
-        グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
+        HUDテキストを作成(最初の値(True), NULL, NULL, カスタムストリング("­\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n"), トップ, -164, NULL, NULL, 色(オレンジ), 目視可能: , デフォルト表示);
+        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_quickRestart, カスタムストリング("{0} | {1}", 入力割り当ての文字列(ボタン(リロード)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒQuick ResetQuick ResetQuick Reset"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), カスタムストリング("{0} {1} | {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(リロード)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒEnable Quick ResetEnable Quick ResetEnable Quick Reset"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))))), 右, -157, NULL, NULL, 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
+        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(リロード)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒInvincibleInvincibleInvincible"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ | On | On | On"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 空の配列))), 右, -154, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
+        HUDテキストを作成(最初の値(True), NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_guide, 空の配列, カスタムストリング("{0}{1}{2}", IF-THEN-ELSE((ローカルプレイヤー).toggle_invincible, アビリティアイコンストリング(ヒーロー(バティスト), ボタン(アビリティ2)), 空の配列), IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, アビリティアイコンストリング(ヒーロー(D.Va), ボタン(アルティメット)), 空の配列), IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, アビリティアイコンストリング(ヒーロー(ソンブラ), ボタン(アビリティ1)), 空の配列))), カスタムストリング("{0} {1} | {2} HUD", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(サブ攻撃)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒToggleToggleToggle"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), 右, -161, NULL, 配列内の値(グローバル.ColorConfig, 5), 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
         "text per checkpoint  text per cp each"
         IF(カウント: (グローバル.CpHudText));
             HUDテキストを作成(最初の値(AND(含む配列(グローバル.CpHudCp, (ローカルプレイヤー).checkpoint_current), (ローカルプレイヤー).toggle_guide)), 配列内の値(グローバル.CpHudText, 配列値のインデックス(グローバル.CpHudCp, (ローカルプレイヤー).checkpoint_current)), NULL, NULL, トップ, -169, 色(青), NULL, NULL, 表示される相手、文字列, デフォルト表示);
         END;
         IF(カウント: (グローバル.CpIwtText));
             ワールド内テキストを作成(含む配列(グローバル.CpIwtCp, (ローカルプレイヤー).checkpoint_current), 配列内の値(グローバル.CpIwtText, 配列値のインデックス(グローバル.CpIwtCp, (ローカルプレイヤー).checkpoint_current)), 配列内の値(グローバル.CpIwtPos, 配列値のインデックス(グローバル.CpIwtCp, (ローカルプレイヤー).checkpoint_current)), 2, 表面に対してクリップ, 表示される相手、位置、文字列, グローバル.CpIwtColor, デフォルト表示);
-        END;
-        "Remove no hints - visual and element bloat"
-        IF(カウント: (グローバル.HintText));
-            HUDテキストを作成(最初の値(AND((ローカルプレイヤー).toggle_guide, 含む配列(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current))), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, カスタムストリング("― ― ― ― ― 提示 ― ― ― ― ―\\n {0} ", 配列内の値(グローバル.HintText, 配列値のインデックス(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current))), カスタムストリング("――――――  有可用提示 ――――――")), IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, カスタムストリング("― ― ― ― ― Hint ― ― ― ― ―\\n {0} ", 配列内の値(グローバル.HintText, 配列値のインデックス(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current))), カスタムストリング("― ― ― hint available ― ― ―"))), カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アビリティ2)), 入力割り当ての文字列(ボタン(近接)), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, カスタムストリング("隐藏提示"), カスタムストリング("获取提示")), IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, カスタムストリング("hide hint"), カスタムストリング("show hint")))), 右, -151, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_hints, 色(緑), 色(オレンジ)), IF-THEN-ELSE(含む配列(グローバル.HintCp, (ローカルプレイヤー).checkpoint_current), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5)), 色(グレー)), 表示される相手、文字列、色, デフォルト表示);
-            グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
         END;
         IF(グローバル.CompMode);
             HUDテキストを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), (現在の配列の要素).comp_instructionHud), カスタムストリング("                                                                                                                           "), NULL, NULL, トップ, -181, 色(白), NULL, NULL, 目視可能: , デフォルト表示);
@@ -2455,25 +2470,14 @@ export const frameworkTemplate = `設定
                 HUDテキストを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), (現在の配列の要素).comp_instructionHud), NULL, NULL, 配列内の値(グローバル.instructiontext, 3), トップ, -177, NULL, NULL, 色(白), 目視可能: , デフォルト表示);
             END;
             HUDテキストを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), (現在の配列の要素).comp_instructionHud), カスタムストリング("                                   Press {0} to start                                ", 入力割り当ての文字列(ボタン(インタラクト))), NULL, NULL, トップ, -176, 色(白), NULL, NULL, 表示される相手、文字列, デフォルト表示);
+        ELSE IF(NOT(グローバル.EditorOn));
+            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} {1} | {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒInvisibleInvisibleInvisible"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ | On | On | On"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 空の配列))), 右, -158, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(近接)), カスタムストリング("{0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPracticePracticePractice"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, カスタムストリング(" | ({0})", (ローカルプレイヤー).checkpoint_practice), 空の配列))), 右, -153, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成(最初の値(AND((ローカルプレイヤー).toggle_practice, (ローカルプレイヤー).toggle_guide)), NULL, カスタムストリング("{0} + {1} | {2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0}\\n{1} + {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒNext LevelNext LevelNext Level"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(しゃがみ)), カスタムストリング("{0} | {1}\\n{2}", 入力割り当ての文字列(ボタン(サブ攻撃)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPrevious LevelPrevious LevelPrevious Level"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), カスタムストリング("{0} | {1}", 入力割り当ての文字列(ボタン(インタラクト)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒRestart PracticeRestart PracticeRestart Practice"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))))))), NULL, 右, -152, NULL, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), NULL, 表示される相手、文字列、色, デフォルト表示);
+            スキップ(True);
         ELSE;
-            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("长按 {0} | 观战模式{1}", 入力割り当ての文字列(ボタン(インタラクト)), IF-THEN-ELSE((ローカルプレイヤー).toggle_spectate, カスタムストリング(" | 启用"), 空の配列)), カスタムストリング("Hold {0} | Spectate{1}", 入力割り当ての文字列(ボタン(インタラクト)), IF-THEN-ELSE((ローカルプレイヤー).toggle_spectate, カスタムストリング(" | ON"), 空の配列))), 右, -155, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_spectate, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
-            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("长按 {0} | 隐身模式{1}", 入力割り当ての文字列(ボタン(アビリティ2)), IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, カスタムストリング(" | 启用"), 空の配列)), カスタムストリング("Hold {0} | invisible{1}", 入力割り当ての文字列(ボタン(アビリティ2)), IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, カスタムストリング(" | ON"), 空の配列))), 右, -158, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_invisible, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
-            グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
-            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | 练习模式{2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(近接)), IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, カスタムストリング(" | ({0})", (ローカルプレイヤー).checkpoint_practice), 空の配列)), カスタムストリング("{0} + {1} | Practice{2}", 入力割り当ての文字列(ボタン(アルティメット)), 入力割り当ての文字列(ボタン(近接)), IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, カスタムストリング(" | ({0})", (ローカルプレイヤー).checkpoint_practice), 空の配列))), 右, -153, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_practice, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
-            グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
-            HUDテキストを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), AND((現在の配列の要素).toggle_practice, (現在の配列の要素).toggle_guide)), NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} | 下一关\\n{0} + {2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} | 上一关\\n{1} | 回到练习模式起点 ", 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(インタラクト)))), カスタムストリング("{0} + {1} | Next level\\n{0} + {2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(メイン攻撃)), カスタムストリング("{0} | Previous level\\n{1} | Start from practice cp ", 入力割り当ての文字列(ボタン(サブ攻撃)), 入力割り当ての文字列(ボタン(インタラクト))))), NULL, 右, -152, NULL, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), NULL, 表示される相手、文字列、色, デフォルト表示);
-            グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
-        END;
-        "if not hostPlayer.editor_on:\\nfind the value"
-        グローバル変数を設定(Difficultyhud, 配列(ワークショップ設定コンボ(カスタムストリング("map settings \\n地图设置"), カスタムストリング("difficulty 󠀨display hud󠀩 - 难度 󠀨顶部hud󠀩"), 0, 配列(カスタムストリング("<fg27AAFFFF>playtest - 游戏测试"), カスタムストリング("<fgA0E81BFF>easy-"), カスタムストリング("<fgA0E81BFF>easy"), カスタムストリング("<fgA0E81BFF>easy+"), カスタムストリング("<fge0e000FF>medium-"), カスタムストリング("<fge0e000FF>medium"), カスタムストリング("<fge0e000FF>medium+"), カスタムストリング("<fgEC9900FF>hard-"), カスタムストリング("<fgEC9900FF>hard"), カスタムストリング("<fgEC9900FF>hard+"), カスタムストリング("<fgFF4500FF>very hard-"), カスタムストリング("<fgFF4500FF>very hard"), カスタムストリング("<fgFF4500FF>very hard+"), カスタムストリング("<fgC80013FF>extreme-"), カスタムストリング("<fgC80013FF>extreme"), カスタムストリング("<fgC80013FF>extreme+"), カスタムストリング("<fg960000FF>hell"), カスタムストリング("don't display - 不显示")), 0), ワークショップの設定の切り替え(カスタムストリング("map settings \\n地图设置"), カスタムストリング("Playtest display - 游戏测试"), False, 1)));
-        "display\\n17th entry is 'dont display'"
-        IF(COMPARE(最初の値(グローバル.Difficultyhud), !=, 17));
-            HUDテキストを作成(最初の値(AND((ローカルプレイヤー).toggle_guide, NOT((ローカルプレイヤー).toggle_leaderboard))), IF-THEN-ELSE(最後の値(グローバル.Difficultyhud), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("游戏测试"), カスタムストリング("Playtest")), 空の配列), 配列内の値(配列(カスタムストリング("playtest"), カスタムストリング("easy -"), カスタムストリング("easy"), カスタムストリング("easy +"), カスタムストリング("medium -"), カスタムストリング("medium"), カスタムストリング("medium +"), カスタムストリング("hard -"), カスタムストリング("hard"), カスタムストリング("hard +"), カスタムストリング("very hard -"), カスタムストリング("very hard"), カスタムストリング("very hard +"), カスタムストリング("extreme -"), カスタムストリング("extreme"), カスタムストリング("extreme +"), カスタムストリング("hell"), NULL), 最初の値(グローバル.Difficultyhud)), NULL, トップ, -173, 色(青), 配列内の値(配列(色(青), 色(ライムグリーン), 色(ライムグリーン), 色(ライムグリーン), 色(黄色), 色(黄色), 色(黄色), 色(オレンジ), 色(オレンジ), 色(オレンジ), カスタム・カラー(255, 69, 0, 255), カスタム・カラー(255, 69, 0, 255), カスタム・カラー(255, 69, 0, 255), 色(赤), 色(赤), 色(赤), カスタム・カラー(150, 0, 0, 255), NULL), 最初の値(グローバル.Difficultyhud)), NULL, 表示される相手、文字列, デフォルト表示);
-            グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
-        END;
-        "restart + leaderboard\\nthis is remade in editor to not include leaderboard"
-        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0} + {1} + {2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | 重新开始\\n长按 {1} | 完整成绩排名", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接)))), カスタムストリング("{0} + {1} + {2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(アビリティ2)), カスタムストリング("{0} | Restart\\nHold {1} | leaderboard", 入力割り当ての文字列(ボタン(インタラクト)), 入力割り当ての文字列(ボタン(近接))))), 右, -156, NULL, NULL, 配列内の値(グローバル.ColorConfig, 5), 表示される相手、文字列, デフォルト表示);
-        グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
+            //spectateHud:
+            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} {1} | {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(インタラクト)), カスタムストリング("{0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒSpectateSpectateSpectate"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((ローカルプレイヤー).toggle_spectate, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ | On | On | On"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 空の配列))), 右, -155, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).toggle_spectate, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
     }
 }
 
@@ -2502,7 +2506,7 @@ export const frameworkTemplate = `設定
         END;
         グローバル変数を設定(LeaderBoardRemake, カスタムストリング("{0}\\n", グローバル.LeaderBoardRemake));
         "if LeaderBoardFull[0]:"
-        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング(" \\n{0} 排名前5 {0}", アイコンストリング(通報)), カスタムストリング(" \\n{0} Top 5 {0}", アイコンストリング(通報))), NULL, 右, -141, NULL, 色(白), NULL, 表示される相手、文字列, 常に表示);
+        HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, カスタムストリング(" \\n{0} {1} {0}", アイコンストリング(通報), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒTop 5Top 5Top 5"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), NULL, 右, -141, NULL, 色(白), NULL, 表示される相手、文字列, 常に表示);
         グローバル変数を設定(LeaderBoardHuds, 最新のテキストID);
         HUDテキストを作成(最初の値(True), ヒーローアイコン文字列(ヒーロー(ゲンジ)), 最初の値(最初の値(グローバル.LeaderBoardFull)), 最後の値(最初の値(グローバル.LeaderBoardFull)), 右, -140, 色(赤), 色(赤), 色(赤), 目視可能: , 常に表示);
         グローバル変数を変更(LeaderBoardHuds, 配列に追加, 最新のテキストID);
@@ -2522,7 +2526,7 @@ export const frameworkTemplate = `設定
                 END;
             END;
         END;
-        HUDテキストを作成(IF-THEN-ELSE(一度だけ評価(AND(グローバル.CompMode, NOT(グローバル.CompTime))), True, (ローカルプレイヤー).toggle_leaderboard), カスタムストリング("　　　　 {0} {1} {0} 　　　　\\n　　　　　　　　　　　　　　　　　　{2}", アイコンストリング(通報), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("成绩排名"), カスタムストリング("Leaderboard")), 一度だけ評価(グローバル.LeaderBoardRemake)), NULL, NULL, トップ, -165, 色(白), NULL, NULL, 表示される相手、文字列, デフォルト表示);
+        HUDテキストを作成(IF-THEN-ELSE(一度だけ評価(AND(グローバル.CompMode, NOT(グローバル.CompTime))), True, (ローカルプレイヤー).toggle_leaderboard), カスタムストリング("　　　　 {0} {1} {0} 　　　　\\n　　　　　　　　　　　　　　　　　　{2}", アイコンストリング(通報), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒLeaderboardLeaderboardLeaderboard"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 一度だけ評価(グローバル.LeaderBoardRemake)), NULL, NULL, トップ, -165, 色(白), NULL, NULL, 表示される相手、文字列, デフォルト表示);
         グローバル変数を変更(LeaderBoardHuds, 配列に追加, 最新のテキストID);
         グローバル変数を設定(LeaderBoardRemake, NULL);
         待機(False, 条件無視);
@@ -2537,16 +2541,16 @@ export const frameworkTemplate = `設定
     }
     アクション {
         待機(0.512, 条件無視);
-        HUDテキストを作成(イベント・プレイヤー, NULL, IF-THEN-ELSE((イベント・プレイヤー).toggle_practice, カスタムストリング("{0} {1} sec", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("练习用时"), カスタムストリング("Practice Time:")), (イベント・プレイヤー).timer_practice), 空の配列), カスタムストリング("{0} {1} sec                                                                                                ", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("用时"), カスタムストリング("Time:")), (イベント・プレイヤー).timer_normal), 左, -196, NULL, 色(グレー), 配列内の値(グローバル.ColorConfig, 3), 文字列, デフォルト表示);
-        HUDテキストを作成(IF-THEN-ELSE((イベント・プレイヤー).toggle_leaderboard, NULL, イベント・プレイヤー), IF-THEN-ELSE((イベント・プレイヤー).preview_array1, カスタムストリング(" {0} ({1}/{2}", IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE((イベント・プレイヤー).preview_i, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).preview_i, <=, カウント: ((イベント・プレイヤー).cache_bouncePosition)), カスタムストリング("弹球"), カスタムストリング("自定义传送门")), カスタムストリング("检查点")), IF-THEN-ELSE((イベント・プレイヤー).preview_i, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).preview_i, <=, カウント: ((イベント・プレイヤー).cache_bouncePosition)), カスタムストリング("orb"), カスタムストリング("portal")), カスタムストリング("checkpoint"))), 追加((イベント・プレイヤー).preview_i, True), カスタムストリング("{0})\\n―――――――――――\\n {1}\\n", カウント: ((イベント・プレイヤー).preview_array1), IF-THEN-ELSE(AND(COMPARE((イベント・プレイヤー).preview_i, <=, カウント: ((イベント・プレイヤー).cache_bouncePosition)), (イベント・プレイヤー).preview_i), カスタムストリング("{0} {1} {2}", IF-THEN-ELSE(配列内の値(グローバル.TQ5, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), 空の配列), IF-THEN-ELSE(配列内の値(グローバル.TQ6, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), 空の配列), カスタムストリング("{0} {1}", IF-THEN-ELSE(配列内の値(グローバル.BounceToggleLock, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), アイコンストリング(警告), 空の配列), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.EditMode, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), >, NULL), アイコンストリング(矢印:上), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.EditMode, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), <, NULL), アイコンストリング(矢印:下), 空の配列)))), IF-THEN-ELSE((イベント・プレイヤー).preview_i, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(最後の値(配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), カスタムストリング("传送门 {0} 出口 ", 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), カスタムストリング("传送门 {0} 入口 ", 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i))), IF-THEN-ELSE(最後の値(配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), カスタムストリング("portal {0} destination ", 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), カスタムストリング("portal {0} start ", 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)))), (イベント・プレイヤー).banString)))), 空の配列), IF-THEN-ELSE((イベント・プレイヤー).preview_array1, 空の配列, カスタムストリング("{0}{1} {2}", IF-THEN-ELSE(AND((イベント・プレイヤー).toggle_guide, 文字列の長さ((イベント・プレイヤー).banString)), カスタムストリング("{0}\\n", (イベント・プレイヤー).banString), 空の配列), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("关卡"), カスタムストリング("Level")), カスタムストリング("{0} / {1}", (イベント・プレイヤー).checkpoint_current, 減算(カウント: (グローバル.A), True)))), IF-THEN-ELSE(AND((イベント・プレイヤー).cache_bounceMaxLocks, NOT((イベント・プレイヤー).preview_array1)), カスタムストリング("{0}{1} {2}", 配列内の値(グローバル.ColorConfig, 16), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("球"), カスタムストリング(" orbs")), カスタムストリング("{0} / {1}", カウント: ((イベント・プレイヤー).cache_collectedLocks), (イベント・プレイヤー).cache_bounceMaxLocks)), 空の配列), トップ, -172, 配列内の値(グローバル.ColorConfig, 4), 配列内の値(グローバル.ColorConfig, 4), 配列内の値(グローバル.ColorConfig, 16), 表示される相手、文字列, デフォルト表示);
+        HUDテキストを作成(イベント・プレイヤー, NULL, IF-THEN-ELSE((イベント・プレイヤー).toggle_practice, カスタムストリング("{0} {1} sec", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPractice Time:Practice Time:Practice Time:"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), (イベント・プレイヤー).timer_practice), 空の配列), カスタムストリング("{0} {1} sec                                                                                                ", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒTime:Time:Time:"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), (イベント・プレイヤー).timer_normal), 左, -196, NULL, 色(グレー), 配列内の値(グローバル.ColorConfig, 3), 文字列, デフォルト表示);
+        HUDテキストを作成(IF-THEN-ELSE((イベント・プレイヤー).toggle_leaderboard, NULL, イベント・プレイヤー), IF-THEN-ELSE((イベント・プレイヤー).preview_array1, カスタムストリング(" {0} ({1}/{2}", IF-THEN-ELSE((イベント・プレイヤー).preview_i, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).preview_i, <=, カウント: ((イベント・プレイヤー).cache_bouncePosition)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒOrbOrbOrb"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPortalPortalPortal"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒCheckpointCheckpointCheckpoint"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), 追加((イベント・プレイヤー).preview_i, True), カスタムストリング("{0})\\n―――――――――――\\n {1}\\n", カウント: ((イベント・プレイヤー).preview_array1), IF-THEN-ELSE(AND(COMPARE((イベント・プレイヤー).preview_i, <=, カウント: ((イベント・プレイヤー).cache_bouncePosition)), (イベント・プレイヤー).preview_i), カスタムストリング("{0} {1} {2}", IF-THEN-ELSE(配列内の値(グローバル.TQ5, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アルティメット)), 空の配列), IF-THEN-ELSE(配列内の値(グローバル.TQ6, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), アビリティアイコンストリング(ヒーロー(ゲンジ), ボタン(アビリティ1)), 空の配列), カスタムストリング("{0} {1}", IF-THEN-ELSE(配列内の値(グローバル.BounceToggleLock, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), アイコンストリング(警告), 空の配列), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.EditMode, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), >, NULL), アイコンストリング(矢印:上), IF-THEN-ELSE(COMPARE(配列内の値(グローバル.EditMode, 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), <, NULL), アイコンストリング(矢印:下), 空の配列)))), IF-THEN-ELSE((イベント・プレイヤー).preview_i, IF-THEN-ELSE(最後の値(配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), カスタムストリング("{0} {1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPortal ExitPortal ExitPortal Exit"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i)), カスタムストリング("{0} {1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒPortal StartPortal StartPortal Start"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 配列内の値((イベント・プレイヤー).preview_array2, (イベント・プレイヤー).preview_i))), (イベント・プレイヤー).banString)))), 空の配列), IF-THEN-ELSE((イベント・プレイヤー).preview_array1, 空の配列, カスタムストリング("{0}{1} {2}", IF-THEN-ELSE(AND((イベント・プレイヤー).toggle_guide, (イベント・プレイヤー).banString), カスタムストリング("{0}\\n", (イベント・プレイヤー).banString), 空の配列), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒLevelLevelLevel"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), カスタムストリング("{0} / {1}", (イベント・プレイヤー).checkpoint_current, 減算(カウント: (グローバル.A), True)))), IF-THEN-ELSE(AND((イベント・プレイヤー).cache_bounceMaxLocks, NOT((イベント・プレイヤー).preview_array1)), カスタムストリング("{0} {1} / {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ{0} Orbs{0} Orbs{0} Orbs", 配列内の値(グローバル.ColorConfig, 16)), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), カウント: ((イベント・プレイヤー).cache_collectedLocks), (イベント・プレイヤー).cache_bounceMaxLocks), 空の配列), トップ, -172, 配列内の値(グローバル.ColorConfig, 4), 配列内の値(グローバル.ColorConfig, 4), 配列内の値(グローバル.ColorConfig, 16), 表示される相手、文字列, デフォルト表示);
         HUDテキストを作成(イベント・プレイヤー, NULL, NULL, カスタムストリング("{0}{1}{2}", IF-THEN-ELSE(X成分: ((イベント・プレイヤー).cache_inputs), カスタムストリング("■"), カスタムストリング("□")), IF-THEN-ELSE(COMPARE(Z成分: (スロットル: (イベント・プレイヤー)), >, NULL), カスタムストリング("▲"), カスタムストリング("△")), カスタムストリング("{0}\\n{1}{2}", IF-THEN-ELSE(Y成分: ((イベント・プレイヤー).cache_inputs), カスタムストリング("●"), カスタムストリング("○")), IF-THEN-ELSE(COMPARE(X成分: (スロットル: (イベント・プレイヤー)), >, NULL), カスタムストリング("◀"), カスタムストリング("◁")), カスタムストリング("{0}{1}                                                                                                ", IF-THEN-ELSE(COMPARE(Z成分: (スロットル: (イベント・プレイヤー)), <, NULL), カスタムストリング("▼"), カスタムストリング("∇")), IF-THEN-ELSE(COMPARE(X成分: (スロットル: (イベント・プレイヤー)), <, NULL), カスタムストリング("▶"), カスタムストリング("▷"))))), 左, -192, NULL, NULL, 一度だけ評価(配列内の値(グローバル.ColorConfig, 3)), 文字列, デフォルト表示);
         "climb/bhop indicators"
-        HUDテキストを作成(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0}{1}", IF-THEN-ELSE((イベント・プレイヤー).skill_usedClimb, カスタムストリング("爬墙已用"), カスタムストリング("爬墙未用")), IF-THEN-ELSE((イベント・プレイヤー).skill_countMulti, カスタムストリング(" ({0})", (イベント・プレイヤー).skill_countMulti), 空の配列)), カスタムストリング("Climb{0}", IF-THEN-ELSE((イベント・プレイヤー).skill_countMulti, カスタムストリング(" ({0})", (イベント・プレイヤー).skill_countMulti), 空の配列))), NULL, カスタムストリング("                                                                                                                                "), 左, -193, IF-THEN-ELSE((イベント・プレイヤー).skill_usedClimb, 一度だけ評価(配列内の値(グローバル.ColorConfig, 8)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 7))), NULL, NULL, 文字列、色, デフォルト表示);
-        HUDテキストを作成(イベント・プレイヤー, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("{0}{1}", IF-THEN-ELSE((イベント・プレイヤー).skill_usedBhop, カスタムストリング("小跳已用"), カスタムストリング("小跳未用")), IF-THEN-ELSE((イベント・プレイヤー).skill_countCreates, カスタムストリング(" ({0})", (イベント・プレイヤー).skill_countCreates), 空の配列)), カスタムストリング("Bhop{0}", IF-THEN-ELSE((イベント・プレイヤー).skill_countCreates, カスタムストリング(" ({0})", (イベント・プレイヤー).skill_countCreates), 空の配列))), NULL, カスタムストリング("                                                                                                                                "), 左, -194, IF-THEN-ELSE((イベント・プレイヤー).skill_usedBhop, 一度だけ評価(配列内の値(グローバル.ColorConfig, 8)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 7))), NULL, NULL, 文字列、色, デフォルト表示);
-        ワールド内テキストを作成(IF-THEN-ELSE(AND((イベント・プレイヤー).checkpoint_notLast, (イベント・プレイヤー).toggle_guide), イベント・プレイヤー, NULL), IF-THEN-ELSE(AND((イベント・プレイヤー).cache_bounceMaxLocks, COMPARE(カウント: ((イベント・プレイヤー).cache_collectedLocks), <, (イベント・プレイヤー).cache_bounceMaxLocks)), カスタムストリング("{0} {1}", アイコンストリング(警告), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("先收集橙球"), カスタムストリング("collect orbs first"))), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("到这里来"), カスタムストリング("come here"))), 配列内の値(グローバル.A, 追加((イベント・プレイヤー).checkpoint_current, True)), 1.5, クリップしない, 表示される相手、位置、文字列, 配列内の値(グローバル.ColorConfig, 13), デフォルト表示);
+        HUDテキストを作成(イベント・プレイヤー, カスタムストリング("{0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒClimbClimbClimb"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((イベント・プレイヤー).skill_countMulti, カスタムストリング(" ({0})", (イベント・プレイヤー).skill_countMulti), 空の配列)), NULL, カスタムストリング("                                                                                                                                "), 左, -193, IF-THEN-ELSE((イベント・プレイヤー).skill_usedClimb, 一度だけ評価(配列内の値(グローバル.ColorConfig, 8)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 7))), NULL, NULL, 文字列、色, デフォルト表示);
+        HUDテキストを作成(イベント・プレイヤー, カスタムストリング("{0}{1}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒBhopBhopBhop"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((イベント・プレイヤー).skill_countCreates, カスタムストリング(" ({0})", (イベント・プレイヤー).skill_countCreates), 空の配列)), NULL, カスタムストリング("                                                                                                                                "), 左, -194, IF-THEN-ELSE((イベント・プレイヤー).skill_usedBhop, 一度だけ評価(配列内の値(グローバル.ColorConfig, 8)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 7))), NULL, NULL, 文字列、色, デフォルト表示);
+        ワールド内テキストを作成(IF-THEN-ELSE(AND((イベント・プレイヤー).checkpoint_notLast, (イベント・プレイヤー).toggle_guide), イベント・プレイヤー, NULL), IF-THEN-ELSE(AND((イベント・プレイヤー).cache_bounceMaxLocks, COMPARE(カウント: ((イベント・プレイヤー).cache_collectedLocks), <, (イベント・プレイヤー).cache_bounceMaxLocks)), カスタムストリング("{0}{1}", アイコンストリング(警告), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒCollect Orbs FirstCollect Orbs FirstCollect Orbs First"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒCome HereCome HereCome Here"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列))))), 配列内の値(グローバル.A, 追加((イベント・プレイヤー).checkpoint_current, True)), 1.5, クリップしない, 表示される相手、位置、文字列, 配列内の値(グローバル.ColorConfig, 13), デフォルト表示);
         待機(2.5, 条件無視);
         IF(グローバル.CompMode);
-            HUDテキストを作成(イベント・プレイヤー, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("剩余时间: {0} 分钟{1}", グローバル.CompTime, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).comp_countAttempts, <, NULL), カスタムストリング("\\n你没有尝试过"), IF-THEN-ELSE(グローバル.CompAtmpNum, カスタムストリング("\\n尝试 {0} / {1}", (イベント・プレイヤー).comp_countAttempts, グローバル.CompAtmpNum), 空の配列))), カスタムストリング("! 比赛结束 !")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("time left: {0} min{1}", グローバル.CompTime, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).comp_countAttempts, <, NULL), カスタムストリング("\\nYou are out of attempts"), IF-THEN-ELSE(グローバル.CompAtmpNum, カスタムストリング("\\nAttempt {0} / {1}", (イベント・プレイヤー).comp_countAttempts, グローバル.CompAtmpNum), 空の配列))), カスタムストリング("! competition is over !"))), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("竞赛模式"), カスタムストリング("竞赛模式\\n\\n\\n")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("competitive mode"), カスタムストリング("competitive mode\\n\\n\\n"))), トップ, -182, NULL, 色(黄色), 色(黄色), 文字列, デフォルト表示);
+            HUDテキストを作成(イベント・プレイヤー, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("剩余时间: {0} 分钟{1}", グローバル.CompTime, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).comp_countAttempts, <, NULL), カスタムストリング("\\n你没有尝试过"), IF-THEN-ELSE(グローバル.CompAtmpNum, カスタムストリング("\\n尝试 {0} / {1}", (イベント・プレイヤー).comp_countAttempts, グローバル.CompAtmpNum), 空の配列))), カスタムストリング("! 比赛结束 !")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("Time Left: {0} Min{1}", グローバル.CompTime, IF-THEN-ELSE(COMPARE((イベント・プレイヤー).comp_countAttempts, <, NULL), カスタムストリング("\\nYou Are Out Of Attempts"), IF-THEN-ELSE(グローバル.CompAtmpNum, カスタムストリング("\\nAttempt {0} / {1}", (イベント・プレイヤー).comp_countAttempts, グローバル.CompAtmpNum), 空の配列))), カスタムストリング("! Competition Is Over !"))), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("竞赛模式"), カスタムストリング("竞赛模式\\n\\n\\n")), IF-THEN-ELSE(グローバル.CompTime, カスタムストリング("Tournament Mode"), カスタムストリング("Tournament Mode\\n\\n\\n"))), トップ, -182, NULL, 色(黄色), 色(黄色), 文字列, デフォルト表示);
     }
 }
 
@@ -2557,7 +2561,7 @@ export const frameworkTemplate = `設定
     }
     アクション {
         "or eventPlayer.toggle_practice:"
-        中止する条件(OR(OR(グローバル.CompMode, (イベント・プレイヤー).editor_on), NOT(AND(カウント: (グローバル.TitleData), 含む配列(最初の値(グローバル.TitleData), (イベント・プレイヤー).checkpoint_current)))));
+        中止する条件(OR(OR(グローバル.CompMode, グローバル.EditorOn), NOT(AND(カウント: (グローバル.TitleData), 含む配列(最初の値(グローバル.TitleData), (イベント・プレイヤー).checkpoint_current)))));
         ワールド内テキストを破棄((イベント・プレイヤー).cache_titleHud);
         ワールド内テキストを作成(最初の値(NOT((イベント・プレイヤー).toggle_invisible)), 配列内の値(配列内の値(グローバル.TitleData, True), 配列値のインデックス(最初の値(グローバル.TitleData), (イベント・プレイヤー).checkpoint_current)), イベント・プレイヤー, 1.1, 表面に対してクリップ, 表示される相手、位置, 配列内の値(最後の値(グローバル.TitleData), 配列値のインデックス(最初の値(グローバル.TitleData), (イベント・プレイヤー).checkpoint_current)), デフォルト表示);
         プレイヤー変数を設定(イベント・プレイヤー, cache_titleHud, 最新のテキストID);
@@ -2573,11 +2577,11 @@ export const frameworkTemplate = `設定
         条件待機(エンティティが存在している(すべてのプレイヤー(すべてのチーム)), 999999999999);
         待機(False, 条件無視);
         IF(COMPARE((すべてのプレイヤー(すべてのチーム)).addon_toggle3rdPov, <=, True));
-            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("长按 {0} + {1} | 第三人称{2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ)), IF-THEN-ELSE((ローカルプレイヤー).addon_toggle3rdPov, カスタムストリング(" | 启用"), 空の配列)), カスタムストリング("Hold {0} + {1} | 3rd Person{2}", 入力割り当ての文字列(ボタン(しゃがみ)), 入力割り当ての文字列(ボタン(ジャンプ)), IF-THEN-ELSE((ローカルプレイヤー).addon_toggle3rdPov, カスタムストリング(" | ON"), 空の配列))), 右, -159, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).addon_toggle3rdPov, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
+            HUDテキストを作成((ローカルプレイヤー).toggle_guide, NULL, NULL, カスタムストリング("{0} {1} + {2}", 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒHoldHoldHold"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 入力割り当ての文字列(ボタン(しゃがみ)), カスタムストリング("{0} | {1}{2}", 入力割り当ての文字列(ボタン(ジャンプ)), 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ3rd Person3rd Person3rd Person"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), IF-THEN-ELSE((ローカルプレイヤー).addon_toggle3rdPov, 配列内の値(文字列の分割(カスタムストリング("ＴＬＥｒｒ | On | On | On"), グローバル.__overpyTranslationHelper__), 絶対値(配列値のインデックス(グローバル.__overpyTranslationHelper__, 文字列の分割(色(白), 空の配列)))), 空の配列))), 右, -159, NULL, NULL, IF-THEN-ELSE((ローカルプレイヤー).addon_toggle3rdPov, 一度だけ評価(配列内の値(グローバル.ColorConfig, 6)), 一度だけ評価(配列内の値(グローバル.ColorConfig, 5))), 表示される相手、文字列、色, デフォルト表示);
     }
 }
 
-ルール ("<tx0C00000000001344> Effects <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Effects ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -2596,10 +2600,9 @@ export const frameworkTemplate = `設定
                 エフェクトを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), OR((現在の配列の要素).toggle_invincible, NOT((現在の配列の要素).checkpoint_notLast))), 悪いオーラ, IF-THEN-ELSE(剰余(グローバル.NANBA, 2), 色(アクア), 色(オレンジ)), 配列内の値(グローバル.PortalLoc, グローバル.NANBA), 0.6, 目視可能: );
                 ワールド内テキストを作成(フィルタリングされた配列(すべてのプレイヤー(すべてのチーム), OR((現在の配列の要素).toggle_invincible, NOT((現在の配列の要素).checkpoint_notLast))), 配列内の値(グローバル.PortalNames, グローバル.NANBA), 追加(配列内の値(グローバル.PortalLoc, グローバル.NANBA), 上), True, 表面に対してクリップ, 目視可能: , 色(白), デフォルト表示);
             END;
+            待機(False, 条件無視);
         END;
-        条件待機(エンティティが存在している(すべてのプレイヤー(すべてのチーム)), 999999999999);
-        待機(False, 条件無視);
-        IF((すべてのプレイヤー(すべてのチーム)).editor_on);
+        IF(グローバル.EditorOn);
             サブルーチンの呼び出し(RebuildKillOrbs);
             サブルーチンの呼び出し(RebuildBounceOrbs);
             サブルーチンの呼び出し(RebuildPortals);
@@ -2686,7 +2689,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Addon Functions <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addon Functions ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -2702,7 +2705,7 @@ export const frameworkTemplate = `設定
         移動している(イベント・プレイヤー) == False;
         生存している(イベント・プレイヤー) == True;
         エモートでコミュニケーションしている(イベント・プレイヤー) == False;
-        (イベント・プレイヤー).editor_on == False;
+        グローバル.EditorOn == False;
     }
     アクション {
         待機(300, 「FALSE」の場合中止);
@@ -2866,7 +2869,8 @@ export const frameworkTemplate = `設定
         目視可否を設定(グローバル.MsDestructo, すべて);
         プレイヤーのスケールを開始(グローバル.MsDestructo, 3.111111111111110, False);
         重力を設定(グローバル.MsDestructo, 999999999999);
-        条件待機(スポーンした(グローバル.MsDestructo), 999999999999);
+        "Not infinity incase dummy does not spawn"
+        条件待機(スポーンした(グローバル.MsDestructo), 16);
         プレイヤー変数用(グローバル.MsDestructo, checkpoint_current, 1, カウント: (グローバル.A), True);
             IF(AND(最初の値(最も近い歩行可能な位置(配列内の値(グローバル.A, (グローバル.MsDestructo).checkpoint_current))), COMPARE(二点間の距離(配列内の値(グローバル.A, (グローバル.MsDestructo).checkpoint_current), 最も近い歩行可能な位置(配列内の値(グローバル.A, (グローバル.MsDestructo).checkpoint_current))), >, 1.4)));
                 プレイヤーの位置強制を開始(グローバル.MsDestructo, レイ・キャストのヒット位置(追加(配列内の値(グローバル.A, (グローバル.MsDestructo).checkpoint_current), 乗算(1.4, 上)), 追加(配列内の値(グローバル.A, (グローバル.MsDestructo).checkpoint_current), 乗算(-1.4, 上)), 空の配列, 空の配列, False), True);
@@ -2887,11 +2891,14 @@ export const frameworkTemplate = `設定
             END;
             //lbl_MapChecker_nextCp:
         END;
-        ダミーボットを破壊する(チーム: (グローバル.MsDestructo), スロット: (グローバル.MsDestructo));
-        グローバル変数を設定(MsDestructo, NULL);
+        プレイヤー変数を設定(グローバル.MsDestructo, editor_saveCache, グローバル.EditorOn);
+        グローバル変数を設定(EditorOn, NULL);
         インスペクターでの記録を有効化;
         インスペクターに記録(カスタムストリング("■ Map Check Complete ■"));
         インスペクターでの記録を無効化;
+        グローバル変数を設定(EditorOn, (グローバル.MsDestructo).editor_saveCache);
+        ダミーボットを破壊する(チーム: (グローバル.MsDestructo), スロット: (グローバル.MsDestructo));
+        グローバル変数を設定(MsDestructo, NULL);
     }
 }
 
@@ -2909,151 +2916,139 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
+ルール ("Ø Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-ルール ("<tx0C000000000207B5><fgFFFF00FF> Map Data & Addon Settings Are On Page 2 - 地图数据和附加组件的设置在第2页") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("<tx0C0000000000D297><fg00FFFFFF> Map Data - 数据录入 <---- INSERT HERE / 在这输入") {
-    イベント {
-        進行中 - グローバル;
-    }
-}
-
-ルール ("<tx0C00000000044B55><fg0FFFFFFF> Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入") {
+ルール ("☞ Credits and Colors here - 作者代码HUD颜色 <---- INSERT HERE / 在这输入") {
     イベント {
         進行中 - グローバル;
     }
@@ -3123,7 +3118,7 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Addons Settings & Data - 附加组件 <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addons Settings & Data - 附加组件 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
@@ -3151,7 +3146,6 @@ export const frameworkTemplate = `設定
         待機(2.5, 条件無視);
         "1) 地图工坊设 置难度改为 “不显示”\\n2) 勾选此规则 点击上方的 开启/关闭 开启此规则\\n3) 修改下面的 创建hud文本 中的“enter custom difficulty here”"
         HUDテキストを作成(最初の値(True), IF-THEN-ELSE(最後の値(グローバル.Difficultyhud), IF-THEN-ELSE(COMPARE(文字列("うーん"), ==, カスタムストリング("噢")), カスタムストリング("游戏测试"), カスタムストリング("Playtest")), 空の配列), カスタムストリング("enter custom difficulty here"), NULL, トップ, -173, 色(青), 色(緑), NULL, 表示される相手、文字列, デフォルト表示);
-        グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
     }
 }
 
@@ -3182,15 +3176,15 @@ export const frameworkTemplate = `設定
         条件待機(スポーンした(イベント・プレイヤー), 999999999999);
         IF(COMPARE(カスタムストリング("your nickname <-------"), ==, 文字列の分割(最初の値(イベント・プレイヤー), 空の配列)));
             大きなメッセージ(最初の値(True), カスタムストリング("Message to the whole room"));
-            ワールド内テキストを作成(最初の値(True), カスタムストリング("display title"), イベント・プレイヤー, 1.5, 表面に対してクリップ, 表示される相手、位置、文字列, 色(オレンジ), デフォルト表示);
+            ワールド内テキストを作成(最初の値(NOT((イベント・プレイヤー).toggle_invisible)), カスタムストリング("display title"), イベント・プレイヤー, 1.5, 表面に対してクリップ, 表示される相手、位置、文字列, 色(オレンジ), デフォルト表示);
         END;
         IF(COMPARE(カスタムストリング("your nickname <-------"), ==, 文字列の分割(最初の値(イベント・プレイヤー), 空の配列)));
             大きなメッセージ(最初の値(True), カスタムストリング("Message to the whole room"));
-            ワールド内テキストを作成(最初の値(True), カスタムストリング("display title"), イベント・プレイヤー, 1.5, 表面に対してクリップ, 表示される相手、位置、文字列, 色(オレンジ), デフォルト表示);
+            ワールド内テキストを作成(最初の値(NOT((イベント・プレイヤー).toggle_invisible)), カスタムストリング("display title"), イベント・プレイヤー, 1.5, 表面に対してクリップ, 表示される相手、位置、文字列, 色(オレンジ), デフォルト表示);
         END;
         IF(COMPARE(カスタムストリング("your nickname <-------"), ==, 文字列の分割(最初の値(イベント・プレイヤー), 空の配列)));
             大きなメッセージ(最初の値(True), カスタムストリング("Message to the whole room"));
-            ワールド内テキストを作成(最初の値(True), カスタムストリング("display title"), イベント・プレイヤー, 1.5, 表面に対してクリップ, 表示される相手、位置、文字列, 色(オレンジ), デフォルト表示);
+            ワールド内テキストを作成(最初の値(NOT((イベント・プレイヤー).toggle_invisible)), カスタムストリング("display title"), イベント・プレイヤー, 1.5, 表面に対してクリップ, 表示される相手、位置、文字列, 色(オレンジ), デフォルト表示);
     }
 }
 
@@ -3201,7 +3195,6 @@ export const frameworkTemplate = `設定
     アクション {
         "type your entry in the textfield that says \\"name and time here\\"\\n在文本框 中输入“名称和时间”"
         HUDテキストを作成(最初の値(True), NULL, カスタムストリング(" \\n{0} author time {0}", アイコンストリング(砲撃)), カスタムストリング("name and time here"), 右, -142, NULL, 色(ローズ), 色(ローズ), 目視可能: , デフォルト表示);
-        グローバル変数を変更(HudStoreEdit, 配列に追加, 最新のテキストID);
     }
 }
 
@@ -3264,13 +3257,13 @@ export const frameworkTemplate = `設定
     }
 }
 
-ルール ("<tx0C00000000001344> Addons Skills - 附加组件技能 <tx0C00000000001344>") {
+ルール ("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ Addons Skills - 附加组件技能 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒") {
     イベント {
         進行中 - グローバル;
     }
 }
 
-無効 ルール ("Addon | Stall enhancer - 增强系統跳的判定") {
+無効 ルール ("Addon | Stall Enhancer - 增强系統跳的判定") {
     イベント {
         進行中 - 各プレイヤー;
         すべて;
@@ -3282,11 +3275,10 @@ export const frameworkTemplate = `設定
         垂直速度: (イベント・プレイヤー) <= 0.05;
         水平速度: (イベント・プレイヤー) <= 1.3;
         空中にいる(イベント・プレイヤー) == True;
-        (イベント・プレイヤー).editor_on != False;
+        グローバル.EditorOn != False;
         (イベント・プレイヤー).editor_fly == False;
     }
     アクション {
-        "@Condition createWorkshopSetting(bool, \\"map settings \\\\n地图设置\\",\\" Autobounce enhancer - 增强系統跳的判定\\", false, 3)"
         待機(0.25, 「FALSE」の場合中止);
         プレイヤーの位置強制を開始(イベント・プレイヤー, 位置: (イベント・プレイヤー), False);
         条件待機(NOT(移動している(イベント・プレイヤー)), 1);
@@ -3409,7 +3401,7 @@ export const frameworkTemplate = `設定
         IF(含む配列(配列(1, 2), (イベント・プレイヤー).cache_bounceTouched));
             "example gravity (should be reset to 100 in AddonCustomLoadAndReset)"
             重力を設定(イベント・プレイヤー, 25);
-            小さなメッセージ(イベント・プレイヤー, カスタムストリング(" you feel light"));
+            小さなメッセージ(イベント・プレイヤー, カスタムストリング(" You Feel Light"));
             待機(2, 条件無視);
             重力を設定(イベント・プレイヤー, 100);
         END;
@@ -3417,12 +3409,12 @@ export const frameworkTemplate = `設定
             "example canceling primary makes double jump recover"
             メインアクションをキャンセル(イベント・プレイヤー);
             プレイヤー変数を設定(イベント・プレイヤー, skill_usedDouble, NULL);
-            小さなメッセージ(イベント・プレイヤー, カスタムストリング(" double jump recovered"));
+            小さなメッセージ(イベント・プレイヤー, カスタムストリング(" Double Jump Recovered"));
         END;
         IF(含む配列(配列(5, 6), (イベント・プレイヤー).cache_bounceTouched));
             "example move speed"
             移動速度を設定(イベント・プレイヤー, 250);
-            小さなメッセージ(イベント・プレイヤー, カスタムストリング(" zooom"));
+            小さなメッセージ(イベント・プレイヤー, カスタムストリング(" Zooom"));
             待機(2, 条件無視);
             移動速度を設定(イベント・プレイヤー, 100);
     }
