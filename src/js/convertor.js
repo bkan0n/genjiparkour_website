@@ -1060,7 +1060,7 @@ function sanitizeMapDataAssignments(text) {
   text = text.replace(reSetGlobalVar, "");
 
   const reDotAssign = new RegExp(
-    String.raw`^[ \t]*Global\.(?:DashExploitToggle|HudStoreEdit)\s*=\s*[^\r\n;]+;?[ \t]*\r?\n?`,
+    String.raw`^[ \t]*(?:Global|全局|グローバル)\.(?:DashExploitToggle|HudStoreEdit)\s*=\s*[^\r\n;]+;?[ \t]*\r?\n?`,
     "gmi"
   );
   text = text.replace(reDotAssign, "");
@@ -2119,10 +2119,6 @@ function insertMapCreditsIntoTemplate(tpl, creditsBlock, lang) {
       /\s*$/,
       `\n\t\tSet Global Variable At Index(ColorConfig, ${idxRaw}, ${rhs});\n`
     );
-  }
-
-  if (!/Wait\s*\(\s*False\s*,\s*Ignore Condition\s*\)\s*;?/i.test(actions)) {
-    actions = `\t\tWait(False, Ignore Condition);\n` + actions.replace(/^\s+/, s => s);
   }
 
   actions = actions.replace(/\)\s*;\s*\)\s*;/g, ');');
@@ -3458,6 +3454,14 @@ function renderMapSettings(fullText) {
   }
 }
 
+function temporaryReplace(text) {
+  if (!text) return text;
+  return text.replace(
+    /(设置不可见\(\s*事件玩家\s*,\s*)无(\s*\);)/g,
+    "$1全部禁用$2"
+  );
+}
+
 /* ------- Convertor ------- */
 async function doConvert(fullText, lang) {
   const lobbyBlock            = extractLobbyBlock(fullText, lang);
@@ -3507,6 +3511,8 @@ async function doConvert(fullText, lang) {
   tpl = applyDifficultyIndexToTemplate(tpl, sourceDiffValue);
 
   tpl = insertBasicMapValidator(tpl, lang, !isValidatorOn);
+
+  tpl = temporaryReplace(tpl);
 
   return tpl;
 }
