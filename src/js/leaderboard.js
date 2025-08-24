@@ -99,97 +99,127 @@ document.addEventListener("DOMContentLoaded", async function () {
         leaderboardContainer.style.maxWidth = `74vw`;
     }
 
-    leaderboardContainer.innerHTML = `
-        <thead>
-            <div class="thead-container">
-                <tr class="thead-wrapper">
-                    <th class="col-nickname">
-                        ${t("thead.mapNickname")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-xp">
-                        ${t("thead.mapXP")}    
-                        <span class="vertical-bar"></span>
-                        <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
-                            <div class="stroke stroke1 resize1"></div>
-                            <div class="stroke stroke2 bounce"></div>
-                            <div class="stroke stroke3 resize2"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-tier">
-                        ${t("thead.mapTierRank")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
-                            <div class="stroke stroke1 resize1"></div>
-                            <div class="stroke stroke2 bounce"></div>
-                            <div class="stroke stroke3 resize2"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-skill-rank">
-                        ${t("thead.mapSkillRank")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-wr">
-                        ${t("thead.mapWR")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-maps">
-                        ${t("thead.mapMade")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-playtest">
-                        ${t("thead.mapPlaytestsVotes")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                    <th class="col-discord-tag">
-                        ${t("thead.mapDiscordTag")}
-                        <span class="vertical-bar"></span>
-                        <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
-                            <div class="stroke stroke1"></div>
-                            <div class="stroke stroke2"></div>
-                            <div class="stroke stroke3"></div>
-                            <div class="tap-circle"></div>
-                        </button>
-                    </th>
-                </tr>
+leaderboardContainer.innerHTML = `
+  <thead>
+    <tr class="thead-wrapper">
+      <th class="col-nickname">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapNickname")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-nickname" class="sort-btn" data-column="nickname" data-order="asc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1"></div>
+              <div class="stroke stroke2"></div>
+              <div class="stroke stroke3"></div>
             </div>
-        </thead>
-        <tbody></tbody>
-    `;
+          </button>
+        </div>
+      </th>
 
-    updateLeaderboard();
+      <th class="col-xp">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapXP")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-xp" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1 resize1"></div>
+              <div class="stroke stroke2 bounce"></div>
+              <div class="stroke stroke3 resize2"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+
+      <th class="col-tier">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapTierRank")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-tier" class="sort-btn" data-column="xp_amount" data-order="desc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1 resize1"></div>
+              <div class="stroke stroke2 bounce"></div>
+              <div class="stroke stroke3 resize2"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+
+      <th class="col-skill-rank">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapSkillRank")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-skill-rank" class="sort-btn" data-column="skill_rank" data-order="asc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1"></div>
+              <div class="stroke stroke2"></div>
+              <div class="stroke stroke3"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+
+      <th class="col-wr">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapWR")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-wr" class="sort-btn" data-column="wr_count" data-order="asc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1"></div>
+              <div class="stroke stroke2"></div>
+              <div class="stroke stroke3"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+
+      <th class="col-maps">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapMade")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-maps" class="sort-btn" data-column="map_count" data-order="asc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1"></div>
+              <div class="stroke stroke2"></div>
+              <div class="stroke stroke3"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+
+      <th class="col-playtest">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapPlaytestsVotes")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-playtest" class="sort-btn" data-column="playtest_count" data-order="asc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1"></div>
+              <div class="stroke stroke2"></div>
+              <div class="stroke stroke3"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+
+      <th class="col-discord-tag">
+        <div class="th-content">
+          <span class="col-label">${t("thead.mapDiscordTag")}</span>
+          <span class="vertical-bar"></span>
+          <button id="sort-discord-tag" class="sort-btn" data-column="discord_tag" data-order="asc" onclick="animation(this)">
+            <div class="tap-circle">
+              <div class="stroke stroke1"></div>
+              <div class="stroke stroke2"></div>
+              <div class="stroke stroke3"></div>
+            </div>
+          </button>
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+`;
+
+updateLeaderboard();
+
 });
 
 async function fetchLeaderboard(params = {}) {
